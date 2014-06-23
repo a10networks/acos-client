@@ -16,8 +16,13 @@
 
 import httplib
 import json
+import logging
 import socket
 import ssl
+
+from version import VERSION
+
+LOG = logging.getLogger(__name__)
 
 
 # Monkey patch for ssl connect, for specific TLS version required by
@@ -51,7 +56,7 @@ class HttpClient(object):
 
         headers = {
             "Content-Type": "application/json",
-            "User-Agent": "OS-LBaaS-AGENT"
+            "User-Agent": "ACOS-Client-AGENT-%s" % VERSION
         }
 
         LOG.debug("axapi_http: start")
@@ -75,4 +80,3 @@ class HttpClient(object):
             return {'response': {'status': 'OK'}}
 
         return json.loads(data)
-
