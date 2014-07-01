@@ -12,8 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import functools
 import json
+
 import mock
 
 import acos_client
@@ -70,7 +70,6 @@ class Session(MockPair):
         return {'session_id': self.session_id}
 
     def post_validate(self):
-        print self._mock.mock_calls
         self._mock.assert_called_once_with(
             'POST',
             '/services/rest/v2.1/?format=json&method=authenticate',
@@ -82,7 +81,7 @@ class SessionBadPassword(Session):
     def output(self):
         return {
             "response": {
-                "status": "fail", 
+                "status": "fail",
                 "err": {"code": 520486915, "msg": " Admin password error"}
             }
         }
@@ -106,7 +105,7 @@ class CloseBadSession(Close):
     def output(self):
         return {
             "response": {
-                "status": "fail", 
+                "status": "fail",
                 "err": {"code": 1009, "msg": "Invalid session ID"}
             }
         }

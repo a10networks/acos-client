@@ -12,13 +12,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
-import mock
 import unittest
 
-import acos_client
-import test_base
 import v21_mocks as mocks
+
+import acos_client
 
 
 class TestSession(unittest.TestCase):
@@ -36,7 +34,6 @@ class TestSession(unittest.TestCase):
         with s.client() as c:
             r = c.session.authenticate('panda', 'weak')
             self.assertNotEqual(r['session_id'], None)
-
 
     def test_bad_authenticate(self):
         s = mocks.SessionBadPassword({'username': 'user', 'password': 'pass'})
