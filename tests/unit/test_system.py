@@ -12,16 +12,15 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import test_base
+import unittest
 
-class TestSystem(test_base.UnitTestBase):
-    pass
+import v21_mocks as mocks
 
-    # def test_information(self):
-    #     self.c.system.information()
-    #     self.assertEqual(2, self.c.http_client._http.call_count)
-    #     self.c.http_client._http.assert_called_with(
-    #         'GET',
-    #         '/services/rest/v2.1/?format=json&session_id=session0&'
-    #         'method=system.information.get',
-    #         None)
+
+class TestSystem(unittest.TestCase):
+
+    def test_information(self):
+        m = mocks.SystemInformation()
+        with m.client() as c:
+            r = c.system.information()
+            self.assertTrue('system_information' in r)

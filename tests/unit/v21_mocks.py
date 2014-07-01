@@ -19,32 +19,20 @@ import mock
 import acos_client
 
 
-# def acos(mock_pair_instance):
-#     def acos_decorator(func):
-#         @functools.wraps(func)
-#         def func_wrapper(*args):
-#             k = args[0]
-#             k.c.http_client._http = mock_pair_instance.mock()
-#             k.c.session.http_client._http = k.c.http_client._http
-
-#             func(*args)
-
-#             mock_pair_instance.post_validate()
-
-#         return func_wrapper
-#     return acos_decorator
-
-
 class MockPairClient(object):
 
-    def __init__(self, parent):
+    def __init__(self, parent, session_id=None):
         self.parent = parent
+        self.session_id = session_id
 
     def __enter__(self):
-        c = acos_client.Client('localhost', self.parent._username,
-                               self.parent._password)
+        c = acos_client.Client('localhost', self.parent.username,
+                               self.parent.password)
         c.http_client._http = self.parent.mock()
         c.session.http_client._http = c.http_client._http
+        if self.session_id is not None:
+            c.session.session_id = self.session_id
+
         return c
 
     def __exit__(self, *args, **kwargs):
@@ -54,13 +42,13 @@ class MockPairClient(object):
 class MockPair(object):
 
     def __init__(self, fields={}):
-        self._fields = fields
-        self._session_id = fields.get('session_id', 'session0')
-        self._username = fields.get('username', 'defuser')
-        self._password = fields.get('password', 'defpass')
+        self.fields = fields
+        self.session_id = fields.get('session_id', 'session0')
+        self.username = fields.get('username', 'defuser')
+        self.password = fields.get('password', 'defpass')
 
     def client(self):
-        return MockPairClient(self)
+        return MockPairClient(self, session_id=None)
 
     def mock(self):
         self._mock = mock.MagicMock(return_value=json.dumps(self.output()))
@@ -70,18 +58,23 @@ class MockPair(object):
         pass
 
 
+class AuthenticatedMockPair(MockPair):
+
+    def client(self):
+        return MockPairClient(self, session_id=self.session_id)
+
+
 class Session(MockPair):
 
     def output(self):
-        return {'session_id': self._session_id}
+        return {'session_id': self.session_id}
 
     def post_validate(self):
         print self._mock.mock_calls
         self._mock.assert_called_once_with(
             'POST',
             '/services/rest/v2.1/?format=json&method=authenticate',
-            json.dumps({'username': self._fields['username'],
-                        'password': self._fields['password']}))
+            json.dumps({'username': self.username, 'password': self.password}))
 
 
 class SessionBadPassword(Session):
@@ -95,55 +88,54 @@ class SessionBadPassword(Session):
         }
 
 
-def Close(MockPair):
+class Close(AuthenticatedMockPair):
 
     def output(self):
         return {"response": {"status": "OK"}}
 
     def post_validate(self):
-        self.c.session.http_client._http.assert_called_with(
+        self._mock.assert_called_with(
             'POST',
             "/services/rest/v2.1/?format=json&method=session.close&"
-            "session_id=abc",
-            json.dumps({'session_id': 'abc'}))
+            "session_id=%s" % self.session_id,
+            json.dumps({'session_id': "%s" % self.session_id}))
 
 
-# session_ok = {
-#     'mock': mock.MagicMock(return_value=json.dumps(
-#                 {'session_id': session_id})),
-#     'results': 
-# }
-# def session_ok()
+class CloseBadSession(Close):
+
+    def output(self):
+        return {
+            "response": {
+                "status": "fail", 
+                "err": {"code": 1009, "msg": "Invalid session ID"}
+            }
+        }
 
 
+class SystemInformation(AuthenticatedMockPair):
 
-# def session_mock(session_id="session0"):
-#     return mock.MagicMock(return_value=json.dumps({'session_id': session_id}))
+    def output(self):
+        return {
+            'system_information': {
+                'advanced_core_os_on_compact_flash1': 'No Software',
+                'advanced_core_os_on_compact_flash2': 'No Software',
+                'advanced_core_os_on_harddisk1': '2.7.1-P3-AWS(build: 4)',
+                'advanced_core_os_on_harddisk2': '2.7.1-P3-AWS(build: 4)',
+                'aflex_engine_version': '2.0.0',
+                'axapi_version': '2.1',
+                'current_time': '03:25:47 IST Tue Jul 1 2014',
+                'firmware_version': 'N/A',
+                'last_config_saved': '06:25:26 GMT Sat Dec 28 2013',
+                'serial_number': 'N/A',
+                'software_version': '2.7.1-P3-AWS(build: 4)',
+                'startup_mode': 'hard disk primary',
+                'technical_support': 'www.a10networks.com/support '
+            }
+        }
 
-# def invalid_session_mock():
-#     return mock.MagicMock(return_value=json.dumps({
-#             "response": {
-#                 "status": "fail", 
-#                 "err": {"code": 1009, "msg": "Invalid session ID"}
-#             }
-#         }))
-
-# def mock_response_ok():
-#     return mock.MagicMock(return_value=json.dumps(
-#         {"response": {"status": "OK"}}))
-
-# def bad_pass_mock():
-#     return mock.MagicMock(return_value=json.dumps({
-#             "response": {
-#                 "status": "fail", 
-#                 "err": {"code": 520486915, "msg": " Admin password error"}
-#             }
-#         }))
-
-#         self.c.system.information()
-#         self.assertEqual(2, self.c.http_client._http.call_count)
-#         self.c.http_client._http.assert_called_with(
-#             'GET',
-#             '/services/rest/v2.1/?format=json&session_id=session0&'
-#             'method=system.information.get',
-#             None)
+    def post_validate(self):
+        self._mock.assert_called_with(
+            'GET',
+            '/services/rest/v2.1/?format=json&session_id=%s&'
+            'method=system.information.get' % self.session_id,
+            None)
