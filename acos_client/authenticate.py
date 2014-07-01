@@ -1,3 +1,5 @@
+# vim: tabstop=4 shiftwidth=4 softtabstop=4
+
 # Copyright 2014,  Doug Wiegley,  A10 Networks.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -12,4 +14,18 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-VERSION = '0.1'
+class Authenticate(object):
+
+    def __init__(self, client):
+        self.client = client
+        #self.session_id = self.authenticate(username, password)['session_id']
+
+    def authenticate(self, username, password):
+        url = "/services/rest/v2.1/?format=json&method=authenticate"
+        params = {
+            "username": username,
+            "password": password
+        }
+
+        r = self.client.http.axapi_http("POST", auth_url, params) #yikes
+        return r
