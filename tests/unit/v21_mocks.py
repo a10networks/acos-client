@@ -28,8 +28,8 @@ class MockPairClient(object):
     def __enter__(self):
         c = acos_client.Client('localhost', self.parent.username,
                                self.parent.password)
-        c.http_client._http = self.parent.mock()
-        c.session.http_client._http = c.http_client._http
+        c.http._http = self.parent.mock()
+        c.session.http._http = c.http._http
         if self.session_id is not None:
             c.session.session_id = self.session_id
 
@@ -135,6 +135,6 @@ class SystemInformation(AuthenticatedMockPair):
     def post_validate(self):
         self._mock.assert_called_with(
             'GET',
-            '/services/rest/v2.1/?format=json&session_id=%s&'
-            'method=system.information.get' % self.session_id,
+            '/services/rest/v2.1/?format=json&method=system.information.get&'
+            'session_id=%s' % self.session_id,
             None)

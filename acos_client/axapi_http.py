@@ -104,3 +104,10 @@ class HttpClient(object):
                 acos_errors.raise_axapi_ex(r, action=extract_method(api_url))
 
         return r
+
+    def get(self, api_url, params={}):
+        return self.request("GET", api_url, params)
+
+    def post(self, api_url, params={}):
+        return self.request("POST", api_url, params)
+

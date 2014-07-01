@@ -20,12 +20,12 @@ from v21.system import System
 class Client(object):
 
     def __init__(self, host, username, password, port=None, protocol=None):
-        self.http_client = HttpClient(host, port, protocol)
-        self.session = Session(self.http_client, username, password)
+        self.http = HttpClient(host, port, protocol)
+        self.session = Session(self.http, username, password)
 
     @property
     def system(self):
-        return System(self.http_client, self.session)
+        return System(self.http, self.session)
 
 
 

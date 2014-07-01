@@ -12,17 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import base
 
+class BaseV21(object):
 
-class System(base.BaseV21):
-
-    def __init__(self, http, session):
-        self.http = http
-        self.session = session
-
-    def information(self):
-        return self.http.get(self.url("system.information.get"))
-
-    def write_memory(self):
-        return self.http.get(self.url("system.action.write_memory"))
+    def url(self, action):
+        return ("/services/rest/v2.1/?format=json&method=%s&session_id=%s" %
+            (action, self.session.id))
