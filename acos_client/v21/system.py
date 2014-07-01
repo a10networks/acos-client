@@ -17,10 +17,6 @@ import base
 
 class System(base.BaseV21):
 
-    def __init__(self, http, session):
-        self.http = http
-        self.session = session
-
     def information(self):
         return self.http.get(self.url("system.information.get"))
 

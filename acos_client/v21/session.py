@@ -13,10 +13,9 @@
 #    under the License.
 
 import acos_client.errors as acos_errors
-import base
 
 
-class Session(base.BaseV21):
+class Session(object):
 
     def __init__(self, http, username, password):
         self.http = http
@@ -40,7 +39,7 @@ class Session(base.BaseV21):
         if self.session_id is not None:
             self.close()
 
-        r = self.http.request("POST", url, params)
+        r = self.http.post(url, params)
         self.session_id = r['session_id']
         return r
 
@@ -49,8 +48,7 @@ class Session(base.BaseV21):
             url = ("/services/rest/v2.1/?format=json&method=session"
                    ".close&session_id=%s" % self.session_id)
 
-            r = self.http.request("POST", url,
-                                         {"session_id": self.session_id})
+            r = self.http.post(url, {"session_id": self.session_id})
 
         finally:
             self.session_id = None

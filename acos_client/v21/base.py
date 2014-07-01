@@ -15,6 +15,10 @@
 
 class BaseV21(object):
 
+    def __init__(self, http, session):
+        self.http = http
+        self.session = session
+
     def url(self, action):
         return ("/services/rest/v2.1/?format=json&method=%s&session_id=%s" %
             (action, self.session.id))
