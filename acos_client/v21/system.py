@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client.errors as acos_errors
 import base
 
 
@@ -21,4 +22,9 @@ class System(base.BaseV21):
         return self.http.get(self.url("system.information.get"))
 
     def write_memory(self):
-        return self.http.get(self.url("system.action.write_memory"))
+        r = self.http.get(self.url("system.action.write_memory"))
+        if 'response' in r:
+            if 'status' in r['response']:
+                if r['response']['status'] == 'OK':
+                    return
+        raise acos_errors.ACOSUnknownError()

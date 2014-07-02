@@ -138,3 +138,17 @@ class SystemInformation(AuthenticatedMockPair):
             '/services/rest/v2.1/?format=json&method=system.information.get&'
             'session_id=%s' % self.session_id,
             None)
+
+class SystemWriteMemory(AuthenticatedMockPair):
+
+    def output(self):
+        return {"response": {"status": "OK"}}
+
+    def post_validate(self):
+        self._mock.assert_called_with(
+            'GET',
+            "/services/rest/v2.1/?format=json&"
+            "method=system.action.write_memory&"
+            "session_id=%s" % self.session_id,
+            None)
+

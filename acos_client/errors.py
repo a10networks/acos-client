@@ -33,6 +33,9 @@ class AuthenticationFailure(ACOSException):
 class InvalidSessionID(ACOSException):
     pass
 
+class ACOSUnknownError(ACOSException):
+    pass
+
 RESPONSE_CODES = {
     1009: {
         'session.close': None,

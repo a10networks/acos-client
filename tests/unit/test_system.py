@@ -24,3 +24,8 @@ class TestSystem(unittest.TestCase):
         with m.client() as c:
             r = c.system.information()
             self.assertTrue('system_information' in r)
+
+    def test_write_memory(self):
+        m = mocks.SystemWriteMemory()
+        with m.client() as c:
+            r = c.system.write_memory()
