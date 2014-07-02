@@ -22,9 +22,4 @@ class System(base.BaseV21):
         return self.http.get(self.url("system.information.get"))
 
     def write_memory(self):
-        r = self.http.get(self.url("system.action.write_memory"))
-        if 'response' in r:
-            if 'status' in r['response']:
-                if r['response']['status'] == 'OK':
-                    return
-        raise acos_errors.ACOSUnknownError()
+        self.http.get(self.url("system.action.write_memory"))

@@ -27,23 +27,43 @@ LOG.setLevel(logging.DEBUG)
 class ACOSException(Exception):
     pass
 
+class ACOSUnknownError(ACOSException):
+    pass
+
+class AddressSpecifiedIsInUse(ACOSException):
+    pass
+
 class AuthenticationFailure(ACOSException):
     pass
 
 class InvalidSessionID(ACOSException):
     pass
 
-class ACOSUnknownError(ACOSException):
+class NameOrIpAlreadyExists(ACOSException):
     pass
+
+class NotFound(ACOSException):
+    pass
+    
 
 RESPONSE_CODES = {
     1009: {
         'session.close': None,
         '*': InvalidSessionID
     },
+    67174402: {
+        'slb.server.delete': None,
+        '*': NotFound
+    },
+    402653200: {
+        '*': NameOrIpAlreadyExists
+    },
     520486915: {
         '*': AuthenticationFailure  # /authenticate, 2.7.1
-    }
+    },
+    654311496: {
+        '*': AddressSpecifiedIsInUse
+    },
 }
 
 # {"response": {"status": "fail", "err": {"code": 520486915, "msg": " Admin password error"}}}

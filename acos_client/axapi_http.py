@@ -111,3 +111,7 @@ class HttpClient(object):
     def post(self, api_url, params={}):
         return self.request("POST", api_url, params)
 
+
+# socket.error: [Errno 54] Connection reset by peer
+
+
