@@ -16,12 +16,13 @@ import acos_client.v21.base as base
 
 from persistence import CookiePersistence, SourceIpPersistence
 
+
 class Template(base.BaseV21):
 
     @property
     def cookie_persistence(self):
-        return CookiePersistence(self.http, self.session)
+        return CookiePersistence(sself.client)
 
     @property
     def src_ip_persistence(self):
-        return SourceIpPersistence(self.http, self.session)
+        return SourceIpPersistence(self.client)

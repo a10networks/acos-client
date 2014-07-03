@@ -25,39 +25,27 @@ class Client(object):
     def __init__(self, host, username, password, port=None, protocol=None):
         self.http = HttpClient(host, port, protocol)
         self.session = Session(self.http, username, password)
+        self.partition = todo
+
+    def close_session(self):
+        if self.session.session_id is None:
+            return
+
+        try:
+            self.partiion.active()
+        except:
+            pass
+
+        self.session.close()
 
     @property
     def partition(self):
-        return Partition(self.http, self.session)
+        return Partition(self)
 
     @property
     def system(self):
-        return System(self.http, self.session)
+        return System(self)
 
     @property
     def slb(self):
-        return SLB(self.http, self.session)
-
-
-
-    # def check_version(self):
-    #     if 'skip_version_check' in self.device_info:
-    #         if self.device_info['skip_version_check']:
-    #             return
-
-    #     info_url = ("/services/rest/v2.1/?format=json&session_id=%s"
-    #                 "&method=system.information.get" % self.session_id)
-
-    #     r = self.axapi_http("GET", info_url)
-
-    #     x = r['system_information']['software_version'].split('.')
-    #     major = int(x[0])
-    #     minor = int(x[1])
-    #     dot = 0
-    #     m = re.match("^(\d+)", x[2])
-    #     if m is not None:
-    #         dot = int(m.group(1))
-
-    #     if major < 2 or minor < 7 or dot < 2:
-    #         LOG.error(_("A10Client: driver requires ACOS version 2.7.2+"))
-    #         raise a10_ex.A10ThunderVersionMismatch()
+        return SLB(self)

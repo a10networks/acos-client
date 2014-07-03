@@ -16,16 +16,14 @@ import acos_client.errors as acos_errors
 import acos_client.v21.base as base
 
 class Member(base.BaseV21):
-    enum STATUS {
-        DOWN = 0,
-        UP = 1
-    }
+    DOWN=0
+    UP=1
 
     def get(self, name):
         return self.http.post(self.url("slb.service_group.member.search"),
                               {'name': name})
 
-    def create(self, name, server_name, server_port, status=STATUS.UP):
+    def create(self, name, server_name, server_port, status=self.UP):
         params = {
             "name": name,
             "member": {
@@ -36,7 +34,7 @@ class Member(base.BaseV21):
         }
         self.http.post(self.url("slb.service_group.member.create"), params)
 
-    def update(self, name, server_name, server_port, status=STATUS.UP):
+    def update(self, name, server_name, server_port, status=self.UP):
         params = {
             "name": name,
             "member": {

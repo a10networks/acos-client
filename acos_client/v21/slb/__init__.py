@@ -26,24 +26,24 @@ class SLB(base.BaseV21):
 
     @property
     def hm(self):
-        return HealthMonitor(self.http, self.session)
+        return HealthMonitor(self.client)
 
     @property
     def server(self):
-        return Server(self.http, self.session)
+        return Server(self.client)
 
     @property
     def service_group(self):
-        return ServiceGroup(self.http, self.session)
+        return ServiceGroup(self.client)
 
     @property
     def template(self):
-        return Template(self.http, self.session)
+        return Template(self.client)
 
     @property
     def virtual_server(self):
-        return VirtualServer(self.http, self.session)
+        return VirtualServer(self.client)
 
     @property
     def virtual_service(self):
-        return VirtualService(self.http, self.session)
+        return VirtualService(self.client)

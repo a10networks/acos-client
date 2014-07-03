@@ -54,13 +54,3 @@ class Session(object):
             self.session_id = None
 
         return r
-
-    # def close_session(self, tenant_id=""):
-    #     response = self.partition_active(tenant_id=tenant_id, default=True)
-    #     if "response" in response:
-    #         if 'status' in response['response']:
-    #             if response['response']['status'] == "OK":
-    #                 url = ("/services/rest/v2.1/?format=json&method=session"
-    #                        ".close&session_id=%s" % self.session_id)
-    #                 if results['response']['status'] == "OK":
-    #                     self.session_id = None

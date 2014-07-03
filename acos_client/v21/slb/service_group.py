@@ -22,33 +22,31 @@ class ServiceGroup(base.BaseV21):
     def member(self):
         return Member(self.http, self.session)
 
-    enum METHOD = {
-        ROUND_ROBIN: 0,
-        WEIGHTED_ROUND_ROBIN: 1,
-        LEAST_CONNECTION: 2,
-        WEIGHTED_LEAST_CONNECTION: 3,
-        LEAST_CONNECTION_ON_SERVICE_PORT: 4,
-        WEIGHTED_LEAST_CONNECTION_ON_SERVICE_PORT: 5,
-        FAST_RESPONSE_TIME: 6,
-        LEAST_REQUEST: 7,
-        STRICT_ROUND_ROBIN: 8,
-        STATELESS_SOURCE_IP_HASH: 9,
-        STATELESS_SOURCE_IP_HASH_ONLY: 10,
-        STATELESS_DESTINATION_IP_HASH: 11,
-        STATELESS_SOURCE_DESTINATION_IP_HASH: 12,
-        STATELESS_PER_PACKAGE_ROUND_ROBIN: 13
-    }
+    # Valid LB methods
+    ROUND_ROBIN=0
+    WEIGHTED_ROUND_ROBIN=1
+    LEAST_CONNECTION=2
+    WEIGHTED_LEAST_CONNECTION=3
+    LEAST_CONNECTION_ON_SERVICE_PORT=4
+    WEIGHTED_LEAST_CONNECTION_ON_SERVICE_PORT=5
+    FAST_RESPONSE_TIME=6
+    LEAST_REQUEST=7
+    STRICT_ROUND_ROBIN=8
+    STATELESS_SOURCE_IP_HASH=9
+    STATELESS_SOURCE_IP_HASH_ONLY=10
+    STATELESS_DESTINATION_IP_HASH=11
+    STATELESS_SOURCE_DESTINATION_IP_HASH=12
+    STATELESS_PER_PACKAGE_ROUND_ROBIN=13
 
-    enum PROTOCOL = {
-        TCP: 2,
-        UDP: 3
-    }
+    # Valid protocols
+    TCP=2
+    UDP=3
 
     def get(self, name):
         return self.http.post(self.url("slb.service_group.search"),
                               {'name': name})
 
-    def create(self, name, protocol, lb_method):
+    def create(self, name, protocol=self.TCP, lb_method=self.ROUND_ROBIN):
         params = {
             "service_group": {
                 "name": name,
