@@ -13,12 +13,37 @@
 #    under the License.
 
 import acos_client.v21.base as base
-from member import Member
+
+from hm import HealthMonitor
 from server import Server
+from service_group import ServiceGroup
+from template import Template
+from virtual_server import VirtualServer
+from virtual_service import VirtualService
 
 
-class Slb(base.BaseV21):
+class SLB(base.BaseV21):
+
+    @property
+    def hm(self):
+        return HealthMonitor(self.http, self.session)
 
     @property
     def server(self):
         return Server(self.http, self.session)
+
+    @property
+    def service_group(self):
+        return ServiceGroup(self.http, self.session)
+
+    @property
+    def template(self):
+        return Template(self.http, self.session)
+
+    @property
+    def virtual_server(self):
+        return VirtualServer(self.http, self.session)
+
+    @property
+    def virtual_service(self):
+        return VirtualService(self.http, self.session)

@@ -13,8 +13,10 @@
 #    under the License.
 
 from axapi_http import HttpClient
+
+from v21.partition import Partition
 from v21.session import Session
-from v21.slb import Slb
+from v21.slb import SLB
 from v21.system import System
 
 
@@ -25,12 +27,16 @@ class Client(object):
         self.session = Session(self.http, username, password)
 
     @property
+    def partition(self):
+        return Partition(self.http, self.session)
+
+    @property
     def system(self):
         return System(self.http, self.session)
 
     @property
     def slb(self):
-        return Slb(self.http, self.session)
+        return SLB(self.http, self.session)
 
 
 
