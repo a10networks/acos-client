@@ -27,13 +27,13 @@ instances = {
         'user': 'admin', 
         'password': 'a10',
     },
-    # '2.7.1': {
-    #     'host': 'dougw-softax-271',
-    #     'port': 8443,
-    #     'protocol': 'https',
-    #     'user': 'admin', 
-    #     'password': 'a10',
-    # }
+    '2.7.1': {
+        'host': 'dougw-softax-271',
+        'port': 8443,
+        'protocol': 'https',
+        'user': 'admin', 
+        'password': 'a10',
+    }
 }
 
 def get_client(h, password=None):
@@ -193,18 +193,11 @@ for version,ax in instances.items():
     print "============================================================="
     print ""
     print "Member Create"
-    c.slb.service_group.member.delete("mfoobar")
-    c.slb.service_group.member.create("mfoobar", "sfoobar", 80)
-    c.slb.service_group.member.get("mfoobar")
+    c.slb.service_group.member.delete("pfoobar", "foobar", 80)
+    c.slb.service_group.member.create("pfoobar", "foobar", 80)
     try:
-        c.slb.service_group.member.create("mfoobar", "sfoobar", 80)
+        c.slb.service_group.member.create("pfoobar", "foobar", 80)
     except acos_client.errors.Exists:
         print "got already exists error, good"
-    c.slb.service_group.member.delete("mfoobar")
-    c.slb.service_group.member.delete("mfoobar")
-    try:
-        c.slb.service_group.member.get("mfoobar")
-    except acos_client.errors.NotFound:
-        print "got not found, good"
-
-
+    c.slb.service_group.member.delete("pfoobar", "foobar", 80)
+    c.slb.service_group.member.delete("pfoobar", "foobar", 80)

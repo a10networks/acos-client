@@ -60,6 +60,13 @@ RESPONSE_CODES = {
         'session.close': None,
         '*': InvalidSessionID
     },
+    1023: {
+        'slb.service_group.member.delete': None,
+        '*': NotFound
+    },
+    1405: {
+        '*': Exists
+    },
     2941: {
         '*': Exists
     },
@@ -78,7 +85,7 @@ RESPONSE_CODES = {
     67305473: {
         'slb.service_group.delete': None,
         'slb.service_group.member.create': NoSuchServiceGroup,
-        'slb.service_group.member.delete': None,
+        #'slb.service_group.member.delete': None,
         '*': NotFound
     },
     402653200: {
