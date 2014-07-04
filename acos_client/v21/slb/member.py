@@ -19,13 +19,9 @@ class Member(base.BaseV21):
     DOWN = 0
     UP = 1
 
-    def get(self, name):
-        return self.http.post(self.url("slb.service_group.member.search"),
-                              {'name': name})
-
-    def create(self, name, server_name, server_port, status=UP):
+    def create(self, service_group_name, server_name, server_port, status=UP):
         params = {
-            "name": name,
+            "name": service_group_name,
             "member": {
                 "server": server_name,
                 "port": server_port,
@@ -34,9 +30,9 @@ class Member(base.BaseV21):
         }
         self.http.post(self.url("slb.service_group.member.create"), params)
 
-    def update(self, name, server_name, server_port, status=UP):
+    def update(self, service_group_name, server_name, server_port, status=UP):
         params = {
-            "name": name,
+            "name": service_group_name,
             "member": {
                 "server": server_name,
                 "port": server_port,
@@ -45,12 +41,12 @@ class Member(base.BaseV21):
         }
         self.http.post(self.url("slb.service_group.member.update"), params)
 
-    def delete(self, name):
+    def delete(self, service_group_name, server_name, server_port):
         params = {
-            "name": name,
-            # "member": {
-            #     "server": server_name,
-            #     "port": server_port
-            # }
+            "name": service_group_name,
+            "member": {
+                "server": server_name,
+                "port": server_port
+            }
         }
         self.http.post(self.url("slb.service_group.member.delete"), params)

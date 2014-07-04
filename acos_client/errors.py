@@ -77,7 +77,7 @@ RESPONSE_CODES = {
     },
     67305473: {
         'slb.service_group.delete': None,
-        'slb.service_group.member.create': NoSuchServiceGroup,  ## ?? 2.7.1
+        'slb.service_group.member.create': NoSuchServiceGroup,
         'slb.service_group.member.delete': None,
         '*': NotFound
     },
@@ -91,7 +91,7 @@ RESPONSE_CODES = {
         '*': Exists
     },
     520486915: {
-        '*': AuthenticationFailure  # /authenticate, 2.7.1
+        '*': AuthenticationFailure
     },
     654311496: {
         '*': AddressSpecifiedIsInUse
