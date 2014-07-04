@@ -136,6 +136,13 @@ for version,ax in instances.items():
                                    c.slb.service_group.ROUND_ROBIN)
     except acos_client.errors.Exists:
         print "got already exists error, good"
+    c.slb.service_group.update("pfoobar", c.slb.service_group.TCP,
+                               c.slb.service_group.LEAST_CONNECTION)
+    try:
+        c.slb.service_group.update("pnfoobar", c.slb.service_group.TCP,
+                                   c.slb.service_group.LEAST_CONNECTION)
+    except acos_client.errors.NotFound:
+        print "got not found, good"
     c.slb.service_group.delete("pfoobar")
     c.slb.service_group.delete("pfoobar")
     try:
@@ -182,6 +189,11 @@ for version,ax in instances.items():
         c.slb.hm.create(c.slb.hm.HTTP, "hfoobar", 5, 5, 5, 'GET', '/', '200', 80)
     except acos_client.errors.Exists:
         print "got already exists error, good"
+    c.slb.hm.update(c.slb.hm.HTTP, "hfoobar", 10, 10, 10)
+    try:
+        c.slb.hm.update(c.slb.hm.HTTP, "hnfoobar", 10, 10, 10)
+    except acos_client.errors.NotFound:
+        print "got not found, good"
     c.slb.hm.delete("hfoobar")
     c.slb.hm.delete("hfoobar")
     try:
@@ -199,5 +211,90 @@ for version,ax in instances.items():
         c.slb.service_group.member.create("pfoobar", "foobar", 80)
     except acos_client.errors.Exists:
         print "got already exists error, good"
+    c.slb.service_group.member.update("pfoobar", "foobar", 80,
+                                      c.slb.service_group.member.DOWN)
+    try:
+        c.slb.service_group.member.update("pfoobar", "nfoobar", 80)
+    except acos_client.errors.NotFound:
+        print "got not found, good"
+    try:
+        c.slb.service_group.member.update("pnfoobar", "foobar", 80)
+    except acos_client.errors.NotFound:
+        print "got not found, good"
     c.slb.service_group.member.delete("pfoobar", "foobar", 80)
     c.slb.service_group.member.delete("pfoobar", "foobar", 80)
+
+
+    print "============================================================="
+    print ""
+    print "Source Ip Persistence"
+    c.slb.template.src_ip_persistence.delete("sip1")
+    c.slb.template.src_ip_persistence.create("sip1")
+    try:
+        c.slb.template.src_ip_persistence.create("sip1")
+    except acos_client.errors.Exists:
+        print "got already exists error, good"
+    c.slb.template.src_ip_persistence.get("sip1")
+    c.slb.template.src_ip_persistence.exists("sip1")
+    c.slb.template.src_ip_persistence.delete("sip1")
+    c.slb.template.src_ip_persistence.delete("sip1")
+    try:
+        c.slb.template.src_ip_persistence.get("sip1")
+    except acos_client.errors.NotFound:
+        print "got not found, good"
+
+
+    print "============================================================="
+    print ""
+    print "Http Cookie Persistence"
+    c.slb.template.cookie_persistence.delete("cp1")
+    c.slb.template.cookie_persistence.create("cp1")
+    try:
+        c.slb.template.cookie_persistence.create("cp1")
+    except acos_client.errors.Exists:
+        print "got already exists error, good"
+    c.slb.template.cookie_persistence.get("cp1")
+    c.slb.template.cookie_persistence.exists("cp1")
+    c.slb.template.cookie_persistence.delete("cp1")
+    c.slb.template.cookie_persistence.delete("cp1")
+    try:
+        c.slb.template.cookie_persistence.get("cp1")
+    except acos_client.errors.NotFound:
+        print "got not found, good"
+
+
+    print "============================================================="
+    print ""
+    print "Vip with pers"
+    c.slb.virtual_server.delete("vip2")
+    c.slb.virtual_server.create("vip2", 
+                                '192.168.2.249',
+                                c.slb.virtual_service.HTTPS,
+                                443,
+                                'pfoobar',
+                                'sip1',
+                                'cp1',
+                                1)
+    c.slb.virtual_server.delete("vip2")
+    c.slb.virtual_server.create("vip2", 
+                                '192.168.2.249',
+                                c.slb.virtual_service.HTTPS,
+                                443,
+                                'pfoobar',
+                                spers='sip1')
+    c.slb.virtual_server.delete("vip2")
+    c.slb.virtual_server.create("vip2", 
+                                '192.168.2.249',
+                                c.slb.virtual_service.HTTPS,
+                                443,
+                                'pfoobar',
+                                cpers='cp1')
+
+
+    print "============================================================="
+    print ""
+    print "Vport"
+
+    c.slb.virtual_service.get('vip2')
+    c.slb.virtual_service.update('vip2', c.slb.virtual_service.HTTP, 'pfoobar')
+    c.slb.virtual_service.delete('vip2')

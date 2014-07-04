@@ -29,7 +29,7 @@ class Partition(base.BaseV21):
         return False
 
     def active(self, name='shared'):
-        self.http.post(self.url("system.partition.search"), {'name': name})
+        self.http.post(self.url("system.partition.active"), {'name': name})
 
     def create(self, name):
         params = {
