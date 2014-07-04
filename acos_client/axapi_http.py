@@ -14,6 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import errno
 import httplib
 import json
 import logging
@@ -44,8 +45,8 @@ def force_tlsv1_connect(self):
     self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file,
                                 ssl_version=ssl.PROTOCOL_TLSv1)
 
+
 def extract_method(api_url):
-    method = None
     m = re.search("method=([^&]+)", api_url)
     if m is not None:
         return m.group(1)
@@ -87,7 +88,15 @@ class HttpClient(object):
         else:
             payload = None
 
-        data = self._http(method, api_url, payload)
+        for i in [1, 2, 3]:
+            try:
+                data = self._http(method, api_url, payload)
+                break
+            except socket.error as e:
+                if e.errno == errno.ECONNRESET:
+                    # todo - sleep needed?
+                    continue
+                raise e
 
         LOG.debug("axapi_http: data = %s", data)
 
@@ -110,8 +119,3 @@ class HttpClient(object):
 
     def post(self, api_url, params={}):
         return self.request("POST", api_url, params)
-
-
-# socket.error: [Errno 54] Connection reset by peer
-
-

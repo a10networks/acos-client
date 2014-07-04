@@ -13,7 +13,6 @@
 #    under the License.
 
 from axapi_http import HttpClient
-
 from v21.partition import Partition
 from v21.session import Session
 from v21.slb import SLB
@@ -25,7 +24,7 @@ class Client(object):
     def __init__(self, host, username, password, port=None, protocol=None):
         self.http = HttpClient(host, port, protocol)
         self.session = Session(self.http, username, password)
-        self.partition = todo
+        # self.partition = todo
 
     def close_session(self):
         if self.session.session_id is None:
@@ -33,7 +32,7 @@ class Client(object):
 
         try:
             self.partiion.active()
-        except:
+        except Exception as e:
             pass
 
         self.session.close()

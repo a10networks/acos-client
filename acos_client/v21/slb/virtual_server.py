@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.errors as acos_errors
 import acos_client.v21.base as base
 
 
@@ -32,15 +31,15 @@ class VirtualServer(base.BaseV21):
             },
             "vport_list": [
                 {
-                    "name": name + "_VPORT"
+                    "name": name + "_VPORT",
                     "protocol": protocol,
                     "port": port,
                     "service_group": service_group_id,
                     "status": status
                 }
             ]
-       }
-       if s_pers is not None:
+        }
+        if s_pers is not None:
             params['vport_list'][0]['source_ip_persistence_template'] = s_pers
         elif c_pers is not None:
             params['vport_list'][0]['cookie_persistence_template'] = c_pers

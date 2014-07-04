@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.errors as acos_errors
 import acos_client.v21.base as base
 
 
@@ -30,7 +29,6 @@ class Server(base.BaseV21):
             }
         }
         self.http.post(self.url("slb.server.create"), params)
-
 
     def delete(self, name):
         self.http.post(self.url("slb.server.delete"),

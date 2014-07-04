@@ -12,8 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.errors as acos_errors
-import acos_client.v21.base as base
+import base
 
 
 class Partition(base.BaseV21):

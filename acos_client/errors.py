@@ -23,28 +23,33 @@ LOG.addHandler(out_hdlr)
 LOG.setLevel(logging.DEBUG)
 
 
-
 class ACOSException(Exception):
     pass
+
 
 class ACOSUnknownError(ACOSException):
     pass
 
+
 class AddressSpecifiedIsInUse(ACOSException):
     pass
+
 
 class AuthenticationFailure(ACOSException):
     pass
 
+
 class InvalidSessionID(ACOSException):
     pass
+
 
 class NameOrIpAlreadyExists(ACOSException):
     pass
 
+
 class NotFound(ACOSException):
     pass
-    
+
 
 RESPONSE_CODES = {
     1009: {
@@ -66,7 +71,6 @@ RESPONSE_CODES = {
     },
 }
 
-# {"response": {"status": "fail", "err": {"code": 520486915, "msg": " Admin password error"}}}
 
 def raise_axapi_ex(response, action=None):
     if 'response' in response and 'err' in response['response']:
@@ -90,4 +94,3 @@ def raise_axapi_ex(response, action=None):
                 return
 
     raise ACOSException()
-

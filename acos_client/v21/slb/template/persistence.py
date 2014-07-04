@@ -33,12 +33,6 @@ class BasePersistence(base.BaseV21):
             return False
 
     def create(self, name):
-        params = {
-            "server": {
-                "name": name,
-                "host": ip_address,
-            }
-        }
         self.http.post(self.url("%s.create" % self.prefix),
                        self.get_params(name))
 

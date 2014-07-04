@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.errors as acos_errors
 import acos_client.v21.base as base
 
 
@@ -41,7 +40,6 @@ class VirtualService(base.BaseV21):   # aka VirtualPort
         params['status'] = status
 
         self.http.post(self.url("slb.virtual_service.update"), params)
-
 
     def delete(self, name):
         self.http.post(self.url("slb.virtual_service.delete"),

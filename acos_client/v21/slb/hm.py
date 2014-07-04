@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.errors as acos_errors
 import acos_client.v21.base as base
 
 
@@ -54,11 +53,11 @@ class HealthMonitor(base.BaseV21):
         self.http.post(self.url(action), params)
 
     def create(self, mon_type, name, interval, timeout, max_retries,
-             method=None, url=None, expect_code=None, port=None):
+               method=None, url=None, expect_code=None, port=None):
         self._set("slb.hm.create", todo)
 
     def update(self, mon_type, name, interval, timeout, max_retries,
-             method=None, url=None, expect_code=None, port=None):
+               method=None, url=None, expect_code=None, port=None):
         self._set("slb.hm.update", todo)
 
     def delete(self, name):
