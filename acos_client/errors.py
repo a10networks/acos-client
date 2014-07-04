@@ -43,7 +43,7 @@ class InvalidSessionID(ACOSException):
     pass
 
 
-class NameOrIpAlreadyExists(ACOSException):
+class Exists(ACOSException):
     pass
 
 
@@ -60,8 +60,19 @@ RESPONSE_CODES = {
         'slb.server.delete': None,
         '*': NotFound
     },
+    67239937: {
+        'slb.virtual_server.delete': None,
+        '*': NotFound
+    },
+    67305473: {
+        'slb.service_group.delete': None,
+        '*': NotFound
+    },
     402653200: {
-        '*': NameOrIpAlreadyExists
+        '*': Exists
+    },
+    402653201: {
+        '*': Exists
     },
     520486915: {
         '*': AuthenticationFailure  # /authenticate, 2.7.1
