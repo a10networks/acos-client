@@ -29,7 +29,7 @@ class HealthMonitor(base.BaseV21):
             self.HTTP: {
                 'protocol': 'http',
                 'port': 80
-            }
+            },
             self.HTTPS: {
                 'protocol': 'https',
                 'port': 443
