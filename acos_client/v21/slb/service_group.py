@@ -16,6 +16,7 @@ import acos_client.v21.base as base
 
 from member import Member
 
+
 class ServiceGroup(base.BaseV21):
 
     @property
@@ -73,5 +74,3 @@ class ServiceGroup(base.BaseV21):
 
     def delete(self, name):
         self.http.post(self.url("slb.service_group.delete"), {'name': name})
-
-

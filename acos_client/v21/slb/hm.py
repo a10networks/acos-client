@@ -44,7 +44,7 @@ class HealthMonitor(base.BaseV21):
             'disable_after_down': 0,
             'type': mon_type,
         }
-        if hm_type in defs:
+        if mon_type in defs:
             params[defs[mon_type]['protocol']] = {
                 'port': port or defs[mon_type]['port'],
                 'url': "%s %s" % (method, url),
@@ -52,13 +52,11 @@ class HealthMonitor(base.BaseV21):
             }
         self.http.post(self.url(action), params)
 
-    def create(self, mon_type, name, interval, timeout, max_retries,
-               method=None, url=None, expect_code=None, port=None):
-        self._set("slb.hm.create", todo)
+    def create(self, *args):
+        self._set("slb.hm.create", *args)
 
-    def update(self, mon_type, name, interval, timeout, max_retries,
-               method=None, url=None, expect_code=None, port=None):
-        self._set("slb.hm.update", todo)
+    def update(self, *args):
+        self._set("slb.hm.update", *args)
 
     def delete(self, name):
         self.http.post(self.url("slb.hm.delete"), {"name": name})

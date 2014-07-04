@@ -45,12 +45,12 @@ class Member(base.BaseV21):
         }
         self.http.post(self.url("slb.service_group.member.update"), params)
 
-    def delete(self, server_name, server_port):
+    def delete(self, name):
         params = {
             "name": name,
-            "member": {
-                "server": server_name,
-                "port": server_port
-            }
+            # "member": {
+            #     "server": server_name,
+            #     "port": server_port
+            # }
         }
         self.http.post(self.url("slb.service_group.member.delete"), params)
