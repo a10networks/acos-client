@@ -23,35 +23,27 @@ class VirtualServer(base.BaseV21):
                               {'name': name})
 
     def create(self, name, ip_address, protocol, port, service_group_id,
-               s_pers=None, c_pers=None, status=1):  # WRONG WRONG WRONG
-
+               s_pers=None, c_pers=None, status=1):
         params = {
             "virtual_server": {
                 "name": name,
                 "address": ip_address,
-                "status": todo,
+                "status": status,
             },
             "vport_list": [
                 {
-                    extra_goo_from_def_struct: todo,
-                    "service_group": service_group_id,
-                    "port": port_todo, ##what is this?  enum?
                     "name": name + "_VPORT"
+                    "protocol": protocol,
+                    "port": port,
+                    "service_group": service_group_id,
+                    "status": status
                 }
             ]
        }
-        # if protocol == "HTTP":
-        #     vport_obj = request_struct_v2.vport_HTTP_obj.ds.toDict()
-        # elif protocol == "HTTPS":
-        #     vport_obj = request_struct_v2.vport_HTTPS_obj.ds.toDict()
-        # else:
-        #     vport_obj = request_struct_v2.vport_TCP_obj.ds.toDict()
-        # if s_pers is not None:
-        #     vport_obj['source_ip_persistence_template'] = s_pers
-        # if c_pers is not None:
-        #     vport_obj['cookie_persistence_template'] = c_pers
-        # if self.device_info['autosnat']:
-        #     vport_obj['source_nat_auto'] = 1
+       if s_pers is not None:
+            params['vport_list'][0]['source_ip_persistence_template'] = s_pers
+        elif c_pers is not None:
+            params['vport_list'][0]['cookie_persistence_template'] = c_pers
 
         self.http.post(self.url("slb.virtual_server.create"), params)
 
