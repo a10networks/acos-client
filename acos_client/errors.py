@@ -88,6 +88,10 @@ RESPONSE_CODES = {
         #'slb.service_group.member.delete': None,
         '*': NotFound
     },
+    67371009: {
+        'slb.template.src_ip_persistence.delete': None,
+        '*': NotFound
+    },
     402653200: {
         '*': Exists
     },

@@ -18,7 +18,8 @@ import acos_client.v21.base as base
 
 class BasePersistence(base.BaseV21):
 
-    def __init__(self):
+    def __init__(self, client):
+        super(BasePersistence, self).__init__(client)
         self.prefix = "slb.template.%s_persistence" % self.pers_type
 
     def get(self, name):
@@ -42,9 +43,9 @@ class BasePersistence(base.BaseV21):
 
 class CookiePersistence(BasePersistence):
 
-    def __init__(self):
+    def __init__(self, client):
         self.pers_type = 'cookie'
-        super(CookiePersistence, self).__init__()
+        super(CookiePersistence, self).__init__(client)
 
     def get_params(self, name):
         return {
@@ -66,11 +67,11 @@ class CookiePersistence(BasePersistence):
         }
 
 
-class SourceIpPersistence(base.BaseV21):
+class SourceIpPersistence(BasePersistence):
 
-    def __init__(self):
+    def __init__(self, client):
         self.pers_type = 'src_ip'
-        super(CookiePersistence, self).__init__()
+        super(SourceIpPersistence, self).__init__(client)
 
     def get_params(self, name):
         return {
