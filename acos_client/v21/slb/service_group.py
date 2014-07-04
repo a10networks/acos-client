@@ -21,7 +21,7 @@ class ServiceGroup(base.BaseV21):
 
     @property
     def member(self):
-        return Member(self.http, self.session)
+        return Member(self.client)
 
     # Valid LB methods
     ROUND_ROBIN = 0

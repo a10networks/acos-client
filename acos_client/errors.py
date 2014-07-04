@@ -51,11 +51,22 @@ class NotFound(ACOSException):
     pass
 
 
+class NoSuchServiceGroup(ACOSException):
+    pass
+
+
 RESPONSE_CODES = {
     1009: {
         'session.close': None,
         '*': InvalidSessionID
     },
+    2941: {
+        '*': Exists
+    },
+    33619968: {
+        'slb.hm.delete': None,
+        '*': NotFound
+        },
     67174402: {
         'slb.server.delete': None,
         '*': NotFound
@@ -66,12 +77,17 @@ RESPONSE_CODES = {
     },
     67305473: {
         'slb.service_group.delete': None,
+        'slb.service_group.member.create': NoSuchServiceGroup,  ## ?? 2.7.1
+        'slb.service_group.member.delete': None,
         '*': NotFound
     },
     402653200: {
         '*': Exists
     },
     402653201: {
+        '*': Exists
+    },
+    402653206: {
         '*': Exists
     },
     520486915: {

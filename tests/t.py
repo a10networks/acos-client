@@ -27,13 +27,13 @@ instances = {
         'user': 'admin', 
         'password': 'a10',
     },
-    '2.7.1': {
-        'host': 'dougw-softax-271',
-        'port': 8443,
-        'protocol': 'https',
-        'user': 'admin', 
-        'password': 'a10',
-    }
+    # '2.7.1': {
+    #     'host': 'dougw-softax-271',
+    #     'port': 8443,
+    #     'protocol': 'https',
+    #     'user': 'admin', 
+    #     'password': 'a10',
+    # }
 }
 
 def get_client(h, password=None):
@@ -152,14 +152,14 @@ for version,ax in instances.items():
     c.slb.virtual_server.delete("vfoobar")
     c.slb.virtual_server.create("vfoobar", 
                                 '192.168.2.250',
-                                'http',
+                                c.slb.virtual_service.HTTP,
                                 '80',
                                 'pfoobar')
     c.slb.virtual_server.get("vfoobar")
     try:
         c.slb.virtual_server.create("vfoobar", 
                                     '192.168.2.250',
-                                    'http',
+                                    c.slb.virtual_service.HTTP,
                                     '80',
                                     'pfoobar')
     except acos_client.errors.Exists:
@@ -193,17 +193,17 @@ for version,ax in instances.items():
     print "============================================================="
     print ""
     print "Member Create"
-    c.slb.member.delete("mfoobar")
-    c.slb.member.create("mfoobar", "sfoobar", 80)
-    c.slb.member.get("mfoobar")
+    c.slb.service_group.member.delete("mfoobar")
+    c.slb.service_group.member.create("mfoobar", "sfoobar", 80)
+    c.slb.service_group.member.get("mfoobar")
     try:
-        c.slb.member.create("mfoobar", "sfoobar", 80)
+        c.slb.service_group.member.create("mfoobar", "sfoobar", 80)
     except acos_client.errors.Exists:
         print "got already exists error, good"
-    c.slb.member.delete("mfoobar")
-    c.slb.member.delete("mfoobar")
+    c.slb.service_group.member.delete("mfoobar")
+    c.slb.service_group.member.delete("mfoobar")
     try:
-        c.slb.member.get("mfoobar")
+        c.slb.service_group.member.get("mfoobar")
     except acos_client.errors.NotFound:
         print "got not found, good"
 
