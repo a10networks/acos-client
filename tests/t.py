@@ -45,7 +45,7 @@ def get_client(h, password=None):
     return c
 
 
-for version,ax in instances.items():
+def run_all(version, ax):
     print "============================================================="
     print "============================================================="
     print "============================================================="
@@ -242,6 +242,7 @@ for version,ax in instances.items():
         c.slb.template.src_ip_persistence.get("sip1")
     except acos_client.errors.NotFound:
         print "got not found, good"
+    c.slb.template.src_ip_persistence.create("sip1")
 
 
     print "============================================================="
@@ -261,6 +262,7 @@ for version,ax in instances.items():
         c.slb.template.cookie_persistence.get("cp1")
     except acos_client.errors.NotFound:
         print "got not found, good"
+    c.slb.template.cookie_persistence.create("cp1")
 
 
     print "============================================================="
@@ -281,14 +283,14 @@ for version,ax in instances.items():
                                 c.slb.virtual_service.HTTPS,
                                 443,
                                 'pfoobar',
-                                spers='sip1')
+                                s_pers='sip1')
     c.slb.virtual_server.delete("vip2")
     c.slb.virtual_server.create("vip2", 
                                 '192.168.2.249',
                                 c.slb.virtual_service.HTTPS,
                                 443,
                                 'pfoobar',
-                                cpers='cp1')
+                                c_pers='cp1')
 
 
     print "============================================================="
@@ -298,3 +300,14 @@ for version,ax in instances.items():
     c.slb.virtual_service.get('vip2')
     c.slb.virtual_service.update('vip2', c.slb.virtual_service.HTTP, 'pfoobar')
     c.slb.virtual_service.delete('vip2')
+
+
+for version,ax in instances.items():
+    try:
+        run_all(version, ax)
+    except Exception as e:
+        sys.exit(1)
+
+sys.exit(0)
+
+

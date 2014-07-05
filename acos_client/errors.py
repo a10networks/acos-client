@@ -89,6 +89,7 @@ RESPONSE_CODES = {
         '*': NotFound
     },
     67371009: {
+        'slb.template.cookie_persistence.delete': None,
         'slb.template.src_ip_persistence.delete': None,
         '*': NotFound
     },
@@ -96,6 +97,9 @@ RESPONSE_CODES = {
         '*': Exists
     },
     402653201: {
+        '*': Exists
+    },
+    402653202: {
         '*': Exists
     },
     402653206: {
