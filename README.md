@@ -54,6 +54,12 @@ c.slb.service_group.member.create("pool1", "s2", 80)
 
 ## Future Features and Additions
 
-Initial entry points for openstack driver. ACOS 4.0 support coming soon.
+- [ ] Fill out the rest of axapi 2.1 apis
+- [ ] Validate more args to methods
+- [ ] ACOS 4.0 support
+- [ ] SSH as interface support
+- [ ] Support stripe-api-object like model; reference object fields as attributes, then save().
+- [ ] Include pdf/html docs to actual REST api.
+- [ ] Include ACOS error code/msg string with ACOSException
 
-Please refer to [TODO.md](TODO.md).
+From [TODO.md](TODO.md).
