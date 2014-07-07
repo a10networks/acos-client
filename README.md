@@ -40,9 +40,6 @@ c.slb.service_group.member.create("pool1", "s1", 80)
 c.slb.service_group.member.create("pool1", "s2", 80)
 ```
 
-
-Not yet complete, initial entry points for openstack driver.  Refer to TODO.md.
-
 ## Contributing
 
 1. Fork it
