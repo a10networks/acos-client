@@ -9,13 +9,11 @@
 $ pip install acos_client
 ```
 
-### Install the latest version
+### Install from source
 
 ```
-$ git clone blah
-```
-
-```
+$ git clone https://github.com/a10networks/acos_client.git
+$ cd acos_client
 $ python setup.py
 ```
 
