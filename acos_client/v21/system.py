@@ -12,4 +12,13 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-VERSION = '0.1'
+import base
+
+
+class System(base.BaseV21):
+
+    def information(self):
+        return self.http.get(self.url("system.information.get"))
+
+    def write_memory(self):
+        self.http.get(self.url("system.action.write_memory"))

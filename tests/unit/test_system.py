@@ -12,4 +12,20 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-VERSION = '0.1'
+import unittest
+
+import v21_mocks as mocks
+
+
+class TestSystem(unittest.TestCase):
+
+    def test_information(self):
+        m = mocks.SystemInformation()
+        with m.client() as c:
+            r = c.system.information()
+            self.assertTrue('system_information' in r)
+
+    def test_write_memory(self):
+        m = mocks.SystemWriteMemory()
+        with m.client() as c:
+            r = c.system.write_memory()
