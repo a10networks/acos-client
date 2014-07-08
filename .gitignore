@@ -12,3 +12,6 @@ pip-log.txt
 .coverage
 .tox
 nosetests.xml
+Vagrantfile
+.vagrant/
+
