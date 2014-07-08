@@ -20,7 +20,6 @@ import v21_mocks as mocks
 class TestHealthMonitor(unittest.TestCase):
 
     def test_(self):
-        m = mocks.SystemInformation()
         with mocks.().client() as c:
             r = c.
 
