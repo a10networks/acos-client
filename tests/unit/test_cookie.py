@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client.errors as acos_errors
 import unittest
 
 import v21_mocks as mocks
@@ -19,7 +20,28 @@ import v21_mocks as mocks
 
 class TestHttpCookiePersistence(unittest.TestCase):
 
-    def test_(self):
-        with mocks.().client() as c:
-            r = c.
+    def test_http_cookie_delete(self):
+        with mocks.HttpCookiePersistenceDelete().client() as c:
+            c.slb.template.cookie_persistence.delete('cp1')
 
+    def test_http_cookie_delete_not_found(self):
+        with mocks.HttpCookiePersistenceDeleteNotFound().client() as c:
+            c.slb.template.cookie_persistence.delete('cp1')
+
+    def test_http_cookie_create(self):
+        with mocks.HttpCookiePersistenceCreate().client() as c:
+            c.slb.template.cookie_persistence.create('cp1')
+
+    def test_http_cookie_create_exists(self):
+        with mocks.HttpCookiePersistenceCreateExists().client() as c:
+            with self.assertRaises(acos_errors.Exists):
+                c.slb.template.cookie_persistence.create('cp1')
+
+    def test_http_cookie_search(self):
+        with mocks.HttpCookiePersistenceSearch().client() as c:
+            r = c.slb.template.cookie_persistence.get('cp1')
+
+    def test_http_cookie_search_not_found(self):
+        with mocks.HttpCookiePersistenceSearchNotFound().client() as c:
+            with self.assertRaises(acos_errors.NotFound):
+                r = c.slb.template.cookie_persistence.get('cp1')

@@ -20,7 +20,28 @@ import v21_mocks as mocks
 
 class TestSourceIpPersistence(unittest.TestCase):
 
-    def test_(self):
-        with mocks.().client() as c:
-            r = c.
+    def test_source_ip_pers_delete(self):
+        with mocks.SourceIpPersistenceDelete().client() as c:
+            c.slb.template.src_ip_persistence.delete('sip1')
 
+    def test_source_ip_pers_delete_not_found(self):
+        with mocks.SourceIpPersistenceDeleteNotFound().client() as c:
+            c.slb.template.src_ip_persistence.delete('sip1')
+
+    def test_source_ip_pers_create(self):
+        with mocks.SourceIpPersistenceCreate().client() as c:
+            c.slb.template.src_ip_persistence.create('sip1')
+
+    def test_source_ip_pers_create_exists(self):
+        with mocks.SourceIpPersistenceCreateExists().client() as c:
+            with self.assertRaises(acos_errors.Exists):
+                c.slb.template.src_ip_persistence.create('sip1')
+
+    def test_source_ip_pers_search(self):
+        with mocks.SourceIpPersistenceSearch().client() as c:
+            r = c.slb.template.src_ip_persistence.get('sip1')
+
+    def test_source_ip_pers_search_not_found(self):
+        with mocks.SourceIpPersistenceSearchNotFound().client() as c:
+            with self.assertRaises(acos_errors.NotFound):
+                r = c.slb.template.src_ip_persistence.get('sip1')
