@@ -203,7 +203,7 @@ class ServiceGroupDeleteNotFound(ServiceGroupDelete):
 class ServiceGroupCreate(ServiceGroup):
     action = 'slb.service_group.create'
     params = {'service_group': {'lb_method': 0, 'protocol': 2,
-              'name': 'pool1'}},
+              'name': 'pool1'}}
 
 class ServiceGroupCreateExists(ServiceGroupCreate):
     response = {"response": {"status": "fail", "err": {"code": 402653201,
@@ -224,10 +224,9 @@ class ServiceGroupSearchNotFound(ServiceGroupSearch):
 
 class ServiceGroupUpdate(ServiceGroup):
     action = 'slb.service_group.update'
-    params = {'service_group': {'lb_method': 2, 'protocol': 2, 
-              'name': 'pool1'}}
+    params = {"service_group": {"lb_method": 2, "name": "pool1"}}
 
-class ServiceGroupUpdateExists(ServiceGroupUpdate):
+class ServiceGroupUpdateNotFound(ServiceGroupUpdate):
     response = {"response": {"status": "fail", "err": {"code": 67305473,
                 "msg": " No such service group"}}}
 

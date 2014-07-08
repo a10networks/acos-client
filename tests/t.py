@@ -171,6 +171,7 @@ def run_all(version, ax):
                                     'pfoobar')
     except acos_client.errors.Exists:
         print "got already exists error, good"
+    c.slb.virtual_server.stats("vfoobar")
     c.slb.virtual_server.delete("vfoobar")
     c.slb.virtual_server.delete("vfoobar")
     try:

@@ -20,7 +20,11 @@ import v21_mocks as mocks
 
 class TestVirtualService(unittest.TestCase):
 
-    def test_(self):
-        with mocks.().client() as c:
-            r = c.
+    def test_virtual_service_search(self):
+        with mocks.VirtualServiceSearch().client() as c:
+            r = c.slb.virtual_service.get('vip2')
 
+    # def test_virtual_service_search_not_found(self):
+    #     with mocks.VirtualServiceSearchNotFound().client() as c:
+    #         with self.assertRaises(acos_errors.NotFound):
+    #             r = c.slb.virtual_service.get('vip2')

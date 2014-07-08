@@ -20,7 +20,39 @@ import v21_mocks as mocks
 
 class TestServiceGroup(unittest.TestCase):
 
-    def test_(self):
-        with mocks.().client() as c:
-            r = c.
+    def test_sg_delete(self):
+        with mocks.ServiceGroupDelete().client() as c:
+            c.slb.service_group.delete('pool1')
 
+    def test_sg_delete_not_found(self):
+        with mocks.ServiceGroupDeleteNotFound().client() as c:
+            c.slb.service_group.delete('pool1')
+
+    def test_sg_create(self):
+        with mocks.ServiceGroupCreate().client() as c:        
+            c.slb.service_group.create('pool1')
+
+    def test_sg_create_exists(self):
+        with mocks.ServiceGroupCreateExists().client() as c:
+            with self.assertRaises(acos_errors.Exists):
+                c.slb.service_group.create('pool1')
+
+    def test_sg_update(self):
+        with mocks.ServiceGroupUpdate().client() as c:        
+            c.slb.service_group.update('pool1',
+                               lb_method=c.slb.service_group.LEAST_CONNECTION)
+
+    def test_sg_update_not_found(self):
+        with mocks.ServiceGroupUpdateNotFound().client() as c:
+            with self.assertRaises(acos_errors.NotFound):
+                c.slb.service_group.update('pool1',
+                               lb_method=c.slb.service_group.LEAST_CONNECTION)
+
+    def test_sg_search(self):
+        with mocks.ServiceGroupSearch().client() as c:
+            r = c.slb.service_group.get('pool1')
+
+    def test_sg_search_not_found(self):
+        with mocks.ServiceGroupSearchNotFound().client() as c:
+            with self.assertRaises(acos_errors.NotFound):
+                r = c.slb.service_group.get('pool1')

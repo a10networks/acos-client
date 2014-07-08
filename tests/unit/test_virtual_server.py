@@ -20,7 +20,34 @@ import v21_mocks as mocks
 
 class TestVirtualServer(unittest.TestCase):
 
-    def test_(self):
-        with mocks.().client() as c:
-            r = c.
+    def test_virtual_server_delete(self):
+        with mocks.VirtualServerDelete().client() as c:
+            c.slb.virtual_server.delete('vip1')
 
+    def test_virtual_server_delete_not_found(self):
+        with mocks.VirtualServerDeleteNotFound().client() as c:
+            c.slb.virtual_server.delete('vip1')
+
+    def test_virtual_server_create(self):
+        with mocks.VirtualServerCreate().client() as c:        
+            c.slb.virtual_server.create('vip1', '192.168.2.250',
+                                         c.slb.virtual_service.HTTP,
+                                         '80',
+                                         'pool1')
+
+    def test_virtual_server_create_exists(self):
+        with mocks.VirtualServerCreateExists().client() as c:
+            with self.assertRaises(acos_errors.Exists):
+                c.slb.virtual_server.create('vip1', '192.168.2.250',
+                                             c.slb.virtual_service.HTTP,
+                                             '80',
+                                             'pool1')
+
+    def test_virtual_server_search(self):
+        with mocks.VirtualServerSearch().client() as c:
+            r = c.slb.virtual_server.get('vip1')
+
+    def test_virtual_server_search_not_found(self):
+        with mocks.VirtualServerSearchNotFound().client() as c:
+            with self.assertRaises(acos_errors.NotFound):
+                r = c.slb.virtual_server.get('vip1')
