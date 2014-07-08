@@ -18,6 +18,7 @@ import mock
 
 import acos_client
 
+DEFAULT_SESSION_ID = 'session0'
 
 class MockPairClient(object):
 
@@ -40,6 +41,10 @@ class MockPairClient(object):
 
 
 class MockPair(object):
+    method = 'POST'
+    action = None
+    params = None
+    response = None
 
     def __init__(self, fields={}):
         self.fields = fields
@@ -47,18 +52,34 @@ class MockPair(object):
         self.username = fields.get('username', 'defuser')
         self.password = fields.get('password', 'defpass')
 
+    def url(self, session_id=None):
+        return ("/services/rest/v2.1/?format=json&method=%s&session_id=%s" %
+                (self.action, session_id))
+
     def client(self):
-        return MockPairClient(self, session_id=None)
+        self._client = MockPairClient(self, session_id=None)
+        return self._client
 
     def mock(self):
         self._mock = mock.MagicMock(return_value=json.dumps(self.output()))
         return self._mock
 
+    def output(self):
+        if response is not None:
+            return self.response
+        else:
+            return
+
     def post_validate(self):
-        pass
+        if self.params is not None:
+            self._mock.assert_called_once_with(
+                self.method,
+                self.url(self._client.session_id),
+                json.dumps(self.params))
 
 
 class AuthenticatedMockPair(MockPair):
+    response = {"response": {"status": "OK"}}
 
     def client(self):
         return MockPairClient(self, session_id=self.session_id)
@@ -88,67 +109,364 @@ class SessionBadPassword(Session):
 
 
 class Close(AuthenticatedMockPair):
-
-    def output(self):
-        return {"response": {"status": "OK"}}
-
-    def post_validate(self):
-        self._mock.assert_called_with(
-            'POST',
-            "/services/rest/v2.1/?format=json&method=session.close&"
-            "session_id=%s" % self.session_id,
-            json.dumps({'session_id': "%s" % self.session_id}))
-
+    action = 'session.close'
+    params = {'session_id': DEFAULT_SESSION_ID}
 
 class CloseBadSession(Close):
-
-    def output(self):
-        return {
-            "response": {
-                "status": "fail",
-                "err": {"code": 1009, "msg": "Invalid session ID"}
-            }
+    params = {'session_id': "badsessionid"}
+    response = {
+        "response": {
+            "status": "fail",
+            "err": {"code": 1009, "msg": "Invalid session ID"}
         }
-
+    }
 
 class SystemInformation(AuthenticatedMockPair):
+    method = 'GET'
+    action = 'system.information.get'
+    response = {
+        'system_information': {
+            'advanced_core_os_on_compact_flash1': 'No Software',
+            'advanced_core_os_on_compact_flash2': 'No Software',
+            'advanced_core_os_on_harddisk1': '2.7.1-P3-AWS(build: 4)',
+            'advanced_core_os_on_harddisk2': '2.7.1-P3-AWS(build: 4)',
+            'aflex_engine_version': '2.0.0',
+            'axapi_version': '2.1',
+            'current_time': '03:25:47 IST Tue Jul 1 2014',
+            'firmware_version': 'N/A',
+            'last_config_saved': '06:25:26 GMT Sat Dec 28 2013',
+            'serial_number': 'N/A',
+            'software_version': '2.7.1-P3-AWS(build: 4)',
+            'startup_mode': 'hard disk primary',
+            'technical_support': 'www.a10networks.com/support '
+        }
+    }
 
-    def output(self):
-        return {
-            'system_information': {
-                'advanced_core_os_on_compact_flash1': 'No Software',
-                'advanced_core_os_on_compact_flash2': 'No Software',
-                'advanced_core_os_on_harddisk1': '2.7.1-P3-AWS(build: 4)',
-                'advanced_core_os_on_harddisk2': '2.7.1-P3-AWS(build: 4)',
-                'aflex_engine_version': '2.0.0',
-                'axapi_version': '2.1',
-                'current_time': '03:25:47 IST Tue Jul 1 2014',
-                'firmware_version': 'N/A',
-                'last_config_saved': '06:25:26 GMT Sat Dec 28 2013',
-                'serial_number': 'N/A',
-                'software_version': '2.7.1-P3-AWS(build: 4)',
-                'startup_mode': 'hard disk primary',
-                'technical_support': 'www.a10networks.com/support '
+class SystemWriteMemory(AuthenticatedMockPair):
+    method = 'GET'
+    action = 'system.action.write_memory'
+
+
+class Server(AuthenticatedMockPair):
+    params = {'server': {'name': 's1'}}
+
+class ServerDelete(AuthenticatedMockPair):
+    action = 'slb.server.delete'
+
+class ServerDeleteNotFound(ServerDelete):
+    response = {
+        "response": {
+            "status": "fail",
+            "err": {
+                "code": 67174402,
+                "msg": " No such Server"}
             }
         }
 
-    def post_validate(self):
-        self._mock.assert_called_with(
-            'GET',
-            '/services/rest/v2.1/?format=json&method=system.information.get&'
-            'session_id=%s' % self.session_id,
-            None)
+class ServerCreate(Server):
+    action = 'slb.server.delete'
+    params = {'server': {'host': '192.168.2.254', 'name': 's1'}},
 
-class SystemWriteMemory(AuthenticatedMockPair):
+class ServerCreateExists(ServerCreate):
+    response = {"response": {"status": "fail", "err": {"code": 402653200,
+                "msg": " Name or IP address already exists."}}}
 
-    def output(self):
-        return {"response": {"status": "OK"}}
+class ServerSearch(Server):
+    action = 'slb.server.search'
+    response = {"server":{"name":"s1","host":"192.168.2.254",
+                "gslb_external_address":"0.0.0.0","weight":1,
+                "health_monitor":"(default)","status":1,
+                "conn_limit":8000000,"conn_limit_log":0,"conn_resume":0,
+                "stats_data":1,"extended_stats":0,"slow_start":0,
+                "spoofing_cache":0,"template":"default","port_list":[]}}
 
-    def post_validate(self):
-        self._mock.assert_called_with(
-            'GET',
-            "/services/rest/v2.1/?format=json&"
-            "method=system.action.write_memory&"
-            "session_id=%s" % self.session_id,
-            None)
+class ServerSearchNotFound(ServerSearch):
+    response = {"response": {"status": "fail", "err": {"code": 67174402,
+                "msg": " No such Server"}}}
 
+
+class ServiceGroup(AuthenticatedMockPair):
+    params = {'name': 'pool1'}
+
+class ServiceGroupDelete(ServiceGroup):
+    action = 'slb.service_group.delete'
+
+class ServiceGroupDeleteNotFound(ServiceGroupDelete):
+    response = {"response": {"status": "fail", "err": {"code": 67305473,
+                "msg": " No such service group"}}}
+
+class ServiceGroupCreate(ServiceGroup):
+    action = 'slb.service_group.create'
+    params = {'service_group': {'lb_method': 0, 'protocol': 2,
+              'name': 'pool1'}},
+
+class ServiceGroupCreateExists(ServiceGroupCreate):
+    response = {"response": {"status": "fail", "err": {"code": 402653201,
+                "msg": " Service group already exists."}}}
+
+class ServiceGroupSearch(ServiceGroup):
+    action = 'slb.service_group.search'
+    response = {"service_group":{"name":"pool1","protocol":2,
+                "lb_method":0,"health_monitor":"",
+                "min_active_member":{"status":0,"number":0,
+                "priority_set":0},"backup_server_event_log_enable":0,
+                "client_reset":0,"stats_data":1,"extended_stats":0,
+                "member_list":[]}}
+
+class ServiceGroupSearchNotFound(ServiceGroupSearch):
+    response = {"response": {"status": "fail", "err": {"code": 67305473,
+                "msg": " No such service group"}}}
+
+class ServiceGroupUpdate(ServiceGroup):
+    action = 'slb.service_group.update'
+    params = {'service_group': {'lb_method': 2, 'protocol': 2, 
+              'name': 'pool1'}}
+
+class ServiceGroupUpdateExists(ServiceGroupUpdate):
+    response = {"response": {"status": "fail", "err": {"code": 67305473,
+                "msg": " No such service group"}}}
+
+class VirtualServer(AuthenticatedMockPair):
+    params = {'name': 'vip1'}
+
+class VirtualServerDelete(VirtualServer):
+    action = 'slb.virtual_server.delete'
+
+class VirtualServerDeleteNotFound(VirtualServerDelete):
+    response = {"response": {"status": "fail", "err": {"code": 67239937,
+                "msg": " No such Virtual Server"}}}
+
+class VirtualServerCreate(VirtualServer):
+    action = 'slb.virtual_server.create'
+    params = {'virtual_server': {'status': 1, 'name': 'vip1',
+              'address': '192.168.2.250'},
+              'vport_list': [
+                  {'service_group': 'pool1', 'status': 1, 'protocol': 11,
+                   'name': 'vip1_VPORT', 'port': '80'}]}
+
+class VirtualServerCreateExists(VirtualServerCreate):
+    response = {"response": {"status": "fail", "err": {"code": 402653206,
+                "msg": " Name already exists."}}}
+
+class VirtualServerSearch(VirtualServer):
+    action = 'slb.virtual_server.search'
+    response = {
+        "virtual_server": {
+            "name": "vip1",
+            "address":"192.168.2.250",
+            "status":1,
+            "vrid":0,
+            "arp_status":1,
+            "stats_data":1,
+            "extended_stats":0,
+            "disable_vserver_on_condition":0,
+            "redistribution_flagged":0,
+            "ha_group": {
+                "status":0,
+                "ha_group_id":0,
+                "dynamic_server_weight":0
+            },
+            "vip_template":"default",
+            "pbslb_template":"",
+            "vport_list":[
+                {
+                    "protocol":11,
+                    "port":80,
+                    "name":"vip1_VPORT",
+                    "service_group":"pool1",
+                    "connection_limit": {
+                        "status":0,
+                        "connection_limit":8000000,
+                        "connection_limit_action":0,
+                        "connection_limit_log":0
+                    },
+                    "default_selection":1,
+                    "received_hop":0,
+                    "status":1,
+                    "stats_data":1,
+                    "extended_stats":0,
+                    "snat_against_vip":0,
+                    "vport_template":"default",
+                    "vport_acl_id":0,
+                    "aflex_list":[],
+                    "send_reset":0,
+                    "sync_cookie": {
+                        "sync_cookie":0,
+                        "sack":0
+                    },
+                    "source_nat":"",
+                    "http_template":"",
+                    "ram_cache_template":"",
+                    "tcp_proxy_template":"",
+                    "server_ssl_template":"",
+                    "conn_reuse_template":"",
+                    "source_ip_persistence_template":"",
+                    "pbslb_template":"",
+                    "acl_natpool_binding_list":[]
+                }
+            ]
+        }
+    }
+
+class VirtualServerSearchNotFound(VirtualServerSearch):
+    response = {"response": {"status": "fail", "err": {"code": 67239937,
+                "msg": " No such Virtual Server"}}}
+
+
+class HealthMonitor(AuthenticatedMockPair):
+    params = {'name': 'hm1'}
+
+class HealthMonitorDelete(HealthMonitor):
+    action = 'slb.hm.delete'
+
+class HealthMonitorDeleteNotFound(HealthMonitorDelete):
+    response = {"response": {"status": "fail", "err": {"code": 33619968,
+                "msg": " The monitor does not exist."}}}
+
+class HealthMonitorCreate(HealthMonitor):
+    action = 'slb.hm.create'
+    params = {'retry': 5, 'http': {'url': 'GET /', 'port': 80,
+              'expect_code': '200'}, 'name': 'hfoobar', 'consec_pass_reqd': 5,
+              'interval': 5, 'timeout': 5, 'disable_after_down': 0, 'type': 3}
+
+class HealthMonitorCreateExists(HealthMonitorCreate):
+    response = {"response": {"status": "fail", "err": {"code": 2941,
+                "msg": "The same health monitor name already exist."}}}
+
+class HealthMonitorSearch(HealthMonitor):
+    action = 'slb.hm.search'
+    response = {"health_monitor":{"name":"hfoobar","retry":5,
+                "consec_pass_reqd":5,"interval":5,"timeout":5,
+                "strictly_retry":0,"disable_after_down":0,
+                "override_ipv4":"0.0.0.0","override_ipv6":"::",
+                "override_port":0,"type":3,"http":{"port":80,"host":"",
+                "url":"GET /","user":"","password":"","expect_code":"200",
+                "maintenance_code":""}}}
+
+class HealthMonitorSearchNotFound(HealthMonitorSearch):
+    response = {"response": {"status": "fail", "err": {"code": 33619968,
+                "msg": " The monitor does not exist."}}}
+
+class HealthMonitorUpdate(HealthMonitor):
+    action = 'slb.hm.update'
+    params = {'retry': 10, 'http': {'url': 'None None', 'port': 80,
+              'expect_code': None}, 'name': 'hfoobar', 'consec_pass_reqd': 10,
+              'interval': 10, 'timeout': 10, 'disable_after_down': 0,
+              'type': 3}
+
+class HealthMonitorUpdateNotFound(HealthMonitorUpdate):
+    response = {"response": {"status": "fail", "err": {"code": 33619968,
+                "msg": " The monitor does not exist."}}}
+
+
+class Member(AuthenticatedMockPair):
+    params = {'member': {'port': 80, 'server': 's1'}, 'name': 'pool1'}
+
+class MemberDelete(Member):
+    action = 'slb.service_group.member.delete'
+
+class MemberDeleteNotFound(MemberDelete):
+    response = {"response": {"status": "fail", "err": {"code": 1023,
+                "msg": "Can not find the service group member"}}}
+
+class MemberCreate(Member):
+    action = 'slb.service_group.member.create'
+    params = {'member': {'status': 1, 'port': 80, 'server': 's1'},
+              'name': 'pool1'}
+
+class MemberCreateExists(MemberCreate):
+    response = {"response": {"status": "fail", "err": {"code": 1405,
+                "msg": "The service group member already exists."}}}
+
+class MemberUpdate(Member):
+    action = 'slb.service_group.member.update'
+    params = {'member': {'status': 0, 'port': 80, 'server': 's1'},
+              'name': 'pool1'}
+
+class MemberUpdateNotFound(MemberUpdate):
+    response = {"response": {"status": "fail", "err": {"code": 1023,
+                "msg": "Can not find the service group member"}}}
+
+class MemberUpdateNoSuchServiceGroup(MemberUpdate):
+    response = {"response": {"status": "fail", "err": {"code": 67305473,
+                "msg": " No such service group"}}}
+
+
+class SourceIpPersistence(AuthenticatedMockPair):
+    params = {'name': 'sip1'}
+
+class SourceIpPersistenceDelete(SourceIpPersistence):
+    action = 'slb.template.src_ip_persistence.delete'
+
+class SourceIpPersistenceDeleteNotFound(SourceIpPersistenceDelete):
+    response = {"response": {"status": "fail", "err": {"code": 67371009,
+                "msg": " No such Template"}}}
+
+class SourceIpPersistenceCreate(SourceIpPersistence):
+    action = 'slb.template.src_ip_persistence.create'
+    params = {'src_ip_persistence_template': {'name': 'sip1'}}
+
+class SourceIpPersistenceCreateExists(SourceIpPersistenceCreate):
+    response = {"response": {"status": "fail", "err": {"code": 402653202,
+                "msg": " Template name already exists."}}}
+
+class SourceIpPersistenceSearch(SourceIpPersistence):
+    action = 'slb.template.src_ip_persistence.search'
+    response = {"src_ip_persistence_template":{"name":"sip1","match_type":0,
+                "match_all":0,"timeout":5,"no_honor_conn":0,"incl_sport":0,
+                "include_dstip":0,"hash_persist":0,"enforce_high_priority":0,
+                "netmask":"255.255.255.255","netmask6":128}}
+
+class SourceIpPersistenceSearchNotFound(SourceIpPersistenceSearch):
+    response = {"response": {"status": "fail", "err": {"code": 67371009,
+                "msg": " No such Template"}}}
+
+
+class HttpCookiePersistence(AuthenticatedMockPair):
+    params = {'name': 'cp1'}
+
+class HttpCookiePersistenceDelete(HttpCookiePersistence):
+    action = 'slb.template.cookie_persistence.delete'
+
+class HttpCookiePersistenceDeleteNotFound(HttpCookiePersistenceDelete):
+    response = {"response": {"status": "fail", "err": {"code": 67371009,
+                "msg": " No such Template"}}}
+
+class HttpCookiePersistenceCreate(HttpCookiePersistence):
+    action = 'slb.template.cookie_persistence.create'
+    params = {'cookie_persistence_template': {'name': 'cp1'}}
+
+class HttpCookiePersistenceCreateExists(HttpCookiePersistenceCreate):
+    response = {"response": {"status": "fail", "err": {"code": 402653202,
+                "msg": " Template name already exists."}}}
+
+class HttpCookiePersistenceSearch(HttpCookiePersistence):
+    action = 'slb.template.cookie_persistence.search'
+    response = {"cookie_persistence_template":{"name":"cp1","expire_exist":0,
+                "expire":0,"cookie_name":"","domain":"","path":"",
+                "match_type":0,"match_all":0,"insert_always":0,
+                "dont_honor_conn":0}}
+
+class HttpCookiePersistenceSearchNotFound(HttpCookiePersistenceSearch):
+    response = {"response": {"status": "fail", "err": {"code": 67371009,
+                "msg": " No such Template"}}}
+
+
+class VirtualService(AuthenticatedMockPair):
+    params = {'name': 'vip2_VPORT'}
+
+class VirtualServiceSearch(VirtualService):
+    action = 'slb.virtual_service.search'
+    response = {"virtual_service":{"name":"vip2_VPORT","protocol":12,
+                "port":443,"address":"192.168.2.249","service_group":"pfoobar",
+                "connection_limit":{"status":0,"connection_limit":8000000,
+                "connection_limit_action":0,"connection_limit_log":0},
+                "default_selection":1,"received_hop":0,"status":1,
+                "stats_data":1,"extended_stats":0,"snat_against_vip":0,
+                "vport_template":"default","vport_acl_id":0,"aflex_list":[],
+                "send_reset":0,"sync_cookie":{"sync_cookie":0,"sack":0},
+                "source_nat":"","http_template":"","ram_cache_template":"",
+                "tcp_proxy_template":"","client_ssl_template":"",
+                "server_ssl_template":"","conn_reuse_template":"",
+                "cookie_persistence_template":"cp1","pbslb_template":"",
+                "acl_natpool_binding_list":[],"ha_group":{"ha_group_id":0}}}
