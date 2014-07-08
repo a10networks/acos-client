@@ -26,7 +26,7 @@ class HealthMonitor(base.BaseV21):
     def get(self, name):
         return self.http.post(self.url("slb.hm.search"), {"name": name})
 
-    def _set(self, action, mon_type, name, interval, timeout, max_retries,
+    def _set(self, action, name, mon_type, interval, timeout, max_retries,
              method=None, url=None, expect_code=None, port=None):
         defs = {
             self.HTTP: {

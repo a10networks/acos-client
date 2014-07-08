@@ -56,8 +56,8 @@ class MockPair(object):
         return ("/services/rest/v2.1/?format=json&method=%s&session_id=%s" %
                 (self.action, session_id))
 
-    def client(self):
-        self._client = MockPairClient(self, session_id=None)
+    def client(self, session_id=None):
+        self._client = MockPairClient(self, session_id=session_id)
         return self._client
 
     def mock(self):
@@ -65,24 +65,28 @@ class MockPair(object):
         return self._mock
 
     def output(self):
-        if response is not None:
+        if self.response is not None:
             return self.response
         else:
             return
 
     def post_validate(self):
-        if self.params is not None:
+        if self.action is not None:
+            p = None
+            if self.params is not None:
+                p = json.dumps(self.params)
             self._mock.assert_called_once_with(
                 self.method,
                 self.url(self._client.session_id),
-                json.dumps(self.params))
+                p)
 
 
 class AuthenticatedMockPair(MockPair):
     response = {"response": {"status": "OK"}}
 
     def client(self):
-        return MockPairClient(self, session_id=self.session_id)
+        return super(AuthenticatedMockPair, self).client(
+            session_id=self.session_id)
 
 
 class Session(MockPair):
@@ -148,10 +152,11 @@ class SystemWriteMemory(AuthenticatedMockPair):
 
 
 class Server(AuthenticatedMockPair):
-    params = {'server': {'name': 's1'}}
+    params = {'name': 's1'}
 
-class ServerDelete(AuthenticatedMockPair):
+class ServerDelete(Server):
     action = 'slb.server.delete'
+    params = {"server": {"name": 's1'}}
 
 class ServerDeleteNotFound(ServerDelete):
     response = {
@@ -164,8 +169,8 @@ class ServerDeleteNotFound(ServerDelete):
         }
 
 class ServerCreate(Server):
-    action = 'slb.server.delete'
-    params = {'server': {'host': '192.168.2.254', 'name': 's1'}},
+    action = 'slb.server.create'
+    params = {'server': {'host': '192.168.2.254', 'name': 's1'}}
 
 class ServerCreateExists(ServerCreate):
     response = {"response": {"status": "fail", "err": {"code": 402653200,
@@ -325,9 +330,8 @@ class HealthMonitorDeleteNotFound(HealthMonitorDelete):
 
 class HealthMonitorCreate(HealthMonitor):
     action = 'slb.hm.create'
-    params = {'retry': 5, 'http': {'url': 'GET /', 'port': 80,
-              'expect_code': '200'}, 'name': 'hfoobar', 'consec_pass_reqd': 5,
-              'interval': 5, 'timeout': 5, 'disable_after_down': 0, 'type': 3}
+    params = {"retry": 5, "name": "hm1", "consec_pass_reqd": 5, "interval": 5,
+              "timeout": 5, "disable_after_down": 0, "type": "HTTP"}
 
 class HealthMonitorCreateExists(HealthMonitorCreate):
     response = {"response": {"status": "fail", "err": {"code": 2941,
@@ -349,10 +353,8 @@ class HealthMonitorSearchNotFound(HealthMonitorSearch):
 
 class HealthMonitorUpdate(HealthMonitor):
     action = 'slb.hm.update'
-    params = {'retry': 10, 'http': {'url': 'None None', 'port': 80,
-              'expect_code': None}, 'name': 'hfoobar', 'consec_pass_reqd': 10,
-              'interval': 10, 'timeout': 10, 'disable_after_down': 0,
-              'type': 3}
+    params = {"retry": 5, "name": "hm1", "consec_pass_reqd": 5, "interval": 5,
+              "timeout": 5, "disable_after_down": 0, "type": "HTTP"}
 
 class HealthMonitorUpdateNotFound(HealthMonitorUpdate):
     response = {"response": {"status": "fail", "err": {"code": 33619968,

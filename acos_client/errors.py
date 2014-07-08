@@ -85,7 +85,7 @@ RESPONSE_CODES = {
     67305473: {
         'slb.service_group.delete': None,
         'slb.service_group.member.create': NoSuchServiceGroup,
-        #'slb.service_group.member.delete': None,
+        'slb.service_group.member.update': NoSuchServiceGroup,
         '*': NotFound
     },
     67371009: {

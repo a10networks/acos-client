@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client.errors as acos_errors
 import unittest
 
 import v21_mocks as mocks
@@ -19,7 +20,28 @@ import v21_mocks as mocks
 
 class TestServer(unittest.TestCase):
 
-    def test_(self):
-        with mocks.().client() as c:
-            r = c.
+    def test_server_delete(self):
+        with mocks.ServerDelete().client() as c:
+            c.slb.server.delete('s1')
 
+    def test_server_delete_not_found(self):
+        with mocks.ServerDeleteNotFound().client() as c:
+            c.slb.server.delete('s1')
+
+    def test_server_create(self):
+        with mocks.ServerCreate().client() as c:        
+            c.slb.server.create('s1', '192.168.2.254')
+
+    def test_server_create_exists(self):
+        with mocks.ServerCreateExists().client() as c:
+            with self.assertRaises(acos_errors.Exists):
+                c.slb.server.create('s1', '192.168.2.254')
+
+    def test_server_search(self):
+        with mocks.ServerSearch().client() as c:
+            r = c.slb.server.get('s1')
+
+    def test_server_search_not_found(self):
+        with mocks.ServerSearchNotFound().client() as c:
+            with self.assertRaises(acos_errors.NotFound):
+                r = c.slb.server.get('s1')
