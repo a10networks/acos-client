@@ -12,4 +12,13 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-VERSION = '0.1'
+
+class BaseV21(object):
+
+    def __init__(self, client):
+        self.client = client
+        self.http = client.http
+
+    def url(self, action):
+        return ("/services/rest/v2.1/?format=json&method=%s&session_id=%s" %
+                (action, self.client.session.id))

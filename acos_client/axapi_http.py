@@ -14,15 +14,25 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import errno
 import httplib
 import json
 import logging
+import re
 import socket
 import ssl
 
+import errors as acos_errors
 from version import VERSION
 
 LOG = logging.getLogger(__name__)
+
+import sys
+out_hdlr = logging.StreamHandler(sys.stdout)
+out_hdlr.setLevel(logging.DEBUG)
+LOG.addHandler(out_hdlr)
+
+LOG.setLevel(logging.DEBUG)
 
 
 # Monkey patch for ssl connect, for specific TLS version required by
@@ -36,7 +46,36 @@ def force_tlsv1_connect(self):
                                 ssl_version=ssl.PROTOCOL_TLSv1)
 
 
+def extract_method(api_url):
+    m = re.search("method=([^&]+)", api_url)
+    if m is not None:
+        return m.group(1)
+    return ""
+
+broken_replies = {
+    ('<?xml version="1.0" encoding="utf-8" ?><response status="ok">'
+     '</response>'): "{'response': {'status': 'OK'}}",
+
+    ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
+     '<error code="999" msg=" Partition does not exist. '
+     '(internal error: 520749062)" /></response>'):
+    ('{"response": {"status": "fail", "err": {"code": 999,'
+     '"msg": " Partition does not exist."}}}'),
+
+    ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
+     '<error code="999" msg=" Failed to get partition. (internal error: '
+     '402718800)" /></response>'):
+    ('{"response": {"status": "fail", "err": {"code": 999,'
+     '"msg": " Partition does not exist."}}}')
+}
+
+
 class HttpClient(object):
+    HEADERS = {
+        "Content-Type": "application/json",
+        "User-Agent": "ACOS-Client-AGENT-%s" % VERSION
+    }
+
     def __init__(self, host, port=None, protocol="https"):
         self.host = host
         self.port = port
@@ -47,19 +86,17 @@ class HttpClient(object):
             else:
                 port = 443
 
-    def request(self, method, api_url, params={}):
+    def _http(self, method, api_url, payload):
         if self.protocol == 'https':
             http = httplib.HTTPSConnection(self.host, self.port)
             http.connect = lambda: force_tlsv1_connect(http)
         else:
             http = httplib.HTTPConnection(self.host, self.port)
 
-        headers = {
-            "Content-Type": "application/json",
-            "User-Agent": "ACOS-Client-AGENT-%s" % VERSION
-        }
+        http.request(method, api_url, payload, self.HEADERS)
+        return http.getresponse().read()
 
-        LOG.debug("axapi_http: start")
+    def request(self, method, api_url, params={}):
         LOG.debug("axapi_http: url = %s", api_url)
         LOG.debug("axapi_http: params = %s", params)
 
@@ -68,15 +105,36 @@ class HttpClient(object):
         else:
             payload = None
 
-        http.request(method, api_url, payload, headers)
-        data = http.getresponse().read()
+        for i in [1, 2, 3]:
+            try:
+                data = self._http(method, api_url, payload)
+                break
+            except socket.error as e:
+                if e.errno == errno.ECONNRESET:
+                    # todo - sleep needed?
+                    continue
+                raise e
 
         LOG.debug("axapi_http: data = %s", data)
 
         # Fixup some broken stuff in an earlier version of the axapi
-        xmlok = ('<?xml version="1.0" encoding="utf-8" ?>'
-                 '<response status="ok"></response>')
-        if data == xmlok:
-            return {'response': {'status': 'OK'}}
+        # xmlok = ('<?xml version="1.0" encoding="utf-8" ?>'
+        #          '<response status="ok"></response>')
+        # if data == xmlok:
+        #     return {'response': {'status': 'OK'}}
+        if data in broken_replies:
+            data = broken_replies[data]
 
-        return json.loads(data)
+        r = json.loads(data, encoding='utf-8')
+
+        if 'response' in r and 'status' in r['response']:
+            if r['response']['status'] == 'fail':
+                acos_errors.raise_axapi_ex(r, action=extract_method(api_url))
+
+        return r
+
+    def get(self, api_url, params={}):
+        return self.request("GET", api_url, params)
+
+    def post(self, api_url, params={}):
+        return self.request("POST", api_url, params)

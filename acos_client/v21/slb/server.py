@@ -12,4 +12,24 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-VERSION = '0.1'
+import acos_client.v21.base as base
+
+
+class Server(base.BaseV21):
+
+    def get(self, name):
+        return self.http.post(self.url("slb.server.search"),
+                              {'name': name})
+
+    def create(self, name, ip_address):
+        params = {
+            "server": {
+                "name": name,
+                "host": ip_address,
+            }
+        }
+        self.http.post(self.url("slb.server.create"), params)
+
+    def delete(self, name):
+        self.http.post(self.url("slb.server.delete"),
+                       {"server": {"name": name}})

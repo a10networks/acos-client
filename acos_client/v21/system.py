@@ -12,4 +12,18 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-VERSION = '0.1'
+import base
+from partition import Partition
+
+
+class System(base.BaseV21):
+
+    @property
+    def partition(self):
+        return Partition(self.client)
+
+    def information(self):
+        return self.http.get(self.url("system.information.get"))
+
+    def write_memory(self):
+        self.http.get(self.url("system.action.write_memory"))

@@ -12,4 +12,18 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-VERSION = '0.1'
+import acos_client.v21.base as base
+
+from persistence import CookiePersistence
+from persistence import SourceIpPersistence
+
+
+class Template(base.BaseV21):
+
+    @property
+    def cookie_persistence(self):
+        return CookiePersistence(self.client)
+
+    @property
+    def src_ip_persistence(self):
+        return SourceIpPersistence(self.client)
