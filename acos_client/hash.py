@@ -11,12 +11,15 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-# flake8: noqa
 
-from acos_client.client import Client
-from acos_client.hash import Hash
-from acos_client.version import VERSION
+import hash_ring
 
-AXAPI_21 = 'v21'
-AXAPI_30 = 'v30'
-#AXAPI_SSH = 'ssh'
+
+class Hash(object):
+
+    def __init__(self, server_list):
+        self.server_list = server_list
+        self.ring = hash_ring.HashRing(self.server_list)
+
+    def get_server(self, unique_token):
+        return self.ring.get_node(unique_token)
