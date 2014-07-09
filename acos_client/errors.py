@@ -12,16 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import logging
-LOG = logging.getLogger(__name__)
-
-import sys
-out_hdlr = logging.StreamHandler(sys.stdout)
-out_hdlr.setLevel(logging.DEBUG)
-LOG.addHandler(out_hdlr)
-
-LOG.setLevel(logging.DEBUG)
-
 
 class ACOSException(Exception):
     pass
@@ -130,16 +120,12 @@ RESPONSE_CODES = {
 
 
 def raise_axapi_ex(response, action=None):
-    LOG.debug("raise_axapi_ex response=%s", response)
-
     if 'response' in response and 'err' in response['response']:
         code = response['response']['err']['code']
 
         if code in RESPONSE_CODES:
             ex_dict = RESPONSE_CODES[code]
             ex = None
-
-            LOG.debug("raise_axapi_ex method=%s", action)
 
             if action is not None and action in ex_dict:
                 ex = ex_dict[action]
@@ -149,7 +135,6 @@ def raise_axapi_ex(response, action=None):
             if ex is not None:
                 raise ex
             else:
-                LOG.debug("raise_axapi_ex skipping error: %s, %s", action, response)
                 return
 
     raise ACOSException()

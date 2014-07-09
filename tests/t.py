@@ -371,7 +371,10 @@ def run_all(version, ax, partition, pmap):
 
     if int(random.random() * 2):
         c.partition.delete(partition)
-        c.partition.delete(partition)
+        try:
+            c.partition.delete(partition)
+        except acos_client.errors.NotFound:
+            pass
 
 
 for partition,v in partitions.items():
