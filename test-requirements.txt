@@ -1,3 +1,4 @@
 hacking>=0.9.1,<0.10
 mock
-pytest
+nose
+
