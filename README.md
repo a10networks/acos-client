@@ -60,5 +60,8 @@ c.slb.service_group.member.create("pool1", "s2", 80)
 - [ ] Support stripe-api-object like model; reference object fields as attributes, then save().
 - [ ] Include pdf/html docs to actual REST api.
 - [ ] Include ACOS error code/msg string with ACOSException
+- [ ] 2.7.1 & partitions
+- [ ] python3 support (requires workaround for httplib)
+- [ ] py26 tests pass by hand, but not in tox
 
 From [TODO.md](TODO.md).
