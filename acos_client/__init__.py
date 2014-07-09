@@ -13,8 +13,8 @@
 #    under the License.
 # flake8: noqa
 
-from client import Client
-from version import VERSION
+from acos_client.client import Client
+from acos_client.version import VERSION
 
 AXAPI_21 = 'v21'
 AXAPI_30 = 'v30'

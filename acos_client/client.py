@@ -13,9 +13,9 @@
 #    under the License.
 
 import acos_client
+import acos_client.axapi_http as axapi_http
+import acos_client.errors as acos_errors
 
-from axapi_http import HttpClient
-import errors as acos_errors
 from v21.session import Session
 from v21.slb import SLB
 from v21.system import System
@@ -27,7 +27,7 @@ class Client(object):
                  protocol=None):
         if version != acos_client.AXAPI_21:
             raise acos_errors.ACOSUnsupportedVersion()
-        self.http = HttpClient(host, port, protocol)
+        self.http = axapi_http.HttpClient(host, port, protocol)
         self.session = Session(self, username, password)
         self.current_partition = 'shared'
 
