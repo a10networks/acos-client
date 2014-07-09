@@ -54,17 +54,3 @@ c.slb.service_group.member.create("pool1", "s2", 80)
 
   * axapi 2.1, ACOS 2.7.2+ (2.7.1 works if you avoid partitions)
 
-## Future Features and Additions
-
-- [ ] Fill out the rest of axapi 2.1 apis
-- [ ] Validate more args to methods
-- [ ] ACOS 4.0 support
-- [ ] SSH as interface support
-- [ ] Support stripe-api-object like model; reference object fields as attributes, then save().
-- [ ] Include pdf/html docs to actual REST api.
-- [ ] Include ACOS error code/msg string with ACOSException
-- [ ] 2.7.1 & partitions
-- [ ] python3 support (requires workaround for httplib)
-- [ ] py26 tests pass by hand, but not in tox
-
-From [TODO.md](TODO.md).
