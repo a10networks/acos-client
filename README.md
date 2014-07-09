@@ -5,27 +5,30 @@
 ### Install using pip
 
 ```
-$ pip install acos_client
+$ pip install acos-client
 ```
 
 ### Install from source
 
 ```
-$ git clone https://github.com/a10networks/acos_client.git
-$ cd acos_client
-$ python setup.py
+$ git clone https://github.com/a10networks/acos-client.git
+$ cd acos-client
+$ python setup.py install
 ```
 
 ## Usage
 
 ```python
-c = acos_client.Client('somehost.example.com', 'admin', '123')
+c = acos_client.Client('somehost.example.com', acos_client.AXAPI_21,
+                       'admin', '123')
 ```
 
 #### Example setting up an SLB:
 
 ```python
-c = acos_client.Client('1.2.3.4', 'admin', '123')
+import acos_client as acos
+
+c = acos.Client('1.2.3.4', acos.AXAPI_21, 'admin', '123')
 c.slb.server.create('s1', '1.1.1.1')
 c.slb.server.create('s2', '1.1.1.2')
 c.slb.service_group.create('pool1', c.slb.service_group.TCP,
@@ -49,7 +52,7 @@ c.slb.service_group.member.create("pool1", "s2", 80)
 
 ## Supported Versions
 
-  * axapi 2.1.
+  * axapi 2.1, ACOS 2.7.2+ (2.7.1 works if you avoid partitions)
 
 ## Future Features and Additions
 
