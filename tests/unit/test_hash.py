@@ -11,12 +11,19 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-# flake8: noqa
 
-from acos_client.client import Client
-from acos_client.hash import Hash
-from acos_client.version import VERSION
+import unittest
 
-AXAPI_21 = 'v21'
-AXAPI_30 = 'v30'
-#AXAPI_SSH = 'ssh'
+import acos_client
+
+servers = ['a', 'b', 'c', 'd', 'e', 'f']
+
+
+class TestHash(unittest.TestCase):
+
+    def test_hash(self):
+        h = acos_client.Hash(servers)
+        a = h.get_server('aaa')
+        h.get_server('bbb')
+        h.get_server('ccc')
+        self.assertEqual(a, h.get_server('aaa'))
