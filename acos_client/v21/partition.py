@@ -13,6 +13,7 @@
 #    under the License.
 
 import acos_client.errors as acos_errors
+
 import base
 
 
@@ -22,8 +23,8 @@ class Partition(base.BaseV21):
         try:
             self.http.post(self.url("system.partition.search"), {'name': name})
             return True
-        except acos_errors.NotFound as e:
-            return False            
+        except acos_errors.NotFound:
+            return False
 
     def active(self, name='shared'):
         if self.client.current_partition != name:

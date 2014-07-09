@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.errors as acos_errors
 import unittest
 
 import v21_mocks as mocks
@@ -22,7 +21,7 @@ class TestVirtualService(unittest.TestCase):
 
     def test_virtual_service_search(self):
         with mocks.VirtualServiceSearch().client() as c:
-            r = c.slb.virtual_service.get('vip2')
+            c.slb.virtual_service.get('vip2')
 
     # def test_virtual_service_search_not_found(self):
     #     with mocks.VirtualServiceSearchNotFound().client() as c:

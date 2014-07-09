@@ -57,16 +57,16 @@ broken_replies = {
      '</response>'): "{'response': {'status': 'OK'}}",
 
     ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
-    '<error code="999" msg=" Partition does not exist. '
-    '(internal error: 520749062)" /></response>'):
-        ('{"response": {"status": "fail", "err": {"code": 999,'
-        '"msg": " Partition does not exist."}}}'),
+     '<error code="999" msg=" Partition does not exist. '
+     '(internal error: 520749062)" /></response>'):
+    ('{"response": {"status": "fail", "err": {"code": 999,'
+     '"msg": " Partition does not exist."}}}'),
 
     ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
      '<error code="999" msg=" Failed to get partition. (internal error: '
      '402718800)" /></response>'):
-        ('{"response": {"status": "fail", "err": {"code": 999,'
-        '"msg": " Partition does not exist."}}}')
+    ('{"response": {"status": "fail", "err": {"code": 999,'
+     '"msg": " Partition does not exist."}}}')
 }
 
 

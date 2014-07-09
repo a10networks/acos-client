@@ -30,7 +30,7 @@ class BasePersistence(base.BaseV21):
         try:
             self.get(name)
             return True
-        except acos_errors.NotFound as e:
+        except acos_errors.NotFound:
             return False
 
     def create(self, name):

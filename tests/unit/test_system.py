@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.errors as acos_errors
 import unittest
 
 import v21_mocks as mocks
@@ -29,4 +28,4 @@ class TestSystem(unittest.TestCase):
     def test_write_memory(self):
         m = mocks.SystemWriteMemory()
         with m.client() as c:
-            r = c.system.write_memory()
+            c.system.write_memory()

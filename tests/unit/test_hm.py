@@ -12,8 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.errors as acos_errors
 import unittest
+
+import acos_client.errors as acos_errors
 
 import v21_mocks as mocks
 
@@ -29,7 +30,7 @@ class TestHealthMonitor(unittest.TestCase):
             c.slb.hm.delete('hm1')
 
     def test_hm_create(self):
-        with mocks.HealthMonitorCreate().client() as c:        
+        with mocks.HealthMonitorCreate().client() as c:
             c.slb.hm.create('hm1', 'HTTP', 5, 5, 5, 'GET', '/', '200', 80)
 
     def test_hm_create_exists(self):
@@ -38,7 +39,7 @@ class TestHealthMonitor(unittest.TestCase):
                 c.slb.hm.create('hm1', 'HTTP', 5, 5, 5, 'GET', '/', '200', 80)
 
     def test_hm_update(self):
-        with mocks.HealthMonitorUpdate().client() as c:        
+        with mocks.HealthMonitorUpdate().client() as c:
             c.slb.hm.update('hm1', 'HTTP', 5, 5, 5, 'GET', '/', '200', 80)
 
     def test_hm_update_not_found(self):
@@ -48,9 +49,9 @@ class TestHealthMonitor(unittest.TestCase):
 
     def test_hm_search(self):
         with mocks.HealthMonitorSearch().client() as c:
-            r = c.slb.hm.get('hm1')
+            c.slb.hm.get('hm1')
 
     def test_hm_search_not_found(self):
         with mocks.HealthMonitorSearchNotFound().client() as c:
             with self.assertRaises(acos_errors.NotFound):
-                r = c.slb.hm.get('hm1')
+                c.slb.hm.get('hm1')

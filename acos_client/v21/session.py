@@ -45,9 +45,9 @@ class Session(object):
     def close(self):
         try:
             self.client.partition.active()
-        except Exception as e:
+        except Exception:
             pass
-            
+
         try:
             url = ("/services/rest/v2.1/?format=json&method=session"
                    ".close&session_id=%s" % self.session_id)

@@ -12,8 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.errors as acos_errors
 import unittest
+
+import acos_client.errors as acos_errors
 
 import v21_mocks as mocks
 
@@ -39,9 +40,9 @@ class TestSourceIpPersistence(unittest.TestCase):
 
     def test_source_ip_pers_search(self):
         with mocks.SourceIpPersistenceSearch().client() as c:
-            r = c.slb.template.src_ip_persistence.get('sip1')
+            c.slb.template.src_ip_persistence.get('sip1')
 
     def test_source_ip_pers_search_not_found(self):
         with mocks.SourceIpPersistenceSearchNotFound().client() as c:
             with self.assertRaises(acos_errors.NotFound):
-                r = c.slb.template.src_ip_persistence.get('sip1')
+                c.slb.template.src_ip_persistence.get('sip1')

@@ -12,8 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.errors as acos_errors
 import unittest
+
+import acos_client.errors as acos_errors
 
 import v21_mocks as mocks
 
@@ -30,7 +31,7 @@ class TestPartition(unittest.TestCase):
     #         c.system.partition.delete('p1')
 
     def test_partition_create(self):
-        with mocks.PartitionCreate().client() as c:        
+        with mocks.PartitionCreate().client() as c:
             c.system.partition.create('p1')
 
     def test_partition_create_exists(self):
@@ -47,10 +48,10 @@ class TestPartition(unittest.TestCase):
             self.assertFalse(c.system.partition.exists('p1'))
 
     def test_partition_active(self):
-        with mocks.PartitionActive().client() as c:        
+        with mocks.PartitionActive().client() as c:
             c.system.partition.active('p1')
 
     def test_partition_active_not_found(self):
-        with mocks.PartitionActiveNotFound().client() as c:       
+        with mocks.PartitionActiveNotFound().client() as c:
             with self.assertRaises(acos_errors.NotFound):
-                r = c.system.partition.active('p1')
+                c.system.partition.active('p1')

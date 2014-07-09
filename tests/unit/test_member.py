@@ -12,8 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.errors as acos_errors
 import unittest
+
+import acos_client.errors as acos_errors
 
 import v21_mocks as mocks
 
@@ -29,7 +30,7 @@ class TestMember(unittest.TestCase):
             c.slb.service_group.member.delete('pool1', 's1', 80)
 
     def test_member_create(self):
-        with mocks.MemberCreate().client() as c:        
+        with mocks.MemberCreate().client() as c:
             c.slb.service_group.member.create('pool1', 's1', 80)
 
     def test_member_create_exists(self):
@@ -38,18 +39,20 @@ class TestMember(unittest.TestCase):
                 c.slb.service_group.member.create('pool1', 's1', 80)
 
     def test_member_update(self):
-        with mocks.MemberUpdate().client() as c:        
+        with mocks.MemberUpdate().client() as c:
             c.slb.service_group.member.update('pool1', 's1', 80,
-                                               c.slb.service_group.member.DOWN)
+                                              c.slb.service_group.member.DOWN)
 
     def test_member_update_not_found(self):
         with mocks.MemberUpdateNotFound().client() as c:
             with self.assertRaises(acos_errors.NotFound):
-                c.slb.service_group.member.update('pool1', 's1', 80,
-                                               c.slb.service_group.member.DOWN)
+                c.slb.service_group.member.update(
+                    'pool1', 's1', 80,
+                    c.slb.service_group.member.DOWN)
 
     def test_member_update_no_such_service_group(self):
         with mocks.MemberUpdateNoSuchServiceGroup().client() as c:
             with self.assertRaises(acos_errors.NoSuchServiceGroup):
-                r = c.slb.service_group.member.update('pool1', 's1', 80,
-                                               c.slb.service_group.member.DOWN)
+                c.slb.service_group.member.update(
+                    'pool1', 's1', 80,
+                    c.slb.service_group.member.DOWN)

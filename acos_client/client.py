@@ -13,9 +13,9 @@
 #    under the License.
 
 import acos_client
-import errors as acos_errors
+
 from axapi_http import HttpClient
-from v21.partition import Partition
+import errors as acos_errors
 from v21.session import Session
 from v21.slb import SLB
 from v21.system import System

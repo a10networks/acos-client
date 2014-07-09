@@ -7,4 +7,4 @@
 - Include pdf/html docs to actual REST api.
 - Include ACOS error code/msg string with ACOSException
 
-- Require API version on client creation
+- 2.7.1 & partitions
