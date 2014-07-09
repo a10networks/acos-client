@@ -15,6 +15,6 @@
 from client import Client
 from version import VERSION
 
-AXAPI_HTTP_2_1 = 'v21'
-# AXAPI_HTTP_3_0 = 'v30'
-# AXAPI_SSH = 'ssh'
+AXAPI_21 = 'v21'
+AXAPI_30 = 'v30'
+#AXAPI_SSH = 'ssh'

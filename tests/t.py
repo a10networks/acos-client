@@ -59,10 +59,9 @@ partitions = {
 
 def get_client(h, password=None):
     p = password or h['password']
-    c = acos_client.Client(h['host'], h['user'], p,
+    c = acos_client.Client(h['host'], acos_client.AXAPI_21, h['user'], p,
                            port=h['port'],
                            protocol=h['protocol'])
-    #c.system.information()
     return c
 
 

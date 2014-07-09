@@ -14,8 +14,13 @@
 
 import base
 
+from partition import Partition
 
 class System(base.BaseV21):
+
+    @property
+    def partition(self):
+        return Partition(self.client)
 
     def information(self):
         return self.http.get(self.url("system.information.get"))

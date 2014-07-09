@@ -27,7 +27,8 @@ class MockPairClient(object):
         self.session_id = session_id
 
     def __enter__(self):
-        c = acos_client.Client('localhost', self.parent.username,
+        c = acos_client.Client('localhost', acos_client.AXAPI_21,
+                               self.parent.username,
                                self.parent.password)
         c.http._http = self.parent.mock()
         c.session.http._http = c.http._http
@@ -75,7 +76,7 @@ class MockPair(object):
             p = None
             if self.params is not None:
                 p = json.dumps(self.params)
-            self._mock.assert_called_once_with(
+            self._mock.assert_called_with(
                 self.method,
                 self.url(self._client.session_id),
                 p)
@@ -471,3 +472,42 @@ class VirtualServiceSearch(VirtualService):
                 "server_ssl_template":"","conn_reuse_template":"",
                 "cookie_persistence_template":"cp1","pbslb_template":"",
                 "acl_natpool_binding_list":[],"ha_group":{"ha_group_id":0}}}
+
+
+class Partition(AuthenticatedMockPair):
+    params = {'name': 'p1'}
+
+class PartitionExists(Partition):
+    action = 'system.partition.search'
+    response = {"partition":{"partition_id":1,"name":"p1","max_aflex_file":32,
+                "network_partition":0}}
+
+class PartitionExistsNotFound(PartitionExists):
+    response = {"response": {"status": "fail", "err": {"code": 520749062,
+                "msg": " Partition does not exist."}}}
+
+class PartitionActive(Partition):
+    action = 'system.partition.active'
+
+class PartitionActiveNotFound(PartitionActive):
+    response = {"response": {"status": "fail", "err": {"code": 402718800,
+                "msg": " Failed to get partition."}}}
+
+class PartitionCreate(Partition):
+    action = 'system.partition.create'
+    params = {'partition': {'max_aflex_file': 32, 'network_partition': 0,
+              'name': 'p1'}}
+
+class PartitionCreateExists(PartitionCreate):
+    response = {"response": {"status": "fail", "err": {"code": 1982,
+                "msg": "The partition already exists"}}}
+
+class PartitionDelete(Partition):
+    action = 'system.partition.delete'
+
+class PartitionDeleteNotFound(PartitionDelete):
+    response = {"response": {"status": "fail", "err": {"code": 520749062,
+                "msg": " Partition does not exist."}}}
+
+
+

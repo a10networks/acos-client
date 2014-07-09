@@ -12,6 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client
+import errors as acos_errors
 from axapi_http import HttpClient
 from v21.partition import Partition
 from v21.session import Session
@@ -21,25 +23,13 @@ from v21.system import System
 
 class Client(object):
 
-    def __init__(self, host, username, password, port=None, protocol=None):
+    def __init__(self, host, version, username, password, port=None,
+                 protocol=None):
+        if version != acos_client.AXAPI_21:
+            raise acos_errors.ACOSUnsupportedVersion()
         self.http = HttpClient(host, port, protocol)
-        self.session = Session(self.http, username, password)
-        # self.partition = todo
-
-    def close_session(self):
-        if self.session.session_id is None:
-            return
-
-        try:
-            self.partiion.active()
-        except Exception as e:
-            pass
-
-        self.session.close()
-
-    @property
-    def partition(self):
-        return Partition(self)
+        self.session = Session(self, username, password)
+        self.current_partition = 'shared'
 
     @property
     def system(self):

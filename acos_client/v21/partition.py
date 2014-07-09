@@ -18,16 +18,17 @@ import base
 
 class Partition(base.BaseV21):
 
-    def search(self, name):
+    def exists(self, name):
         try:
-            r = self.http.post(self.url("system.partition.search"), {'name': name})
-            print "R = ", r
+            self.http.post(self.url("system.partition.search"), {'name': name})
             return True
         except acos_errors.NotFound as e:
             return False            
 
     def active(self, name='shared'):
-        self.http.post(self.url("system.partition.active"), {'name': name})
+        if self.client.current_partition != name:
+            self.http.post(self.url("system.partition.active"), {'name': name})
+            self.client.current_partition = name
 
     def create(self, name):
         params = {

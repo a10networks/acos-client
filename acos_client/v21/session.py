@@ -15,8 +15,9 @@
 
 class Session(object):
 
-    def __init__(self, http, username, password):
-        self.http = http
+    def __init__(self, client, username, password):
+        self.client = client
+        self.http = client.http
         self.username = username
         self.password = password
         self.session_id = None
@@ -42,6 +43,11 @@ class Session(object):
         return r
 
     def close(self):
+        try:
+            self.client.partition.active()
+        except Exception as e:
+            pass
+            
         try:
             url = ("/services/rest/v2.1/?format=json&method=session"
                    ".close&session_id=%s" % self.session_id)

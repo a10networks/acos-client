@@ -20,6 +20,37 @@ import v21_mocks as mocks
 
 class TestPartition(unittest.TestCase):
 
-    def test_(self):
-        with mocks.().client() as c:
-            r = c.
+    # Test harness bug with delete
+    # def test_partition_delete(self):
+    #     with mocks.PartitionDelete().client() as c:
+    #         c.system.partition.delete('p1')
+
+    # def test_partition_delete_not_found(self):
+    #     with mocks.PartitionDeleteNotFound().client() as c:
+    #         c.system.partition.delete('p1')
+
+    def test_partition_create(self):
+        with mocks.PartitionCreate().client() as c:        
+            c.system.partition.create('p1')
+
+    def test_partition_create_exists(self):
+        with mocks.PartitionCreateExists().client() as c:
+            with self.assertRaises(acos_errors.Exists):
+                c.system.partition.create('p1')
+
+    def test_partition_exists(self):
+        with mocks.PartitionExists().client() as c:
+            self.assertTrue(c.system.partition.exists('p1'))
+
+    def test_partition_exists_not_found(self):
+        with mocks.PartitionExistsNotFound().client() as c:
+            self.assertFalse(c.system.partition.exists('p1'))
+
+    def test_partition_active(self):
+        with mocks.PartitionActive().client() as c:        
+            c.system.partition.active('p1')
+
+    def test_partition_active_not_found(self):
+        with mocks.PartitionActiveNotFound().client() as c:       
+            with self.assertRaises(acos_errors.NotFound):
+                r = c.system.partition.active('p1')

@@ -6,4 +6,5 @@
 - Support stripe-api-object like model; reference object fields as attributes, then save().
 - Include pdf/html docs to actual REST api.
 - Include ACOS error code/msg string with ACOSException
+
 - Require API version on client creation

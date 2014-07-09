@@ -17,6 +17,10 @@ class ACOSException(Exception):
     pass
 
 
+class ACOSUnsupportedVersion(ACOSException):
+    pass
+
+
 class ACOSUnknownError(ACOSException):
     pass
 

@@ -53,7 +53,7 @@ class TestSession(unittest.TestCase):
             self.assertEqual(c.session.session_id, None)
 
     def test_close_with_bad_session_id(self):
-        m = mocks.CloseBadSession()
+        m = mocks.CloseBadSession({'session_id': 'badsessionid'})
         with m.client() as c:
             c.session.close()
             self.assertEqual(c.session.session_id, None)
