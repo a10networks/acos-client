@@ -52,6 +52,23 @@ def extract_method(api_url):
         return m.group(1)
     return ""
 
+broken_replies = {
+    ('<?xml version="1.0" encoding="utf-8" ?><response status="ok">'
+     '</response>'): "{'response': {'status': 'OK'}}",
+
+    ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
+    '<error code="999" msg=" Partition does not exist. '
+    '(internal error: 520749062)" /></response>'):
+        ('{"response": {"status": "fail", "err": {"code": 999,'
+        '"msg": " Partition does not exist."}}}'),
+
+    ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
+     '<error code="999" msg=" Failed to get partition. (internal error: '
+     '402718800)" /></response>'):
+        ('{"response": {"status": "fail", "err": {"code": 999,'
+        '"msg": " Partition does not exist."}}}')
+}
+
 
 class HttpClient(object):
     HEADERS = {
@@ -101,10 +118,12 @@ class HttpClient(object):
         LOG.debug("axapi_http: data = %s", data)
 
         # Fixup some broken stuff in an earlier version of the axapi
-        xmlok = ('<?xml version="1.0" encoding="utf-8" ?>'
-                 '<response status="ok"></response>')
-        if data == xmlok:
-            return {'response': {'status': 'OK'}}
+        # xmlok = ('<?xml version="1.0" encoding="utf-8" ?>'
+        #          '<response status="ok"></response>')
+        # if data == xmlok:
+        #     return {'response': {'status': 'OK'}}
+        if data in broken_replies:
+            data = broken_replies[data]
 
         r = json.loads(data, encoding='utf-8')
 

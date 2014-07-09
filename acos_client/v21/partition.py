@@ -12,21 +12,19 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client.errors as acos_errors
 import base
 
 
 class Partition(base.BaseV21):
 
     def search(self, name):
-        r = self.http.post(self.url("system.partition.search"), {'name': name})
-        raise "need to fix here"
-        #     if 'response' in response:
-        #         if "err" in response['response']:
-        #             if response['response']['err'] == 520749062:
-        #                 return False
-        #     elif "partition" in response:
-        #         return True
-        return False
+        try:
+            r = self.http.post(self.url("system.partition.search"), {'name': name})
+            print "R = ", r
+            return True
+        except acos_errors.NotFound as e:
+            return False            
 
     def active(self, name='shared'):
         self.http.post(self.url("system.partition.active"), {'name': name})
@@ -39,8 +37,10 @@ class Partition(base.BaseV21):
                 'name': name
             }
         }
-        self.http.post(self.url("system.partition.create"), params)
+        if name != 'shared':
+            self.http.post(self.url("system.partition.create"), params)
 
     def delete(self, name):
-        self.client.session.close()
-        self.http.post(self.url("system.partition.delete"), {"name": name})
+        if name != 'shared':
+            self.client.session.close()
+            self.http.post(self.url("system.partition.delete"), {"name": name})

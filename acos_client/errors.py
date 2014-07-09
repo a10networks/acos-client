@@ -56,6 +56,9 @@ class NoSuchServiceGroup(ACOSException):
 
 
 RESPONSE_CODES = {
+    999: {
+        '*': NotFound
+    },
     1009: {
         'session.close': None,
         '*': InvalidSessionID
@@ -65,6 +68,9 @@ RESPONSE_CODES = {
         '*': NotFound
     },
     1405: {
+        '*': Exists
+    },
+    1982: {
         '*': Exists
     },
     2941: {
@@ -105,8 +111,17 @@ RESPONSE_CODES = {
     402653206: {
         '*': Exists
     },
+    402718800: {
+        '*': NotFound
+    },
     520486915: {
         '*': AuthenticationFailure
+    },
+    520749062: {
+        '*': NotFound
+    },
+    654311465: {
+        '*': AddressSpecifiedIsInUse
     },
     654311496: {
         '*': AddressSpecifiedIsInUse
@@ -115,6 +130,8 @@ RESPONSE_CODES = {
 
 
 def raise_axapi_ex(response, action=None):
+    LOG.debug("raise_axapi_ex response=%s", response)
+
     if 'response' in response and 'err' in response['response']:
         code = response['response']['err']['code']
 
@@ -122,7 +139,7 @@ def raise_axapi_ex(response, action=None):
             ex_dict = RESPONSE_CODES[code]
             ex = None
 
-            LOG.debug("raise_axapi_ex method=%skipping", action)
+            LOG.debug("raise_axapi_ex method=%s", action)
 
             if action is not None and action in ex_dict:
                 ex = ex_dict[action]
