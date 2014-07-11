@@ -25,22 +25,29 @@ class VirtualService(base.BaseV21):   # aka VirtualPort
 
     def get(self, name):
         return self.http.post(self.url("slb.virtual_service.search"),
-                              {'name': name + "_VPORT"})
+                              {'name': name})
 
-    def update(self, name, protocol, service_group_id,
-               s_pers=None, c_pers=None, status=1):
-        params = self.get(name)
+    def _set(self, action, service_group_name, name, protocol=None, port=None,
+             s_pers_name=None, c_pers_name=None, status=1):
+        params = {
+            "virtual_service": self.minimal_dict({
+                "name": name,
+                "service_group": service_group_name,
+                "protocol": protocol,
+                "port": port,
+                "source_ip_persistence_template": s_pers_name,
+                "cookie_persistence_template": c_pers_name,
+                "status": status
+            })
+        }
 
-        if s_pers is not None:
-            params['source_ip_persistence_template'] = s_pers
-        elif c_pers is not None:
-            params['cookie_persistence_template'] = c_pers
+        self.http.post(self.url(action), params)
 
-        params['service_group'] = service_group_id
-        params['status'] = status
+    def create(self, *args):
+        self._set('slb.virtual_service.create', *args)
 
-        self.http.post(self.url("slb.virtual_service.update"), params)
+    def update(self, *args):
+        self._set('slb.virtual_service.update', *args)
 
     def delete(self, name):
-        self.http.post(self.url("slb.virtual_service.delete"),
-                       {"name": name + "_VPORT"})
+        self.http.post(self.url("slb.virtual_service.delete"), {"name": name})

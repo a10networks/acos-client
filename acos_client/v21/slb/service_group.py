@@ -47,30 +47,23 @@ class ServiceGroup(base.BaseV21):
         return self.http.post(self.url("slb.service_group.search"),
                               {'name': name})
 
-    def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN):
+    def _set(self, action, name, protocol=None, lb_method=None, hm_name=None):
         params = {
-            "service_group": {
+            "service_group": self.minimal_dict({
                 "name": name,
                 "protocol": protocol,
-                "lb_method": lb_method
-            }
+                "lb_method": lb_method,
+                "health_monitor": hm_name
+            })
         }
-        self.http.post(self.url("slb.service_group.create"), params)
+        self.http.post(self.url(action), params)
+
+    def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN):
+        self._set("slb.service_group.create", name, protocol, lb_method)
 
     def update(self, name, protocol=None, lb_method=None, health_monitor=None):
-        params = {
-            "service_group": {
-                "name": name,
-            }
-        }
-        if protocol is not None:
-            params['service_group']['protocol'] = protocol
-        if lb_method is not None:
-            params['service_group']['lb_method'] = lb_method
-        if health_monitor is not None:
-            params['service_group']['health_monitor'] = health_monitor
-
-        self.http.post(self.url("slb.service_group.update"), params)
+        self._set("slb.service_group.update", name, protocol, lb_method,
+                  health_monitor)
 
     def delete(self, name):
         self.http.post(self.url("slb.service_group.delete"), {'name': name})

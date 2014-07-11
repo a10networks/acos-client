@@ -16,37 +16,27 @@ import acos_client.v21.base as base
 
 
 class Member(base.BaseV21):
-    DOWN = 0
-    UP = 1
 
-    def create(self, service_group_name, server_name, server_port, status=UP):
+    def _write(self, action, service_group_name, server_name, server_port,
+               status=None):
         params = {
             "name": service_group_name,
-            "member": {
+            "member": self.minimal_dict({
                 "server": server_name,
                 "port": server_port,
                 "status": status
-            }
+            })
         }
-        self.http.post(self.url("slb.service_group.member.create"), params)
+        self.http.post(self.url(action), params)
 
-    def update(self, service_group_name, server_name, server_port, status=UP):
-        params = {
-            "name": service_group_name,
-            "member": {
-                "server": server_name,
-                "port": server_port,
-                "status": status
-            }
-        }
-        self.http.post(self.url("slb.service_group.member.update"), params)
+    def create(self, service_group_name, server_name, server_port, status=1):
+        self._write("slb.service_group.member.create", service_group_name,
+                    server_name, server_port, status)
+
+    def update(self, service_group_name, server_name, server_port, status=1):
+        self._write("slb.service_group.member.update", service_group_name,
+                    server_name, server_port, status)
 
     def delete(self, service_group_name, server_name, server_port):
-        params = {
-            "name": service_group_name,
-            "member": {
-                "server": server_name,
-                "port": server_port
-            }
-        }
-        self.http.post(self.url("slb.service_group.member.delete"), params)
+        self._write("slb.service_group.member.delete", service_group_name,
+                    server_name, server_port)

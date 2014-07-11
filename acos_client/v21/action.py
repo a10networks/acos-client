@@ -12,20 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import unittest
-
-import v21_mocks as mocks
+import base
 
 
-class TestSystem(unittest.TestCase):
+class Action(base.BaseV21):
 
-    def test_information(self):
-        m = mocks.SystemInformation()
-        with m.client() as c:
-            r = c.system.information()
-            self.assertTrue('system_information' in r)
-
-    def test_write_memory(self):
-        m = mocks.SystemWriteMemory()
-        with m.client() as c:
-            c.system.action.write_memory()
+    def write_memory(self):
+        self.http.get(self.url("system.action.write_memory"))

@@ -52,18 +52,6 @@ class CookiePersistence(BasePersistence):
             "cookie_persistence_template": {
                 "name": name
             }
-            # "cookie_persistence_template": {
-            #     "name": name,
-            #     "expire_exist": 0,
-            #     "expire": 3600,
-            #     "cookie_name": "",
-            #     "domain": "",
-            #     "path": "",
-            #     "match_type": 0,
-            #     "match_all": 0,
-            #     "insert_always": 0,
-            #     "dont_honor_conn": 0
-            # }
         }
 
 
@@ -78,17 +66,4 @@ class SourceIpPersistence(BasePersistence):
             "src_ip_persistence_template": {
                 "name": name
             }
-            # "src_ip_persistence_template": {
-            #     "name": name,
-            #     "match_type": 1,
-            #     "match_all": 0,
-            #     "timeout": 1800,
-            #     "no_honor_conn": 0,
-            #     "incl_sport": 0,
-            #     "include_dstip": 0,
-            #     "hash_persist": 0,
-            #     "enforce_high_priority": 0,
-            #     "netmask": "255.255.255.255",
-            #     "netmask6": 96
-            # }
         }

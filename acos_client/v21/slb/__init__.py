@@ -21,6 +21,10 @@ from template import Template
 from virtual_server import VirtualServer
 from virtual_service import VirtualService
 
+# For status args
+DOWN = 2
+UP = 1
+
 
 class SLB(base.BaseV21):
 

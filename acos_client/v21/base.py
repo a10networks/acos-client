@@ -19,6 +19,9 @@ class BaseV21(object):
         self.client = client
         self.http = client.http
 
+    def minimal_dict(self, my_dict):
+        return dict((k, v) for k, v in my_dict.items() if v)
+
     def url(self, action):
         return ("/services/rest/v2.1/?format=json&method=%s&session_id=%s" %
                 (action, self.client.session.id))
