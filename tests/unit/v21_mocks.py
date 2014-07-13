@@ -360,6 +360,10 @@ class VirtualServerSearchNotFound(VirtualServerSearch):
                 "msg": " No such Virtual Server"}}}
 
 
+class VirtualPort(AuthenticatedMockPair):
+    params = {'name': 'vip3_VPORT'}
+
+
 class HealthMonitor(AuthenticatedMockPair):
     params = {'name': 'hm1'}
 
@@ -559,56 +563,6 @@ class HttpCookiePersistenceSearch(HttpCookiePersistence):
 class HttpCookiePersistenceSearchNotFound(HttpCookiePersistenceSearch):
     response = {"response": {"status": "fail", "err": {"code": 67371009,
                 "msg": " No such Template"}}}
-
-
-class VirtualService(AuthenticatedMockPair):
-    params = {'name': 'vip2_VPORT'}
-
-
-class VirtualServiceSearch(VirtualService):
-    action = 'slb.virtual_service.search'
-    response = {
-        "virtual_service": {
-            "name": "vip2_VPORT",
-            "protocol": 12,
-            "port": 443,
-            "address": "192.168.2.249",
-            "service_group": "pfoobar",
-            "connection_limit": {
-                "status": 0,
-                "connection_limit": 8000000,
-                "connection_limit_action": 0,
-                "connection_limit_log": 0
-            },
-            "default_selection": 1,
-            "received_hop": 0,
-            "status": 1,
-            "stats_data": 1,
-            "extended_stats": 0,
-            "snat_against_vip": 0,
-            "vport_template": "default",
-            "vport_acl_id": 0,
-            "aflex_list": [],
-            "send_reset": 0,
-            "sync_cookie": {
-                "sync_cookie": 0,
-                "sack": 0
-            },
-            "source_nat": "",
-            "http_template": "",
-            "ram_cache_template": "",
-            "tcp_proxy_template": "",
-            "client_ssl_template": "",
-            "server_ssl_template": "",
-            "conn_reuse_template": "",
-            "cookie_persistence_template": "cp1",
-            "pbslb_template": "",
-            "acl_natpool_binding_list": [],
-            "ha_group": {
-                "ha_group_id": 0
-            }
-        }
-    }
 
 
 class Partition(AuthenticatedMockPair):

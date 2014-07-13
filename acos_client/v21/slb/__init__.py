@@ -19,14 +19,12 @@ from server import Server
 from service_group import ServiceGroup
 from template import Template
 from virtual_server import VirtualServer
-from virtual_service import VirtualService
-
-# For status args
-DOWN = 2
-UP = 1
 
 
 class SLB(base.BaseV21):
+    # For status args
+    DOWN = 0
+    UP = 1
 
     @property
     def hm(self):
@@ -47,7 +45,3 @@ class SLB(base.BaseV21):
     @property
     def virtual_server(self):
         return VirtualServer(self.client)
-
-    @property
-    def virtual_service(self):
-        return VirtualService(self.client)

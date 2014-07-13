@@ -15,7 +15,7 @@
 import acos_client.v21.base as base
 
 
-class VirtualService(base.BaseV21):   # aka VirtualPort
+class VirtualPort(base.BaseV21):
 
     # Protocols
     TCP = 2
@@ -23,14 +23,12 @@ class VirtualService(base.BaseV21):   # aka VirtualPort
     HTTP = 11
     HTTPS = 12
 
-    def get(self, name):
-        return self.http.post(self.url("slb.virtual_service.search"),
-                              {'name': name})
-
-    def _set(self, action, service_group_name, name, protocol=None, port=None,
+    def _set(self, action, virtual_server_name, name, protocol, port,
+             service_group_name,
              s_pers_name=None, c_pers_name=None, status=1):
         params = {
-            "virtual_service": self.minimal_dict({
+            "name": virtual_server_name,
+            "vport": self.minimal_dict({
                 "name": name,
                 "service_group": service_group_name,
                 "protocol": protocol,
@@ -40,14 +38,24 @@ class VirtualService(base.BaseV21):   # aka VirtualPort
                 "status": status
             })
         }
-
         self.http.post(self.url(action), params)
 
-    def create(self, *args):
-        self._set('slb.virtual_service.create', *args)
+    def create(self, virtual_server_name, name, **kwargs):
+        self._set('slb.virtual_server.vport.create', virtual_server_name,
+                  name, **kwargs)
 
-    def update(self, *args):
-        self._set('slb.virtual_service.update', *args)
+    def update(self, virtual_server_name, name, **kargs):
+        self._set('slb.virtual_server.vport.update', virtual_server_name,
+                  name, **kwargs)
 
-    def delete(self, name):
-        self.http.post(self.url("slb.virtual_service.delete"), {"name": name})
+    def delete(self, virtual_server_name, name, protocol, port):
+        params = {
+            "name": virtual_server_name,
+            "vport": {
+                "name": name,
+                "protocol": protocol,
+                "port": port
+            }
+        }
+        self.http.post(self.url("slb.virtual_server.vport.delete"),
+                       params)

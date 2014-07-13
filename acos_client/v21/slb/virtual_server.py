@@ -13,9 +13,14 @@
 #    under the License.
 
 import acos_client.v21.base as base
+from virtual_port import VirtualPort
 
 
 class VirtualServer(base.BaseV21):
+
+    @property
+    def vport(self):
+        return VirtualPort(self.client)
 
     def get(self, name):
         return self.http.post(self.url("slb.virtual_server.search"),

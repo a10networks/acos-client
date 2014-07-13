@@ -14,7 +14,9 @@
 
 
 class ACOSException(Exception):
-    pass
+    def __init__(self, code=1, msg=''):
+        self.code = code
+        self.msg = msg
 
 
 class ACOSUnsupportedVersion(ACOSException):
@@ -61,7 +63,14 @@ RESPONSE_CODES = {
         'slb.service_group.member.delete': None,
         '*': NotFound
     },
+    1043: {
+        'slb.virtual_server.vport.delete': None,
+        '*': NotFound
+    },
     1405: {
+        '*': Exists
+    },
+    1406: {
         '*': Exists
     },
     1982: {
@@ -80,7 +89,11 @@ RESPONSE_CODES = {
     },
     67239937: {
         'slb.virtual_server.delete': None,
+        'slb.virtual_service.delete': None,
         '*': NotFound
+    },
+    67239947: {
+        '*': Exists
     },
     67305473: {
         'slb.service_group.delete': None,
@@ -137,8 +150,9 @@ def raise_axapi_ex(response, action=None):
                 ex = ex_dict['*']
 
             if ex is not None:
-                raise ex
+                raise ex(code, response['response']['err']['msg'])
             else:
                 return
 
+        raise ACOSException(code, response['response']['err']['msg'])
     raise ACOSException()
