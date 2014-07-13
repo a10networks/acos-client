@@ -259,10 +259,11 @@ def run_all(version, ax, partition, pmap):
                                       protocol=c.slb.virtual_server.vport.HTTP,
                                       port='80')
     try:
-        c.slb.virtual_server.vport.create("vip3", "vip3_VPORT",
-                                      service_group_name="pfoobar",
-                                      protocol=c.slb.virtual_server.vport.HTTP,
-                                      port='80')
+        c.slb.virtual_server.vport.create(
+            "vip3", "vip3_VPORT",
+            service_group_name="pfoobar",
+            protocol=c.slb.virtual_server.vport.HTTP,
+            port='80')
     except acos_client.errors.Exists:
         print("got already exists error, good")
     c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
@@ -358,23 +359,26 @@ def run_all(version, ax, partition, pmap):
     print("Vip with pers")
     c.slb.virtual_server.delete("vip2")
     c.slb.virtual_server.create("vip2", pmap['vip2'])
-    c.slb.virtual_server.vport.create("vip2", "vip2_vport1",
-                                protocol=c.slb.virtual_server.vport.HTTPS,
-                                port=443,
-                                service_group_name='pfoobar',
-                                s_pers_name='sip1',
-                                c_pers_name='cp1',
-                                status=1)
-    c.slb.virtual_server.vport.create("vip2", "vip2_vport2",
-                                protocol=c.slb.virtual_server.vport.HTTPS,
-                                port=444,
-                                service_group_name='pfoobar',
-                                s_pers_name='sip1')
-    c.slb.virtual_server.vport.create("vip2", "vip2_vport3",
-                                protocol=c.slb.virtual_server.vport.HTTPS,
-                                port=445,
-                                service_group_name='pfoobar',
-                                c_pers_name='cp1')
+    c.slb.virtual_server.vport.create(
+        "vip2", "vip2_vport1",
+        protocol=c.slb.virtual_server.vport.HTTPS,
+        port=443,
+        service_group_name='pfoobar',
+        s_pers_name='sip1',
+        c_pers_name='cp1',
+        status=1)
+    c.slb.virtual_server.vport.create(
+        "vip2", "vip2_vport2",
+        protocol=c.slb.virtual_server.vport.HTTPS,
+        port=444,
+        service_group_name='pfoobar',
+        s_pers_name='sip1')
+    c.slb.virtual_server.vport.create(
+        "vip2", "vip2_vport3",
+        protocol=c.slb.virtual_server.vport.HTTPS,
+        port=445,
+        service_group_name='pfoobar',
+        c_pers_name='cp1')
 
     print("=============================================================")
     print("")

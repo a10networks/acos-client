@@ -44,7 +44,7 @@ class VirtualPort(base.BaseV21):
         self._set('slb.virtual_server.vport.create', virtual_server_name,
                   name, **kwargs)
 
-    def update(self, virtual_server_name, name, **kargs):
+    def update(self, virtual_server_name, name, **kwargs):
         self._set('slb.virtual_server.vport.update', virtual_server_name,
                   name, **kwargs)
 
@@ -57,5 +57,7 @@ class VirtualPort(base.BaseV21):
                 "port": port
             }
         }
+        print "vport delete"
         self.http.post(self.url("slb.virtual_server.vport.delete"),
                        params)
+        print "after vport delete"

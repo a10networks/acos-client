@@ -31,18 +31,12 @@ class TestVirtualServer(unittest.TestCase):
 
     def test_virtual_server_create(self):
         with mocks.VirtualServerCreate().client() as c:
-            c.slb.virtual_server.create('vip1', '192.168.2.250',
-                                        c.slb.virtual_service.HTTP,
-                                        '80',
-                                        'pool1')
+            c.slb.virtual_server.create('vip1', '192.168.2.250')
 
     def test_virtual_server_create_exists(self):
         with mocks.VirtualServerCreateExists().client() as c:
             with self.assertRaises(acos_errors.Exists):
-                c.slb.virtual_server.create('vip1', '192.168.2.250',
-                                            c.slb.virtual_service.HTTP,
-                                            '80',
-                                            'pool1')
+                c.slb.virtual_server.create('vip1', '192.168.2.250')
 
     def test_virtual_server_search(self):
         with mocks.VirtualServerSearch().client() as c:
