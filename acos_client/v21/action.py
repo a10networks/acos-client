@@ -12,18 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import unittest
-
-import v21_mocks as mocks
+import base
 
 
-class TestVirtualService(unittest.TestCase):
+class Action(base.BaseV21):
 
-    def test_virtual_service_search(self):
-        with mocks.VirtualServiceSearch().client() as c:
-            c.slb.virtual_service.get('vip2')
-
-    # def test_virtual_service_search_not_found(self):
-    #     with mocks.VirtualServiceSearchNotFound().client() as c:
-    #         with self.assertRaises(acos_errors.NotFound):
-    #             r = c.slb.virtual_service.get('vip2')
+    def write_memory(self):
+        self.http.get(self.url("system.action.write_memory"))

@@ -283,10 +283,7 @@ class VirtualServerDeleteNotFound(VirtualServerDelete):
 class VirtualServerCreate(VirtualServer):
     action = 'slb.virtual_server.create'
     params = {'virtual_server': {'status': 1, 'name': 'vip1',
-              'address': '192.168.2.250'},
-              'vport_list': [
-                  {'service_group': 'pool1', 'status': 1, 'protocol': 11,
-                   'name': 'vip1_VPORT', 'port': '80'}]}
+              'address': '192.168.2.250'}}
 
 
 class VirtualServerCreateExists(VirtualServerCreate):
@@ -312,45 +309,9 @@ class VirtualServerSearch(VirtualServer):
                 "ha_group_id": 0,
                 "dynamic_server_weight": 0
             },
-            "vip_template": "default",
+            "vip_template": "shared/default",
             "pbslb_template": "",
-            "vport_list": [
-                {
-                    "protocol": 11,
-                    "port": 80,
-                    "name": "vip1_VPORT",
-                    "service_group": "pool1",
-                    "connection_limit": {
-                        "status": 0,
-                        "connection_limit": 8000000,
-                        "connection_limit_action": 0,
-                        "connection_limit_log": 0
-                    },
-                    "default_selection": 1,
-                    "received_hop": 0,
-                    "status": 1,
-                    "stats_data": 1,
-                    "extended_stats": 0,
-                    "snat_against_vip": 0,
-                    "vport_template": "default",
-                    "vport_acl_id": 0,
-                    "aflex_list": [],
-                    "send_reset": 0,
-                    "sync_cookie": {
-                        "sync_cookie": 0,
-                        "sack": 0
-                    },
-                    "source_nat": "",
-                    "http_template": "",
-                    "ram_cache_template": "",
-                    "tcp_proxy_template": "",
-                    "server_ssl_template": "",
-                    "conn_reuse_template": "",
-                    "source_ip_persistence_template": "",
-                    "pbslb_template": "",
-                    "acl_natpool_binding_list": []
-                }
-            ]
+            "vport_list": []
         }
     }
 
@@ -358,6 +319,45 @@ class VirtualServerSearch(VirtualServer):
 class VirtualServerSearchNotFound(VirtualServerSearch):
     response = {"response": {"status": "fail", "err": {"code": 67239937,
                 "msg": " No such Virtual Server"}}}
+
+
+class VirtualPort(AuthenticatedMockPair):
+    params = {
+        'vport': {
+            'protocol': 11,
+            'name': 'vip1_VPORT',
+            'port': 80
+        },
+        'name': 'vip1'
+    }
+
+
+class VirtualPortDelete(VirtualPort):
+    action = 'slb.virtual_server.vport.delete'
+
+
+class VirtualPortDeleteNotFound(VirtualPortDelete):
+    response = {"response": {"status": "fail", "err": {"code": 1043,
+                "msg": "Can not find the virtual server port"}}}
+
+
+class VirtualPortCreate(VirtualPort):
+    action = 'slb.virtual_server.vport.create'
+    params = {
+        'vport': {
+            'service_group': 'pool1',
+            'status': 1,
+            'protocol': 11,
+            'name': 'vip1_VPORT',
+            'port': 80
+        },
+        'name': 'vip1'
+    }
+
+
+class VirtualPortCreateExists(VirtualPortCreate):
+    response = {"response": {"status": "fail", "err": {"code": 1406,
+                "msg": "The virtual port already exists."}}}
 
 
 class HealthMonitor(AuthenticatedMockPair):
@@ -559,56 +559,6 @@ class HttpCookiePersistenceSearch(HttpCookiePersistence):
 class HttpCookiePersistenceSearchNotFound(HttpCookiePersistenceSearch):
     response = {"response": {"status": "fail", "err": {"code": 67371009,
                 "msg": " No such Template"}}}
-
-
-class VirtualService(AuthenticatedMockPair):
-    params = {'name': 'vip2_VPORT'}
-
-
-class VirtualServiceSearch(VirtualService):
-    action = 'slb.virtual_service.search'
-    response = {
-        "virtual_service": {
-            "name": "vip2_VPORT",
-            "protocol": 12,
-            "port": 443,
-            "address": "192.168.2.249",
-            "service_group": "pfoobar",
-            "connection_limit": {
-                "status": 0,
-                "connection_limit": 8000000,
-                "connection_limit_action": 0,
-                "connection_limit_log": 0
-            },
-            "default_selection": 1,
-            "received_hop": 0,
-            "status": 1,
-            "stats_data": 1,
-            "extended_stats": 0,
-            "snat_against_vip": 0,
-            "vport_template": "default",
-            "vport_acl_id": 0,
-            "aflex_list": [],
-            "send_reset": 0,
-            "sync_cookie": {
-                "sync_cookie": 0,
-                "sack": 0
-            },
-            "source_nat": "",
-            "http_template": "",
-            "ram_cache_template": "",
-            "tcp_proxy_template": "",
-            "client_ssl_template": "",
-            "server_ssl_template": "",
-            "conn_reuse_template": "",
-            "cookie_persistence_template": "cp1",
-            "pbslb_template": "",
-            "acl_natpool_binding_list": [],
-            "ha_group": {
-                "ha_group_id": 0
-            }
-        }
-    }
 
 
 class Partition(AuthenticatedMockPair):

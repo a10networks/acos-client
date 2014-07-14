@@ -28,4 +28,4 @@ class TestSystem(unittest.TestCase):
     def test_write_memory(self):
         m = mocks.SystemWriteMemory()
         with m.client() as c:
-            c.system.write_memory()
+            c.system.action.write_memory()

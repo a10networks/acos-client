@@ -14,41 +14,38 @@
 
 import acos_client.v21.base as base
 
+from virtual_port import VirtualPort
+
 
 class VirtualServer(base.BaseV21):
+
+    @property
+    def vport(self):
+        return VirtualPort(self.client)
 
     def get(self, name):
         return self.http.post(self.url("slb.virtual_server.search"),
                               {'name': name})
 
-    def create(self, name, ip_address, protocol, port, service_group_id,
-               s_pers=None, c_pers=None, status=1):
+    def _set(self, action, name, ip_address=None, status=1):
         params = {
-            "virtual_server": {
+            "virtual_server": self.minimal_dict({
                 "name": name,
                 "address": ip_address,
                 "status": status,
-            },
-            "vport_list": [
-                {
-                    "name": name + "_VPORT",
-                    "protocol": protocol,
-                    "port": port,
-                    "service_group": service_group_id,
-                    "status": status
-                }
-            ]
+            }),
         }
-        if s_pers is not None:
-            params['vport_list'][0]['source_ip_persistence_template'] = s_pers
-        elif c_pers is not None:
-            params['vport_list'][0]['cookie_persistence_template'] = c_pers
 
-        self.http.post(self.url("slb.virtual_server.create"), params)
+        self.http.post(self.url(action), params)
+
+    def create(self, name, ip_address, status=1):
+        self._set("slb.virtual_server.create", name, ip_address, status)
+
+    def update(self, name, ip_address=None, status=1):
+        self._set("slb.virtual_server.update", name, ip_address, status)
 
     def delete(self, name):
-        self.http.post(self.url("slb.virtual_server.delete"),
-                       {"name": name})
+        self.http.post(self.url("slb.virtual_server.delete"), {"name": name})
 
     def stats(self, name):
         return self.http.post(self.url("slb.virtual_server.fetchStatistics"),
