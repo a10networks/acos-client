@@ -325,10 +325,10 @@ class VirtualPort(AuthenticatedMockPair):
     params = {
         'vport': {
             'protocol': 11,
-            'name': 'vip3_VPORT',
+            'name': 'vip1_VPORT',
             'port': 80
         },
-        'name': 'vip3'
+        'name': 'vip1'
     }
 
 
@@ -343,20 +343,15 @@ class VirtualPortDeleteNotFound(VirtualPortDelete):
 
 class VirtualPortCreate(VirtualPort):
     action = 'slb.virtual_server.vport.create'
-    params = {'virtual_server': {'status': 1, 'name': 'vip1',
-              'address': '192.168.2.250'},
-              'vport_list': [
-                  {'service_group': 'pool1', 'status': 1, 'protocol': 11,
-                   'name': 'vip1_VPORT', 'port': '80'}]}
     params = {
         'vport': {
-            'service_group': 'pfoobar',
+            'service_group': 'pool1',
             'status': 1,
             'protocol': 11,
-            'name': 'vip3_VPORT',
-            'port': '80'
+            'name': 'vip1_VPORT',
+            'port': 80
         },
-        'name': 'vip3'
+        'name': 'vip1'
     }
 
 

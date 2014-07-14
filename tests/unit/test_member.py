@@ -41,18 +41,18 @@ class TestMember(unittest.TestCase):
     def test_member_update(self):
         with mocks.MemberUpdate().client() as c:
             c.slb.service_group.member.update('pool1', 's1', 80,
-                                              c.slb.service_group.member.DOWN)
+                                              c.slb.DOWN)
 
     def test_member_update_not_found(self):
         with mocks.MemberUpdateNotFound().client() as c:
             with self.assertRaises(acos_errors.NotFound):
                 c.slb.service_group.member.update(
                     'pool1', 's1', 80,
-                    c.slb.service_group.member.DOWN)
+                    c.slb.DOWN)
 
     def test_member_update_no_such_service_group(self):
         with mocks.MemberUpdateNoSuchServiceGroup().client() as c:
             with self.assertRaises(acos_errors.NoSuchServiceGroup):
                 c.slb.service_group.member.update(
                     'pool1', 's1', 80,
-                    c.slb.service_group.member.DOWN)
+                    c.slb.DOWN)

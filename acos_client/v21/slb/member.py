@@ -23,7 +23,7 @@ class Member(base.BaseV21):
             "name": service_group_name,
             "member": self.minimal_dict({
                 "server": server_name,
-                "port": server_port,
+                "port": int(server_port),
                 "status": status
             })
         }
@@ -39,4 +39,4 @@ class Member(base.BaseV21):
 
     def delete(self, service_group_name, server_name, server_port):
         self._write("slb.service_group.member.delete", service_group_name,
-                    server_name, server_port)
+                    server_name, int(server_port))

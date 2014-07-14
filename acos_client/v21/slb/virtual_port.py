@@ -32,7 +32,7 @@ class VirtualPort(base.BaseV21):
                 "name": name,
                 "service_group": service_group_name,
                 "protocol": protocol,
-                "port": port,
+                "port": int(port),
                 "source_ip_persistence_template": s_pers_name,
                 "cookie_persistence_template": c_pers_name,
                 "status": status
@@ -54,10 +54,8 @@ class VirtualPort(base.BaseV21):
             "vport": {
                 "name": name,
                 "protocol": protocol,
-                "port": port
+                "port": int(port)
             }
         }
-        print "vport delete"
         self.http.post(self.url("slb.virtual_server.vport.delete"),
                        params)
-        print "after vport delete"
