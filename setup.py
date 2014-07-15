@@ -1,16 +1,12 @@
 #!/usr/bin/env python
 # flake8: noqa
 
-import os
 from setuptools import setup, find_packages
-
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name = "acos-client",
-    version = "0.5",
-    packages = ['acos_client'],
+    version = "0.6",
+    packages = find_packages(),
 
     author = "A10 Networks",
     author_email = "dougw@a10networks.com",
@@ -19,7 +15,7 @@ setup(
     keywords = "a10 axapi acos adc slb load balancer",
     url = "https://github.com/a10networks/acos-client",
 
-    long_description = read('README.md'),
+    long_description = open('README.md').read(),
 
     classifiers = [
         'Development Status :: 4 - Beta',
