@@ -9,7 +9,7 @@ def read(fname):
 
 setup(
     name = "acos-client",
-    version = "0.3",
+    version = "0.4",
     packages = ['acos_client'],
 
     author = "A10 Networks",
