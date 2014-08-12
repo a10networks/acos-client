@@ -55,11 +55,15 @@ class HealthMonitor(base.BaseV21):
             }
         self.http.post(self.url(action), params)
 
-    def create(self, *args):
-        self._set("slb.hm.create", *args)
+    def create(self, name, mon_type, interval, timeout, max_retries,
+               method=None, url=None, expect_code=None, port=None):
+        self._set("slb.hm.create", name, mon_type, interval, timeout,
+                  max_retries, method, url, expect_code, port)
 
-    def update(self, *args):
-        self._set("slb.hm.update", *args)
+    def update(self, name, mon_type, interval, timeout, max_retries,
+               method=None, url=None, expect_code=None, port=None):
+        self._set("slb.hm.update", name, mon_type, interval, timeout,
+                  max_retries, method, url, expect_code, port)
 
     def delete(self, name):
         self.http.post(self.url("slb.hm.delete"), {"name": name})

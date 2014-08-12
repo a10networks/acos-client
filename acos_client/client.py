@@ -25,11 +25,14 @@ class Client(object):
 
     def __init__(self, host, version, username, password, port=None,
                  protocol=None):
-        if version != acos_client.AXAPI_21:
+        if self._just_digits(version) != acos_client.AXAPI_21:
             raise acos_errors.ACOSUnsupportedVersion()
         self.http = axapi_http.HttpClient(host, port, protocol)
         self.session = Session(self, username, password)
         self.current_partition = 'shared'
+
+    def _just_digits(self, s):
+        return ''.join(i for i in s if i.isdigit()) 
 
     @property
     def system(self):
