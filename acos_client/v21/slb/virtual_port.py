@@ -40,13 +40,19 @@ class VirtualPort(base.BaseV21):
         }
         self.http.post(self.url(action), params)
 
-    def create(self, virtual_server_name, name, **kwargs):
+    def create(self, virtual_server_name, name, protocol, port,
+               service_group_name,
+               s_pers_name=None, c_pers_name=None, status=1):
         self._set('slb.virtual_server.vport.create', virtual_server_name,
-                  name, **kwargs)
+                  name, protocol, port, service_group_name,
+                  s_pers_name, c_pers_name, status)
 
-    def update(self, virtual_server_name, name, **kwargs):
-        self._set('slb.virtual_server.vport.update', virtual_server_name,
-                  name, **kwargs)
+    def update(self, virtual_server_name, name, protocol, port,
+               service_group_name,
+               s_pers_name=None, c_pers_name=None, status=1):
+            self._set('slb.virtual_server.vport.update', virtual_server_name,
+                      name, protocol, port, service_group_name,
+                      s_pers_name, c_pers_name, status)
 
     def delete(self, virtual_server_name, name, protocol, port):
         params = {
