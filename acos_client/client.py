@@ -32,7 +32,7 @@ class Client(object):
         self.current_partition = 'shared'
 
     def _just_digits(self, s):
-        return ''.join(i for i in s if i.isdigit()) 
+        return ''.join(i for i in s if i.isdigit())
 
     @property
     def system(self):
