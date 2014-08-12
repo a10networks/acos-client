@@ -25,7 +25,7 @@ class Client(object):
 
     def __init__(self, host, version, username, password, port=None,
                  protocol=None):
-        if version != acos_client.AXAPI_21:
+        if version not in acos_client.AXAPI_VERSIONS:
             raise acos_errors.ACOSUnsupportedVersion()
         self.http = axapi_http.HttpClient(host, port, protocol)
         self.session = Session(self, username, password)

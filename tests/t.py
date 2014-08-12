@@ -44,6 +44,7 @@ instances = {
         'protocol': 'https',
         'user': 'admin',
         'password': 'a10',
+        'axapi': '21'
     },
     # '2.7.1': {
     #     'host': 'dougw-softax-271',
@@ -52,6 +53,14 @@ instances = {
     #     'user': 'admin',
     #     'password': 'a10',
     # }
+    '4.0.0': {
+        'host': 'dougw-softax-272',
+        'port': 8443,
+        'protocol': 'https',
+        'user': 'admin',
+        'password': 'a10',
+        'axapi': '40'
+    },
 }
 
 partitions = {
@@ -78,7 +87,7 @@ partitions = {
 
 def get_client(h, password=None):
     p = password or h['password']
-    c = acos_client.Client(h['host'], acos_client.AXAPI_21, h['user'], p,
+    c = acos_client.Client(h['host'], h['axapi'], h['user'], p,
                            port=h['port'],
                            protocol=h['protocol'])
     return c

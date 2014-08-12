@@ -18,6 +18,13 @@ class BaseV40(object):
     def __init__(self, client):
         self.client = client
         self.http = client.http
+        self.auth_headers = {
+            'Content-type': 'application/json',
+        }
+
+    def _set_auth_header(self, auth_id):
+        self.auth_headers['Authorization'] = "A10 %s" % auth_id
+    # _set_auth_header()
 
     def minimal_dict(self, my_dict):
         return dict((k, v) for k, v in my_dict.items() if v is not None)

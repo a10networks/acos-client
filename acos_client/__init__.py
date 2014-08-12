@@ -19,4 +19,6 @@ from acos_client.version import VERSION
 
 AXAPI_21 = 'v2.1'
 AXAPI_30 = 'v3.0'
+
+AXAPI_VERSIONS = (AXAPI_21, AXAPI_30)
 #AXAPI_SSH = 'ssh'
