@@ -22,6 +22,7 @@ import traceback
 sys.path.append(".")
 
 import acos_client
+from acos_client.errors import ACOSException
 
 
 def get_client(h, password=None):
@@ -135,7 +136,11 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("Server Create")
-    c.slb.server.delete("foobar")
+    try:
+        c.slb.server.delete("foobar")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
+
     c.slb.server.create("foobar", pmap['s1'])
     c.slb.server.get("foobar")
     try:
@@ -143,7 +148,10 @@ def run_all(version, ax, partition, pmap):
     except acos_client.errors.Exists:
         print("got already exists error, good")
     c.slb.server.delete("foobar")
-    c.slb.server.delete("foobar")
+    try:
+        c.slb.server.delete("foobar")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
     try:
         c.slb.server.get("foobar")
     except acos_client.errors.NotFound:
@@ -153,7 +161,11 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("SG Create")
-    c.slb.service_group.delete("pfoobar")
+    try:
+        c.slb.service_group.delete("pfoobar")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
+
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.ROUND_ROBIN)
     c.slb.service_group.get("pfoobar")
@@ -170,7 +182,10 @@ def run_all(version, ax, partition, pmap):
     except acos_client.errors.NotFound:
         print("got not found, good")
     c.slb.service_group.delete("pfoobar")
-    c.slb.service_group.delete("pfoobar")
+    try:
+        c.slb.service_group.delete("pfoobar")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
     try:
         c.slb.service_group.get("pfoobar")
     except acos_client.errors.NotFound:
@@ -181,20 +196,31 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("VIP Create")
-    c.slb.virtual_server.delete("vip3")
+    try:
+        c.slb.virtual_server.delete("vip3")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
     c.slb.virtual_server.create("vip3", pmap['vip3'])
     c.slb.virtual_server.get("vip3")
 
-    c.slb.virtual_server.delete("vfoobar")
+    try:
+        c.slb.virtual_server.delete("vfoobar")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
     c.slb.virtual_server.create("vfoobar", pmap['vip1'])
     c.slb.virtual_server.get("vfoobar")
     try:
         c.slb.virtual_server.create("vfoobar", pmap['vip1'])
     except acos_client.errors.Exists:
         print("got already exists error, good")
+
     c.slb.virtual_server.stats("vfoobar")
     c.slb.virtual_server.delete("vfoobar")
-    c.slb.virtual_server.delete("vfoobar")
+
+    try:
+        c.slb.virtual_server.delete("vfoobar")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
     try:
         c.slb.virtual_server.get("vfoobar")
     except acos_client.errors.NotFound:

@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
 import acos_client.v30.base as base
 
 
@@ -30,10 +29,7 @@ class Server(base.BaseV30):
                 "host": ip_address,
             }
         }
-        return self.http.post(self.url(self.url_prefix + name), json.dumps(params))
+        return self.http.post(self.url(self.url_prefix), params)
 
     def delete(self, name):
-        return self.http.delete(
-            self.url(self.url_prefix + name),
-            json.dumps({"server": {"name": name}})
-        )
+        return self.http.delete(self.url(self.url_prefix + name))

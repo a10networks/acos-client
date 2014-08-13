@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
 import acos_client.v30.base as base
 
 
@@ -46,7 +45,7 @@ class VirtualPort(base.BaseV30):
                 "status": status
             })
         }
-        return self.http.post(self.url(url), json.dumps(params))
+        return self.http.post(self.url(url), params)
 
     def create(self, virtual_server_name, name, protocol, port,
                service_group_name,
@@ -77,4 +76,4 @@ class VirtualPort(base.BaseV30):
             }
         }
 
-        return self.http.delete(self.url(url), json.dumps(params))
+        return self.http.delete(self.url(url), params)

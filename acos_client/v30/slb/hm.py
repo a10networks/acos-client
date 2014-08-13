@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
 import acos_client.v30.base as base
 
 
@@ -57,7 +56,7 @@ class HealthMonitor(base.BaseV30):
                 'expect_code': expect_code,
             }
 
-        self.http.post(self.url(action), json.dumps(params))
+        self.http.post(self.url(action), params)
 
     def create(self, name, mon_type, interval, timeout, max_retries,
                method=None, url=None, expect_code=None, port=None):

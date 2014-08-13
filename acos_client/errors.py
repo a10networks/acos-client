@@ -134,6 +134,9 @@ RESPONSE_CODES = {
     654311496: {
         '*': AddressSpecifiedIsInUse
     },
+    1023410176: {
+        '*': NotFound
+    }
 }
 
 

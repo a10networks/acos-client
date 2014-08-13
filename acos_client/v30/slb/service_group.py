@@ -12,28 +12,27 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
 import acos_client.v30.base as base
 from member import Member
 
 
 class ServiceGroup(base.BaseV30):
-    url_prefix = '/service-group/'
+    url_prefix = '/slb/service-group/'
 
     @property
     def member(self):
         return Member(self.client)
 
     # Valid LB methods
-    ROUND_ROBIN = 0
+    ROUND_ROBIN = 'round-robin' 
     WEIGHTED_ROUND_ROBIN = 1
-    LEAST_CONNECTION = 2
+    LEAST_CONNECTION = 'least-request'
     WEIGHTED_LEAST_CONNECTION = 3
     LEAST_CONNECTION_ON_SERVICE_PORT = 4
     WEIGHTED_LEAST_CONNECTION_ON_SERVICE_PORT = 5
-    FAST_RESPONSE_TIME = 6
-    LEAST_REQUEST = 7
-    STRICT_ROUND_ROBIN = 8
+    FAST_RESPONSE_TIME = 'fastest-response'
+    LEAST_REQUEST = 'least-request'
+    STRICT_ROUND_ROBIN = 'round-robin-strict'
     STATELESS_SOURCE_IP_HASH = 9
     STATELESS_SOURCE_IP_HASH_ONLY = 10
     STATELESS_DESTINATION_IP_HASH = 11
@@ -41,29 +40,32 @@ class ServiceGroup(base.BaseV30):
     STATELESS_PER_PACKAGE_ROUND_ROBIN = 13
 
     # Valid protocols
-    TCP = 2
-    UDP = 3
+    TCP = 'tcp'
+    UDP = 'udp'
 
     def get(self, name):
         return self.http.get(self.url(self.url_prefix + name))
 
-    def _set(self, name, protocol=None, lb_method=None, hm_name=None):
-        params = {
-            "service_group": self.minimal_dict({
-                "name": name,
-                "protocol": protocol,
-                "lb_method": lb_method,
-                "health_monitor": hm_name
+    def _set(self, name, protocol=None, lb_method=None, hm_name=None, update=False):
+        params = {"service-group": self.minimal_dict({
+            "name": name,
+            "protocol": protocol,
+            "lb-method": lb_method,
+            "health-monitor": hm_name
             })
         }
-        self.http.post(self.url(self.url_prefix + name), json.dumps(params))
+
+        if not update:
+            name = ''
+
+        self.http.post(self.url(self.url_prefix + name), params)
 
     def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN):
         self._set(name, protocol, lb_method)
 
     def update(self, name, protocol=None, lb_method=None, health_monitor=None):
         self._set(name, protocol, lb_method,
-                  health_monitor)
+                  health_monitor, update=True)
 
     def delete(self, name):
         self.http.delete(self.url(self.url_prefix + name))

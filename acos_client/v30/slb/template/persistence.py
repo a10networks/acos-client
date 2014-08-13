@@ -11,7 +11,6 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-import json
 
 import acos_client.errors as acos_errors
 import acos_client.v30.base as base
@@ -34,7 +33,7 @@ class BasePersistence(base.BaseV30):
             return False
 
     def create(self, name):
-        self.http.post(self.url(self.prefix + name), json.dumps(self.get_params(name)))
+        self.http.post(self.url(self.prefix + name), self.get_params(name))
 
     def delete(self, name):
         self.http.delete(self.url(self.prefix + name))

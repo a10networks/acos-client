@@ -34,9 +34,10 @@ class Partition(base.BaseV30):
     def create(self, name):
         params = {
             'partition': {
-                'max_aflex_file': 32,
-                'network_partition': 0,
-                'name': name
+                # 'max_aflex_file': 32,
+                # 'network_partition': 0,
+                'id': 1,
+                'partition-name': name
             }
         }
         if name != 'shared':
@@ -45,4 +46,4 @@ class Partition(base.BaseV30):
     def delete(self, name):
         if name != 'shared':
             self.client.session.close()
-            self.http.post(self.url("/delete/partition/" + name), {"name": name})
+            self.http.post(self.url("/delete/partition/" + name))

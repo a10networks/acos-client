@@ -100,9 +100,7 @@ class HttpClient(object):
         http.request(method, api_url, payload, hdrs)
 
         resp = http.getresponse()
-        # if resp.status != 200:
-        #     acos_errors.raise_http_axapi_ex(resp, method, api_url, payload)
-
+        LOG.debug("http response status %s", resp.status)
         return resp.read()
 
     def request(self, method, api_url, params={}, headers=None):
@@ -114,7 +112,7 @@ class HttpClient(object):
         else:
             payload = None
 
-        for i in [1, 2, 3]:
+        for i in range(3):
             try:
                 data = self._http(method, api_url, payload, headers=headers)
                 break

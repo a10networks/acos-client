@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
 import acos_client.v30.base as base
 
 
@@ -38,7 +37,7 @@ class Member(base.BaseV30):
             name=server_name,
             port=server_port
         )
-        action(self.url(url), json.dumps(params))
+        action(self.url(url), params)
 
     def create(self, service_group_name, server_name, server_port, status=1):
         self._write(self.http.post, service_group_name,

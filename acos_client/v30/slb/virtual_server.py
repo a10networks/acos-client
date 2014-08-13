@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
 import acos_client.v30.base as base
 from virtual_port import VirtualPort
 
@@ -27,25 +26,29 @@ class VirtualServer(base.BaseV30):
     def get(self, name):
         return self.http.get(self.url(self.url_prefix + name))
 
-    def _set(self, name, ip_address=None, status=1):
+    def _set(self, name, ip_address=None, status='stats-data-enable', update=False):
         params = {
-            "virtual_server": self.minimal_dict({
+            "virtual-server": self.minimal_dict({
                 "name": name,
-                "address": ip_address,
-                "status": status,
+                "ip-address": ip_address,
+                "stats-data-action": status,
             }),
         }
 
-        self.http.post(self.url(self.url_prefix + name), json.dumps(params))
+        if not update:
+            name = ''
 
-    def create(self, name, ip_address, status=1):
+        self.http.post(self.url(self.url_prefix + name), params)
+
+    def create(self, name, ip_address, status='stats-data-enable'):
         self._set(name, ip_address, status)
 
-    def update(self, name, ip_address=None, status=1):
-        self._set(name, ip_address, status)
+    def update(self, name, ip_address=None, status='stats-data-enable'):
+        self._set(name, ip_address, status, update=True)
 
     def delete(self, name):
         self.http.delete(self.url(self.url_prefix + name))
 
-    def stats(self, name):
-        return self.http.get(self.url(self.url_prefix + name + '/stats/'))
+    def stats(self, name=''):
+        resp = self.http.get(self.url(self.url_prefix + name + '/stats/'))
+        return resp
