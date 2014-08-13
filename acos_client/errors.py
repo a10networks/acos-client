@@ -17,6 +17,7 @@ class ACOSException(Exception):
     def __init__(self, code=1, msg=''):
         self.code = code
         self.msg = msg
+        super(ACOSException, self).__init__(msg)
 
 
 class ACOSUnsupportedVersion(ACOSException):
@@ -156,3 +157,13 @@ def raise_axapi_ex(response, action=None):
 
         raise ACOSException(code, response['response']['err']['msg'])
     raise ACOSException()
+
+
+def raise_http_axapi_ex(resp, method='', url='', payload=''):
+
+    msg = ("HTTP Error %s\n"
+           "method: %s\nurl: %s\npayload: %s\nresponse: \n%s\n") % (
+               resp.status, method, url, payload, resp.read())
+
+    raise ACOSException(resp.status, msg)
+# raise_http_axapi_ex()

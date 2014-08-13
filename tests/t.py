@@ -374,8 +374,8 @@ def main():
         # }
         '4.0.0': {
             'host': '172.18.61.64',
-            'port': 443,
-            'protocol': 'https',
+            'port': 80,
+            'protocol': 'http',
             'user': 'admin',
             'password': 'a10',
             'axapi': '30'

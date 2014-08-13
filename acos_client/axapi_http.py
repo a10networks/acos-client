@@ -98,7 +98,12 @@ class HttpClient(object):
             hdrs.update(headers)
 
         http.request(method, api_url, payload, hdrs)
-        return http.getresponse().read()
+
+        resp = http.getresponse()
+        # if resp.status != 200:
+        #     acos_errors.raise_http_axapi_ex(resp, method, api_url, payload)
+
+        return resp.read()
 
     def request(self, method, api_url, params={}, headers=None):
         LOG.debug("axapi_http: url = %s", api_url)

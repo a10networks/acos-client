@@ -11,7 +11,6 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-import json
 
 
 class Session(object):
@@ -22,9 +21,6 @@ class Session(object):
         self.username = username
         self.password = password
         self.session_id = None
-        self.headers = {
-            'Content-type': 'application/json',
-        }
 
     @property
     def id(self):
@@ -33,30 +29,32 @@ class Session(object):
         return self.session_id
 
     def authenticate(self, username, password):
+        print "SESSION AUTHENTICATE: "
         url = "/axapi/v3/auth"
-        headers = {'Content-type': 'application/json'}
-        payload = json.dumps(
-            {'credentials': {
-                "username": username,
-                "password": password
-                }
-             }
-        )
+        payload = {'credentials': {
+            "username": username,
+            "password": password
+        }
+        }
 
         if self.session_id is not None:
             self.close()
 
-        r = self.http.post(url, payload, headers=headers)
-        # print "RESPONSE ", r
+        r = self.http.post(url, payload)
+        print "SESSION AUTHENTICATE RESPONSE: ", r
         # print "RESPONSE ", dir(r)
-        # response = json.loads(str(r))
 
-        self.session_id = r.get('session_id', '')
-        self.headers['Authorization'] = "A10 %s" % self.session_id
+        if "authresponse" in r:
+            self.session_id = str(r['authresponse']['signature'])
+            self.http.HEADERS['Authorization'] = "A10 %s" % self.session_id
+        else:
+            self.session_id = None
+            self.http.HEADERS.pop('Authorization', None)
 
         return r
 
     def close(self):
+        print "SESSION CLOSE: "
         try:
             self.client.partition.active()
         except Exception:
@@ -64,8 +62,9 @@ class Session(object):
 
         try:
             url = "/axapi/v3/logoff"
-            r = self.http.post(url, "", headers=self.headers)
+            r = self.http.post(url, "")
         finally:
             self.session_id = None
+            self.http.HEADERS.pop('Authorization', None)
 
         return r

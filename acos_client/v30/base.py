@@ -18,9 +18,11 @@ class BaseV30(object):
     def __init__(self, client):
         self.client = client
         self.http = client.http
+        self.auth_header = {}
 
     def minimal_dict(self, my_dict):
         return dict((k, v) for k, v in my_dict.items() if v is not None)
 
     def url(self, action):
+        self.auth_header['Authorization'] = "A10 %s" % self.client.session.id
         return ("/axapi/v3" + action)
