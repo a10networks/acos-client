@@ -13,15 +13,27 @@
 #    under the License.
 
 import json
-import base
+import acos_client.v30.base as base
 
 
-class Action(base.BaseV30):
+class Server(base.BaseV30):
 
-    def write_memory(self):
-        payload = {
-            "memory": {
-                "primary": True
+    url_prefix = '/slb/server/'
+
+    def get(self, name):
+        return self.http.get(self.url(self.url_prefix + name))
+
+    def create(self, name, ip_address):
+        params = {
+            "server": {
+                "name": name,
+                "host": ip_address,
             }
         }
-        self.http.post(self.url("/write/memory/"), json.dumps(payload))
+        return self.http.post(self.url(self.url_prefix + name), json.dumps(params))
+
+    def delete(self, name):
+        return self.http.delete(
+            self.url(self.url_prefix + name),
+            json.dumps({"server": {"name": name}})
+        )

@@ -23,67 +23,6 @@ sys.path.append(".")
 
 import acos_client
 
-instances = {
-    # '2.7.2': {
-    #     'host': '10.10.100.20',
-    #     'port': 8443,
-    #     'protocol': 'https',
-    #     'user': 'admin',
-    #     'password': 'a10',
-    # },
-    # '2.7.1': {
-    #     'host': 'softax.a10boise.net',
-    #     'port': 8443,
-    #     'protocol': 'https',
-    #     'user': 'admin',
-    #     'password': 'i-9276ff9f',
-    # }
-    '2.7.2': {
-        'host': 'dougw-softax-272',
-        'port': 8443,
-        'protocol': 'https',
-        'user': 'admin',
-        'password': 'a10',
-        'axapi': '21'
-    },
-    # '2.7.1': {
-    #     'host': 'dougw-softax-271',
-    #     'port': 8443,
-    #     'protocol': 'https',
-    #     'user': 'admin',
-    #     'password': 'a10',
-    # }
-    '4.0.0': {
-        'host': 'dougw-softax-272',
-        'port': 8443,
-        'protocol': 'https',
-        'user': 'admin',
-        'password': 'a10',
-        'axapi': '40'
-    },
-}
-
-partitions = {
-    'p1': {
-        's1': '192.168.2.244',
-        'vip1': '192.168.2.240',
-        'vip2': '192.168.2.239',
-        'vip3': '192.168.2.238'
-    },
-    'p2': {
-        's1': '192.168.2.234',
-        'vip1': '192.168.2.230',
-        'vip2': '192.168.2.229',
-        'vip3': '192.168.2.228'
-    },
-    'shared': {
-        's1': '192.168.2.254',
-        'vip1': '192.168.2.250',
-        'vip2': '192.168.2.249',
-        'vip3': '192.168.2.248'
-    }
-}
-
 
 def get_client(h, password=None):
     p = password or h['password']
@@ -401,13 +340,79 @@ def run_all(version, ax, partition, pmap):
             pass
 
 
-for partition, v in partitions.items():
-    for version, ax in instances.items():
-        try:
-            run_all(version, ax, partition, v)
-        except Exception as e:
-            traceback.print_exc()
-            print(e)
-            sys.exit(1)
+def main():
 
-sys.exit(0)
+    instances = {
+        # '2.7.2': {
+        #     'host': '10.10.100.20',
+        #     'port': 8443,
+        #     'protocol': 'https',
+        #     'user': 'admin',
+        #     'password': 'a10',
+        # },
+        # '2.7.1': {
+        #     'host': 'softax.a10boise.net',
+        #     'port': 8443,
+        #     'protocol': 'https',
+        #     'user': 'admin',
+        #     'password': 'i-9276ff9f',
+        # }
+        '2.7.2': {
+            'host': 'dougw-softax-272',
+            'port': 8443,
+            'protocol': 'https',
+            'user': 'admin',
+            'password': 'a10',
+            'axapi': '21'
+        },
+        # '2.7.1': {
+        #     'host': 'dougw-softax-271',
+        #     'port': 8443,
+        #     'protocol': 'https',
+        #     'user': 'admin',
+        #     'password': 'a10',
+        # }
+        '4.0.0': {
+            'host': 'dougw-softax-272',
+            'port': 8443,
+            'protocol': 'https',
+            'user': 'admin',
+            'password': 'a10',
+            'axapi': '30'
+        },
+    }
+
+    partitions = {
+        'p1': {
+            's1': '192.168.2.244',
+            'vip1': '192.168.2.240',
+            'vip2': '192.168.2.239',
+            'vip3': '192.168.2.238'
+        },
+        'p2': {
+            's1': '192.168.2.234',
+            'vip1': '192.168.2.230',
+            'vip2': '192.168.2.229',
+            'vip3': '192.168.2.228'
+        },
+        'shared': {
+            's1': '192.168.2.254',
+            'vip1': '192.168.2.250',
+            'vip2': '192.168.2.249',
+            'vip3': '192.168.2.248'
+        }
+    }
+
+    for partition, v in partitions.items():
+        for version, ax in instances.items():
+            try:
+                run_all(version, ax, partition, v)
+            except Exception as e:
+                traceback.print_exc()
+                print(e)
+                sys.exit(1)
+# main()
+
+if __name__ == '__main__':
+    main()
+    sys.exit(0)
