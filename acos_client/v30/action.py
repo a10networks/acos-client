@@ -12,15 +12,19 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import json
+import base
 
-class BaseV30(object):
 
-    def __init__(self, client):
-        self.client = client
-        self.http = client.http
+class Action(base.BaseV30):
 
-    def minimal_dict(self, my_dict):
-        return dict((k, v) for k, v in my_dict.items() if v is not None)
-
-    def url(self, action):
-        return ("/axapi/v3" + action)
+    def write_memory(self):
+        payload = {
+            "memory" : {
+                "primary": True
+            }
+        }
+        self.http.post(
+            self.url("/write"),
+            json.dumps(payload)
+        )

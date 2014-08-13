@@ -12,15 +12,20 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from action import Action
+import base
+from partition import Partition
 
-class BaseV30(object):
 
-    def __init__(self, client):
-        self.client = client
-        self.http = client.http
+class System(base.BaseV30):
 
-    def minimal_dict(self, my_dict):
-        return dict((k, v) for k, v in my_dict.items() if v is not None)
+    @property
+    def action(self):
+        return Action(self.client)
 
-    def url(self, action):
-        return ("/axapi/v3" + action)
+    @property
+    def partition(self):
+        return Partition(self.client)
+
+    def information(self):
+        return self.http.get(self.url("/system"))
