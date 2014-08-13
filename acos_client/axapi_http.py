@@ -86,17 +86,21 @@ class HttpClient(object):
             else:
                 port = 443
 
-    def _http(self, method, api_url, payload):
+    def _http(self, method, api_url, payload, headers=None):
         if self.protocol == 'https':
             http = httplib.HTTPSConnection(self.host, self.port)
             http.connect = lambda: force_tlsv1_connect(http)
         else:
             http = httplib.HTTPConnection(self.host, self.port)
 
-        http.request(method, api_url, payload, self.HEADERS)
+        hdrs = self.HEADERS
+        if headers:
+            hdrs.update(headers)
+
+        http.request(method, api_url, payload, hdrs)
         return http.getresponse().read()
 
-    def request(self, method, api_url, params={}):
+    def request(self, method, api_url, params={}, headers=None):
         LOG.debug("axapi_http: url = %s", api_url)
         LOG.debug("axapi_http: params = %s", params)
 
@@ -107,7 +111,7 @@ class HttpClient(object):
 
         for i in [1, 2, 3]:
             try:
-                data = self._http(method, api_url, payload)
+                data = self._http(method, api_url, payload, headers=headers)
                 break
             except socket.error as e:
                 if e.errno == errno.ECONNRESET:
@@ -133,8 +137,11 @@ class HttpClient(object):
 
         return r
 
-    def get(self, api_url, params={}):
-        return self.request("GET", api_url, params)
+    def get(self, api_url, params={}, headers=None):
+        return self.request("GET", api_url, params, headers=None)
 
-    def post(self, api_url, params={}):
-        return self.request("POST", api_url, params)
+    def post(self, api_url, params={}, headers=None):
+        return self.request("POST", api_url, params, headers=headers)
+
+    def delete(self, api_url, params={}, headers=None):
+        return self.request("DELETE", api_url, params, headers=headers)

@@ -13,10 +13,10 @@
 #    under the License.
 
 import json
-import acos_client.v21.base as base
+import acos_client.v30.base as base
 
 
-class VirtualPort(base.BaseV21):
+class VirtualPort(base.BaseV30):
 
     # Protocols
     TCP = 2

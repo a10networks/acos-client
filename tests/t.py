@@ -357,14 +357,14 @@ def main():
         #     'user': 'admin',
         #     'password': 'i-9276ff9f',
         # }
-        '2.7.2': {
-            'host': 'dougw-softax-272',
-            'port': 8443,
-            'protocol': 'https',
-            'user': 'admin',
-            'password': 'a10',
-            'axapi': '21'
-        },
+        # '2.7.2': {
+        #     'host': 'dougw-softax-272',
+        #     'port': 8443,
+        #     'protocol': 'https',
+        #     'user': 'admin',
+        #     'password': 'a10',
+        #     'axapi': '21'
+        # },
         # '2.7.1': {
         #     'host': 'dougw-softax-271',
         #     'port': 8443,
@@ -373,8 +373,8 @@ def main():
         #     'password': 'a10',
         # }
         '4.0.0': {
-            'host': 'dougw-softax-272',
-            'port': 8443,
+            'host': '172.18.61.64',
+            'port': 443,
             'protocol': 'https',
             'user': 'admin',
             'password': 'a10',

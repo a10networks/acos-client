@@ -35,19 +35,23 @@ class Session(object):
     def authenticate(self, username, password):
         url = "/axapi/v3/auth"
         headers = {'Content-type': 'application/json'}
-        payload = json.dumps({'credentials':
-                              {"username":dusername,
-                               "password":password
-                              }
-                             })
+        payload = json.dumps(
+            {'credentials': {
+                "username": username,
+                "password": password
+                }
+             }
+        )
 
         if self.session_id is not None:
             self.close()
 
-        r = self.http.post(url, payload, headers)
-        response = json.loads(r)
+        r = self.http.post(url, payload, headers=headers)
+        # print "RESPONSE ", r
+        # print "RESPONSE ", dir(r)
+        # response = json.loads(str(r))
 
-        self.session_id = r['session_id']
+        self.session_id = r.get('session_id', '')
         self.headers['Authorization'] = "A10 %s" % self.session_id
 
         return r
@@ -60,7 +64,7 @@ class Session(object):
 
         try:
             url = "/axapi/v3/logoff"
-            r = self.http.post(url, "", self.headers)
+            r = self.http.post(url, "", headers=self.headers)
         finally:
             self.session_id = None
 
