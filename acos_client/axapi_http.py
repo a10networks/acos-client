@@ -54,7 +54,7 @@ def extract_method(api_url):
 
 broken_replies = {
     ('<?xml version="1.0" encoding="utf-8" ?><response status="ok">'
-     '</response>'): "{'response': {'status': 'OK'}}",
+     '</response>'): '{"response": {"status": "OK"}}',
 
     ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
      '<error code="999" msg=" Partition does not exist. '
