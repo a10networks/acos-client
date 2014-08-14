@@ -18,34 +18,64 @@ import acos_client.v30.base as base
 class VirtualPort(base.BaseV30):
 
     # Protocols
-    TCP = 2
-    UDP = 3
-    HTTP = 11
-    HTTPS = 12
-    url_tmpl = '/slb/virtual-server/{name}/port/{port_number}+{protocol}'
+    TCP = "tcp"
+    UDP = "udp"
+    OTHERS = "others"
+    DIAMETER = "diameter"
+    DNS_TCP = "dns-tcp"
+    DNS_UDP = "dns-udp"
+    FAST_HTTP = "fast-http"
+    FIX = "fix"
+    FTP = "ftp"
+    FTP_PROXY = "ftp-proxy"
+    HTTP = "http"
+    HTTPS = "https"
+    MLB = "mlb"
+    MMS = "mms"
+    MYSQL = "mysql"
+    MSSQL = "mssql"
+    RADIUS = "radius"
+    RTSP = "rtsp"
+    SIP = "sip"
+    SIP_TCP = "sip-tcp"
+    SIPS = "sips"
+    SMPP_TCP = "smpp-tcp"
+    SPDY = "spdy"
+    SPDYS = "spdys"
+    SMTP = "smtp"
+    SSL_PROXY = "ssl-proxy"
+    TCP_PROXY = "tcp-proxy"
+    TFTP = "tftp"
+
+    url_server_tmpl = '/slb/virtual-server/{name}/port/'
+    url_port_tmpl = '/slb/virtual-server/{name}/port/{port_number}+{protocol}'
 
     def _set(self, virtual_server_name, name, protocol, port,
              service_group_name,
-             s_pers_name=None, c_pers_name=None, status=1):
-
-        url = self.url_tmpl.format(
-            name=virtual_server_name,
-            port_number=port,
-            protocol=protocol
-        )
+             s_pers_name=None, c_pers_name=None, stats=0, update=False):
 
         params = {
-            "vport": self.minimal_dict({
+            "port": self.minimal_dict({
                 "name": name,
-                "service_group": service_group_name,
+                "service-group": service_group_name,
                 "protocol": protocol,
-                "port": int(port),
-                "source_ip_persistence_template": s_pers_name,
-                "cookie_persistence_template": c_pers_name,
-                "status": status
+                "port-number": int(port),
+                "source-ip-persistence-template": s_pers_name,
+                "cookie-persistence-template": c_pers_name,
+                "extended-stats": stats
             })
         }
-        return self.http.post(self.url(url), params)
+
+        if update:
+            url = self.url_port_tmpl.format(
+                name=virtual_server_name,
+                port_number=port,
+                protocol=protocol
+            )
+            return self.http.post(self.url(url), params)
+        
+        url = self.url_server_tmpl.format(name=virtual_server_name)
+        return self.http.post(self.url(url))
 
     def create(self, virtual_server_name, name, protocol, port,
                service_group_name,
@@ -59,21 +89,14 @@ class VirtualPort(base.BaseV30):
                s_pers_name=None, c_pers_name=None, status=1):
         return self._set(virtual_server_name,
                          name, protocol, port, service_group_name,
-                         s_pers_name, c_pers_name, status)
+                         s_pers_name, c_pers_name, status, True)
 
     def delete(self, virtual_server_name, name, protocol, port):
 
-        url = self.url_tmpl.format(
+        url = self.url_port_tmpl.format(
             name=virtual_server_name,
             port_number=port,
             protocol=protocol
         )
-        params = {
-            "vport": {
-                "name": name,
-                "protocol": protocol,
-                "port": int(port)
-            }
-        }
 
-        return self.http.delete(self.url(url), params)
+        return self.http.delete(self.url(url))

@@ -226,8 +226,12 @@ def run_all(version, ax, partition, pmap):
     except acos_client.errors.NotFound:
         print("got not found, good")
 
-    c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
-                                      c.slb.virtual_server.vport.HTTP, 80)
+    try:
+        c.slb.virtual_server.vport.delete(
+            "vip3", "vip3_VPORT", c.slb.virtual_server.vport.HTTP, 80)
+    except acos_client.errors.NotFound:
+        print("got not found, good")
+
     c.slb.virtual_server.vport.create("vip3", "vip3_VPORT",
                                       service_group_name="pfoobar",
                                       protocol=c.slb.virtual_server.vport.HTTP,

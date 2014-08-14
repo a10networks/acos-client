@@ -66,7 +66,8 @@ broken_replies = {
      '<error code="999" msg=" Failed to get partition. (internal error: '
      '402718800)" /></response>'):
     ('{"response": {"status": "fail", "err": {"code": 999,'
-     '"msg": " Partition does not exist."}}}')
+     '"msg": " Partition does not exist."}}}'),
+    "": '{"response": {"status": "OK"}}'
 }
 
 
@@ -131,6 +132,7 @@ class HttpClient(object):
         #     return {'response': {'status': 'OK'}}
         if data in broken_replies:
             data = broken_replies[data]
+            LOG.debug("axapi_http: broken reply, new response: %s", data)
 
         r = json.loads(data, encoding='utf-8')
 
