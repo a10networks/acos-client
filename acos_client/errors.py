@@ -51,6 +51,10 @@ class NoSuchServiceGroup(ACOSException):
     pass
 
 
+class InUse(ACOSException):
+    pass
+
+
 RESPONSE_CODES = {
     999: {
         '*': NotFound
@@ -82,7 +86,10 @@ RESPONSE_CODES = {
     33619968: {
         'slb.hm.delete': None,
         '*': NotFound
-        },
+    },
+    33619969: {
+        '*': InUse,
+    },
     67174402: {
         'slb.server.delete': None,
         '*': NotFound
