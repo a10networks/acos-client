@@ -66,7 +66,12 @@ broken_replies = {
      '<error code="999" msg=" Failed to get partition. (internal error: '
      '402718800)" /></response>'):
     ('{"response": {"status": "fail", "err": {"code": 999,'
-     '"msg": " Partition does not exist."}}}')
+     '"msg": " Partition does not exist."}}}'),
+
+    ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
+     '<error code="1076" msg="Invalid partition parameter." /></response>'):
+    ('{"response": {"status": "fail", "err": {"code": 1076,'
+     '"msg": "Invalid partition parameter."}}}'),
 }
 
 
