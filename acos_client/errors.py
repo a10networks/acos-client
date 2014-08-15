@@ -55,6 +55,10 @@ class InUse(ACOSException):
     pass
 
 
+class InvalidPartitionParameter(ACOSException):
+    pass
+
+
 RESPONSE_CODES = {
     999: {
         '*': NotFound
@@ -70,6 +74,10 @@ RESPONSE_CODES = {
     1043: {
         'slb.virtual_server.vport.delete': None,
         '*': NotFound
+    },
+    1076: {
+        'session.close': None,
+        '*': InvalidPartitionParameter
     },
     1405: {
         '*': Exists
