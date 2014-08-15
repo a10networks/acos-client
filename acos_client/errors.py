@@ -137,6 +137,9 @@ RESPONSE_CODES = {
     654311465: {
         '*': AddressSpecifiedIsInUse
     },
+    654311495: {
+        '*': InUse,
+    },
     654311496: {
         '*': AddressSpecifiedIsInUse
     },
