@@ -23,6 +23,9 @@ class VirtualServer(base.BaseV21):
     def vport(self):
         return VirtualPort(self.client)
 
+    def all(self):
+        return self.http.post(self.url("slb.virtual_server.getAll"))
+
     def get(self, name):
         return self.http.post(self.url("slb.virtual_server.search"),
                               {'name': name})
