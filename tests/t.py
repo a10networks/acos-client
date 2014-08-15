@@ -236,10 +236,11 @@ def run_all(version, ax, partition, pmap):
     c.slb.virtual_server.delete("vip3")
     c.slb.virtual_server.create("vip3", pmap['vip3'])
     c.slb.virtual_server.get("vip3")
-
+    
     c.slb.virtual_server.delete("vfoobar")
     c.slb.virtual_server.create("vfoobar", pmap['vip1'])
     c.slb.virtual_server.get("vfoobar")
+    c.slb.virtual_server.all()
     try:
         c.slb.virtual_server.create("vfoobar", pmap['vip1'])
     except acos_client.errors.Exists:
