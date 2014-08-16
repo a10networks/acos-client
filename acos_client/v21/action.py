@@ -18,4 +18,7 @@ import base
 class Action(base.BaseV21):
 
     def write_memory(self):
-        self.http.get(self.url("system.action.write_memory"))
+        try:
+            self.http.get(self.url("system.action.write_memory"))
+        except Exception:
+            pass
