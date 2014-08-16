@@ -126,6 +126,10 @@ class HttpClient(object):
                     last_e = e
                     continue
                 raise e
+            except httplib.BadStatusLine:
+                time.sleep(0.1)
+                last_e = e
+                continue
 
         if last_e is not None:
             raise e
