@@ -12,6 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client.errors as acos_errors
+
 
 class Session(object):
 
@@ -53,7 +55,8 @@ class Session(object):
                    ".close&session_id=%s" % self.session_id)
 
             r = self.http.post(url, {"session_id": self.session_id})
-
+        except acos_errors.InvalidPartitionParameter:
+            pass
         finally:
             self.session_id = None
 
