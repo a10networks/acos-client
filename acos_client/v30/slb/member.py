@@ -17,36 +17,57 @@ import acos_client.v30.base as base
 
 class Member(base.BaseV30):
 
-    url_tmpl = '/slb/service-group/{gname}/member/{name}+{port}/'
+    url_base_tmpl = '/slb/service-group/{gname}/member/'
+    url_mbr_tmpl = '{name}+{port}/'
 
-    def _write(self, action,
+    STATUS_ENABLE = 0
+    STATUS_DISABLE = 1
+
+    def _write(self,
                service_group_name,
                server_name,
                server_port,
-               status=None):
+               status=STATUS_ENABLE,
+               update=False):
+
+        url = self.url_base_tmpl.format(gname=service_group_name)
+        if update:
+            url += self.url_mbr_tmpl.format(
+                name=server_name,
+                port=server_port
+            )
+
         params = {
             "member": self.minimal_dict({
-                "server": server_name,
+                "name": server_name,
                 "port": int(server_port),
-                "status": status
+                # flip status code, becuase it's a disable flag in v30
+                "member-stats-data-disable": status,
             })
         }
 
-        url = self.url_tmpl.format(
-            gname=service_group_name,
+        self.http.post(self.url(url), params)
+
+    def create(self,
+               service_group_name,
+               server_name,
+               server_port,
+               status=STATUS_ENABLE):
+        self._write(service_group_name,
+                    server_name, server_port, status)
+
+    def update(self,
+               service_group_name,
+               server_name,
+               server_port,
+               status=STATUS_ENABLE):
+        self._write(service_group_name,
+                    server_name, server_port, status, update=True)
+
+    def delete(self, service_group_name, server_name, server_port):
+        url = self.url_base_tmpl.format(gname=service_group_name)
+        url += self.url_mbr_tmpl.format(
             name=server_name,
             port=server_port
         )
-        action(self.url(url), params)
-
-    def create(self, service_group_name, server_name, server_port, status=1):
-        self._write(self.http.post, service_group_name,
-                    server_name, server_port, status)
-
-    def update(self, service_group_name, server_name, server_port, status=1):
-        self._write(self.http.post, service_group_name,
-                    server_name, server_port, status)
-
-    def delete(self, service_group_name, server_name, server_port):
-        self._write(self.http.delete,  service_group_name,
-                    server_name, server_port)
+        self.http.delete(self.url(url))

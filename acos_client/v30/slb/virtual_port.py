@@ -48,7 +48,7 @@ class VirtualPort(base.BaseV30):
     TFTP = "tftp"
 
     url_server_tmpl = '/slb/virtual-server/{name}/port/'
-    url_port_tmpl = '/slb/virtual-server/{name}/port/{port_number}+{protocol}'
+    url_port_tmpl = '{port_number}+{protocol}'
 
     def _set(self, virtual_server_name, name, protocol, port,
              service_group_name,
@@ -60,22 +60,19 @@ class VirtualPort(base.BaseV30):
                 "service-group": service_group_name,
                 "protocol": protocol,
                 "port-number": int(port),
-                "source-ip-persistence-template": s_pers_name,
-                "cookie-persistence-template": c_pers_name,
+                "template-persist-source-ip": s_pers_name,
+                "template-persist-cookie": c_pers_name,
                 "extended-stats": stats
             })
         }
 
-        if update:
-            url = self.url_port_tmpl.format(
-                name=virtual_server_name,
-                port_number=port,
-                protocol=protocol
-            )
-            return self.http.post(self.url(url), params)
-        
         url = self.url_server_tmpl.format(name=virtual_server_name)
-        return self.http.post(self.url(url))
+        if update:
+            url += self.url_port_tmpl.format(
+                port_number=port, protocol=protocol
+            )
+
+        return self.http.post(self.url(url), params)
 
     def create(self, virtual_server_name, name, protocol, port,
                service_group_name,
@@ -92,11 +89,6 @@ class VirtualPort(base.BaseV30):
                          s_pers_name, c_pers_name, status, True)
 
     def delete(self, virtual_server_name, name, protocol, port):
-
-        url = self.url_port_tmpl.format(
-            name=virtual_server_name,
-            port_number=port,
-            protocol=protocol
-        )
-
+        url = self.url_server_tmpl.format(name=virtual_server_name)
+        url += self.url_port_tmpl.format(port_number=port, protocol=protocol)
         return self.http.delete(self.url(url))

@@ -135,7 +135,11 @@ RESPONSE_CODES = {
         '*': AddressSpecifiedIsInUse
     },
     1023410176: {
-        '*': NotFound
+        '/axapi/v3/slb/service-group/': NoSuchServiceGroup,
+        '*': NotFound,
+    },
+    1207959957: {
+        '*': NotFound,
     }
 }
 
@@ -150,8 +154,13 @@ def raise_axapi_ex(response, action=None):
 
             if action is not None and action in ex_dict:
                 ex = ex_dict[action]
-            elif '*' in ex_dict:
-                ex = ex_dict['*']
+            else:
+                for k in ex_dict.keys():
+                    if action.startswith(k):
+                        ex = ex_dict[k]
+                # end for k in ex_dict.keys()
+                if not ex and '*' in ex_dict:
+                    ex = ex_dict['*']
 
             if ex is not None:
                 raise ex(code, response['response']['err']['msg'])

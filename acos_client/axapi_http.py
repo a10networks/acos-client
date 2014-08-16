@@ -50,7 +50,7 @@ def extract_method(api_url):
     m = re.search("method=([^&]+)", api_url)
     if m is not None:
         return m.group(1)
-    return ""
+    return api_url
 
 broken_replies = {
     ('<?xml version="1.0" encoding="utf-8" ?><response status="ok">'
@@ -73,8 +73,10 @@ broken_replies = {
 
 class HttpClient(object):
     HEADERS = {
-        "Content-Type": "application/json",
-        "User-Agent": "ACOS-Client-AGENT-%s" % VERSION
+        "Content-type": "application/json",
+        "User-Agent": "ACOS-Client-AGENT-%s" % VERSION,
+        # 'Connection': 'keep-alive',
+        'Accept': '*/*',
     }
 
     def __init__(self, host, port=None, protocol="https"):
@@ -98,18 +100,23 @@ class HttpClient(object):
         if headers:
             hdrs.update(headers)
 
+        LOG.debug("axapi_http: url:     %s", api_url)
+        LOG.debug("axapi_http: method:  %s", method)
+        LOG.debug("axapi_http: headers: %s", hdrs)
+        LOG.debug("axapi_http: payload: %s", payload)
         http.request(method, api_url, payload, hdrs)
 
         resp = http.getresponse()
+        # print "RESP ", dir(resp)
+        print "RESP HEADERS", resp.getheaders()
         LOG.debug("http response status %s", resp.status)
         return resp.read()
 
     def request(self, method, api_url, params={}, headers=None):
-        LOG.debug("axapi_http: url = %s", api_url)
         LOG.debug("axapi_http: params = %s", params)
 
         if params:
-            payload = json.dumps(params, encoding='utf-8')
+            payload = json.dumps(params)
         else:
             payload = None
 
@@ -147,6 +154,9 @@ class HttpClient(object):
 
     def post(self, api_url, params={}, headers=None):
         return self.request("POST", api_url, params, headers=headers)
+
+    def put(self, api_url, params={}, headers=None):
+        return self.request("PUT", api_url, params, headers=headers)
 
     def delete(self, api_url, params={}, headers=None):
         return self.request("DELETE", api_url, params, headers=headers)

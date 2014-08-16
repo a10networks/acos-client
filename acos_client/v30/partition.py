@@ -13,7 +13,6 @@
 #    under the License.
 
 import acos_client.errors as acos_errors
-
 import base
 
 
@@ -27,23 +26,21 @@ class Partition(base.BaseV30):
             return False
 
     def active(self, name='shared'):
+
         if self.client.current_partition != name:
-            self.http.post(self.url("/active-partition/" + name), {'name': name})
+            self.http.post(self.url("/active-partition/" + name))
             self.client.current_partition = name
 
-    def create(self, name):
-        params = {
-            'partition': {
-                # 'max_aflex_file': 32,
-                # 'network_partition': 0,
-                'id': 1,
-                'partition-name': name
-            }
-        }
+    def create(self, name, p_id=2):
         if name != 'shared':
-            self.http.post(self.url("/partition/" + name), params)
+            params = {
+                "partition": {
+                    "id": p_id,
+                    "partition-name": name
+                }
+            }
+            self.http.post(self.url("/partition"), params)
 
     def delete(self, name):
         if name != 'shared':
-            self.client.session.close()
-            self.http.post(self.url("/delete/partition/" + name))
+            self.http.delete(self.url("/delete/partition/" + name))

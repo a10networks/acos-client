@@ -163,7 +163,7 @@ def run_all(version, ax, partition, pmap):
     print("SG Create")
     try:
         c.slb.service_group.delete("pfoobar")
-    except acos_client.errors.NotFound:
+    except acos_client.errors.NoSuchServiceGroup:
         print("got not found, good")
 
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
@@ -179,16 +179,16 @@ def run_all(version, ax, partition, pmap):
     try:
         c.slb.service_group.update("pnfoobar", c.slb.service_group.TCP,
                                    c.slb.service_group.LEAST_CONNECTION)
-    except acos_client.errors.NotFound:
+    except acos_client.errors.NoSuchServiceGroup:
         print("got not found, good")
     c.slb.service_group.delete("pfoobar")
     try:
         c.slb.service_group.delete("pfoobar")
-    except acos_client.errors.NotFound:
+    except acos_client.errors.NoSuchServiceGroup:
         print("got not found, good")
     try:
         c.slb.service_group.get("pfoobar")
-    except acos_client.errors.NotFound:
+    except acos_client.errors.NoSuchServiceGroup:
         print("got not found, good")
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.ROUND_ROBIN)
@@ -246,13 +246,20 @@ def run_all(version, ax, partition, pmap):
         print("got already exists error, good")
     c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
                                       c.slb.virtual_server.vport.HTTP, 80)
-    c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
-                                      c.slb.virtual_server.vport.HTTP, 80)
+    try:
+        c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
+                                        c.slb.virtual_server.vport.HTTP, 80)
+    except acos_client.errors.NotFound:
+        print("got not found, good")
 
     print("=============================================================")
     print("")
     print("HM Create")
-    c.slb.hm.delete("hfoobar")
+    try:
+        c.slb.hm.delete("hfoobar")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
+
     c.slb.hm.create("hfoobar", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200', 80)
     c.slb.hm.get("hfoobar")
     try:
@@ -266,7 +273,12 @@ def run_all(version, ax, partition, pmap):
     except acos_client.errors.NotFound:
         print("got not found, good")
     c.slb.hm.delete("hfoobar")
-    c.slb.hm.delete("hfoobar")
+
+    try:
+        c.slb.hm.delete("hfoobar")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
+
     try:
         c.slb.hm.get("hfoobar")
     except acos_client.errors.NotFound:
@@ -275,7 +287,12 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("Member Create")
-    c.slb.service_group.member.delete("pfoobar", "foobar", 80)
+
+    try:
+        c.slb.service_group.member.delete("pfoobar", "foobar", 80)
+    except acos_client.errors.NoSuchServiceGroup:
+        print("got not found, good")
+
     c.slb.service_group.member.create("pfoobar", "foobar", 80)
     try:
         c.slb.service_group.member.create("pfoobar", "foobar", 80)
@@ -285,19 +302,27 @@ def run_all(version, ax, partition, pmap):
                                       c.slb.DOWN)
     try:
         c.slb.service_group.member.update("pfoobar", "nfoobar", 80)
-    except acos_client.errors.NotFound:
+    except acos_client.errors.NoSuchServiceGroup:
         print("got not found, good")
+
     try:
         c.slb.service_group.member.update("pnfoobar", "foobar", 80)
     except acos_client.errors.NoSuchServiceGroup:
         print("got not found, good")
+
     c.slb.service_group.member.delete("pfoobar", "foobar", 80)
-    c.slb.service_group.member.delete("pfoobar", "foobar", 80)
+    try:
+        c.slb.service_group.member.delete("pfoobar", "foobar", 80)
+    except acos_client.errors.NoSuchServiceGroup:
+        print("got not found, good")
 
     print("=============================================================")
     print("")
     print("Source Ip Persistence")
-    c.slb.template.src_ip_persistence.delete("sip1")
+    try:
+        c.slb.template.src_ip_persistence.delete("sip1")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
     c.slb.template.src_ip_persistence.create("sip1")
     try:
         c.slb.template.src_ip_persistence.create("sip1")
@@ -306,7 +331,11 @@ def run_all(version, ax, partition, pmap):
     c.slb.template.src_ip_persistence.get("sip1")
     c.slb.template.src_ip_persistence.exists("sip1")
     c.slb.template.src_ip_persistence.delete("sip1")
-    c.slb.template.src_ip_persistence.delete("sip1")
+
+    try:
+        c.slb.template.src_ip_persistence.delete("sip1")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
     try:
         c.slb.template.src_ip_persistence.get("sip1")
     except acos_client.errors.NotFound:
@@ -316,7 +345,11 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("Http Cookie Persistence")
-    c.slb.template.cookie_persistence.delete("cp1")
+    try:
+        c.slb.template.cookie_persistence.delete("cp1")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
+
     c.slb.template.cookie_persistence.create("cp1")
     try:
         c.slb.template.cookie_persistence.create("cp1")
@@ -325,7 +358,10 @@ def run_all(version, ax, partition, pmap):
     c.slb.template.cookie_persistence.get("cp1")
     c.slb.template.cookie_persistence.exists("cp1")
     c.slb.template.cookie_persistence.delete("cp1")
-    c.slb.template.cookie_persistence.delete("cp1")
+    try:
+        c.slb.template.cookie_persistence.delete("cp1")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
     try:
         c.slb.template.cookie_persistence.get("cp1")
     except acos_client.errors.NotFound:
@@ -335,8 +371,12 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("Vip with pers")
-    c.slb.virtual_server.delete("vip2")
+    try:
+        c.slb.virtual_server.delete("vip2")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
     c.slb.virtual_server.create("vip2", pmap['vip2'])
+    c.slb.virtual_server.get("vip2")
     c.slb.virtual_server.vport.create(
         "vip2", "vip2_vport1",
         protocol=c.slb.virtual_server.vport.HTTPS,

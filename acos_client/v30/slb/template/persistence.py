@@ -33,7 +33,7 @@ class BasePersistence(base.BaseV30):
             return False
 
     def create(self, name):
-        self.http.post(self.url(self.prefix + name), self.get_params(name))
+        self.http.post(self.url(self.prefix), self.get_params(name))
 
     def delete(self, name):
         self.http.delete(self.url(self.prefix + name))

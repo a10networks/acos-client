@@ -17,44 +17,58 @@ import acos_client.v30.base as base
 
 class HealthMonitor(base.BaseV30):
 
-    # Valid types
-    ICMP = 0
-    TCP = 1
-    HTTP = 3
-    HTTPS = 4
+    # Valid method objects
+    ICMP = 'icmp'
+    TCP = 'tcp'
+    HTTP = 'http'
+    HTTPS = 'https'
     url_prefix = "/health/monitor/"
+
+    _method_objects = {
+        ICMP: {
+            'method-icmp': 1,
+            'a10-url': '',
+        },
+        TCP: {
+            'method-tcp': 1,
+            'a10-url': '',
+        },
+        HTTP: {
+            'method-http': 1,
+            'a10-url': '',
+            'http-port': 80,
+        },
+        HTTPS: {
+            'method-https': 1,
+            'a10-url': '',
+            'https-port': 443,
+        },
+    }
 
     def get(self, name):
         return self.http.get(self.url(self.url_prefix + name))
 
-    def _set(self, action, name, mon_type, interval, timeout, max_retries,
+    def _set(self, action, name, mon_method, interval, timeout, max_retries,
              method=None, url=None, expect_code=None, port=None):
-        defs = {
-            self.HTTP: {
-                'protocol': 'http',
-                'port': 80
-            },
-            self.HTTPS: {
-                'protocol': 'https',
-                'port': 443
-            }
-        }
 
         params = {'monitor': {
             'retry': max_retries,
             'name': name,
-            'consec_pass_reqd': max_retries,
             'interval': interval,
             'timeout': timeout,
-            'disable_after_down': 0,
-            'type': mon_type,
+            'disable-after-down': 0,
         }}
-        if mon_type in defs:
-            params[defs[mon_type]['protocol']] = {
-                'port': port or defs[mon_type]['port'],
-                'url': "%s %s" % (method, url),
-                'expect_code': expect_code,
+
+        if mon_method in self._method_objects:
+            mon_obj = {
+                mon_method: {
+                    mon_method: 1,
+                    'a10-url': url or '',
+                }
             }
+            if port:
+                mon_obj[mon_method][mon_method + '-port'] = port
+            params['monitor']['method'] = mon_obj
 
         self.http.post(self.url(action), params)
 
@@ -69,4 +83,4 @@ class HealthMonitor(base.BaseV30):
                   max_retries, method, url, expect_code, port)
 
     def delete(self, name):
-        self.http.delete(self.url(self.url_prefix + "name"))
+        self.http.delete(self.url(self.url_prefix + name))
