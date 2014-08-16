@@ -21,6 +21,7 @@ import logging
 import re
 import socket
 import ssl
+import time
 
 import errors as acos_errors
 from version import VERSION
@@ -110,15 +111,24 @@ class HttpClient(object):
         else:
             payload = None
 
-        for i in [1, 2, 3]:
+        i = 0
+        while i < 600:
+            i += 1
             try:
+                last_e = None
                 data = self._http(method, api_url, payload)
                 break
             except socket.error as e:
-                if e.errno == errno.ECONNRESET:
-                    # todo - sleep needed?
+                # Workaround some bogosity in the API
+                if (e.errno == errno.ECONNRESET or
+                   e.errno == errno.ECONNREFUSED):
+                    time.sleep(0.1)
+                    last_e = e
                     continue
                 raise e
+
+        if last_e is not None:
+            raise e
 
         LOG.debug("axapi_http: data = %s", data)
 
