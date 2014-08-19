@@ -126,7 +126,7 @@ class HttpClient(object):
                     last_e = e
                     continue
                 raise e
-            except httplib.BadStatusLine:
+            except httplib.BadStatusLine as e:
                 time.sleep(0.1)
                 last_e = e
                 continue
