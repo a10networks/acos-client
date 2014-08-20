@@ -82,7 +82,7 @@ class HttpClient(object):
         "User-Agent": "ACOS-Client-AGENT-%s" % VERSION
     }
 
-    def __init__(self, host, port=None, protocol="https"):
+    def __init__(self, host, port=None, protocol="https", client=None):
         self.host = host
         self.port = port
         self.protocol = protocol
@@ -101,6 +101,11 @@ class HttpClient(object):
 
         http.request(method, api_url, payload, self.HEADERS)
         return http.getresponse().read()
+
+    # temporary brutal hack
+    def _url(self, action):
+        return ("/services/rest/v2.1/?format=json&method=%s&session_id=%s" %
+                (action, self.client.session.id))
 
     def request(self, method, api_url, params={}):
         LOG.debug("axapi_http: url = %s", api_url)
@@ -148,7 +153,17 @@ class HttpClient(object):
 
         if 'response' in r and 'status' in r['response']:
             if r['response']['status'] == 'fail':
-                acos_errors.raise_axapi_ex(r, action=extract_method(api_url))
+                try:
+                    acos_errors.raise_axapi_ex(
+                        r,
+                        action=extract_method(api_url))
+                except acos_errors.InvalidSessionID:
+                    try:
+                        self.client.session.close()
+                    except Exception:
+                        pass
+                    u = self._url(extract_method(api_url))
+                    return self.request(method, u, params)
 
         return r
 
