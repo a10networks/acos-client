@@ -91,6 +91,7 @@ class HttpClient(object):
                 port = 80
             else:
                 port = 443
+        self.client = client
 
     def _http(self, method, api_url, payload):
         if self.protocol == 'https':
