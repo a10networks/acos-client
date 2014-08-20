@@ -27,7 +27,7 @@ class Client(object):
                  protocol=None):
         if self._just_digits(version) != acos_client.AXAPI_21:
             raise acos_errors.ACOSUnsupportedVersion()
-        self.http = axapi_http.HttpClient(host, port, protocol)
+        self.http = axapi_http.HttpClient(host, port, protocol, self)
         self.session = Session(self, username, password)
         self.current_partition = 'shared'
 
