@@ -27,7 +27,7 @@ class Member(base.BaseV21):
                 "status": status
             })
         }
-        self.http.post(self.url(action), params)
+        self._post(action, params)
 
     def create(self, service_group_name, server_name, server_port, status=1):
         self._write("slb.service_group.member.create", service_group_name,

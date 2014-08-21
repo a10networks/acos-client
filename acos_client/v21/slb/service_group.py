@@ -44,8 +44,7 @@ class ServiceGroup(base.BaseV21):
     UDP = 3
 
     def get(self, name):
-        return self.http.post(self.url("slb.service_group.search"),
-                              {'name': name})
+        return self._post("slb.service_group.search", {'name': name})
 
     def _set(self, action, name, protocol=None, lb_method=None, hm_name=None):
         params = {
@@ -56,7 +55,7 @@ class ServiceGroup(base.BaseV21):
                 "health_monitor": hm_name
             })
         }
-        self.http.post(self.url(action), params)
+        self._post(action, params)
 
     def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN):
         self._set("slb.service_group.create", name, protocol, lb_method)
@@ -66,4 +65,4 @@ class ServiceGroup(base.BaseV21):
                   health_monitor)
 
     def delete(self, name):
-        self.http.post(self.url("slb.service_group.delete"), {'name': name})
+        self._post("slb.service_group.delete", {'name': name})

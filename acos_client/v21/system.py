@@ -28,4 +28,4 @@ class System(base.BaseV21):
         return Partition(self.client)
 
     def information(self):
-        return self.http.get(self.url("system.information.get"))
+        return self._get("system.information.get")

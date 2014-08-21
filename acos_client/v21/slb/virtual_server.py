@@ -24,11 +24,10 @@ class VirtualServer(base.BaseV21):
         return VirtualPort(self.client)
 
     def all(self):
-        return self.http.get(self.url("slb.virtual_server.getAll"))
+        return self._get("slb.virtual_server.getAll")
 
     def get(self, name):
-        return self.http.post(self.url("slb.virtual_server.search"),
-                              {'name': name})
+        return self._post("slb.virtual_server.search", {'name': name})
 
     def _set(self, action, name, ip_address=None, status=1):
         params = {
@@ -39,7 +38,7 @@ class VirtualServer(base.BaseV21):
             }),
         }
 
-        self.http.post(self.url(action), params)
+        self._post(action, params)
 
     def create(self, name, ip_address, status=1):
         self._set("slb.virtual_server.create", name, ip_address, status)
@@ -48,8 +47,7 @@ class VirtualServer(base.BaseV21):
         self._set("slb.virtual_server.update", name, ip_address, status)
 
     def delete(self, name):
-        self.http.post(self.url("slb.virtual_server.delete"), {"name": name})
+        self._post("slb.virtual_server.delete", {"name": name})
 
     def stats(self, name):
-        return self.http.post(self.url("slb.virtual_server.fetchStatistics"),
-                              {"name": name})
+        return self._post("slb.virtual_server.fetchStatistics", {"name": name})
