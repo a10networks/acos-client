@@ -117,9 +117,7 @@ class HttpClient(object):
         else:
             payload = None
 
-        i = 0
-        while i < 600:
-            i += 1
+        for i in xrange(0, 600):
             try:
                 last_e = None
                 data = self._http(method, api_url, payload)
@@ -154,17 +152,8 @@ class HttpClient(object):
 
         if 'response' in r and 'status' in r['response']:
             if r['response']['status'] == 'fail':
-                try:
-                    acos_errors.raise_axapi_ex(
-                        r,
-                        action=extract_method(api_url))
-                except acos_errors.InvalidSessionID:
-                    try:
-                        self.client.session.close()
-                    except Exception:
-                        pass
-                    u = self._url(extract_method(api_url))
-                    return self.request(method, u, params)
+                    acos_errors.raise_axapi_ex(r,
+                                               action=extract_method(api_url))
 
         return r
 

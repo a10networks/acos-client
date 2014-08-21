@@ -23,8 +23,7 @@ class BasePersistence(base.BaseV21):
         self.prefix = "slb.template.%s_persistence" % self.pers_type
 
     def get(self, name):
-        return self.http.post(self.url("%s.search" % self.prefix),
-                              {'name': name})
+        return self._post(("%s.search" % self.prefix), {'name': name})
 
     def exists(self, name):
         try:
@@ -34,11 +33,10 @@ class BasePersistence(base.BaseV21):
             return False
 
     def create(self, name):
-        self.http.post(self.url("%s.create" % self.prefix),
-                       self.get_params(name))
+        self._post(("%s.create" % self.prefix), self.get_params(name))
 
     def delete(self, name):
-        self.http.post(self.url("%s.delete" % self.prefix), {'name': name})
+        self._post(("%s.delete" % self.prefix), {'name': name})
 
 
 class CookiePersistence(BasePersistence):

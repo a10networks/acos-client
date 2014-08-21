@@ -21,14 +21,14 @@ class Partition(base.BaseV21):
 
     def exists(self, name):
         try:
-            self.http.post(self.url("system.partition.search"), {'name': name})
+            self._post("system.partition.search", {'name': name})
             return True
         except acos_errors.NotFound:
             return False
 
     def active(self, name='shared'):
         if self.client.current_partition != name:
-            self.http.post(self.url("system.partition.active"), {'name': name})
+            self._post("system.partition.active", {'name': name})
             self.client.current_partition = name
 
     def create(self, name):
@@ -40,9 +40,9 @@ class Partition(base.BaseV21):
             }
         }
         if name != 'shared':
-            self.http.post(self.url("system.partition.create"), params)
+            self._post("system.partition.create", params)
 
     def delete(self, name):
         if name != 'shared':
             self.client.session.close()
-            self.http.post(self.url("system.partition.delete"), {"name": name})
+            self._post("system.partition.delete", {"name": name})

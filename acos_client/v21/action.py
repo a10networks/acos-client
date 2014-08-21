@@ -12,6 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client.errors as acos_errors
+
 import base
 
 
@@ -19,6 +21,6 @@ class Action(base.BaseV21):
 
     def write_memory(self):
         try:
-            self.http.get(self.url("system.action.write_memory"))
-        except Exception:
+            self._get("system.action.write_memory")
+        except acos_errors.InvalidPartitionParameter:
             pass

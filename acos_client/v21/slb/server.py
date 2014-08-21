@@ -18,8 +18,7 @@ import acos_client.v21.base as base
 class Server(base.BaseV21):
 
     def get(self, name):
-        return self.http.post(self.url("slb.server.search"),
-                              {'name': name})
+        return self._post("slb.server.search", {'name': name})
 
     def create(self, name, ip_address):
         params = {
@@ -28,8 +27,7 @@ class Server(base.BaseV21):
                 "host": ip_address,
             }
         }
-        self.http.post(self.url("slb.server.create"), params)
+        self._post("slb.server.create", params)
 
     def delete(self, name):
-        self.http.post(self.url("slb.server.delete"),
-                       {"server": {"name": name}})
+        self._post("slb.server.delete", {"server": {"name": name}})

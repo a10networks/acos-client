@@ -24,7 +24,7 @@ class HealthMonitor(base.BaseV21):
     HTTPS = 4
 
     def get(self, name):
-        return self.http.post(self.url("slb.hm.search"), {"name": name})
+        return self._post("slb.hm.search", {"name": name})
 
     def _set(self, action, name, mon_type, interval, timeout, max_retries,
              method=None, url=None, expect_code=None, port=None):
@@ -53,7 +53,7 @@ class HealthMonitor(base.BaseV21):
                 'url': "%s %s" % (method, url),
                 'expect_code': expect_code,
             }
-        self.http.post(self.url(action), params)
+        self._post(action, params)
 
     def create(self, name, mon_type, interval, timeout, max_retries,
                method=None, url=None, expect_code=None, port=None):
@@ -66,4 +66,4 @@ class HealthMonitor(base.BaseV21):
                   max_retries, method, url, expect_code, port)
 
     def delete(self, name):
-        self.http.post(self.url("slb.hm.delete"), {"name": name})
+        self._post("slb.hm.delete", {"name": name})

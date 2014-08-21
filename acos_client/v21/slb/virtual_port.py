@@ -38,7 +38,7 @@ class VirtualPort(base.BaseV21):
                 "status": status
             })
         }
-        self.http.post(self.url(action), params)
+        self._post(action, params)
 
     def create(self, virtual_server_name, name, protocol, port,
                service_group_name,
@@ -63,5 +63,4 @@ class VirtualPort(base.BaseV21):
                 "port": int(port)
             }
         }
-        self.http.post(self.url("slb.virtual_server.vport.delete"),
-                       params)
+        self._post("slb.virtual_server.vport.delete", params)

@@ -12,12 +12,15 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import time
+
+import acos_client.errors as acos_errors
+
 
 class BaseV21(object):
 
     def __init__(self, client):
         self.client = client
-        self.http = client.http
 
     def minimal_dict(self, my_dict):
         return dict((k, v) for k, v in my_dict.items() if v is not None)
@@ -25,3 +28,29 @@ class BaseV21(object):
     def url(self, action):
         return ("/services/rest/v2.1/?format=json&method=%s&session_id=%s" %
                 (action, self.client.session.id))
+
+    def _request(self, method, action, params, retry_count=0):
+        try:
+            return self.client.http.request(method, self.url(action), params)
+        except acos_errors.MemoryFault as e:
+            if retry_count < 5:
+                time.sleep(0.1)
+                return self._request(method, action, params, retry_count+1)
+            raise e
+        except acos_errors.InvalidSessionID:
+            if retry_count < 5:
+                time.sleep(0.1)
+                try:
+                    p = self.client.current_partition
+                    self.client.session.close()
+                    self.client.partition.active(p)
+                except Exception:
+                    pass
+                return self._request(method, action, params, retry_count+1)
+            raise e
+
+    def _get(self, action, params={}):
+        return self._request('GET', action, params)
+
+    def _post(self, action, params={}):
+        return self._request('POST', action, params)

@@ -59,9 +59,16 @@ class InvalidPartitionParameter(ACOSException):
     pass
 
 
+class MemoryFault(ACOSException):
+    pass
+
+
 RESPONSE_CODES = {
     999: {
         '*': NotFound
+    },
+    1002: {
+        '*': MemoryFault
     },
     1009: {
         'session.close': None,
