@@ -36,6 +36,10 @@ class HealthMonitor(base.BaseV21):
             self.HTTPS: {
                 'protocol': 'https',
                 'port': 443
+            },
+            self.TCP: {
+                'protocol': 'tcp',
+                'port': 80
             }
         }
         params = {
