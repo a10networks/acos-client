@@ -12,6 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client.errors as acos_errors
+
 import acos_client.v30.base as base
 
 from virtual_port import VirtualPort
@@ -23,6 +25,9 @@ class VirtualServer(base.BaseV30):
     @property
     def vport(self):
         return VirtualPort(self.client)
+
+    def all(self):
+        return self._get(self.url_prefix)
 
     def get(self, name):
         return self._get(self.url_prefix + name)
@@ -43,6 +48,13 @@ class VirtualServer(base.BaseV30):
         self._post(self.url_prefix + name, params)
 
     def create(self, name, ip_address, status='stats-data-enable'):
+        try:
+            self.get(name)
+        except acos_errors.NotFound:
+            pass
+        else:
+            raise acos_errors.Exists
+
         self._set(name, ip_address, status)
 
     def update(self, name, ip_address=None, status='stats-data-enable'):
@@ -52,5 +64,7 @@ class VirtualServer(base.BaseV30):
         self._delete(self.url_prefix + name)
 
     def stats(self, name=''):
-        resp = self._get(self.url_prefix + name + '/stats/')
-        return resp
+        # resp = self._get(self.url_prefix + name + '/stats/')
+        # return resp
+        raise acos_errors.NotImplemented()
+

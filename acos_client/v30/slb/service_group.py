@@ -12,6 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client.errors as acos_errors
+
 import acos_client.v30.base as base
 
 from member import Member
@@ -64,6 +66,13 @@ class ServiceGroup(base.BaseV30):
         self._post(self.url_prefix + name, params)
 
     def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN):
+        try:
+            self.get(name)
+        except acos_errors.NotFound:
+            pass
+        else:
+            raise acos_errors.Exists
+
         self._set(name, protocol, lb_method)
 
     def update(self, name, protocol=None, lb_method=None, health_monitor=None):

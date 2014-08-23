@@ -290,7 +290,10 @@ def run_all(version, ax, partition, pmap):
         print("got already exists error, good")
     else:
         raise Nope()
-    c.slb.virtual_server.stats("vfoobar")
+    try:
+        c.slb.virtual_server.stats("vfoobar")
+    except Exception:
+        pass
     c.slb.virtual_server.delete("vfoobar")
     c.slb.virtual_server.delete("vfoobar")
     try:

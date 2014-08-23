@@ -21,7 +21,7 @@ RESPONSE_CODES = {
             '*': None
         },
         '*': {
-            '/axapi/v3/slb/service-group/': ae.NoSuchServiceGroup,
+#            '/axapi/v3/slb/service-group/': ae.NoSuchServiceGroup,
             '*': ae.NotFound
         }
     },

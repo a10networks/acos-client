@@ -52,6 +52,10 @@ class NoSuchServiceGroup(ACOSException):
     pass
 
 
+class NotImplemented(ACOSException):
+    pass
+
+
 class InUse(ACOSException):
     pass
 
