@@ -14,102 +14,103 @@
 
 import acos_client.errors as ae
 
+
 RESPONSE_CODES = {
     999: {
-        '*': NotFound
+        '*': ae.NotFound
     },
     1002: {
-        '*': MemoryFault
+        '*': ae.MemoryFault
     },
     1009: {
         'session.close': None,
-        '*': InvalidSessionID
+        '*': ae.InvalidSessionID
     },
     1023: {
         'slb.service_group.member.delete': None,
-        '*': NotFound
+        '*': ae.NotFound
     },
     1043: {
         'slb.virtual_server.vport.delete': None,
-        '*': NotFound
+        '*': ae.NotFound
     },
     1076: {
         'session.close': None,
-        '*': InvalidPartitionParameter
+        '*': ae.InvalidPartitionParameter
     },
     1163: {
-        '*': InvalidParameter
+        '*': ae.InvalidParameter
     },
     1405: {
-        '*': Exists
+        '*': ae.Exists
     },
     1406: {
-        '*': Exists
+        '*': ae.Exists
     },
     1982: {
-        '*': Exists
+        '*': ae.Exists
     },
     2941: {
-        '*': Exists
+        '*': ae.Exists
     },
     33619968: {
         'slb.hm.delete': None,
-        '*': NotFound
+        '*': ae.NotFound
     },
     33619969: {
-        '*': InUse,
+        '*': ae.InUse,
     },
     67174402: {
         'slb.server.delete': None,
-        '*': NotFound
+        '*': ae.NotFound
     },
     67239937: {
         'slb.virtual_server.delete': None,
         'slb.virtual_service.delete': None,
-        '*': NotFound
+        '*': ae.NotFound
     },
     67239947: {
-        '*': Exists
+        '*': ae.Exists
     },
     67305473: {
         'slb.service_group.delete': None,
-        'slb.service_group.member.create': NoSuchServiceGroup,
-        'slb.service_group.member.update': NoSuchServiceGroup,
-        '*': NotFound
+        'slb.service_group.member.create': ae.NoSuchServiceGroup,
+        'slb.service_group.member.update': ae.NoSuchServiceGroup,
+        '*': ae.NotFound
     },
     67371009: {
         'slb.template.cookie_persistence.delete': None,
         'slb.template.src_ip_persistence.delete': None,
-        '*': NotFound
+        '*': ae.NotFound
     },
     402653200: {
-        '*': Exists
+        '*': ae.Exists
     },
     402653201: {
-        '*': Exists
+        '*': ae.Exists
     },
     402653202: {
-        '*': Exists
+        '*': ae.Exists
     },
     402653206: {
-        '*': Exists
+        '*': ae.Exists
     },
     402718800: {
-        '*': NotFound
+        '*': ae.NotFound
     },
     520486915: {
-        '*': AuthenticationFailure
+        '*': ae.AuthenticationFailure
     },
     520749062: {
-        '*': NotFound
+        '*': ae.NotFound
     },
     654311465: {
-        '*': AddressSpecifiedIsInUse
+        '*': ae.AddressSpecifiedIsInUse
     },
     654311495: {
-        '*': InUse,
+        '*': ae.InUse,
     },
     654311496: {
-        '*': AddressSpecifiedIsInUse
+        '*': ae.AddressSpecifiedIsInUse
     },
 }

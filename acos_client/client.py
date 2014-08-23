@@ -46,7 +46,8 @@ class Client(object):
         if self._version not in acos_client.AXAPI_VERSIONS:
             raise acos_errors.ACOSUnsupportedVersion()
         self.http = axapi_http.HttpClient(host, port, protocol)
-        self.session = VERSION_IMPORTS[version]['Session'](self, username, password)
+        self.session = VERSION_IMPORTS[version]['Session'](
+            self, username, password)
         self.current_partition = 'shared'
 
     def _just_digits(self, s):

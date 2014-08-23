@@ -13,6 +13,7 @@
 #    under the License.
 
 import acos_client
+
 import v21.responses
 import v30.responses
 
@@ -72,11 +73,14 @@ class InvalidParameter(ACOSException):
     pass
 
 
+RESPONSE_CODE_MAP = {
+    acos_client.AXAPI_21: v21.responses.RESPONSE_CODES,
+    acos_client.AXAPI_30: v30.responses.RESPONSE_CODES,
+}
+
+
 def raise_axapi_ex(version, response, action=None):
-    if version == acos_client.AXAPI_30
-        response_codes = v30.responses.RESPONSE_CODES
-    else:
-        response_codes = v21.responses.RESPONSE_CODES
+    response_codes = RESPONSE_CODE_MAP[version]
 
     if 'response' in response and 'err' in response['response']:
         code = response['response']['err']['code']
@@ -102,8 +106,4 @@ def raise_axapi_ex(version, response, action=None):
 
         raise ACOSException(code, response['response']['err']['msg'])
 
-    msg = ("HTTP Error %s\n"
-           "method: %s\nurl: %s\npayload: %s\nresponse: \n%s\n") % (
-               resp.status, method, url, payload, resp.read())
-
-    raise ACOSException(resp.status, msg)
+    raise ACOSException()

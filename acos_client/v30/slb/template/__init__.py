@@ -27,4 +27,3 @@ class Template(base.BaseV30):
     @property
     def src_ip_persistence(self):
         return SourceIpPersistence(self.client)
-

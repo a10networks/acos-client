@@ -45,5 +45,3 @@ class SLB(base.BaseV30):
     @property
     def virtual_server(self):
         return VirtualServer(self.client)
-
-

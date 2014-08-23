@@ -13,6 +13,7 @@
 #    under the License.
 
 import acos_client.v30.base as base
+
 from member import Member
 
 
@@ -24,7 +25,7 @@ class ServiceGroup(base.BaseV30):
         return Member(self.client)
 
     # Valid LB methods
-    ROUND_ROBIN = 'round-robin' 
+    ROUND_ROBIN = 'round-robin'
     WEIGHTED_ROUND_ROBIN = 1
     LEAST_CONNECTION = 'least-request'
     WEIGHTED_LEAST_CONNECTION = 3
@@ -46,7 +47,8 @@ class ServiceGroup(base.BaseV30):
     def get(self, name):
         return self._get(self.url_prefix + name)
 
-    def _set(self, name, protocol=None, lb_method=None, hm_name=None, update=False):
+    def _set(self, name, protocol=None, lb_method=None, hm_name=None,
+             update=False):
         params = {
             "service-group": self.minimal_dict({
                 "name": name,

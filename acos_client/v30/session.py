@@ -29,7 +29,7 @@ class Session(object):
         return self.session_id
 
     def authenticate(self, username, password):
-        print "SESSION AUTHENTICATE: "
+        print("SESSION AUTHENTICATE: ")
         url = "/axapi/v3/auth"
         payload = {
             'credentials': {
@@ -42,7 +42,7 @@ class Session(object):
             self.close()
 
         r = self.http.post(url, payload)
-        print "SESSION AUTHENTICATE RESPONSE: ", r
+        print("SESSION AUTHENTICATE RESPONSE: ", r)
         # print "RESPONSE ", dir(r)
 
         if "authresponse" in r:
@@ -57,7 +57,7 @@ class Session(object):
         return r
 
     def close(self):
-        print "SESSION CLOSE: "
+        print("SESSION CLOSE: ")
         try:
             self.client.partition.active()
         except Exception:

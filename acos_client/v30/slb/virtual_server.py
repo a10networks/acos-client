@@ -13,6 +13,7 @@
 #    under the License.
 
 import acos_client.v30.base as base
+
 from virtual_port import VirtualPort
 
 
@@ -26,7 +27,8 @@ class VirtualServer(base.BaseV30):
     def get(self, name):
         return self._get(self.url_prefix + name)
 
-    def _set(self, name, ip_address=None, status='stats-data-enable', update=False):
+    def _set(self, name, ip_address=None, status='stats-data-enable',
+             update=False):
         params = {
             "virtual-server": self.minimal_dict({
                 "name": name,
