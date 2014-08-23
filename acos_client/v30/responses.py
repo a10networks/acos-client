@@ -38,3 +38,39 @@ def raise_axapi_auth_error(response, action=None, headers={}):
                 raise ae.AuthenticationFailure()
         elif response['authorizationschema']['code'] == 403:
             raise ae.AuthenticationFailure()
+
+
+def raise_axapi_ex(version, response, action=None, method=None):
+    print("ACTION = %s", action)
+    response_codes = RESPONSE_CODE_MAP[version]
+
+    if 'response' in response and 'err' in response['response']:
+        code = response['response']['err']['code']
+
+        if code in response_codes:
+            ex_dict = response_codes[code]
+            ex = None
+
+            if action is not None and action in ex_dict:
+                ex = ex_dict[action]
+            else:
+                for k in ex_dict.keys():
+                    if action.startswith(k):
+                        ex = ex_dict[k]
+
+                if not ex and '*' in ex_dict:
+                    ex = ex_dict['*']
+
+            if ex is not None:
+                if ex != ae.NotFound or method != 'DELETE':
+                    raise ex(code, response['response']['err']['msg'])
+            else:
+                return
+
+        raise ae.ACOSException(code, response['response']['err']['msg'])
+
+    raise ae.ACOSException()
+
+
+def raise_axapi_auth_error(response, action=None, headers={}):
+    v30.responses.raise_axapi_auth_error(response, action, headers)

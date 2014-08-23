@@ -20,6 +20,8 @@ import base
 class Partition(base.BaseV30):
 
     def exists(self, name):
+        if name == 'shared':
+            return True
         try:
             self._get("/partition/" + name)
             return True
@@ -27,17 +29,16 @@ class Partition(base.BaseV30):
             return False
 
     def active(self, name='shared'):
-
         if self.client.current_partition != name:
             self._post("/active-partition/" + name)
             self.client.current_partition = name
 
-    def create(self, name, p_id=2):
+    def create(self, name, p_id=100):
         if name != 'shared':
             params = {
                 "partition": {
+                    "partition-name": name,
                     "id": p_id,
-                    "partition-name": name
                 }
             }
             self._post("/partition", params)

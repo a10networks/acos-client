@@ -13,23 +13,26 @@
 #    under the License.
 
 import acos_client
-import acos_client.axapi_http as axapi_http
 import acos_client.errors as acos_errors
 
+import v21.axapi_http
 from v21.session import Session as v21_Session
 from v21.slb import SLB as v21_SLB
 from v21.system import System as v21_System
+import v30.axapi_http
 from v30.session import Session as v30_Session
 from v30.slb import SLB as v30_SLB
 from v30.system import System as v30_System
 
 VERSION_IMPORTS = {
     '21': {
+        'http': v21.axapi_http,
         'Session': v21_Session,
         'SLB': v21_SLB,
         'System': v21_System,
     },
     '30': {
+        'http': v30.axapi_http,
         'Session': v30_Session,
         'SLB': v30_SLB,
         'System': v30_System,
@@ -44,9 +47,9 @@ class Client(object):
         self._version = self._just_digits(version)
         if self._version not in acos_client.AXAPI_VERSIONS:
             raise acos_errors.ACOSUnsupportedVersion()
-        self.http = axapi_http.HttpClient(host, port, protocol,
-                                          version=self._version)
-        self.session = VERSION_IMPORTS[version]['Session'](
+        self.http = VERSION_IMPORTS[self._version]['http'].HttpClient(
+            host, port, protocol, version=self._version)
+        self.session = VERSION_IMPORTS[self._version]['Session'](
             self, username, password)
         self.current_partition = 'shared'
 

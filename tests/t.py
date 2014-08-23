@@ -465,14 +465,21 @@ def run_all(version, ax, partition, pmap):
 
 
 def main():
-    for partition, v in partitions.items():
-        for version, ax in instances.items():
-            try:
-                run_all(version, ax, partition, v)
-            except Exception as e:
-                traceback.print_exc()
-                print(e)
-                sys.exit(1)
+    # for partition, v in partitions.items():
+    #     for version, ax in instances.items():
+    #         try:
+    #             run_all(version, ax, partition, v)
+    #         except Exception as e:
+    #             traceback.print_exc()
+    #             print(e)
+    #             sys.exit(1)
+    for version, ax in instances.items():
+        try:
+            run_all(version, ax, 'shared', partitions['shared'])
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
+            sys.exit(1)
 
 if __name__ == '__main__':
     main()

@@ -23,8 +23,8 @@ import socket
 import ssl
 import time
 
-import responses as acos_responses
-from version import VERSION
+import acos_client.responses as acos_responses
+from acos_client.version import VERSION
 
 LOG = logging.getLogger(__name__)
 
@@ -94,26 +94,22 @@ class HttpClient(object):
         self.protocol = protocol
         if port is None:
             if protocol is 'http':
-                port = 80
+                self.port = 80
             else:
-                port = 443
+                self.port = 443
 
-    def _http(self, method, api_url, payload, headers=None):
+    def _http(self, method, api_url, payload):
         if self.protocol == 'https':
             http = httplib.HTTPSConnection(self.host, self.port)
             http.connect = lambda: force_tlsv1_connect(http)
         else:
             http = httplib.HTTPConnection(self.host, self.port)
 
-        hdrs = self.HEADERS.copy()
-        if headers:
-            hdrs.update(headers)
-
         LOG.debug("axapi_http: url:     %s", api_url)
         LOG.debug("axapi_http: method:  %s", method)
         LOG.debug("axapi_http: headers: %s", hdrs)
         LOG.debug("axapi_http: payload: %s", payload)
-        http.request(method, api_url, payload, hdrs)
+        http.request(method, api_url, payload, self.HEADERS)
 
         resp = http.getresponse()
         # print "RESP ", dir(resp)
@@ -121,7 +117,7 @@ class HttpClient(object):
         # LOG.debug("http response status %s", resp.status)
         return resp.read()
 
-    def request(self, method, api_url, params={}, headers=None):
+    def request(self, method, api_url, params={}):
         LOG.debug("axapi_http: url = %s", api_url)
         LOG.debug("axapi_http: params = %s", params)
 
@@ -133,7 +129,7 @@ class HttpClient(object):
         for i in xrange(0, 600):
             try:
                 last_e = None
-                data = self._http(method, api_url, payload, headers=headers)
+                data = self._http(method, api_url, payload)
                 break
             except socket.error as e:
                 # Workaround some bogosity in the API
@@ -170,20 +166,16 @@ class HttpClient(object):
                         self.axapi_version, r,
                         action=extract_method(api_url))
 
-        if 'authorizationschema' in r:
-            acos_responses.raise_axapi_auth_error(
-                r, action=extract_method(api_url), headers=headers)
-
         return r
 
-    def get(self, api_url, params={}, headers=None):
-        return self.request("GET", api_url, params, headers=headers)
+    def get(self, api_url, params={}):
+        return self.request("GET", api_url, params)
 
-    def post(self, api_url, params={}, headers=None):
-        return self.request("POST", api_url, params, headers=headers)
+    def post(self, api_url, params={}):
+        return self.request("POST", api_url, params)
 
-    def put(self, api_url, params={}, headers=None):
-        return self.request("PUT", api_url, params, headers=headers)
+    def put(self, api_url, params={}):
+        return self.request("PUT", api_url, params)
 
-    def delete(self, api_url, params={}, headers=None):
-        return self.request("DELETE", api_url, params, headers=headers)
+    def delete(self, api_url, params={}):
+        return self.request("DELETE", api_url, params)
