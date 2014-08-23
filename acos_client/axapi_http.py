@@ -23,7 +23,7 @@ import socket
 import ssl
 import time
 
-import errors as acos_errors
+import responses as acos_responses
 from version import VERSION
 
 LOG = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ def extract_method(api_url):
     m = re.search("method=([^&]+)", api_url)
     if m is not None:
         return m.group(1)
-    return ""
+    return api_url
 
 broken_replies = {
     ('<?xml version="1.0" encoding="utf-8" ?><response status="ok">'
@@ -73,16 +73,22 @@ broken_replies = {
      '<error code="1076" msg="Invalid partition parameter." /></response>'):
     ('{"response": {"status": "fail", "err": {"code": 1076,'
      '"msg": "Invalid partition parameter."}}}'),
+
+    "": '{"response": {"status": "OK"}}'
+
 }
 
 
 class HttpClient(object):
     HEADERS = {
-        "Content-Type": "application/json",
-        "User-Agent": "ACOS-Client-AGENT-%s" % VERSION
+        "Content-type": "application/json",
+        "User-Agent": "ACOS-Client-AGENT-%s" % VERSION,
+        # 'Connection': 'keep-alive',
+        # 'Accept': '*/*',
     }
 
-    def __init__(self, host, port=None, protocol="https", client=None):
+    def __init__(self, host, port=None, protocol="https", version=None):
+        self.axapi_version = version
         self.host = host
         self.port = port
         self.protocol = protocol
@@ -91,36 +97,43 @@ class HttpClient(object):
                 port = 80
             else:
                 port = 443
-        self.client = client
 
-    def _http(self, method, api_url, payload):
+    def _http(self, method, api_url, payload, headers=None):
         if self.protocol == 'https':
             http = httplib.HTTPSConnection(self.host, self.port)
             http.connect = lambda: force_tlsv1_connect(http)
         else:
             http = httplib.HTTPConnection(self.host, self.port)
 
-        http.request(method, api_url, payload, self.HEADERS)
-        return http.getresponse().read()
+        hdrs = self.HEADERS
+        if headers:
+            hdrs.update(headers)
 
-    # temporary brutal hack
-    def _url(self, action):
-        return ("/services/rest/v2.1/?format=json&method=%s&session_id=%s" %
-                (action, self.client.session.id))
+        LOG.debug("axapi_http: url:     %s", api_url)
+        LOG.debug("axapi_http: method:  %s", method)
+        LOG.debug("axapi_http: headers: %s", hdrs)
+        LOG.debug("axapi_http: payload: %s", payload)
+        http.request(method, api_url, payload, hdrs)
 
-    def request(self, method, api_url, params={}):
+        resp = http.getresponse()
+        # print "RESP ", dir(resp)
+        # print "RESP HEADERS", resp.getheaders()
+        # LOG.debug("http response status %s", resp.status)
+        return resp.read()
+
+    def request(self, method, api_url, params={}, headers=None):
         LOG.debug("axapi_http: url = %s", api_url)
         LOG.debug("axapi_http: params = %s", params)
 
         if params:
-            payload = json.dumps(params, encoding='utf-8')
+            payload = json.dumps(params)
         else:
             payload = None
 
         for i in xrange(0, 600):
             try:
                 last_e = None
-                data = self._http(method, api_url, payload)
+                data = self._http(method, api_url, payload, headers=headers)
                 break
             except socket.error as e:
                 # Workaround some bogosity in the API
@@ -147,18 +160,26 @@ class HttpClient(object):
         #     return {'response': {'status': 'OK'}}
         if data in broken_replies:
             data = broken_replies[data]
+            LOG.debug("axapi_http: broken reply, new response: %s", data)
 
         r = json.loads(data, encoding='utf-8')
 
         if 'response' in r and 'status' in r['response']:
             if r['response']['status'] == 'fail':
-                    acos_errors.raise_axapi_ex(r,
-                                               action=extract_method(api_url))
+                    acos_responses.raise_axapi_ex(
+                        self.axapi_version, r,
+                        action=extract_method(api_url))
 
         return r
 
-    def get(self, api_url, params={}):
-        return self.request("GET", api_url, params)
+    def get(self, api_url, params={}, headers=None):
+        return self.request("GET", api_url, params, headers=None)
 
-    def post(self, api_url, params={}):
-        return self.request("POST", api_url, params)
+    def post(self, api_url, params={}, headers=None):
+        return self.request("POST", api_url, params, headers=headers)
+
+    def put(self, api_url, params={}, headers=None):
+        return self.request("PUT", api_url, params, headers=headers)
+
+    def delete(self, api_url, params={}, headers=None):
+        return self.request("DELETE", api_url, params, headers=headers)

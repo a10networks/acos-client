@@ -11,13 +11,16 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-# flake8: noqa
 
-from acos_client.client import Client
-from acos_client.hash import Hash
-from acos_client.version import VERSION
+import acos_client.errors as ae
 
-AXAPI_21 = '21'
-AXAPI_30 = '30'
-#AXAPI_SSH = 'ssh'
-AXAPI_VERSIONS = (AXAPI_21, AXAPI_30)
+
+RESPONSE_CODES = {
+    1023410176: {
+        '/axapi/v3/slb/service-group/': ae.NoSuchServiceGroup,
+        '*': ae.NotFound,
+    },
+    1207959957: {
+        '*': ae.NotFound,
+    }
+}

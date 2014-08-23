@@ -30,6 +30,7 @@ instances = {
     #     'protocol': 'https',
     #     'user': 'admin',
     #     'password': 'a10',
+    #     'axapi': '21',
     # },
     # '2.7.1': {
     #     'host': 'softax.a10boise.net',
@@ -37,6 +38,7 @@ instances = {
     #     'protocol': 'https',
     #     'user': 'admin',
     #     'password': 'i-9276ff9f',
+    #     'axapi': '21',
     # }
     '2.7.2': {
         'host': 'dougw-softax-272',
@@ -44,6 +46,7 @@ instances = {
         'protocol': 'https',
         'user': 'admin',
         'password': 'a10',
+        'axapi': '21',
     },
     # '2.7.1': {
     #     'host': 'dougw-softax-271',
@@ -51,7 +54,17 @@ instances = {
     #     'protocol': 'https',
     #     'user': 'admin',
     #     'password': 'a10',
-    # }
+    #     'axapi': '21',
+    # },
+    '4.0.0': {
+        'host': 'dougw-softax-4',
+        'port': 443,
+        'protocol': 'https',
+        'user': 'admin',
+        'password': 'a10',
+        'axapi': '30',
+    },
+
 }
 
 partitions = {
@@ -78,7 +91,7 @@ partitions = {
 
 def get_client(h, password=None):
     p = password or h['password']
-    c = acos_client.Client(h['host'], acos_client.AXAPI_21, h['user'], p,
+    c = acos_client.Client(h['host'], h['axapi'], h['user'], p,
                            port=h['port'],
                            protocol=h['protocol'])
     return c
@@ -393,13 +406,16 @@ def run_all(version, ax, partition, pmap):
             pass
 
 
-for partition, v in partitions.items():
-    for version, ax in instances.items():
-        try:
-            run_all(version, ax, partition, v)
-        except Exception as e:
-            traceback.print_exc()
-            print(e)
-            sys.exit(1)
+def main():
+    for partition, v in partitions.items():
+        for version, ax in instances.items():
+            try:
+                run_all(version, ax, partition, v)
+            except Exception as e:
+                traceback.print_exc()
+                print(e)
+                sys.exit(1)
 
-sys.exit(0)
+if __name__ == '__main__':
+    main()
+    sys.exit(0)
