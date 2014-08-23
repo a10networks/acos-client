@@ -44,21 +44,22 @@ class ServiceGroup(base.BaseV30):
     UDP = 'udp'
 
     def get(self, name):
-        return self.http.get(self.url(self.url_prefix + name))
+        return self._get(self.url_prefix + name)
 
     def _set(self, name, protocol=None, lb_method=None, hm_name=None, update=False):
-        params = {"service-group": self.minimal_dict({
-            "name": name,
-            "protocol": protocol,
-            "lb-method": lb_method,
-            "health-monitor": hm_name
+        params = {
+            "service-group": self.minimal_dict({
+                "name": name,
+                "protocol": protocol,
+                "lb-method": lb_method,
+                "health-monitor": hm_name
             })
         }
 
         if not update:
             name = ''
 
-        self.http.post(self.url(self.url_prefix + name), params)
+        self._post(self.url_prefix + name, params)
 
     def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN):
         self._set(name, protocol, lb_method)
@@ -68,4 +69,4 @@ class ServiceGroup(base.BaseV30):
                   health_monitor, update=True)
 
     def delete(self, name):
-        self.http.delete(self.url(self.url_prefix + name))
+        self._delete(self.url_prefix + name)

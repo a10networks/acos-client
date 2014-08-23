@@ -46,7 +46,7 @@ class Member(base.BaseV30):
             })
         }
 
-        self.http.post(self.url(url), params)
+        self._post(url, params)
 
     def create(self,
                service_group_name,
@@ -70,4 +70,4 @@ class Member(base.BaseV30):
             name=server_name,
             port=server_port
         )
-        self.http.delete(self.url(url))
+        self._delete(url)

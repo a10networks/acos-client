@@ -46,18 +46,19 @@ class HealthMonitor(base.BaseV30):
     }
 
     def get(self, name):
-        return self.http.get(self.url(self.url_prefix + name))
+        return self._get(self.url_prefix + name)
 
     def _set(self, action, name, mon_method, interval, timeout, max_retries,
              method=None, url=None, expect_code=None, port=None):
-
-        params = {'monitor': {
-            'retry': max_retries,
-            'name': name,
-            'interval': interval,
-            'timeout': timeout,
-            'disable-after-down': 0,
-        }}
+        params = {
+            'monitor': {
+                'retry': max_retries,
+                'name': name,
+                'interval': interval,
+                'timeout': timeout,
+                'disable-after-down': 0,
+            }
+        }
 
         if mon_method in self._method_objects:
             mon_obj = {
@@ -70,7 +71,7 @@ class HealthMonitor(base.BaseV30):
                 mon_obj[mon_method][mon_method + '-port'] = port
             params['monitor']['method'] = mon_obj
 
-        self.http.post(self.url(action), params)
+        self._post(action, params)
 
     def create(self, name, mon_type, interval, timeout, max_retries,
                method=None, url=None, expect_code=None, port=None):
@@ -83,4 +84,4 @@ class HealthMonitor(base.BaseV30):
                   max_retries, method, url, expect_code, port)
 
     def delete(self, name):
-        self.http.delete(self.url(self.url_prefix + name))
+        self._delete(self.url_prefix + name)

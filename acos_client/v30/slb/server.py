@@ -20,7 +20,7 @@ class Server(base.BaseV30):
     url_prefix = '/slb/server/'
 
     def get(self, name):
-        return self.http.get(self.url(self.url_prefix + name))
+        return self._get(self.url_prefix + name)
 
     def create(self, name, ip_address):
         params = {
@@ -29,7 +29,7 @@ class Server(base.BaseV30):
                 "host": ip_address,
             }
         }
-        return self.http.post(self.url(self.url_prefix), params)
+        return self._post(self.url_prefix, params)
 
     def delete(self, name):
-        return self.http.delete(self.url(self.url_prefix + name))
+        return self._delete(self.url_prefix + name)

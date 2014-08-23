@@ -12,6 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client
+import v21.responses
+import v30.responses
+
 
 class ACOSException(Exception):
     def __init__(self, code=1, msg=''):
@@ -68,120 +72,17 @@ class InvalidParameter(ACOSException):
     pass
 
 
-RESPONSE_CODES = {
-    999: {
-        '*': NotFound
-    },
-    1002: {
-        '*': MemoryFault
-    },
-    1009: {
-        'session.close': None,
-        '*': InvalidSessionID
-    },
-    1023: {
-        'slb.service_group.member.delete': None,
-        '*': NotFound
-    },
-    1043: {
-        'slb.virtual_server.vport.delete': None,
-        '*': NotFound
-    },
-    1076: {
-        'session.close': None,
-        '*': InvalidPartitionParameter
-    },
-    1163: {
-        '*': InvalidParameter
-    },
-    1405: {
-        '*': Exists
-    },
-    1406: {
-        '*': Exists
-    },
-    1982: {
-        '*': Exists
-    },
-    2941: {
-        '*': Exists
-    },
-    33619968: {
-        'slb.hm.delete': None,
-        '*': NotFound
-    },
-    33619969: {
-        '*': InUse,
-    },
-    67174402: {
-        'slb.server.delete': None,
-        '*': NotFound
-    },
-    67239937: {
-        'slb.virtual_server.delete': None,
-        'slb.virtual_service.delete': None,
-        '*': NotFound
-    },
-    67239947: {
-        '*': Exists
-    },
-    67305473: {
-        'slb.service_group.delete': None,
-        'slb.service_group.member.create': NoSuchServiceGroup,
-        'slb.service_group.member.update': NoSuchServiceGroup,
-        '*': NotFound
-    },
-    67371009: {
-        'slb.template.cookie_persistence.delete': None,
-        'slb.template.src_ip_persistence.delete': None,
-        '*': NotFound
-    },
-    402653200: {
-        '*': Exists
-    },
-    402653201: {
-        '*': Exists
-    },
-    402653202: {
-        '*': Exists
-    },
-    402653206: {
-        '*': Exists
-    },
-    402718800: {
-        '*': NotFound
-    },
-    520486915: {
-        '*': AuthenticationFailure
-    },
-    520749062: {
-        '*': NotFound
-    },
-    654311465: {
-        '*': AddressSpecifiedIsInUse
-    },
-    654311495: {
-        '*': InUse,
-    },
-    654311496: {
-        '*': AddressSpecifiedIsInUse
-    },
-    1023410176: {
-        '/axapi/v3/slb/service-group/': NoSuchServiceGroup,
-        '*': NotFound,
-    },
-    1207959957: {
-        '*': NotFound,
-    }
-}
+def raise_axapi_ex(version, response, action=None):
+    if version == acos_client.AXAPI_30
+        response_codes = v30.responses.RESPONSE_CODES
+    else:
+        response_codes = v21.responses.RESPONSE_CODES
 
-
-def raise_axapi_ex(response, action=None):
     if 'response' in response and 'err' in response['response']:
         code = response['response']['err']['code']
 
-        if code in RESPONSE_CODES:
-            ex_dict = RESPONSE_CODES[code]
+        if code in response_codes:
+            ex_dict = response_codes[code]
             ex = None
 
             if action is not None and action in ex_dict:
@@ -190,7 +91,7 @@ def raise_axapi_ex(response, action=None):
                 for k in ex_dict.keys():
                     if action.startswith(k):
                         ex = ex_dict[k]
-                # end for k in ex_dict.keys()
+
                 if not ex and '*' in ex_dict:
                     ex = ex_dict['*']
 
@@ -200,14 +101,9 @@ def raise_axapi_ex(response, action=None):
                 return
 
         raise ACOSException(code, response['response']['err']['msg'])
-    raise ACOSException()
-
-
-def raise_http_axapi_ex(resp, method='', url='', payload=''):
 
     msg = ("HTTP Error %s\n"
            "method: %s\nurl: %s\npayload: %s\nresponse: \n%s\n") % (
                resp.status, method, url, payload, resp.read())
 
     raise ACOSException(resp.status, msg)
-# raise_http_axapi_ex()

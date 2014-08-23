@@ -22,7 +22,71 @@ import traceback
 sys.path.append(".")
 
 import acos_client
-from acos_client.errors import ACOSException
+
+instances = {
+    # '2.7.2': {
+    #     'host': '10.10.100.20',
+    #     'port': 8443,
+    #     'protocol': 'https',
+    #     'user': 'admin',
+    #     'password': 'a10',
+    #     'axapi': '21',
+    # },
+    # '2.7.1': {
+    #     'host': 'softax.a10boise.net',
+    #     'port': 8443,
+    #     'protocol': 'https',
+    #     'user': 'admin',
+    #     'password': 'i-9276ff9f',
+    #     'axapi': '21',
+    # }
+    '2.7.2': {
+        'host': 'dougw-softax-272',
+        'port': 8443,
+        'protocol': 'https',
+        'user': 'admin',
+        'password': 'a10',
+        'axapi': '21',
+    },
+    # '2.7.1': {
+    #     'host': 'dougw-softax-271',
+    #     'port': 8443,
+    #     'protocol': 'https',
+    #     'user': 'admin',
+    #     'password': 'a10',
+    #     'axapi': '21',
+    # },
+    '4.0.0': {
+        'host': 'dougw-softax-4',
+        'port': 443,
+        'protocol': 'https',
+        'user': 'admin',
+        'password': 'a10',
+        'axapi': '30',
+    },
+
+}
+
+partitions = {
+    'p1': {
+        's1': '192.168.2.244',
+        'vip1': '192.168.2.240',
+        'vip2': '192.168.2.239',
+        'vip3': '192.168.2.238'
+    },
+    'p2': {
+        's1': '192.168.2.234',
+        'vip1': '192.168.2.230',
+        'vip2': '192.168.2.229',
+        'vip3': '192.168.2.228'
+    },
+    'shared': {
+        's1': '192.168.2.254',
+        'vip1': '192.168.2.250',
+        'vip2': '192.168.2.249',
+        'vip3': '192.168.2.248'
+    }
+}
 
 
 def get_client(h, password=None):
@@ -136,11 +200,7 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("Server Create")
-    try:
-        c.slb.server.delete("foobar")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-
+    c.slb.server.delete("foobar")
     c.slb.server.create("foobar", pmap['s1'])
     c.slb.server.get("foobar")
     try:
@@ -148,10 +208,7 @@ def run_all(version, ax, partition, pmap):
     except acos_client.errors.Exists:
         print("got already exists error, good")
     c.slb.server.delete("foobar")
-    try:
-        c.slb.server.delete("foobar")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
+    c.slb.server.delete("foobar")
     try:
         c.slb.server.get("foobar")
     except acos_client.errors.NotFound:
@@ -161,11 +218,7 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("SG Create")
-    try:
-        c.slb.service_group.delete("pfoobar")
-    except acos_client.errors.NoSuchServiceGroup:
-        print("got not found, good")
-
+    c.slb.service_group.delete("pfoobar")
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.ROUND_ROBIN)
     c.slb.service_group.get("pfoobar")
@@ -179,16 +232,13 @@ def run_all(version, ax, partition, pmap):
     try:
         c.slb.service_group.update("pnfoobar", c.slb.service_group.TCP,
                                    c.slb.service_group.LEAST_CONNECTION)
-    except acos_client.errors.NoSuchServiceGroup:
+    except acos_client.errors.NotFound:
         print("got not found, good")
     c.slb.service_group.delete("pfoobar")
-    try:
-        c.slb.service_group.delete("pfoobar")
-    except acos_client.errors.NoSuchServiceGroup:
-        print("got not found, good")
+    c.slb.service_group.delete("pfoobar")
     try:
         c.slb.service_group.get("pfoobar")
-    except acos_client.errors.NoSuchServiceGroup:
+    except acos_client.errors.NotFound:
         print("got not found, good")
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.ROUND_ROBIN)
@@ -196,17 +246,11 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("VIP Create")
-    try:
-        c.slb.virtual_server.delete("vip3")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
+    c.slb.virtual_server.delete("vip3")
     c.slb.virtual_server.create("vip3", pmap['vip3'])
     c.slb.virtual_server.get("vip3")
 
-    try:
-        c.slb.virtual_server.delete("vfoobar")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
+    c.slb.virtual_server.delete("vfoobar")
     c.slb.virtual_server.create("vfoobar", pmap['vip1'])
     c.slb.virtual_server.get("vfoobar")
     c.slb.virtual_server.all()
@@ -214,25 +258,16 @@ def run_all(version, ax, partition, pmap):
         c.slb.virtual_server.create("vfoobar", pmap['vip1'])
     except acos_client.errors.Exists:
         print("got already exists error, good")
-
     c.slb.virtual_server.stats("vfoobar")
     c.slb.virtual_server.delete("vfoobar")
-
-    try:
-        c.slb.virtual_server.delete("vfoobar")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
+    c.slb.virtual_server.delete("vfoobar")
     try:
         c.slb.virtual_server.get("vfoobar")
     except acos_client.errors.NotFound:
         print("got not found, good")
 
-    try:
-        c.slb.virtual_server.vport.delete(
-            "vip3", "vip3_VPORT", c.slb.virtual_server.vport.HTTP, 80)
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-
+    c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
+                                      c.slb.virtual_server.vport.HTTP, 80)
     c.slb.virtual_server.vport.create("vip3", "vip3_VPORT",
                                       service_group_name="pfoobar",
                                       protocol=c.slb.virtual_server.vport.HTTP,
@@ -247,20 +282,13 @@ def run_all(version, ax, partition, pmap):
         print("got already exists error, good")
     c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
                                       c.slb.virtual_server.vport.HTTP, 80)
-    try:
-        c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
-                                        c.slb.virtual_server.vport.HTTP, 80)
-    except acos_client.errors.NotFound:
-        print("got not found, good")
+    c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
+                                      c.slb.virtual_server.vport.HTTP, 80)
 
     print("=============================================================")
     print("")
     print("HM Create")
-    try:
-        c.slb.hm.delete("hfoobar")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-
+    c.slb.hm.delete("hfoobar")
     c.slb.hm.create("hfoobar", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200', 80)
     c.slb.hm.get("hfoobar")
     try:
@@ -274,12 +302,7 @@ def run_all(version, ax, partition, pmap):
     except acos_client.errors.NotFound:
         print("got not found, good")
     c.slb.hm.delete("hfoobar")
-
-    try:
-        c.slb.hm.delete("hfoobar")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-
+    c.slb.hm.delete("hfoobar")
     try:
         c.slb.hm.get("hfoobar")
     except acos_client.errors.NotFound:
@@ -288,12 +311,7 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("Member Create")
-
-    try:
-        c.slb.service_group.member.delete("pfoobar", "foobar", 80)
-    except acos_client.errors.NoSuchServiceGroup:
-        print("got not found, good")
-
+    c.slb.service_group.member.delete("pfoobar", "foobar", 80)
     c.slb.service_group.member.create("pfoobar", "foobar", 80)
     try:
         c.slb.service_group.member.create("pfoobar", "foobar", 80)
@@ -303,27 +321,19 @@ def run_all(version, ax, partition, pmap):
                                       c.slb.DOWN)
     try:
         c.slb.service_group.member.update("pfoobar", "nfoobar", 80)
-    except acos_client.errors.NoSuchServiceGroup:
+    except acos_client.errors.NotFound:
         print("got not found, good")
-
     try:
         c.slb.service_group.member.update("pnfoobar", "foobar", 80)
     except acos_client.errors.NoSuchServiceGroup:
         print("got not found, good")
-
     c.slb.service_group.member.delete("pfoobar", "foobar", 80)
-    try:
-        c.slb.service_group.member.delete("pfoobar", "foobar", 80)
-    except acos_client.errors.NoSuchServiceGroup:
-        print("got not found, good")
+    c.slb.service_group.member.delete("pfoobar", "foobar", 80)
 
     print("=============================================================")
     print("")
     print("Source Ip Persistence")
-    try:
-        c.slb.template.src_ip_persistence.delete("sip1")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
+    c.slb.template.src_ip_persistence.delete("sip1")
     c.slb.template.src_ip_persistence.create("sip1")
     try:
         c.slb.template.src_ip_persistence.create("sip1")
@@ -332,11 +342,7 @@ def run_all(version, ax, partition, pmap):
     c.slb.template.src_ip_persistence.get("sip1")
     c.slb.template.src_ip_persistence.exists("sip1")
     c.slb.template.src_ip_persistence.delete("sip1")
-
-    try:
-        c.slb.template.src_ip_persistence.delete("sip1")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
+    c.slb.template.src_ip_persistence.delete("sip1")
     try:
         c.slb.template.src_ip_persistence.get("sip1")
     except acos_client.errors.NotFound:
@@ -346,11 +352,7 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("Http Cookie Persistence")
-    try:
-        c.slb.template.cookie_persistence.delete("cp1")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-
+    c.slb.template.cookie_persistence.delete("cp1")
     c.slb.template.cookie_persistence.create("cp1")
     try:
         c.slb.template.cookie_persistence.create("cp1")
@@ -359,10 +361,7 @@ def run_all(version, ax, partition, pmap):
     c.slb.template.cookie_persistence.get("cp1")
     c.slb.template.cookie_persistence.exists("cp1")
     c.slb.template.cookie_persistence.delete("cp1")
-    try:
-        c.slb.template.cookie_persistence.delete("cp1")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
+    c.slb.template.cookie_persistence.delete("cp1")
     try:
         c.slb.template.cookie_persistence.get("cp1")
     except acos_client.errors.NotFound:
@@ -372,12 +371,8 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("Vip with pers")
-    try:
-        c.slb.virtual_server.delete("vip2")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
+    c.slb.virtual_server.delete("vip2")
     c.slb.virtual_server.create("vip2", pmap['vip2'])
-    c.slb.virtual_server.get("vip2")
     c.slb.virtual_server.vport.create(
         "vip2", "vip2_vport1",
         protocol=c.slb.virtual_server.vport.HTTPS,
@@ -412,68 +407,6 @@ def run_all(version, ax, partition, pmap):
 
 
 def main():
-
-    instances = {
-        # '2.7.2': {
-        #     'host': '10.10.100.20',
-        #     'port': 8443,
-        #     'protocol': 'https',
-        #     'user': 'admin',
-        #     'password': 'a10',
-        # },
-        # '2.7.1': {
-        #     'host': 'softax.a10boise.net',
-        #     'port': 8443,
-        #     'protocol': 'https',
-        #     'user': 'admin',
-        #     'password': 'i-9276ff9f',
-        # }
-        # '2.7.2': {
-        #     'host': 'dougw-softax-272',
-        #     'port': 8443,
-        #     'protocol': 'https',
-        #     'user': 'admin',
-        #     'password': 'a10',
-        #     'axapi': '21'
-        # },
-        # '2.7.1': {
-        #     'host': 'dougw-softax-271',
-        #     'port': 8443,
-        #     'protocol': 'https',
-        #     'user': 'admin',
-        #     'password': 'a10',
-        # }
-        '4.0.0': {
-            'host': '172.18.61.64',
-            'port': 80,
-            'protocol': 'http',
-            'user': 'admin',
-            'password': 'a10',
-            'axapi': '30'
-        },
-    }
-
-    partitions = {
-        'p1': {
-            's1': '192.168.2.244',
-            'vip1': '192.168.2.240',
-            'vip2': '192.168.2.239',
-            'vip3': '192.168.2.238'
-        },
-        'p2': {
-            's1': '192.168.2.234',
-            'vip1': '192.168.2.230',
-            'vip2': '192.168.2.229',
-            'vip3': '192.168.2.228'
-        },
-        'shared': {
-            's1': '192.168.2.254',
-            'vip1': '192.168.2.250',
-            'vip2': '192.168.2.249',
-            'vip3': '192.168.2.248'
-        }
-    }
-
     for partition, v in partitions.items():
         for version, ax in instances.items():
             try:
@@ -482,7 +415,6 @@ def main():
                 traceback.print_exc()
                 print(e)
                 sys.exit(1)
-# main()
 
 if __name__ == '__main__':
     main()

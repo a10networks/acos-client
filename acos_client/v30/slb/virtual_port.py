@@ -72,7 +72,7 @@ class VirtualPort(base.BaseV30):
                 port_number=port, protocol=protocol
             )
 
-        return self.http.post(self.url(url), params)
+        return self._post(url, params)
 
     def create(self, virtual_server_name, name, protocol, port,
                service_group_name,
@@ -91,4 +91,4 @@ class VirtualPort(base.BaseV30):
     def delete(self, virtual_server_name, name, protocol, port):
         url = self.url_server_tmpl.format(name=virtual_server_name)
         url += self.url_port_tmpl.format(port_number=port, protocol=protocol)
-        return self.http.delete(self.url(url))
+        return self._delete(url)

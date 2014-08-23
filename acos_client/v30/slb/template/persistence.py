@@ -23,7 +23,7 @@ class BasePersistence(base.BaseV30):
         self.prefix = "/slb/template/persist/%s/" % self.pers_type
 
     def get(self, name):
-        return self.http.get(self.url(self.prefix + name))
+        return self._get(self.prefix + name)
 
     def exists(self, name):
         try:
@@ -33,10 +33,10 @@ class BasePersistence(base.BaseV30):
             return False
 
     def create(self, name):
-        self.http.post(self.url(self.prefix), self.get_params(name))
+        self._post(self.prefix, self.get_params(name))
 
     def delete(self, name):
-        self.http.delete(self.url(self.prefix + name))
+        self._delete(self.prefix + name)
 
 
 class CookiePersistence(BasePersistence):

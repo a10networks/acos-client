@@ -87,7 +87,8 @@ class HttpClient(object):
         # 'Accept': '*/*',
     }
 
-    def __init__(self, host, port=None, protocol="https"):
+    def __init__(self, host, port=None, protocol="https", version=None):
+        self.axapi_version = version
         self.host = host
         self.port = port
         self.protocol = protocol
@@ -165,7 +166,7 @@ class HttpClient(object):
 
         if 'response' in r and 'status' in r['response']:
             if r['response']['status'] == 'fail':
-                    acos_errors.raise_axapi_ex(r,
+                    acos_errors.raise_axapi_ex(self.axapi_version, r,
                                                action=extract_method(api_url))
 
         return r

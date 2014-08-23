@@ -31,10 +31,11 @@ class Session(object):
     def authenticate(self, username, password):
         print "SESSION AUTHENTICATE: "
         url = "/axapi/v3/auth"
-        payload = {'credentials': {
-            "username": username,
-            "password": password
-        }
+        payload = {
+            'credentials': {
+                "username": username,
+                "password": password
+            }
         }
 
         if self.session_id is not None:
@@ -46,10 +47,12 @@ class Session(object):
 
         if "authresponse" in r:
             self.session_id = str(r['authresponse']['signature'])
-            self.http.HEADERS['Authorization'] = "A10 %s" % self.session_id
+            # todo
+            # self.http.HEADERS['Authorization'] = "A10 %s" % self.session_id
         else:
             self.session_id = None
-            self.http.HEADERS.pop('Authorization', None)
+            # todo
+            # self.http.HEADERS.pop('Authorization', None)
 
         return r
 
@@ -61,10 +64,10 @@ class Session(object):
             pass
 
         try:
-            url = "/axapi/v3/logoff"
-            r = self.http.post(url, "")
+            # url = "/axapi/v3/logoff"
+            # r = self.http.post(url, "")
+            r = self.http.post('/axapi/v3/logoff')
         finally:
             self.session_id = None
-            self.http.HEADERS.pop('Authorization', None)
 
         return r

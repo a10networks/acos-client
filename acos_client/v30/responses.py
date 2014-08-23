@@ -1,4 +1,4 @@
-# Copyright 2014,  Jeff Buttars,  A10 Networks.
+# Copyright 2014,  Doug Wiegley,  A10 Networks.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -12,15 +12,14 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import base
+import acos_client.errors as ae
 
-
-class Action(base.BaseV30):
-
-    def write_memory(self):
-        payload = {
-            "memory": {
-                "primary": True
-            }
-        }
-        self._post("/write/memory/", payload)
+RESPONSE_CODES = {
+    1023410176: {
+        '/axapi/v3/slb/service-group/': ae.NoSuchServiceGroup,
+        '*': ae.NotFound,
+    },
+    1207959957: {
+        '*': ae.NotFound,
+    }
+}
