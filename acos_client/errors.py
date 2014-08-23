@@ -12,11 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client
-
-import v21.responses
-import v30.responses
-
 
 class ACOSException(Exception):
     def __init__(self, code=1, msg=''):
@@ -71,39 +66,3 @@ class MemoryFault(ACOSException):
 
 class InvalidParameter(ACOSException):
     pass
-
-
-RESPONSE_CODE_MAP = {
-    acos_client.AXAPI_21: v21.responses.RESPONSE_CODES,
-    acos_client.AXAPI_30: v30.responses.RESPONSE_CODES,
-}
-
-
-def raise_axapi_ex(version, response, action=None):
-    response_codes = RESPONSE_CODE_MAP[version]
-
-    if 'response' in response and 'err' in response['response']:
-        code = response['response']['err']['code']
-
-        if code in response_codes:
-            ex_dict = response_codes[code]
-            ex = None
-
-            if action is not None and action in ex_dict:
-                ex = ex_dict[action]
-            else:
-                for k in ex_dict.keys():
-                    if action.startswith(k):
-                        ex = ex_dict[k]
-
-                if not ex and '*' in ex_dict:
-                    ex = ex_dict['*']
-
-            if ex is not None:
-                raise ex(code, response['response']['err']['msg'])
-            else:
-                return
-
-        raise ACOSException(code, response['response']['err']['msg'])
-
-    raise ACOSException()

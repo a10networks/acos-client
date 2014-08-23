@@ -23,7 +23,7 @@ import socket
 import ssl
 import time
 
-import errors as acos_errors
+import responses as acos_responses
 from version import VERSION
 
 LOG = logging.getLogger(__name__)
@@ -166,8 +166,9 @@ class HttpClient(object):
 
         if 'response' in r and 'status' in r['response']:
             if r['response']['status'] == 'fail':
-                    acos_errors.raise_axapi_ex(self.axapi_version, r,
-                                               action=extract_method(api_url))
+                    acos_responses.raise_axapi_ex(
+                        self.axapi_version, r,
+                        action=extract_method(api_url))
 
         return r
 
