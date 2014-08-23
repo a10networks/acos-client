@@ -170,6 +170,10 @@ class HttpClient(object):
                         self.axapi_version, r,
                         action=extract_method(api_url))
 
+        if 'authorizationschema' in r:
+            acos_responses.raise_axapi_auth_error(
+                r, action=extract_method(api_url), headers=headers)
+
         return r
 
     def get(self, api_url, params={}, headers=None):

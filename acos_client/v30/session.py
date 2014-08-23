@@ -29,7 +29,6 @@ class Session(object):
         return self.session_id
 
     def authenticate(self, username, password):
-        print("SESSION AUTHENTICATE: ")
         url = "/axapi/v3/auth"
         payload = {
             'credentials': {
@@ -42,31 +41,25 @@ class Session(object):
             self.close()
 
         r = self.http.post(url, payload)
-        print("SESSION AUTHENTICATE RESPONSE: ", r)
-        # print "RESPONSE ", dir(r)
-
         if "authresponse" in r:
             self.session_id = str(r['authresponse']['signature'])
-            # todo
-            # self.http.HEADERS['Authorization'] = "A10 %s" % self.session_id
         else:
             self.session_id = None
-            # todo
-            # self.http.HEADERS.pop('Authorization', None)
 
         return r
 
     def close(self):
-        print("SESSION CLOSE: ")
         try:
             self.client.partition.active()
         except Exception:
             pass
 
+        if self.session_id is None:
+            return
+
         try:
-            # url = "/axapi/v3/logoff"
-            # r = self.http.post(url, "")
-            r = self.http.post('/axapi/v3/logoff')
+            h = {'Authorization': self.session_id}
+            r = self.http.post('/axapi/v3/logoff', headers=h)
         finally:
             self.session_id = None
 

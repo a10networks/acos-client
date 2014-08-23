@@ -89,6 +89,10 @@ partitions = {
 }
 
 
+class Nope(Exception):
+    pass
+
+
 def get_client(h, password=None):
     p = password or h['password']
     c = acos_client.Client(h['host'], h['axapi'], h['user'], p,
@@ -108,20 +112,26 @@ def run_all(version, ax, partition, pmap):
     print("")
     print("Basic login/get info twice")
     c = get_client(ax)
-    c.system.information()
+    r = c.system.information()
+    print("LIBRARY RESPONSE = %s", r)
 
     print("=============================================================")
     print("")
     print("About to do an authenticate with a bad password")
     try:
         c = get_client(ax, password='badpass')
+        c.system.information()
     except acos_client.errors.AuthenticationFailure:
         print("got bad auth exception, good")
+    else:
+        sys.stdout.flush()
+        raise Nope()
 
     print("=============================================================")
     print("")
     print("About to do a good close")
     c = get_client(ax)
+    c.system.information()
     c.session.close()
 
     print("=============================================================")
@@ -132,6 +142,8 @@ def run_all(version, ax, partition, pmap):
     if c.session.session_id is not None:
         print("ERROR: session id is not none")
         print("ERROR: ", c.session.session_id)
+        raise Nope()
+    print("here comes the close with no id...")
     c.session.close()
 
     print("=============================================================")
@@ -148,10 +160,13 @@ def run_all(version, ax, partition, pmap):
         c.system.information()
     except acos_client.errors.InvalidSessionID:
         print("got invalid session error, good")
+    else:
+        raise Nope()
 
     # Get a fresh client
 
     c = get_client(ax)
+    c.system.information()
 
     print("=============================================================")
     print("")
@@ -162,6 +177,7 @@ def run_all(version, ax, partition, pmap):
     print("About to search for partition")
 
     p_exists = c.system.partition.exists(partition)
+    print("LIBRARY RESPONSE = %s", p_exists)
 
     print("=============================================================")
     print("")
@@ -202,17 +218,22 @@ def run_all(version, ax, partition, pmap):
     print("Server Create")
     c.slb.server.delete("foobar")
     c.slb.server.create("foobar", pmap['s1'])
-    c.slb.server.get("foobar")
+    r = c.slb.server.get("foobar")
+    print("LIBRARY RESPONSE = %s", r)
     try:
         c.slb.server.create("foobar", pmap['s1'])
     except acos_client.errors.Exists:
         print("got already exists error, good")
+    else:
+        raise Nope()
     c.slb.server.delete("foobar")
     c.slb.server.delete("foobar")
     try:
         c.slb.server.get("foobar")
     except acos_client.errors.NotFound:
         print("got not found, good")
+    else:
+        raise Nope()
     c.slb.server.create("foobar", pmap['s1'])
 
     print("=============================================================")
@@ -221,12 +242,15 @@ def run_all(version, ax, partition, pmap):
     c.slb.service_group.delete("pfoobar")
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.ROUND_ROBIN)
-    c.slb.service_group.get("pfoobar")
+    r = c.slb.service_group.get("pfoobar")
+    print("LIBRARY RESPONSE = %s", r)
     try:
         c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                    c.slb.service_group.ROUND_ROBIN)
     except acos_client.errors.Exists:
         print("got already exists error, good")
+    else:
+        raise Nope()
     c.slb.service_group.update("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.LEAST_CONNECTION)
     try:
@@ -234,12 +258,16 @@ def run_all(version, ax, partition, pmap):
                                    c.slb.service_group.LEAST_CONNECTION)
     except acos_client.errors.NotFound:
         print("got not found, good")
+    else:
+        raise Nope()
     c.slb.service_group.delete("pfoobar")
     c.slb.service_group.delete("pfoobar")
     try:
         c.slb.service_group.get("pfoobar")
     except acos_client.errors.NotFound:
         print("got not found, good")
+    else:
+        raise Nope()
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.ROUND_ROBIN)
 
@@ -252,12 +280,16 @@ def run_all(version, ax, partition, pmap):
 
     c.slb.virtual_server.delete("vfoobar")
     c.slb.virtual_server.create("vfoobar", pmap['vip1'])
-    c.slb.virtual_server.get("vfoobar")
-    c.slb.virtual_server.all()
+    r = c.slb.virtual_server.get("vfoobar")
+    print("LIBRARY RESPONSE = %s", r)
+    r = c.slb.virtual_server.all()
+    print("LIBRARY RESPONSE = %s", r)
     try:
         c.slb.virtual_server.create("vfoobar", pmap['vip1'])
     except acos_client.errors.Exists:
         print("got already exists error, good")
+    else:
+        raise Nope()
     c.slb.virtual_server.stats("vfoobar")
     c.slb.virtual_server.delete("vfoobar")
     c.slb.virtual_server.delete("vfoobar")
@@ -265,6 +297,8 @@ def run_all(version, ax, partition, pmap):
         c.slb.virtual_server.get("vfoobar")
     except acos_client.errors.NotFound:
         print("got not found, good")
+    else:
+        raise Nope()
 
     c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
                                       c.slb.virtual_server.vport.HTTP, 80)
@@ -280,6 +314,8 @@ def run_all(version, ax, partition, pmap):
             port='80')
     except acos_client.errors.Exists:
         print("got already exists error, good")
+    else:
+        raise Nope()
     c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
                                       c.slb.virtual_server.vport.HTTP, 80)
     c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
@@ -290,23 +326,30 @@ def run_all(version, ax, partition, pmap):
     print("HM Create")
     c.slb.hm.delete("hfoobar")
     c.slb.hm.create("hfoobar", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200', 80)
-    c.slb.hm.get("hfoobar")
+    r = c.slb.hm.get("hfoobar")
+    print("LIBRARY RESPONSE = %s", r)
     try:
         c.slb.hm.create("hfoobar", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200',
                         80)
     except acos_client.errors.Exists:
         print("got already exists error, good")
+    else:
+        raise Nope()
     c.slb.hm.update("hfoobar", c.slb.hm.HTTP, 10, 10, 10)
     try:
         c.slb.hm.update("hnfoobar", c.slb.hm.HTTP, 10, 10, 10)
     except acos_client.errors.NotFound:
         print("got not found, good")
+    else:
+        raise Nope()
     c.slb.hm.delete("hfoobar")
     c.slb.hm.delete("hfoobar")
     try:
         c.slb.hm.get("hfoobar")
     except acos_client.errors.NotFound:
         print("got not found, good")
+    else:
+        raise Nope()
 
     print("=============================================================")
     print("")
@@ -317,16 +360,22 @@ def run_all(version, ax, partition, pmap):
         c.slb.service_group.member.create("pfoobar", "foobar", 80)
     except acos_client.errors.Exists:
         print("got already exists error, good")
+    else:
+        raise Nope()
     c.slb.service_group.member.update("pfoobar", "foobar", 80,
                                       c.slb.DOWN)
     try:
         c.slb.service_group.member.update("pfoobar", "nfoobar", 80)
     except acos_client.errors.NotFound:
         print("got not found, good")
+    else:
+        raise Nope()
     try:
         c.slb.service_group.member.update("pnfoobar", "foobar", 80)
     except acos_client.errors.NoSuchServiceGroup:
         print("got not found, good")
+    else:
+        raise Nope()
     c.slb.service_group.member.delete("pfoobar", "foobar", 80)
     c.slb.service_group.member.delete("pfoobar", "foobar", 80)
 
@@ -339,7 +388,10 @@ def run_all(version, ax, partition, pmap):
         c.slb.template.src_ip_persistence.create("sip1")
     except acos_client.errors.Exists:
         print("got already exists error, good")
-    c.slb.template.src_ip_persistence.get("sip1")
+    else:
+        raise Nope()
+    r = c.slb.template.src_ip_persistence.get("sip1")
+    print("LIBRARY RESPONSE = %s", r)
     c.slb.template.src_ip_persistence.exists("sip1")
     c.slb.template.src_ip_persistence.delete("sip1")
     c.slb.template.src_ip_persistence.delete("sip1")
@@ -347,6 +399,8 @@ def run_all(version, ax, partition, pmap):
         c.slb.template.src_ip_persistence.get("sip1")
     except acos_client.errors.NotFound:
         print("got not found, good")
+    else:
+        raise Nope()
     c.slb.template.src_ip_persistence.create("sip1")
 
     print("=============================================================")
@@ -358,6 +412,8 @@ def run_all(version, ax, partition, pmap):
         c.slb.template.cookie_persistence.create("cp1")
     except acos_client.errors.Exists:
         print("got already exists error, good")
+    else:
+        raise Nope()
     c.slb.template.cookie_persistence.get("cp1")
     c.slb.template.cookie_persistence.exists("cp1")
     c.slb.template.cookie_persistence.delete("cp1")
@@ -366,6 +422,8 @@ def run_all(version, ax, partition, pmap):
         c.slb.template.cookie_persistence.get("cp1")
     except acos_client.errors.NotFound:
         print("got not found, good")
+    else:
+        raise Nope()
     c.slb.template.cookie_persistence.create("cp1")
 
     print("=============================================================")

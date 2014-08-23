@@ -41,7 +41,6 @@ class Client(object):
 
     def __init__(self, host, version, username, password, port=None,
                  protocol=None):
-
         self._version = self._just_digits(version)
         if self._version not in acos_client.AXAPI_VERSIONS:
             raise acos_errors.ACOSUnsupportedVersion()

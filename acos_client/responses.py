@@ -53,3 +53,7 @@ def raise_axapi_ex(version, response, action=None):
         raise ae.ACOSException(code, response['response']['err']['msg'])
 
     raise ae.ACOSException()
+
+
+def raise_axapi_auth_error(response, action=None, headers={}):
+    v30.responses.raise_axapi_auth_error(response, action, headers)

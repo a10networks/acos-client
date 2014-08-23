@@ -18,9 +18,23 @@ import acos_client.errors as ae
 RESPONSE_CODES = {
     1023410176: {
         '/axapi/v3/slb/service-group/': ae.NoSuchServiceGroup,
-        '*': ae.NotFound,
+        '*': ae.NotFound
+    },
+    1023475722: {
+        '*': ae.NotFound
     },
     1207959957: {
-        '*': ae.NotFound,
-    }
+        '*': ae.NotFound
+    },
 }
+
+
+def raise_axapi_auth_error(response, action=None, headers={}):
+    if 'authorizationschema' in response:
+        if response['authorizationschema']['code'] == 401:
+            if 'Authorization' in headers:
+                raise ae.InvalidSessionID()
+            else:
+                raise ae.AuthenticationFailure()
+        elif response['authorizationschema']['code'] == 403:
+            raise ae.AuthenticationFailure()
