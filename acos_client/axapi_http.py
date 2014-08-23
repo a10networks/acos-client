@@ -105,7 +105,7 @@ class HttpClient(object):
         else:
             http = httplib.HTTPConnection(self.host, self.port)
 
-        hdrs = self.HEADERS
+        hdrs = self.HEADERS.copy()
         if headers:
             hdrs.update(headers)
 
@@ -173,7 +173,7 @@ class HttpClient(object):
         return r
 
     def get(self, api_url, params={}, headers=None):
-        return self.request("GET", api_url, params, headers=None)
+        return self.request("GET", api_url, params, headers=headers)
 
     def post(self, api_url, params={}, headers=None):
         return self.request("POST", api_url, params, headers=headers)
