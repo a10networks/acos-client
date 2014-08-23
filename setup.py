@@ -18,7 +18,6 @@ setup(
     long_description = open('README.md').read(),
 
     classifiers = [
-        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: MacOS :: MacOS X',
