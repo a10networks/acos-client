@@ -17,6 +17,7 @@ class ACOSException(Exception):
     def __init__(self, code=1, msg=''):
         self.code = code
         self.msg = msg
+        super(ACOSException, self).__init__(msg)
 
 
 class ACOSUnsupportedVersion(ACOSException):
@@ -165,6 +166,13 @@ RESPONSE_CODES = {
     654311496: {
         '*': AddressSpecifiedIsInUse
     },
+    1023410176: {
+        '/axapi/v3/slb/service-group/': NoSuchServiceGroup,
+        '*': NotFound,
+    },
+    1207959957: {
+        '*': NotFound,
+    }
 }
 
 
@@ -178,8 +186,13 @@ def raise_axapi_ex(response, action=None):
 
             if action is not None and action in ex_dict:
                 ex = ex_dict[action]
-            elif '*' in ex_dict:
-                ex = ex_dict['*']
+            else:
+                for k in ex_dict.keys():
+                    if action.startswith(k):
+                        ex = ex_dict[k]
+                # end for k in ex_dict.keys()
+                if not ex and '*' in ex_dict:
+                    ex = ex_dict['*']
 
             if ex is not None:
                 raise ex(code, response['response']['err']['msg'])
@@ -188,3 +201,13 @@ def raise_axapi_ex(response, action=None):
 
         raise ACOSException(code, response['response']['err']['msg'])
     raise ACOSException()
+
+
+def raise_http_axapi_ex(resp, method='', url='', payload=''):
+
+    msg = ("HTTP Error %s\n"
+           "method: %s\nurl: %s\npayload: %s\nresponse: \n%s\n") % (
+               resp.status, method, url, payload, resp.read())
+
+    raise ACOSException(resp.status, msg)
+# raise_http_axapi_ex()

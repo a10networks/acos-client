@@ -1,4 +1,4 @@
-# Copyright 2014,  Doug Wiegley,  A10 Networks.
+# Copyright 2014,  Jeff Buttars,  A10 Networks.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -11,13 +11,18 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-# flake8: noqa
 
-from acos_client.client import Client
-from acos_client.hash import Hash
-from acos_client.version import VERSION
 
-AXAPI_21 = '21'
-AXAPI_30 = '30'
-AXAPI_VERSIONS = (AXAPI_21, AXAPI_30)
-#AXAPI_SSH = 'ssh'
+class BaseV30(object):
+
+    def __init__(self, client):
+        self.client = client
+        self.http = client.http
+        self.auth_header = {}
+
+    def minimal_dict(self, my_dict):
+        return dict((k, v) for k, v in my_dict.items() if v is not None)
+
+    def url(self, action):
+        self.auth_header['Authorization'] = "A10 %s" % self.client.session.id
+        return ("/axapi/v3" + action)

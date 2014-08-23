@@ -60,3 +60,4 @@ docs/_build/
 .installed.cfg
 Vagrantfile
 .vagrant/
+tags
