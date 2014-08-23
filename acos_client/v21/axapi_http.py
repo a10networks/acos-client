@@ -23,7 +23,7 @@ import socket
 import ssl
 import time
 
-import acos_client.responses as acos_responses
+import responses as acos_responses
 from acos_client.version import VERSION
 
 LOG = logging.getLogger(__name__)
@@ -53,6 +53,7 @@ def extract_method(api_url):
         return m.group(1)
     return api_url
 
+
 broken_replies = {
     ('<?xml version="1.0" encoding="utf-8" ?><response status="ok">'
      '</response>'): '{"response": {"status": "OK"}}',
@@ -73,9 +74,6 @@ broken_replies = {
      '<error code="1076" msg="Invalid partition parameter." /></response>'):
     ('{"response": {"status": "fail", "err": {"code": 1076,'
      '"msg": "Invalid partition parameter."}}}'),
-
-    "": '{"response": {"status": "OK"}}'
-
 }
 
 
@@ -87,8 +85,7 @@ class HttpClient(object):
         # 'Accept': '*/*',
     }
 
-    def __init__(self, host, port=None, protocol="https", version=None):
-        self.axapi_version = version
+    def __init__(self, host, port=None, protocol="https"):
         self.host = host
         self.port = port
         self.protocol = protocol
@@ -163,8 +160,7 @@ class HttpClient(object):
         if 'response' in r and 'status' in r['response']:
             if r['response']['status'] == 'fail':
                     acos_responses.raise_axapi_ex(
-                        self.axapi_version, r,
-                        action=extract_method(api_url))
+                        r, action=extract_method(api_url))
 
         return r
 
@@ -176,6 +172,3 @@ class HttpClient(object):
 
     def put(self, api_url, params={}):
         return self.request("PUT", api_url, params)
-
-    def delete(self, api_url, params={}):
-        return self.request("DELETE", api_url, params)

@@ -115,6 +115,7 @@ RESPONSE_CODES = {
     },
 }
 
+
 def raise_axapi_ex(response, action=None):
     if 'response' in response and 'err' in response['response']:
         code = response['response']['err']['code']

@@ -48,7 +48,7 @@ class Client(object):
         if self._version not in acos_client.AXAPI_VERSIONS:
             raise acos_errors.ACOSUnsupportedVersion()
         self.http = VERSION_IMPORTS[self._version]['http'].HttpClient(
-            host, port, protocol, version=self._version)
+            host, port, protocol)
         self.session = VERSION_IMPORTS[self._version]['Session'](
             self, username, password)
         self.current_partition = 'shared'

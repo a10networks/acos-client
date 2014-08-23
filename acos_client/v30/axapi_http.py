@@ -31,7 +31,7 @@ except ImportError:
 http_client.HTTPConnection.debuglevel = 1
 
 
-import acos_client.responses as acos_responses
+import responses as acos_responses
 from acos_client.version import VERSION
 
 LOG = logging.getLogger(__name__)
@@ -57,40 +57,13 @@ class HttpClient(object):
         # 'Accept': '*/*',
     }
 
-    def __init__(self, host, port=None, protocol="https", version=None):
-        self.axapi_version = version
-        self.host = host
-        self.port = port
-        self.protocol = protocol
+    def __init__(self, host, port=None, protocol="https"):
         if port is None:
             if protocol is 'http':
                 port = 80
             else:
                 port = 443
         self.url_base = "%s://%s:%s" % (protocol, host, port)
-
-    # def _http(self, method, api_url, payload, headers=None):
-    #     if self.protocol == 'https':
-    #         http = httplib.HTTPSConnection(self.host, self.port)
-    #         http.connect = lambda: force_tlsv1_connect(http)
-    #     else:
-    #         http = httplib.HTTPConnection(self.host, self.port)
-
-        # hdrs = self.HEADERS.copy()
-        # if headers:
-        #     hdrs.update(headers)
-
-        # LOG.debug("axapi_http: url:     %s", api_url)
-        # LOG.debug("axapi_http: method:  %s", method)
-        # LOG.debug("axapi_http: headers: %s", hdrs)
-        # LOG.debug("axapi_http: payload: %s", payload)
-        # http.request(method, api_url, payload, hdrs)
-
-        # resp = http.getresponse()
-        # # print "RESP ", dir(resp)
-        # # print "RESP HEADERS", resp.getheaders()
-        # # LOG.debug("http response status %s", resp.status)
-        # return resp.read()
 
     def request(self, method, api_url, params={}, headers=None):
         LOG.debug("axapi_http: full url = %s", self.url_base + api_url)
@@ -132,24 +105,22 @@ class HttpClient(object):
 
         if 'response' in r and 'status' in r['response']:
             if r['response']['status'] == 'fail':
-                    acos_responses.raise_axapi_ex(
-                        self.axapi_version, r,
-                        action=api_url, method=method)
+                    acos_responses.raise_axapi_ex(r, method, api_url)
 
         if 'authorizationschema' in r:
             acos_responses.raise_axapi_auth_error(
-                r, action=api_url, headers=headers)
+                r, method, api_url, headers)
 
         return r
 
     def get(self, api_url, params={}, headers=None):
-        return self.request("GET", api_url, params, headers=headers)
+        return self.request("GET", api_url, params, headers)
 
     def post(self, api_url, params={}, headers=None):
-        return self.request("POST", api_url, params, headers=headers)
+        return self.request("POST", api_url, params, headers)
 
     def put(self, api_url, params={}, headers=None):
-        return self.request("PUT", api_url, params, headers=headers)
+        return self.request("PUT", api_url, params, headers)
 
     def delete(self, api_url, params={}, headers=None):
-        return self.request("DELETE", api_url, params, headers=headers)
+        return self.request("DELETE", api_url, params, headers)
