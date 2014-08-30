@@ -38,8 +38,8 @@ instances = {
     #     'user': 'admin',
     #     'password': 'i-9276ff9f',
     # }
-    '4.0.0': {
-        'host': 'dougw-softax-4',
+    '2.7.2': {
+        'host': '172.18.61.163',
         'port': 443,
         'protocol': 'https',
         'user': 'admin',

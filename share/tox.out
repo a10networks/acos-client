@@ -1,0 +1,335 @@
+(.venv)acos-client|tox-py26⚡ ⇒ tox
+py26 develop-inst-nodeps: /home/sandplunge/acos-client
+py26 runtests: PYTHONHASHSEED='1099945480'
+py26 runtests: commands[0] | nosetests
+.F...F..F...F.F.F...FF.F.F...F...F.F...F.F......F...F...F...F...F
+======================================================================
+FAIL: test_http_cookie_create_exists (tests.unit.test_cookie.TestHttpCookiePersistence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_cookie.py", line 39, in test_http_cookie_create_exists
+    c.slb.template.cookie_persistence.create('cp1')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.template.cookie_persistence.create&session_id=session0', '{"cookie_persistence_template": {"name": "cp1"}}')
+Not called
+
+======================================================================
+FAIL: test_http_cookie_search_not_found (tests.unit.test_cookie.TestHttpCookiePersistence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_cookie.py", line 48, in test_http_cookie_search_not_found
+    c.slb.template.cookie_persistence.get('cp1')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.template.cookie_persistence.search&session_id=session0', '{"name": "cp1"}')
+Not called
+
+======================================================================
+FAIL: test_hm_create_exists (tests.unit.test_hm.TestHealthMonitor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_hm.py", line 39, in test_hm_create_exists
+    c.slb.hm.create('hm1', 'HTTP', 5, 5, 5, 'GET', '/', '200', 80)
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.hm.create&session_id=session0', '{"retry": 5, "timeout": 5, "disable_after_down": 0, "type": "HTTP", "interval": 5, "name": "hm1", "consec_pass_reqd": 5}')
+Not called
+
+======================================================================
+FAIL: test_hm_search_not_found (tests.unit.test_hm.TestHealthMonitor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_hm.py", line 57, in test_hm_search_not_found
+    c.slb.hm.get('hm1')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.hm.search&session_id=session0', '{"name": "hm1"}')
+Not called
+
+======================================================================
+FAIL: test_hm_update_not_found (tests.unit.test_hm.TestHealthMonitor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_hm.py", line 48, in test_hm_update_not_found
+    c.slb.hm.update('hm1', 'HTTP', 5, 5, 5, 'GET', '/', '200', 80)
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.hm.update&session_id=session0', '{"retry": 5, "timeout": 5, "disable_after_down": 0, "type": "HTTP", "interval": 5, "name": "hm1", "consec_pass_reqd": 5}')
+Not called
+
+======================================================================
+FAIL: test_member_create_exists (tests.unit.test_member.TestMember)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_member.py", line 39, in test_member_create_exists
+    c.slb.service_group.member.create('pool1', 's1', 80)
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.service_group.member.create&session_id=session0', '{"name": "pool1", "member": {"server": "s1", "port": 80, "status": 1}}')
+Not called
+
+======================================================================
+FAIL: test_member_update_no_such_service_group (tests.unit.test_member.TestMember)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_member.py", line 58, in test_member_update_no_such_service_group
+    c.slb.DOWN)
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.service_group.member.update&session_id=session0', '{"name": "pool1", "member": {"server": "s1", "port": 80, "status": 0}}')
+Not called
+
+======================================================================
+FAIL: test_member_update_not_found (tests.unit.test_member.TestMember)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_member.py", line 51, in test_member_update_not_found
+    c.slb.DOWN)
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.service_group.member.update&session_id=session0', '{"name": "pool1", "member": {"server": "s1", "port": 80, "status": 0}}')
+Not called
+
+======================================================================
+FAIL: test_partition_active_not_found (tests.unit.test_partition.TestPartition)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_partition.py", line 57, in test_partition_active_not_found
+    c.system.partition.active('p1')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=system.partition.active&session_id=session0', '{"name": "p1"}')
+Not called
+
+======================================================================
+FAIL: test_partition_create_exists (tests.unit.test_partition.TestPartition)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_partition.py", line 40, in test_partition_create_exists
+    c.system.partition.create('p1')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=system.partition.create&session_id=session0', '{"partition": {"name": "p1", "network_partition": 0, "max_aflex_file": 32}}')
+Not called
+
+======================================================================
+FAIL: test_server_create_exists (tests.unit.test_server.TestServer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_server.py", line 39, in test_server_create_exists
+    c.slb.server.create('s1', '192.168.2.254')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.server.create&session_id=session0', '{"server": {"name": "s1", "host": "192.168.2.254"}}')
+Not called
+
+======================================================================
+FAIL: test_server_search_not_found (tests.unit.test_server.TestServer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_server.py", line 48, in test_server_search_not_found
+    c.slb.server.get('s1')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.server.search&session_id=session0', '{"name": "s1"}')
+Not called
+
+======================================================================
+FAIL: test_sg_create_exists (tests.unit.test_service_group.TestServiceGroup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_service_group.py", line 39, in test_sg_create_exists
+    c.slb.service_group.create('pool1')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.service_group.create&session_id=session0', '{"service_group": {"name": "pool1", "protocol": 2, "lb_method": 0}}')
+Not called
+
+======================================================================
+FAIL: test_sg_search_not_found (tests.unit.test_service_group.TestServiceGroup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_service_group.py", line 61, in test_sg_search_not_found
+    c.slb.service_group.get('pool1')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.service_group.search&session_id=session0', '{"name": "pool1"}')
+Not called
+
+======================================================================
+FAIL: test_sg_update_not_found (tests.unit.test_service_group.TestServiceGroup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_service_group.py", line 52, in test_sg_update_not_found
+    lb_method=c.slb.service_group.LEAST_CONNECTION)
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.service_group.update&session_id=session0', '{"service_group": {"name": "pool1", "lb_method": 2}}')
+Not called
+
+======================================================================
+FAIL: test_source_ip_pers_create_exists (tests.unit.test_sip.TestSourceIpPersistence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_sip.py", line 39, in test_source_ip_pers_create_exists
+    c.slb.template.src_ip_persistence.create('sip1')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.template.src_ip_persistence.create&session_id=session0', '{"src_ip_persistence_template": {"name": "sip1"}}')
+Not called
+
+======================================================================
+FAIL: test_source_ip_pers_search_not_found (tests.unit.test_sip.TestSourceIpPersistence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_sip.py", line 48, in test_source_ip_pers_search_not_found
+    c.slb.template.src_ip_persistence.get('sip1')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.template.src_ip_persistence.search&session_id=session0', '{"name": "sip1"}')
+Not called
+
+======================================================================
+FAIL: test_virtual_port_create_exists (tests.unit.test_virtual_port.TestVirtualPort)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_virtual_port.py", line 51, in test_virtual_port_create_exists
+    service_group_name='pool1')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.virtual_server.vport.create&session_id=session0', '{"name": "vip1", "vport": {"name": "vip1_VPORT", "protocol": 11, "port": 80, "status": 1, "service_group": "pool1"}}')
+Not called
+
+======================================================================
+FAIL: test_virtual_server_create_exists (tests.unit.test_virtual_server.TestVirtualServer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_virtual_server.py", line 39, in test_virtual_server_create_exists
+    c.slb.virtual_server.create('vip1', '192.168.2.250')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.virtual_server.create&session_id=session0', '{"virtual_server": {"name": "vip1", "address": "192.168.2.250", "status": 1}}')
+Not called
+
+======================================================================
+FAIL: test_virtual_server_search_not_found (tests.unit.test_virtual_server.TestVirtualServer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/sandplunge/acos-client/tests/unit/test_virtual_server.py", line 48, in test_virtual_server_search_not_found
+    c.slb.virtual_server.get('vip1')
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 42, in __exit__
+    self.parent.post_validate()
+  File "/home/sandplunge/acos-client/tests/unit/v21_mocks.py", line 83, in post_validate
+    p)
+  File "/home/sandplunge/acos-client/.tox/py26/lib/python2.6/site-packages/mock.py", line 831, in assert_called_with
+    raise AssertionError('Expected call: %s\nNot called' % (expected,))
+AssertionError: Expected call: mock('POST', '/services/rest/v2.1/?format=json&method=slb.virtual_server.search&session_id=session0', '{"name": "vip1"}')
+Not called
+
+----------------------------------------------------------------------
+Ran 65 tests in 0.056s
+
+FAILED (failures=20)
+ERROR: InvocationError: '/home/sandplunge/acos-client/.tox/py26/bin/nosetests'
+py27 develop-inst-nodeps: /home/sandplunge/acos-client
+py27 runtests: PYTHONHASHSEED='1099945480'
+py27 runtests: commands[0] | nosetests
+.................................................................
+----------------------------------------------------------------------
+Ran 65 tests in 0.050s
+
+OK
+pypy develop-inst-nodeps: /home/sandplunge/acos-client
+pypy runtests: PYTHONHASHSEED='1099945480'
+pypy runtests: commands[0] | nosetests
+.................................................................
+----------------------------------------------------------------------
+Ran 65 tests in 0.116s
+
+OK
+pep8 develop-inst-nodeps: /home/sandplunge/acos-client
+pep8 runtests: PYTHONHASHSEED='1099945480'
+pep8 runtests: commands[0] | flake8
+_____________________________________________________________ summary _____________________________________________________________
+ERROR:   py26: commands failed
+  py27: commands succeeded
+  pypy: commands succeeded
+  pep8: commands succeeded
+(.venv)acos-client|tox-py26⚡ ⇒ 

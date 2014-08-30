@@ -171,9 +171,10 @@ class ServerDeleteNotFound(ServerDelete):
             "status": "fail",
             "err": {
                 "code": 67174402,
-                "msg": " No such Server"}
+                "msg": " No such Server"
             }
         }
+    }
 
 
 class ServerCreate(Server):

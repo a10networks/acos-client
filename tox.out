@@ -1,0 +1,19 @@
+py26 develop-inst-nodeps: /home/sandplunge/acos-client
+py26 runtests: PYTHONHASHSEED='2295601286'
+py26 runtests: commands[0] | nosetests
+ERROR: InvocationError: '/home/sandplunge/acos-client/.tox/py26/bin/nosetests'
+py27 develop-inst-nodeps: /home/sandplunge/acos-client
+py27 runtests: PYTHONHASHSEED='2295601286'
+py27 runtests: commands[0] | nosetests
+ERROR: InvocationError: '/home/sandplunge/acos-client/.tox/py27/bin/nosetests'
+pypy develop-inst-nodeps: /home/sandplunge/acos-client
+pypy runtests: PYTHONHASHSEED='2295601286'
+pypy runtests: commands[0] | nosetests
+pep8 develop-inst-nodeps: /home/sandplunge/acos-client
+pep8 runtests: PYTHONHASHSEED='2295601286'
+pep8 runtests: commands[0] | flake8
+___________________________________ summary ____________________________________
+ERROR:   py26: commands failed
+ERROR:   py27: commands failed
+  pypy: commands succeeded
+  pep8: commands succeeded
