@@ -74,13 +74,13 @@ class MockPair(object):
 
     def post_validate(self):
         if self.action is not None:
-            p = None
+            validated = False
             if self.params is not None:
-                p = json.dumps(self.params)
-            self._mock.assert_called_with(
-                self.method,
-                self.url(self._client.session_id),
-                p)
+                for name, args, kwargs in self._mock.mock_calls:
+                    if args and len(args) > 2 and args[2].__class__ == str:
+                        if json.loads(args[2]) == self.params:
+                            validated = True
+            self._mock.assertTrue(validated)
 
 
 class AuthenticatedMockPair(MockPair):
@@ -171,8 +171,12 @@ class ServerDeleteNotFound(ServerDelete):
             "status": "fail",
             "err": {
                 "code": 67174402,
+<<<<<<< HEAD
                 "msg": " No such Server"
             }
+=======
+                "msg": " No such Server"}
+>>>>>>> address random dict ordering bug
         }
     }
 
