@@ -41,8 +41,8 @@ instances = {
     #     'axapi': '21',
     # }
     '2.7.2': {
-        'host': 'dougw-softax-272',
-        'port': 8443,
+        'host': '172.18.61.163',
+        'port': 443,
         'protocol': 'https',
         'user': 'admin',
         'password': 'a10',
