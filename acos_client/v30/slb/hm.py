@@ -50,26 +50,84 @@ class HealthMonitor(base.BaseV30):
 
     def _set(self, action, name, mon_method, interval, timeout, max_retries,
              method=None, url=None, expect_code=None, port=None):
+
         params = {
-            'monitor': {
-                'retry': max_retries,
-                'name': name,
-                'interval': interval,
-                'timeout': timeout,
-                'disable-after-down': 0,
+            'name': name,
+            'retry': int(max_retries),
+            'interval': int(interval),
+            'timeout': int(timeout),
+            # 'disable-after-down': 0,
+            # 'passive': 0,
+            # 'strict-retry-on-server-err-resp': 0
+        }
+
+        mon_obj = {
+            mon_method: {
+                mon_method: 1,
+                'http-port': int(port),
+                'http-expect': 1,
+                'http-response-code': str(expect_code),
+                'http-url': 1,
+                'url-type': method,
+                'url-path': url,
+                #'http-kerberos-auth': 0
             }
         }
 
-        if mon_method in self._method_objects:
-            mon_obj = {
-                mon_method: {
-                    mon_method: 1,
-                    'a10-url': url or '',
-                }
-            }
-            if port:
-                mon_obj[mon_method][mon_method + '-port'] = port
-            params['monitor']['method'] = mon_obj
+  #   {
+  #     "name":"hm-http-1",
+  #     "retry":5,
+  #     "passive":0,
+  #     "strict-retry-on-server-err-resp":0,
+  #     "disable-after-down":0,
+  #     "interval":5,
+  #     "timeout":5,
+  #     "method": {
+  #       "http": {
+  #         "http":1,
+  #         "http-port":80,
+  #         "http-expect":1,
+  #         "http-response-code":"200",
+  #         "http-url":1,
+  #         "url-type":"GET",
+  #         "url-path":"/",
+  #         "http-kerberos-auth":0,
+  #         "a10-url":"https://172.18.61.29/axapi/v3/health/monitor/hm-http-1/method/http"
+  #       },
+  #       "a10-url":"https://172.18.61.29/axapi/v3/health/monitor/hm-http-1/method"
+  #     },
+  #     "a10-url":"https://172.18.61.29/axapi/v3/health/monitor/hm-http-1"
+  #   }
+
+        params = {
+          "name": name,
+          "retry":5,
+          "passive":0,
+          "strict-retry-on-server-err-resp":0,
+          "disable-after-down":0,
+          "interval":5,
+          "timeout":5,
+          "method": {
+            "http": {
+              "http":1,
+              "http-port":80,
+              "http-expect":1,
+              "http-response-code":"200",
+              "http-url":1,
+              "url-type":"GET",
+              "url-path":"/",
+              "http-kerberos-auth":0,
+              # "a10-url":"https://172.18.61.29/axapi/v3/health/monitor/hm-http-1/method/http"
+            },
+            # "a10-url":"https://172.18.61.29/axapi/v3/health/monitor/hm-http-1/method"
+          },
+          # "a10-url":"https://172.18.61.29/axapi/v3/health/monitor/hm-http-1"
+        }
+
+        params['method'] = mon_obj
+
+        import json
+        print "JSON args = \n%s", json.dumps(params, indent=4)
 
         self._post(action, params)
 

@@ -12,6 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client.errors as acos_errors
+
 import acos_client.v30.base as base
 
 
@@ -22,6 +24,15 @@ class Member(base.BaseV30):
 
     STATUS_ENABLE = 0
     STATUS_DISABLE = 1
+
+    def get(self, service_group_name, server_name, server_port):
+        url = self.url_base_tmpl.format(gname=service_group_name)
+        url += self.url_mbr_tmpl.format(
+            name=server_name,
+            port=server_port
+        )
+
+        return self._get(url)
 
     def _write(self,
                service_group_name,
@@ -53,6 +64,13 @@ class Member(base.BaseV30):
                server_name,
                server_port,
                status=STATUS_ENABLE):
+        try:
+            self.get(service_group_name, server_name, server_port)
+        except acos_errors.NotFound:
+            pass
+        else:
+            raise acos_errors.Exists()
+
         self._write(service_group_name,
                     server_name, server_port, status)
 

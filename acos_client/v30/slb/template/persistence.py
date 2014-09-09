@@ -33,6 +33,8 @@ class BasePersistence(base.BaseV30):
             return False
 
     def create(self, name):
+        if self.exists(name):
+            raise acos_errors.Exists
         self._post(self.prefix, self.get_params(name))
 
     def delete(self, name):

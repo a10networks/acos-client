@@ -68,7 +68,7 @@ class HttpClient(object):
     def request(self, method, api_url, params={}, headers=None):
         LOG.debug("axapi_http: full url = %s", self.url_base + api_url)
         LOG.debug("axapi_http: %s url = %s", method, api_url)
-        LOG.debug("axapi_http: params = %s", params)
+        LOG.debug("axapi_http: params = %s", json.dumps(params, indent=4))
 
         if params:
             payload = json.dumps(params)
@@ -79,7 +79,7 @@ class HttpClient(object):
         if headers:
             hdrs.update(headers)
 
-        LOG.debug("axapi_http: headers = %s", hdrs)
+        LOG.debug("axapi_http: headers = %s", json.dumps(hdrs, indent=4))
 
         z = requests.request(method, self.url_base + api_url,
                              verify=False,

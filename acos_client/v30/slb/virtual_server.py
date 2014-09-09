@@ -65,6 +65,7 @@ class VirtualServer(base.BaseV30):
 
     def stats(self, name=''):
         # resp = self._get(self.url_prefix + name + '/stats/')
-        # return resp
-        raise acos_errors.NotImplemented()
+        resp = self._get(self.url_prefix + name + '/stats')
+        return resp
+        # raise acos_errors.NotImplemented()
 

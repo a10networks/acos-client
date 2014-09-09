@@ -50,6 +50,10 @@ class VirtualPort(base.BaseV30):
     url_server_tmpl = '/slb/virtual-server/{name}/port/'
     url_port_tmpl = '{port_number}+{protocol}'
 
+    def all(self, virtual_server_name):
+        url = self.url_server_tmpl.format(name=virtual_server_name)
+        return self._get(url)
+
     def _set(self, virtual_server_name, name, protocol, port,
              service_group_name,
              s_pers_name=None, c_pers_name=None, stats=0, update=False):

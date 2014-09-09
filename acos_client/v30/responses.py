@@ -12,16 +12,32 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import re
+
 import acos_client.errors as ae
 
 
 RESPONSE_CODES = {
+    67371011: {
+        '*': {
+            '*': ae.Exists
+        }
+    },
     1023410176: {
         'DELETE': {
             '*': None
         },
         '*': {
 #            '/axapi/v3/slb/service-group/': ae.NoSuchServiceGroup,
+            '*': ae.NotFound
+        }
+    },
+    1023410181: {
+        'DELETE': {
+            '*': None
+        },
+        '*': {
+            '/axapi/v3/slb/service-group/.*/member/': ae.NotFound,
             '*': ae.NotFound
         }
     },
@@ -66,7 +82,8 @@ def raise_axapi_ex(response, method, api_url):
 
             # Now try to find specific API method exceptions
             for k in x.keys():
-                if api_url.startswith(k):
+                #if api_url.startswith(k):
+                if k != '*' and re.match('^'+k, api_url):
                     ex = x[k]
 
             # If we get here, try for a fallback exception for this code
