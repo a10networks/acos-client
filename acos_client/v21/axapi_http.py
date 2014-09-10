@@ -24,7 +24,8 @@ import ssl
 import time
 
 import responses as acos_responses
-from acos_client.version import VERSION
+
+import acos_client
 
 LOG = logging.getLogger(__name__)
 
@@ -51,7 +52,7 @@ def extract_method(api_url):
     m = re.search("method=([^&]+)", api_url)
     if m is not None:
         return m.group(1)
-    return api_url
+    return ""
 
 
 broken_replies = {
@@ -80,9 +81,7 @@ broken_replies = {
 class HttpClient(object):
     HEADERS = {
         "Content-type": "application/json",
-        "User-Agent": "ACOS-Client-AGENT-%s" % VERSION,
-        # 'Connection': 'keep-alive',
-        # 'Accept': '*/*',
+        "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
     def __init__(self, host, port=None, protocol="https"):
@@ -104,8 +103,9 @@ class HttpClient(object):
 
         LOG.debug("axapi_http: url:     %s", api_url)
         LOG.debug("axapi_http: method:  %s", method)
-        LOG.debug("axapi_http: headers: %s", hdrs)
+        LOG.debug("axapi_http: headers: %s", self.HEADERS)
         LOG.debug("axapi_http: payload: %s", payload)
+
         http.request(method, api_url, payload, self.HEADERS)
 
         resp = http.getresponse()
@@ -119,7 +119,7 @@ class HttpClient(object):
         LOG.debug("axapi_http: params = %s", params)
 
         if params:
-            payload = json.dumps(params)
+            payload = json.dumps(params, encoding='utf-8')
         else:
             payload = None
 

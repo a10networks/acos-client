@@ -134,5 +134,5 @@ def raise_axapi_ex(response, action=None):
             else:
                 return
 
-        raise ACOSException(code, response['response']['err']['msg'])
-    raise ACOSException()
+        raise ae.ACOSException(code, response['response']['err']['msg'])
+    raise ae.ACOSException()

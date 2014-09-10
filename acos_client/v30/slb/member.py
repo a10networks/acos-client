@@ -13,7 +13,6 @@
 #    under the License.
 
 import acos_client.errors as acos_errors
-
 import acos_client.v30.base as base
 
 

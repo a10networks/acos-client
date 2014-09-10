@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client.errors as acos_errors
 import acos_client.v30.base as base
 
 
@@ -26,22 +27,30 @@ class HealthMonitor(base.BaseV30):
 
     _method_objects = {
         ICMP: {
-            'method-icmp': 1,
-            'a10-url': '',
-        },
-        TCP: {
-            'method-tcp': 1,
-            'a10-url': '',
+            "icmp": 1
         },
         HTTP: {
-            'method-http': 1,
-            'a10-url': '',
-            'http-port': 80,
+            "http": 1,
+            "http-port": 80,
+            "http-expect": 1,
+            "http-response-code": "200",
+            "http-url": 1,
+            "url-type": "GET",
+            "url-path": "/",
         },
         HTTPS: {
-            'method-https': 1,
-            'a10-url': '',
-            'https-port': 443,
+            "https": 1,
+            "web-port": 443,
+            "https-expect": 1,
+            "https-response-code": "200",
+            "https-url": 1,
+            "url-type": "GET",
+            "url-path": "/",
+            "disable-sslv2hello": 0
+        },
+        TCP: {
+            "method-tcp": 1,
+            "tcp-port": 80
         },
     }
 
@@ -50,94 +59,51 @@ class HealthMonitor(base.BaseV30):
 
     def _set(self, action, name, mon_method, interval, timeout, max_retries,
              method=None, url=None, expect_code=None, port=None):
-
         params = {
-            'name': name,
-            'retry': int(max_retries),
-            'interval': int(interval),
-            'timeout': int(timeout),
-            # 'disable-after-down': 0,
-            # 'passive': 0,
-            # 'strict-retry-on-server-err-resp': 0
-        }
-
-        mon_obj = {
-            mon_method: {
-                mon_method: 1,
-                'http-port': int(port),
-                'http-expect': 1,
-                'http-response-code': str(expect_code),
-                'http-url': 1,
-                'url-type': method,
-                'url-path': url,
-                #'http-kerberos-auth': 0
+            "monitor": {
+                "name": name,
+                "retry": int(max_retries),
+                # "passive":0,
+                # "strict-retry-on-server-err-resp":0,
+                # "disable-after-down":0,
+                "interval": int(interval),
+                "timeout": int(timeout),
+                "method": {
+                    mon_method: self._method_objects[mon_method]
+                }
             }
         }
-
-  #   {
-  #     "name":"hm-http-1",
-  #     "retry":5,
-  #     "passive":0,
-  #     "strict-retry-on-server-err-resp":0,
-  #     "disable-after-down":0,
-  #     "interval":5,
-  #     "timeout":5,
-  #     "method": {
-  #       "http": {
-  #         "http":1,
-  #         "http-port":80,
-  #         "http-expect":1,
-  #         "http-response-code":"200",
-  #         "http-url":1,
-  #         "url-type":"GET",
-  #         "url-path":"/",
-  #         "http-kerberos-auth":0,
-  #         "a10-url":"https://172.18.61.29/axapi/v3/health/monitor/hm-http-1/method/http"
-  #       },
-  #       "a10-url":"https://172.18.61.29/axapi/v3/health/monitor/hm-http-1/method"
-  #     },
-  #     "a10-url":"https://172.18.61.29/axapi/v3/health/monitor/hm-http-1"
-  #   }
-
-        params = {
-          "name": name,
-          "retry":5,
-          "passive":0,
-          "strict-retry-on-server-err-resp":0,
-          "disable-after-down":0,
-          "interval":5,
-          "timeout":5,
-          "method": {
-            "http": {
-              "http":1,
-              "http-port":80,
-              "http-expect":1,
-              "http-response-code":"200",
-              "http-url":1,
-              "url-type":"GET",
-              "url-path":"/",
-              "http-kerberos-auth":0,
-              # "a10-url":"https://172.18.61.29/axapi/v3/health/monitor/hm-http-1/method/http"
-            },
-            # "a10-url":"https://172.18.61.29/axapi/v3/health/monitor/hm-http-1/method"
-          },
-          # "a10-url":"https://172.18.61.29/axapi/v3/health/monitor/hm-http-1"
-        }
-
-        params['method'] = mon_obj
-
-        import json
-        print "JSON args = \n%s", json.dumps(params, indent=4)
+        if method:
+            params['monitor']['method'][mon_method]['url-type'] = method
+        if url:
+            params['monitor']['method'][mon_method]['url-path'] = url
+        if expect_code:
+            k = "%s-response-code" % mon_method
+            params['monitor']['method'][mon_method][k] = str(expect_code)
+        if port:
+            if mon_method == self.HTTPS:
+                k = 'web-port'
+            else:
+                k = '%s-port' % mon_method
+            params['monitor']['method'][mon_method][k] = int(port)
 
         self._post(action, params)
 
     def create(self, name, mon_type, interval, timeout, max_retries,
                method=None, url=None, expect_code=None, port=None):
+        try:
+            self.get(name)
+        except acos_errors.NotFound:
+            pass
+        else:
+            raise acos_errors.Exists()
+
         self._set(self.url_prefix, name, mon_type, interval, timeout,
                   max_retries, method, url, expect_code, port)
 
     def update(self, name, mon_type, interval, timeout, max_retries,
                method=None, url=None, expect_code=None, port=None):
+        self.get(name)  # We want a NotFound if it does not exist
         self._set(self.url_prefix, name, mon_type, interval, timeout,
                   max_retries, method, url, expect_code, port)
 

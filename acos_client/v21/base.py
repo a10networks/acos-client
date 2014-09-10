@@ -30,6 +30,9 @@ class BaseV21(object):
                 (action, self.client.session.id))
 
     def _request(self, method, action, params, retry_count=0):
+        if retry_count > 6:
+            raise acos_errors.ACOSUnknownError()
+
         try:
             return self.client.http.request(method, self.url(action), params)
         except acos_errors.MemoryFault as e:

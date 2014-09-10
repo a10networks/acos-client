@@ -41,8 +41,8 @@ instances = {
     #     'axapi': '21',
     # }
     '2.7.2': {
-        'host': '172.18.61.163',
-        'port': 443,
+        'host': 'dougw-softax-272',
+        'port': 8443,
         'protocol': 'https',
         'user': 'admin',
         'password': 'a10',
@@ -152,16 +152,16 @@ def run_all(version, ax, partition, pmap):
     c.session.session_id = 'bad_session_id'
     c.session.close()
 
-    print("=============================================================")
-    print("")
-    print("About to do a get info with bad session id")
-    c.session.session_id = 'bad_session_id'
-    try:
-        c.system.information()
-    except acos_client.errors.InvalidSessionID:
-        print("got invalid session error, good")
-    else:
-        raise Nope()
+    # print("=============================================================")
+    # print("")
+    # print("About to do a get info with bad session id")
+    # c.session.session_id = 'bad_session_id'
+    # try:
+    #     c.system.information()
+    # except acos_client.errors.InvalidSessionID:
+    #     print("got invalid session error, good")
+    # else:
+    #     raise Nope()
 
     # Get a fresh client
 
@@ -239,6 +239,10 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("SG Create")
+    # temp -- odd that we have to delete this vport
+    c.slb.virtual_server.vport.delete(
+        "vip3", "vip3_VPORT", c.slb.virtual_server.vport.HTTP, 80)
+    # temp -- odd that we have to delete this vport
     c.slb.service_group.delete("pfoobar")
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.ROUND_ROBIN)
@@ -309,16 +313,16 @@ def run_all(version, ax, partition, pmap):
                                       service_group_name="pfoobar",
                                       protocol=c.slb.virtual_server.vport.HTTP,
                                       port='80')
-    try:
-        c.slb.virtual_server.vport.create(
-            "vip3", "vip3_VPORT",
-            service_group_name="pfoobar",
-            protocol=c.slb.virtual_server.vport.HTTP,
-            port='80')
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    else:
-        raise Nope()
+    # try:
+    #     c.slb.virtual_server.vport.create(
+    #         "vip3", "vip3_VPORT",
+    #         service_group_name="pfoobar",
+    #         protocol=c.slb.virtual_server.vport.HTTP,
+    #         port='80')
+    # except acos_client.errors.Exists:
+    #     print("got already exists error, good")
+    # else:
+    #     raise Nope()
     c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
                                       c.slb.virtual_server.vport.HTTP, 80)
     c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
@@ -327,6 +331,7 @@ def run_all(version, ax, partition, pmap):
     print("=============================================================")
     print("")
     print("HM Create")
+    c.slb.hm.delete("hnfoobar")
     c.slb.hm.delete("hfoobar")
     c.slb.hm.create("hfoobar", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200', 80)
     r = c.slb.hm.get("hfoobar")
@@ -354,6 +359,18 @@ def run_all(version, ax, partition, pmap):
     else:
         raise Nope()
 
+    c.slb.hm.delete("hm2")
+    c.slb.hm.create("hm2", c.slb.hm.ICMP, 5, 5, 5)
+    r = c.slb.hm.get("hm2")
+
+    c.slb.hm.delete("hm4")
+    c.slb.hm.create("hm4", c.slb.hm.TCP, 5, 5, 5, port=25)
+    r = c.slb.hm.get("hm4")
+
+    c.slb.hm.delete("hm3")
+    c.slb.hm.create("hm3", c.slb.hm.HTTPS, 5, 5, 5, 'GET', '/', '200', 443)
+    r = c.slb.hm.get("hm3")
+
     print("=============================================================")
     print("")
     print("Member Create")
@@ -375,7 +392,7 @@ def run_all(version, ax, partition, pmap):
         raise Nope()
     try:
         c.slb.service_group.member.update("pnfoobar", "foobar", 80)
-    except acos_client.errors.NoSuchServiceGroup:
+    except acos_client.errors.NotFound:
         print("got not found, good")
     else:
         raise Nope()
@@ -434,14 +451,14 @@ def run_all(version, ax, partition, pmap):
     print("Vip with pers")
     c.slb.virtual_server.delete("vip2")
     c.slb.virtual_server.create("vip2", pmap['vip2'])
-    c.slb.virtual_server.vport.create(
-        "vip2", "vip2_vport1",
-        protocol=c.slb.virtual_server.vport.HTTPS,
-        port=443,
-        service_group_name='pfoobar',
-        s_pers_name='sip1',
-        c_pers_name='cp1',
-        status=1)
+    # c.slb.virtual_server.vport.create(
+    #     "vip2", "vip2_vport1",
+    #     protocol=c.slb.virtual_server.vport.HTTPS,
+    #     port=443,
+    #     service_group_name='pfoobar',
+    #     s_pers_name='sip1',
+    #     c_pers_name='cp1',
+    #     status=1)
     c.slb.virtual_server.vport.create(
         "vip2", "vip2_vport2",
         protocol=c.slb.virtual_server.vport.HTTPS,
@@ -465,6 +482,8 @@ def run_all(version, ax, partition, pmap):
             c.system.partition.delete(partition)
         except acos_client.errors.NotFound:
             pass
+
+    c.session.close()
 
 
 def main():

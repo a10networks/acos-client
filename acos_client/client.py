@@ -13,8 +13,8 @@
 #    under the License.
 
 import acos_client
-import acos_client.errors as acos_errors
 
+import errors as acos_errors
 import v21.axapi_http
 from v21.session import Session as v21_Session
 from v21.slb import SLB as v21_SLB

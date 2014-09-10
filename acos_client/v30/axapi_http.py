@@ -12,15 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-# import errno
-# import httplib
 import json
 import logging
 
-# import re
-# import socket
-# import ssl
-# import time
 import requests
 
 try:
@@ -30,9 +24,9 @@ except ImportError:
     import httplib as http_client
 http_client.HTTPConnection.debuglevel = 1
 
-
 import responses as acos_responses
-from acos_client.version import VERSION
+
+import acos_client
 
 LOG = logging.getLogger(__name__)
 
@@ -52,7 +46,7 @@ broken_replies = {
 class HttpClient(object):
     HEADERS = {
         "Content-type": "application/json",
-        "User-Agent": "ACOS-Client-AGENT-%s" % VERSION,
+        "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
         # 'Connection': 'keep-alive',
         # 'Accept': '*/*',
     }

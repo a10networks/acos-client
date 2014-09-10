@@ -13,7 +13,6 @@
 #    under the License.
 
 import acos_client.errors as acos_errors
-
 import acos_client.v30.base as base
 
 from virtual_port import VirtualPort
@@ -68,4 +67,3 @@ class VirtualServer(base.BaseV30):
         resp = self._get(self.url_prefix + name + '/stats')
         return resp
         # raise acos_errors.NotImplemented()
-

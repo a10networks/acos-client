@@ -28,7 +28,6 @@ RESPONSE_CODES = {
             '*': None
         },
         '*': {
-#            '/axapi/v3/slb/service-group/': ae.NoSuchServiceGroup,
             '*': ae.NotFound
         }
     },
@@ -56,13 +55,15 @@ RESPONSE_CODES = {
 
 def raise_axapi_auth_error(response, method, api_url, headers):
     if 'authorizationschema' in response:
-        if response['authorizationschema']['code'] == 401:
-            if 'Authorization' in headers:
-                raise ae.InvalidSessionID()
+        code = response['authorizationschema']['code']
+        s = response['authorizationschema']['error']
+        if code == 401:
+            if headers and 'Authorization' in headers:
+                raise ae.InvalidSessionID(code, s)
             else:
-                raise ae.AuthenticationFailure()
-        elif response['authorizationschema']['code'] == 403:
-            raise ae.AuthenticationFailure()
+                raise ae.AuthenticationFailure(code, s)
+        elif code == 403:
+            raise ae.AuthenticationFailure(code, s)
 
 
 def raise_axapi_ex(response, method, api_url):
@@ -82,7 +83,6 @@ def raise_axapi_ex(response, method, api_url):
 
             # Now try to find specific API method exceptions
             for k in x.keys():
-                #if api_url.startswith(k):
                 if k != '*' and re.match('^'+k, api_url):
                     ex = x[k]
 
