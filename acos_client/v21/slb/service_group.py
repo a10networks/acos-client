@@ -46,7 +46,8 @@ class ServiceGroup(base.BaseV21):
     def get(self, name, **kwargs):
         return self._post("slb.service_group.search", {'name': name}, **kwargs)
 
-    def _set(self, action, name, protocol=None, lb_method=None, hm_name=None, **kwargs):
+    def _set(self, action, name, protocol=None, lb_method=None, hm_name=None,
+             **kwargs):
         params = {
             "service_group": self.minimal_dict({
                 "name": name,
@@ -58,9 +59,11 @@ class ServiceGroup(base.BaseV21):
         self._post(action, params, **kwargs)
 
     def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, **kwargs):
-        self._set("slb.service_group.create", name, protocol, lb_method, **kwargs)
+        self._set("slb.service_group.create", name, protocol, lb_method,
+                  **kwargs)
 
-    def update(self, name, protocol=None, lb_method=None, health_monitor=None, **kwargs):
+    def update(self, name, protocol=None, lb_method=None, health_monitor=None,
+               **kwargs):
         self._set("slb.service_group.update", name, protocol, lb_method,
                   health_monitor, **kwargs)
 

@@ -23,7 +23,7 @@ class VirtualServer(base.BaseV21):
     def vport(self):
         return VirtualPort(self.client)
 
-    def all(self):
+    def all(self, **kwargs):
         return self._get("slb.virtual_server.getAll", **kwargs)
 
     def get(self, name, **kwargs):

@@ -29,11 +29,13 @@ class Member(base.BaseV21):
         }
         self._post(action, params, **kwargs)
 
-    def create(self, service_group_name, server_name, server_port, status=1, **kwargs):
+    def create(self, service_group_name, server_name, server_port, status=1,
+               **kwargs):
         self._write("slb.service_group.member.create", service_group_name,
                     server_name, server_port, status, **kwargs)
 
-    def update(self, service_group_name, server_name, server_port, status=1, **kwargs):
+    def update(self, service_group_name, server_name, server_port, status=1,
+               **kwargs):
         self._write("slb.service_group.member.update", service_group_name,
                     server_name, server_port, status, **kwargs)
 
