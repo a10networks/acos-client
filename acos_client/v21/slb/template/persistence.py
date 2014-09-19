@@ -22,21 +22,23 @@ class BasePersistence(base.BaseV21):
         super(BasePersistence, self).__init__(client)
         self.prefix = "slb.template.%s_persistence" % self.pers_type
 
-    def get(self, name):
-        return self._post(("%s.search" % self.prefix), {'name': name})
+    def get(self, name, **kwargs):
+        return self._post(("%s.search" % self.prefix), {'name': name},
+                          **kwargs)
 
-    def exists(self, name):
+    def exists(self, name, **kwargs):
         try:
-            self.get(name)
+            self.get(name, **kwargs)
             return True
         except acos_errors.NotFound:
             return False
 
-    def create(self, name):
-        self._post(("%s.create" % self.prefix), self.get_params(name))
+    def create(self, name, **kwargs):
+        self._post(("%s.create" % self.prefix), self.get_params(name),
+                   **kwargs)
 
-    def delete(self, name):
-        self._post(("%s.delete" % self.prefix), {'name': name})
+    def delete(self, name, **kwargs):
+        self._post(("%s.delete" % self.prefix), {'name': name}, **kwargs)
 
 
 class CookiePersistence(BasePersistence):

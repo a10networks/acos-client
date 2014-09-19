@@ -108,12 +108,17 @@ class HttpClient(object):
         return ("/services/rest/v2.1/?format=json&method=%s&session_id=%s" %
                 (action, self.client.session.id))
 
-    def request(self, method, api_url, params={}):
+    def request(self, method, api_url, params={}, **kwargs):
         LOG.debug("axapi_http: url = %s", api_url)
         LOG.debug("axapi_http: params = %s", params)
 
         if params:
-            payload = json.dumps(params, encoding='utf-8')
+            extra_params = kwargs.get('axapi_args', {})
+            params_copy = params.copy()
+            params_copy.update(extra_params)
+            LOG.debug("axapi_http: params_all = %s", params_copy)
+
+            payload = json.dumps(params_copy, encoding='utf-8')
         else:
             payload = None
 
@@ -157,8 +162,8 @@ class HttpClient(object):
 
         return r
 
-    def get(self, api_url, params={}):
-        return self.request("GET", api_url, params)
+    def get(self, api_url, params={}, **kwargs):
+        return self.request("GET", api_url, params, **kwargs)
 
-    def post(self, api_url, params={}):
-        return self.request("POST", api_url, params)
+    def post(self, api_url, params={}, **kwargs):
+        return self.request("POST", api_url, params, **kwargs)

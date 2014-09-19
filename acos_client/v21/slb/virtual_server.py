@@ -24,12 +24,13 @@ class VirtualServer(base.BaseV21):
         return VirtualPort(self.client)
 
     def all(self):
-        return self._get("slb.virtual_server.getAll")
+        return self._get("slb.virtual_server.getAll", **kwargs)
 
-    def get(self, name):
-        return self._post("slb.virtual_server.search", {'name': name})
+    def get(self, name, **kwargs):
+        return self._post("slb.virtual_server.search", {'name': name},
+                          **kwargs)
 
-    def _set(self, action, name, ip_address=None, status=1):
+    def _set(self, action, name, ip_address=None, status=1, **kwargs):
         params = {
             "virtual_server": self.minimal_dict({
                 "name": name,
@@ -38,16 +39,19 @@ class VirtualServer(base.BaseV21):
             }),
         }
 
-        self._post(action, params)
+        self._post(action, params, **kwargs)
 
-    def create(self, name, ip_address, status=1):
-        self._set("slb.virtual_server.create", name, ip_address, status)
+    def create(self, name, ip_address, status=1, **kwargs):
+        self._set("slb.virtual_server.create", name, ip_address, status,
+                  **kwargs)
 
-    def update(self, name, ip_address=None, status=1):
-        self._set("slb.virtual_server.update", name, ip_address, status)
+    def update(self, name, ip_address=None, status=1, **kwargs):
+        self._set("slb.virtual_server.update", name, ip_address, status,
+                  **kwargs)
 
-    def delete(self, name):
-        self._post("slb.virtual_server.delete", {"name": name})
+    def delete(self, name, **kwargs):
+        self._post("slb.virtual_server.delete", {"name": name}, **kwargs)
 
-    def stats(self, name):
-        return self._post("slb.virtual_server.fetchStatistics", {"name": name})
+    def stats(self, name, **kwargs):
+        return self._post("slb.virtual_server.fetchStatistics", {"name": name},
+                          **kwargs)

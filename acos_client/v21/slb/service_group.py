@@ -43,10 +43,10 @@ class ServiceGroup(base.BaseV21):
     TCP = 2
     UDP = 3
 
-    def get(self, name):
-        return self._post("slb.service_group.search", {'name': name})
+    def get(self, name, **kwargs):
+        return self._post("slb.service_group.search", {'name': name}, **kwargs)
 
-    def _set(self, action, name, protocol=None, lb_method=None, hm_name=None):
+    def _set(self, action, name, protocol=None, lb_method=None, hm_name=None, **kwargs):
         params = {
             "service_group": self.minimal_dict({
                 "name": name,
@@ -55,14 +55,14 @@ class ServiceGroup(base.BaseV21):
                 "health_monitor": hm_name
             })
         }
-        self._post(action, params)
+        self._post(action, params, **kwargs)
 
-    def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN):
-        self._set("slb.service_group.create", name, protocol, lb_method)
+    def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, **kwargs):
+        self._set("slb.service_group.create", name, protocol, lb_method, **kwargs)
 
-    def update(self, name, protocol=None, lb_method=None, health_monitor=None):
+    def update(self, name, protocol=None, lb_method=None, health_monitor=None, **kwargs):
         self._set("slb.service_group.update", name, protocol, lb_method,
-                  health_monitor)
+                  health_monitor, **kwargs)
 
-    def delete(self, name):
-        self._post("slb.service_group.delete", {'name': name})
+    def delete(self, name, **kwargs):
+        self._post("slb.service_group.delete", {'name': name}, **kwargs)

@@ -23,11 +23,11 @@ class HealthMonitor(base.BaseV21):
     HTTP = 3
     HTTPS = 4
 
-    def get(self, name):
-        return self._post("slb.hm.search", {"name": name})
+    def get(self, name, **kwargs):
+        return self._post("slb.hm.search", {"name": name}, **kwargs)
 
     def _set(self, action, name, mon_type, interval, timeout, max_retries,
-             method=None, url=None, expect_code=None, port=None):
+             method=None, url=None, expect_code=None, port=None, **kwargs):
         defs = {
             self.HTTP: {
                 'protocol': 'http',
@@ -57,17 +57,17 @@ class HealthMonitor(base.BaseV21):
                 'url': "%s %s" % (method, url),
                 'expect_code': expect_code,
             }
-        self._post(action, params)
+        self._post(action, params, **kwargs)
 
     def create(self, name, mon_type, interval, timeout, max_retries,
-               method=None, url=None, expect_code=None, port=None):
+               method=None, url=None, expect_code=None, port=None, **kwargs):
         self._set("slb.hm.create", name, mon_type, interval, timeout,
-                  max_retries, method, url, expect_code, port)
+                  max_retries, method, url, expect_code, port, **kwargs)
 
     def update(self, name, mon_type, interval, timeout, max_retries,
-               method=None, url=None, expect_code=None, port=None):
+               method=None, url=None, expect_code=None, port=None, **kwargs):
         self._set("slb.hm.update", name, mon_type, interval, timeout,
-                  max_retries, method, url, expect_code, port)
+                  max_retries, method, url, expect_code, port, **kwargs)
 
-    def delete(self, name):
-        self._post("slb.hm.delete", {"name": name})
+    def delete(self, name, **kwargs):
+        self._post("slb.hm.delete", {"name": name}, **kwargs)
