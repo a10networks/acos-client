@@ -53,6 +53,17 @@ def extract_method(api_url):
         return m.group(1)
     return ""
 
+
+def merge_dicts(d1, d2):
+    d = d1.copy()
+    for k, v in d2.items():
+        if k in d and isinstance(d[k], dict):
+            d[k] = merge_dicts(d[k], d2[k])
+        else:
+            d[k] = d2[k]
+    return d
+
+
 broken_replies = {
     ('<?xml version="1.0" encoding="utf-8" ?><response status="ok">'
      '</response>'): '{"response": {"status": "OK"}}',
@@ -114,8 +125,7 @@ class HttpClient(object):
 
         if params:
             extra_params = kwargs.get('axapi_args', {})
-            params_copy = params.copy()
-            params_copy.update(extra_params)
+            params_copy = merge_dicts(params, extra_params)
             LOG.debug("axapi_http: params_all = %s", params_copy)
 
             payload = json.dumps(params_copy, encoding='utf-8')
