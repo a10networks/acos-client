@@ -22,6 +22,29 @@ class VirtualPort(base.BaseV21):
     UDP = 3
     HTTP = 11
     HTTPS = 12
+    OTHERS = 4
+    RTSP = 5
+    FTP = 6
+    MMS = 7
+    SIP = 8
+    FAST_HTTP = 9
+    GENERIC_PROXY = 10
+    SSL_PROXY = 13
+    SMTP = 14
+    SIP_TCP = 15
+    SIPS = 16
+    DIAMETER = 17
+    DNS_UDP = 18
+    TFTP = 19
+    DNS_TCP = 20
+    RADIUS = 21
+    MYSQL = 22
+    MSSQL = 23
+    FIX = 24
+    SMPP_TCP = 25
+    SPDY = 26
+    SPDYS = 27
+    FTP_PROXY = 28
 
     def _set(self, action, virtual_server_name, name, protocol, port,
              service_group_name,
