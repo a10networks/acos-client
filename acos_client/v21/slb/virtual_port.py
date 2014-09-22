@@ -22,10 +22,33 @@ class VirtualPort(base.BaseV21):
     UDP = 3
     HTTP = 11
     HTTPS = 12
+    OTHERS = 4
+    RTSP = 5
+    FTP = 6
+    MMS = 7
+    SIP = 8
+    FAST_HTTP = 9
+    GENERIC_PROXY = 10
+    SSL_PROXY = 13
+    SMTP = 14
+    SIP_TCP = 15
+    SIPS = 16
+    DIAMETER = 17
+    DNS_UDP = 18
+    TFTP = 19
+    DNS_TCP = 20
+    RADIUS = 21
+    MYSQL = 22
+    MSSQL = 23
+    FIX = 24
+    SMPP_TCP = 25
+    SPDY = 26
+    SPDYS = 27
+    FTP_PROXY = 28
 
     def _set(self, action, virtual_server_name, name, protocol, port,
              service_group_name,
-             s_pers_name=None, c_pers_name=None, status=1):
+             s_pers_name=None, c_pers_name=None, status=1, **kwargs):
         params = {
             "name": virtual_server_name,
             "vport": self.minimal_dict({
@@ -38,23 +61,23 @@ class VirtualPort(base.BaseV21):
                 "status": status
             })
         }
-        self._post(action, params)
+        self._post(action, params, **kwargs)
 
     def create(self, virtual_server_name, name, protocol, port,
                service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1):
+               s_pers_name=None, c_pers_name=None, status=1, **kwargs):
         self._set('slb.virtual_server.vport.create', virtual_server_name,
                   name, protocol, port, service_group_name,
-                  s_pers_name, c_pers_name, status)
+                  s_pers_name, c_pers_name, status, **kwargs)
 
     def update(self, virtual_server_name, name, protocol, port,
                service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1):
+               s_pers_name=None, c_pers_name=None, status=1, **kwargs):
             self._set('slb.virtual_server.vport.update', virtual_server_name,
                       name, protocol, port, service_group_name,
-                      s_pers_name, c_pers_name, status)
+                      s_pers_name, c_pers_name, status, **kwargs)
 
-    def delete(self, virtual_server_name, name, protocol, port):
+    def delete(self, virtual_server_name, name, protocol, port, **kwargs):
         params = {
             "name": virtual_server_name,
             "vport": {
@@ -63,4 +86,4 @@ class VirtualPort(base.BaseV21):
                 "port": int(port)
             }
         }
-        self._post("slb.virtual_server.vport.delete", params)
+        self._post("slb.virtual_server.vport.delete", params, **kwargs)

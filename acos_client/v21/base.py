@@ -29,13 +29,15 @@ class BaseV21(object):
         return ("/services/rest/v2.1/?format=json&method=%s&session_id=%s" %
                 (action, self.client.session.id))
 
-    def _request(self, method, action, params, retry_count=0):
+    def _request(self, method, action, params, retry_count=0, **kwargs):
         try:
-            return self.client.http.request(method, self.url(action), params)
+            return self.client.http.request(method, self.url(action), params,
+                                            **kwargs)
         except acos_errors.MemoryFault as e:
             if retry_count < 5:
                 time.sleep(0.1)
-                return self._request(method, action, params, retry_count+1)
+                return self._request(method, action, params, retry_count+1,
+                                     **kwargs)
             raise e
         except acos_errors.InvalidSessionID:
             if retry_count < 5:
@@ -46,11 +48,12 @@ class BaseV21(object):
                     self.client.partition.active(p)
                 except Exception:
                     pass
-                return self._request(method, action, params, retry_count+1)
+                return self._request(method, action, params, retry_count+1,
+                                     **kwargs)
             raise e
 
-    def _get(self, action, params={}):
-        return self._request('GET', action, params)
+    def _get(self, action, params={}, **kwargs):
+        return self._request('GET', action, params, **kwargs)
 
-    def _post(self, action, params={}):
-        return self._request('POST', action, params)
+    def _post(self, action, params={}, **kwargs):
+        return self._request('POST', action, params, **kwargs)
