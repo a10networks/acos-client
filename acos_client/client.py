@@ -16,6 +16,7 @@ import acos_client
 import acos_client.axapi_http as axapi_http
 import acos_client.errors as acos_errors
 
+from v21.ha import HA
 from v21.session import Session
 from v21.slb import SLB
 from v21.system import System
@@ -33,6 +34,10 @@ class Client(object):
 
     def _just_digits(self, s):
         return ''.join(i for i in s if i.isdigit())
+
+    @property
+    def ha(self):
+        return HA(self)
 
     @property
     def system(self):
