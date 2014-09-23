@@ -39,8 +39,8 @@ instances = {
     #     'password': 'i-9276ff9f',
     # }
     '2.7.2': {
-        'host': '172.18.61.163',
-        'port': 443,
+        'host': 'dougw-softax-272',
+        'port': 8443,
         'protocol': 'https',
         'user': 'admin',
         'password': 'a10',
@@ -139,6 +139,8 @@ def run_all(version, ax, partition, pmap):
     # Get a fresh client
 
     c = get_client(ax)
+
+    # c.ha.sync('172.18.61.27', 'admin', 'a10')
 
     print("=============================================================")
     print("")

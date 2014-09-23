@@ -609,3 +609,19 @@ class PartitionDelete(Partition):
 class PartitionDeleteNotFound(PartitionDelete):
     response = {"response": {"status": "fail", "err": {"code": 520749062,
                 "msg": " Partition does not exist."}}}
+
+
+class HASync(AuthenticatedMockPair):
+    action = 'ha.sync_config'
+    params = {
+        'ha_config_sync': {
+            'peer_operation': 0,
+            'destination_ip': '172.18.61.27',
+            'peer_reload': 0,
+            'user': 'admin',
+            'auto_authentication': 0,
+            'sync_all_partition': 1,
+            'operation': 2,
+            'password': 'a10'
+        }
+    }

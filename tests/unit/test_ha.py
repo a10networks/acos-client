@@ -12,4 +12,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-VERSION = '1.0.9'
+import unittest2 as unittest
+import v21_mocks as mocks
+
+
+class TestHA(unittest.TestCase):
+
+    def test_ha_sync(self):
+        with mocks.HASync().client() as c:
+            c.ha.sync('192.168.2.254', 'admin', 'a10')
