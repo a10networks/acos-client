@@ -133,6 +133,8 @@ RESPONSE_CODES = {
     67371009: {
         'slb.template.cookie_persistence.delete': None,
         'slb.template.src_ip_persistence.delete': None,
+        'slb.template.client_ssl.delete': None,
+        'slb.template.server_ssl.delete': None,
         '*': NotFound
     },
     402653200: {

@@ -188,6 +188,54 @@ def run_all(version, ax, partition, pmap):
 
     print("=============================================================")
     print("")
+    print("Client SSL Create")
+    c.slb.template.client_ssl.delete("ss1")
+    c.slb.template.client_ssl.create("ss1", "cert1", "cert1")
+    c.slb.template.client_ssl.get("ss1")
+    try:
+        c.slb.template.client_ssl.create("ss1", "cert1", "cert1")
+    except acos_client.errors.Exists:
+        print("got already exists error, good")
+    c.slb.template.client_ssl.update("ss1", "cert1", "cert1")
+    try:
+        c.slb.template.client_ssl.update("sns1", "cert1", "cert1")
+
+    except acos_client.errors.NotFound:
+        print("got not found, good")
+    c.slb.template.client_ssl.delete("ss1")
+    c.slb.template.client_ssl.delete("ss1")
+    try:
+        c.slb.template.client_ssl.get("ss1")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
+    c.slb.template.client_ssl.create("ss1", "cert1", "cert1")
+
+    print("=============================================================")
+    print("")
+    print("Server SSL Create")
+    c.slb.template.server_ssl.delete("ss1")
+    c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
+    c.slb.template.server_ssl.get("ss1")
+    try:
+        c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
+    except acos_client.errors.Exists:
+        print("got already exists error, good")
+    c.slb.template.server_ssl.update("ss1", "cert1", "cert1")
+    try:
+        c.slb.template.server_ssl.update("sns1", "cert1", "cert1")
+
+    except acos_client.errors.NotFound:
+        print("got not found, good")
+    c.slb.template.server_ssl.delete("ss1")
+    c.slb.template.server_ssl.delete("ss1")
+    try:
+        c.slb.template.server_ssl.get("ss1")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
+    c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
+
+    print("=============================================================")
+    print("")
     print("Server Create")
     c.slb.server.delete("foobar")
     c.slb.server.create("foobar", pmap['s1'])
