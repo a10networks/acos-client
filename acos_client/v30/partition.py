@@ -1,4 +1,4 @@
-# Copyright 2014,  Doug Wiegley,  A10 Networks.
+# Copyright 2014,  Jeff Buttars,  A10 Networks.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -17,34 +17,32 @@ import acos_client.errors as acos_errors
 import base
 
 
-class Partition(base.BaseV21):
+class Partition(base.BaseV30):
 
     def exists(self, name):
         if name == 'shared':
             return True
         try:
-            self._post("system.partition.search", {'name': name})
+            self._get("/partition/" + name)
             return True
         except acos_errors.NotFound:
             return False
 
     def active(self, name='shared'):
         if self.client.current_partition != name:
-            self._post("system.partition.active", {'name': name})
+            self._post("/active-partition/" + name)
             self.client.current_partition = name
 
-    def create(self, name):
-        params = {
-            'partition': {
-                'max_aflex_file': 32,
-                'network_partition': 0,
-                'name': name
-            }
-        }
+    def create(self, name, p_id=100):
         if name != 'shared':
-            self._post("system.partition.create", params)
+            params = {
+                "partition": {
+                    "partition-name": name,
+                    "id": p_id,
+                }
+            }
+            self._post("/partition", params)
 
     def delete(self, name):
         if name != 'shared':
-            self.client.session.close()
-            self._post("system.partition.delete", {"name": name})
+            self._delete("/delete/partition/" + name)

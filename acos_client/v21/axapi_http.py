@@ -23,8 +23,9 @@ import socket
 import ssl
 import time
 
-import errors as acos_errors
-from version import VERSION
+import responses as acos_responses
+
+import acos_client
 
 LOG = logging.getLogger(__name__)
 
@@ -89,20 +90,19 @@ broken_replies = {
 
 class HttpClient(object):
     HEADERS = {
-        "Content-Type": "application/json",
-        "User-Agent": "ACOS-Client-AGENT-%s" % VERSION
+        "Content-type": "application/json",
+        "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
-    def __init__(self, host, port=None, protocol="https", client=None):
+    def __init__(self, host, port=None, protocol="https"):
         self.host = host
         self.port = port
         self.protocol = protocol
         if port is None:
             if protocol is 'http':
-                port = 80
+                self.port = 80
             else:
-                port = 443
-        self.client = client
+                self.port = 443
 
     def _http(self, method, api_url, payload):
         if self.protocol == 'https':
@@ -111,13 +111,18 @@ class HttpClient(object):
         else:
             http = httplib.HTTPConnection(self.host, self.port)
 
-        http.request(method, api_url, payload, self.HEADERS)
-        return http.getresponse().read()
+        LOG.debug("axapi_http: url:     %s", api_url)
+        LOG.debug("axapi_http: method:  %s", method)
+        LOG.debug("axapi_http: headers: %s", self.HEADERS)
+        LOG.debug("axapi_http: payload: %s", payload)
 
-    # temporary brutal hack
-    def _url(self, action):
-        return ("/services/rest/v2.1/?format=json&method=%s&session_id=%s" %
-                (action, self.client.session.id))
+        http.request(method, api_url, payload, self.HEADERS)
+
+        resp = http.getresponse()
+        # print "RESP ", dir(resp)
+        # print "RESP HEADERS", resp.getheaders()
+        # LOG.debug("http response status %s", resp.status)
+        return resp.read()
 
     def request(self, method, api_url, params={}, **kwargs):
         LOG.debug("axapi_http: url = %s", api_url)
@@ -162,13 +167,14 @@ class HttpClient(object):
         #     return {'response': {'status': 'OK'}}
         if data in broken_replies:
             data = broken_replies[data]
+            LOG.debug("axapi_http: broken reply, new response: %s", data)
 
         r = json.loads(data, encoding='utf-8')
 
         if 'response' in r and 'status' in r['response']:
             if r['response']['status'] == 'fail':
-                    acos_errors.raise_axapi_ex(r,
-                                               action=extract_method(api_url))
+                    acos_responses.raise_axapi_ex(
+                        r, action=extract_method(api_url))
 
         return r
 

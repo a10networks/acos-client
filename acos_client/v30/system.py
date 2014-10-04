@@ -12,18 +12,20 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.v30.base as base
+from action import Action
+import base
+from partition import Partition
 
-from persistence import CookiePersistence
-from persistence import SourceIpPersistence
 
-
-class Template(base.BaseV30):
-
-    @property
-    def cookie_persistence(self):
-        return CookiePersistence(self.client)
+class System(base.BaseV30):
 
     @property
-    def src_ip_persistence(self):
-        return SourceIpPersistence(self.client)
+    def action(self):
+        return Action(self.client)
+
+    @property
+    def partition(self):
+        return Partition(self.client)
+
+    def information(self):
+        return self._get("/system")

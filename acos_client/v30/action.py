@@ -12,18 +12,15 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.v30.base as base
-
-from persistence import CookiePersistence
-from persistence import SourceIpPersistence
+import base
 
 
-class Template(base.BaseV30):
+class Action(base.BaseV30):
 
-    @property
-    def cookie_persistence(self):
-        return CookiePersistence(self.client)
-
-    @property
-    def src_ip_persistence(self):
-        return SourceIpPersistence(self.client)
+    def write_memory(self):
+        payload = {
+            "memory": {
+                "primary": True
+            }
+        }
+        self._post("/write/memory/", payload)
