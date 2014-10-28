@@ -29,5 +29,15 @@ class Server(base.BaseV21):
         }
         self._post("slb.server.create", params, **kwargs)
 
+    def update(self, name, ip_address, status = 1, **kwargs):
+        params = {
+            "server": {
+                "name": name,
+                "host": ip_address,
+                "status": status
+            }
+        }
+        self._post("slb.server.update", params, **kwargs)
+
     def delete(self, name, **kwargs):
         self._post("slb.server.delete", {"server": {"name": name}}, **kwargs)
