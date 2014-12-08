@@ -20,7 +20,8 @@ from v21.ha import HA
 from v21.session import Session
 from v21.slb import SLB
 from v21.system import System
-
+from v21.network import Network
+from v21.nat import Nat
 
 class Client(object):
 
@@ -46,3 +47,11 @@ class Client(object):
     @property
     def slb(self):
         return SLB(self)
+
+    @property
+    def network(self):
+        return Network(self)
+
+    @property
+    def nat(self):
+        return Nat(self)

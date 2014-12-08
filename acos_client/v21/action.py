@@ -24,3 +24,12 @@ class Action(base.BaseV21):
             self._get("system.action.write_memory")
         except acos_errors.InvalidPartitionParameter:
             pass
+
+    def reboot(self, **kwargs):
+        raise NotImplementedError
+        #return self._post("system.action.reboot", **kwargs)
+
+    def reload(self, write_memory=False, **kwargs):
+        # write_memory param is required but no matter what value is passed it will ALWAYS save pending changes
+        write_memory = 1 if write_memory else 0
+        return self._post("system.action.reload", params={"write_memory": write_memory}, **kwargs)

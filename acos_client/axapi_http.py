@@ -29,7 +29,9 @@ from version import VERSION
 LOG = logging.getLogger(__name__)
 
 import sys
-out_hdlr = logging.StreamHandler(sys.stdout)
+from urlparse import urlparse,parse_qs
+
+out_hdlr = logging.StreamHandler(sys.stderr)
 out_hdlr.setLevel(logging.DEBUG)
 LOG.addHandler(out_hdlr)
 
@@ -48,10 +50,7 @@ def force_tlsv1_connect(self):
 
 
 def extract_method(api_url):
-    m = re.search("method=([^&]+)", api_url)
-    if m is not None:
-        return m.group(1)
-    return ""
+    return parse_qs(urlparse(api_url).query).get('method',[u''])[0]
 
 
 def merge_dicts(d1, d2):
@@ -66,26 +65,42 @@ def merge_dicts(d1, d2):
 
 broken_replies = {
     ('<?xml version="1.0" encoding="utf-8" ?><response status="ok">'
-     '</response>'): '{"response": {"status": "OK"}}',
+     '</response>'): (json.dumps({"response": {"status": "OK"}})),
 
     ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
      '<error code="999" msg=" Partition does not exist. '
      '(internal error: 520749062)" /></response>'):
-    ('{"response": {"status": "fail", "err": {"code": 999,'
-     '"msg": " Partition does not exist."}}}'),
+    (json.dumps({"response": {"status": "fail", "err": {"code": 999,
+     "msg": " Partition does not exist."}}})),
 
     ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
      '<error code="999" msg=" Failed to get partition. (internal error: '
      '402718800)" /></response>'):
-    ('{"response": {"status": "fail", "err": {"code": 999,'
-     '"msg": " Partition does not exist."}}}'),
+    (json.dumps({"response": {"status": "fail", "err": {"code": 999,
+     "msg": " Partition does not exist."}}})),
 
     ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
      '<error code="1076" msg="Invalid partition parameter." /></response>'):
-    ('{"response": {"status": "fail", "err": {"code": 1076,'
-     '"msg": "Invalid partition parameter."}}}'),
+    (json.dumps({"response": {"status": "fail", "err": {"code": 1076,
+     "msg": "Invalid partition parameter."}}})),
+
+    ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
+    '<error code="999" msg=" No such aFleX. (internal error: '
+    '17039361)" /></response>'):
+    (json.dumps({"response": {"status": "fail", "err": {"code": 17039361,
+    "msg": " No such aFleX."}}})),
+
+    ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
+    '<error code="999" msg=" This aFleX is in use. (internal error: '
+    '17039364)" /></response>'):
+    (json.dumps({"response": {"status": "fail", "err": {"code": 17039364,
+    "msg": " This aFleX is in use."}}})),
+
 }
 
+class EmptyHttpResponse(Exception):
+    def __init__(self, response):
+        self.response = response
 
 class HttpClient(object):
     HEADERS = {
@@ -104,15 +119,25 @@ class HttpClient(object):
                 port = 443
         self.client = client
 
-    def _http(self, method, api_url, payload):
+    def _http(self, method, api_url, payload, headers):
         if self.protocol == 'https':
             http = httplib.HTTPSConnection(self.host, self.port)
             http.connect = lambda: force_tlsv1_connect(http)
         else:
             http = httplib.HTTPConnection(self.host, self.port)
 
-        http.request(method, api_url, payload, self.HEADERS)
-        return http.getresponse().read()
+        http.request(method, api_url, body=payload, headers=headers)
+
+        r = http.getresponse()
+
+        # Workaround for zero length response
+        def handle_empty_response(data):
+            if not data:
+                raise EmptyHttpResponse(r)
+
+            return data
+
+        return handle_empty_response(r.read())
 
     # temporary brutal hack
     def _url(self, action):
@@ -123,6 +148,8 @@ class HttpClient(object):
         LOG.debug("axapi_http: url = %s", api_url)
         LOG.debug("axapi_http: params = %s", params)
 
+        headers = self.HEADERS
+
         if params:
             extra_params = kwargs.get('axapi_args', {})
             params_copy = merge_dicts(params, extra_params)
@@ -130,12 +157,18 @@ class HttpClient(object):
 
             payload = json.dumps(params_copy, encoding='utf-8')
         else:
-            payload = None
-
+            try:
+                payload = kwargs.pop('payload')
+                headers = dict(self.HEADERS, **kwargs.get('headers', {}))
+                LOG.debug("axapi_http: headers_all = %s", headers)
+            except:
+                payload = None
+				
+				
         for i in xrange(0, 600):
             try:
                 last_e = None
-                data = self._http(method, api_url, payload)
+                data = self._http(method, api_url, payload, headers)
                 break
             except socket.error as e:
                 # Workaround some bogosity in the API
@@ -149,6 +182,20 @@ class HttpClient(object):
                 time.sleep(0.1)
                 last_e = e
                 continue
+            except EmptyHttpResponse as e:
+                last_e = None
+
+                method = extract_method(api_url)
+                msg = dict(e.response.msg.items())
+
+                if e.response.status == httplib.OK:
+                    data = {"response": {"status": "OK"}}
+                else:
+                    msg['method'] = method
+                    data = {"response": {'status':'fail', 'err':{'code':e.response.status, 'msg': msg }}}
+
+                data = json.dumps(data)
+                break
 
         if last_e is not None:
             raise e
@@ -163,7 +210,13 @@ class HttpClient(object):
         if data in broken_replies:
             data = broken_replies[data]
 
-        r = json.loads(data, encoding='utf-8')
+
+        #Handle non json response
+        try:
+            r = json.loads(data, encoding='utf-8')
+        except  ValueError as e:
+            LOG.debug("axapi_http: json = %s", e)
+            return data
 
         if 'response' in r and 'status' in r['response']:
             if r['response']['status'] == 'fail':

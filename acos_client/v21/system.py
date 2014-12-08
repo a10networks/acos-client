@@ -15,7 +15,9 @@
 from action import Action
 import base
 from partition import Partition
-
+from log import Log
+from config_file import ConfigFile
+from acos_client.multipart import Multipart
 
 class System(base.BaseV21):
 
@@ -29,3 +31,56 @@ class System(base.BaseV21):
 
     def information(self):
         return self._get("system.information.get")
+
+    @property
+    def config_file(self):
+        return ConfigFile(self.client)
+
+    @property
+    def log(self):
+        return Log(self.client)
+
+    def device_info(self):
+        return self._get("system.device_info.get")
+
+    def cpu_usage(self):
+        return self._get("system.device_info.cpu.current_usage.get")
+
+    def backup(self, **kwargs):
+        return self._get("system.backup", **kwargs)
+
+    def restore(self, name, data,**kwargs):
+        m = Multipart()
+        m.file(name="restore", filename=name, value=data)
+        ct, payload = m.get()
+        kwargs.update(payload=buffer(payload), headers={'Content-Type': ct})
+        return self._post("system.restore", **kwargs)
+
+    def tech_download(self, **kwargs):
+        return self._get("system.show_tech.download", **kwargs)
+
+    @property
+    def banner(self):
+        return self.Banner(self.client)
+
+    class Banner(base.BaseV21):
+
+        def get(self, **kwargs):
+            return self._get('system.banner.get', **kwargs)
+
+        def set(self, banner, **kwargs):
+            params = { "banner" : banner }
+            return self._post('system.log.banner.set', params, **kwargs)
+
+    @property
+    def hostname(self):
+        return self.Hostname(self.client)
+
+    class Hostname(base.BaseV21):
+
+        def get(self, **kwargs):
+            return self._get('system.hostname.get', **kwargs)
+
+        def set(self, hostname, **kwargs):
+            params = { "hostname" : hostname }
+            return self._post('system.hostname.set', params, **kwargs)
