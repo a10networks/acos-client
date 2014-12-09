@@ -17,16 +17,11 @@ from action import Action
 from partition import Partition
 from log import Log
 from config_file import ConfigFile
+from device_info import DeviceInfo
 import base
 from acos_client.multipart import Multipart
 
 class System(base.BaseV21):
-
-    def device_info(self):
-        return self._get("system.device_info.get")
-
-    def cpu_usage(self):
-        return self._get("system.device_info.cpu.current_usage.get")
 
     def backup(self, **kwargs):
         return self._get("system.backup", **kwargs)
@@ -43,6 +38,10 @@ class System(base.BaseV21):
 
     def information(self):
         return self._get("system.information.get")
+
+    @property
+    def device_info(self):
+        return DeviceInfo(self.client)
 
     @property
     def action(self):
