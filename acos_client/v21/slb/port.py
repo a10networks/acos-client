@@ -1,5 +1,5 @@
 
-import base
+import acos_client.v21.base as base
 
 class Port(base.BaseV21):
 

@@ -1,6 +1,6 @@
 
 from acos_client.multipart import Multipart
-import base
+import acos_client.v21.base as base
 
 class Aflex(base.BaseV21):
 

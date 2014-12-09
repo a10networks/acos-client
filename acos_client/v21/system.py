@@ -12,33 +12,15 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+
 from action import Action
-import base
 from partition import Partition
 from log import Log
 from config_file import ConfigFile
+import base
 from acos_client.multipart import Multipart
 
 class System(base.BaseV21):
-
-    @property
-    def action(self):
-        return Action(self.client)
-
-    @property
-    def partition(self):
-        return Partition(self.client)
-
-    def information(self):
-        return self._get("system.information.get")
-
-    @property
-    def config_file(self):
-        return ConfigFile(self.client)
-
-    @property
-    def log(self):
-        return Log(self.client)
 
     def device_info(self):
         return self._get("system.device_info.get")
@@ -58,6 +40,25 @@ class System(base.BaseV21):
 
     def tech_download(self, **kwargs):
         return self._get("system.show_tech.download", **kwargs)
+
+    def information(self):
+        return self._get("system.information.get")
+
+    @property
+    def action(self):
+        return Action(self.client)
+
+    @property
+    def partition(self):
+        return Partition(self.client)
+
+    @property
+    def config_file(self):
+        return ConfigFile(self.client)
+
+    @property
+    def log(self):
+        return Log(self.client)
 
     @property
     def banner(self):
