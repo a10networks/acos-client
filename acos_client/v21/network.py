@@ -15,10 +15,13 @@ class Network(base.BaseV21):
         def get(self, port_num):
             return self._get('network.interface.get', {"port_num": port_num})
 
-        def set(self, port_num, interface, **kwargs):
+        def set(self, port_num, **kwargs):
 
-            interface["port_num"] = port_num
-            params = { "interface": interface }
+            params = {
+                "interface": {
+                    "port_num": port_num
+                }
+            }
             return self._post('network.interface.set', params, **kwargs)
 
         @property

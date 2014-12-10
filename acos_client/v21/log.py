@@ -24,6 +24,22 @@ class Log(base.BaseV21):
         def level(self):
             return self.Level(self.client)
 
+        @property
+        def server(self):
+            return self.Server(self.client)
+
+        @property
+        def buffer(self):
+            return self.Buffer(self.client)
+
+        @property
+        def smtp(self):
+            return self.Smtp(self.client)
+
+        @property
+        def audit(self):
+            return self.Audit(self.client)
+
         class Level(base.BaseV21):
             def get(self, **kwargs):
                 return self._get('system.log.level.get', **kwargs)
