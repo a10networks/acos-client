@@ -1,6 +1,6 @@
 # Copyright 2014,  Doug Wiegley,  A10 Networks.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
 #
@@ -21,12 +21,12 @@ from device_info import DeviceInfo
 import base
 from acos_client.multipart import Multipart
 
-class System(base.BaseV21):
 
+class System(base.BaseV21):
     def backup(self, **kwargs):
         return self._get("system.backup", **kwargs)
 
-    def restore(self, name, data,**kwargs):
+    def restore(self, name, data, **kwargs):
         m = Multipart()
         m.file(name="restore", filename=name, value=data)
         ct, payload = m.get()
@@ -64,12 +64,11 @@ class System(base.BaseV21):
         return self.Banner(self.client)
 
     class Banner(base.BaseV21):
-
         def get(self, **kwargs):
             return self._get('system.banner.get', **kwargs)
 
         def set(self, banner, **kwargs):
-            params = { "banner" : banner }
+            params = {"banner": banner}
             return self._post('system.log.banner.set', params, **kwargs)
 
     @property
@@ -77,10 +76,9 @@ class System(base.BaseV21):
         return self.Hostname(self.client)
 
     class Hostname(base.BaseV21):
-
         def get(self, **kwargs):
             return self._get('system.hostname.get', **kwargs)
 
         def set(self, hostname, **kwargs):
-            params = { "hostname" : hostname }
+            params = {"hostname": hostname}
             return self._post('system.hostname.set', params, **kwargs)

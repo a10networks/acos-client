@@ -18,7 +18,6 @@ import errno
 import httplib
 import json
 import logging
-import re
 import socket
 import ssl
 import time
@@ -29,7 +28,7 @@ from version import VERSION
 LOG = logging.getLogger(__name__)
 
 import sys
-from urlparse import urlparse,parse_qs
+from urlparse import urlparse, parse_qs
 
 out_hdlr = logging.StreamHandler(sys.stderr)
 out_hdlr.setLevel(logging.DEBUG)
@@ -108,6 +107,8 @@ class HttpClient(object):
         "User-Agent": "ACOS-Client-AGENT-%s" % VERSION
     }
 
+    headers = {}
+
     def __init__(self, host, port=None, protocol="https", client=None):
         self.host = host
         self.port = port
@@ -119,14 +120,14 @@ class HttpClient(object):
                 port = 443
         self.client = client
 
-    def _http(self, method, api_url, payload, headers):
+    def _http(self, method, api_url, payload):
         if self.protocol == 'https':
             http = httplib.HTTPSConnection(self.host, self.port)
             http.connect = lambda: force_tlsv1_connect(http)
         else:
             http = httplib.HTTPConnection(self.host, self.port)
 
-        http.request(method, api_url, body=payload, headers=headers)
+        http.request(method, api_url, body=payload, headers=self.headers)
 
         r = http.getresponse()
 
@@ -148,7 +149,7 @@ class HttpClient(object):
         LOG.debug("axapi_http: url = %s", api_url)
         LOG.debug("axapi_http: params = %s", params)
 
-        headers = self.HEADERS
+        self.headers = self.HEADERS
 
         if params:
             extra_params = kwargs.get('axapi_args', {})
@@ -158,17 +159,18 @@ class HttpClient(object):
             payload = json.dumps(params_copy, encoding='utf-8')
         else:
             try:
-                payload = kwargs.pop('payload')
-                headers = dict(self.HEADERS, **kwargs.get('headers', {}))
-                LOG.debug("axapi_http: headers_all = %s", headers)
-            except:
+                payload = kwargs.pop('payload', None)
+                self.headers = dict(self.headers, **kwargs.pop('headers', {}))
+                LOG.debug("axapi_http: headers_all = %s", self.headers)
+            except KeyError:
                 payload = None
-				
-				
+
+        last_e = None
+
         for i in xrange(0, 600):
             try:
                 last_e = None
-                data = self._http(method, api_url, payload, headers)
+                data = self._http(method, api_url, payload)
                 break
             except socket.error as e:
                 # Workaround some bogosity in the API
@@ -183,18 +185,11 @@ class HttpClient(object):
                 last_e = e
                 continue
             except EmptyHttpResponse as e:
-                last_e = None
-
-                method = extract_method(api_url)
-                msg = dict(e.response.msg.items())
-
-                if e.response.status == httplib.OK:
-                    data = {"response": {"status": "OK"}}
-                else:
-                    msg['method'] = method
-                    data = {"response": {'status':'fail', 'err':{'code':e.response.status, 'msg': msg }}}
-
-                data = json.dumps(data)
+                if e.response.status != httplib.OK:
+                    msg = dict(e.response.msg.items())
+                    data = json.dumps({"response": {'status': 'fail', 'err': {'code': e.response.status, 'msg': msg}}})
+                #else:
+                #   data = {"response": {"status": "OK"}}
                 break
 
         if last_e is not None:
@@ -214,7 +209,7 @@ class HttpClient(object):
         #Handle non json response
         try:
             r = json.loads(data, encoding='utf-8')
-        except  ValueError as e:
+        except ValueError as e:
             LOG.debug("axapi_http: json = %s", e)
             return data
 
