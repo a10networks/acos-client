@@ -19,6 +19,9 @@ class ACOSException(Exception):
         self.msg = msg
         super(ACOSException, self).__init__(msg)
 
+    def __str__(self):
+        return "%d %s" % (self.code, self.msg)
+
 
 class ACOSUnsupportedVersion(ACOSException):
     pass
