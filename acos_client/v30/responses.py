@@ -23,6 +23,16 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    520749062: {
+        '*': {
+            '*': ae.NotFound
+        }
+    },
+    654311495: {
+        '*': {
+            '*': ae.Exists
+        }
+    },
     1023410176: {
         'DELETE': {
             '*': None
@@ -38,6 +48,11 @@ RESPONSE_CODES = {
         '*': {
             '/axapi/v3/slb/service-group/.*/member/': ae.NotFound,
             '*': ae.NotFound
+        }
+    },
+    1023410183: {
+        '*': {
+            '*': ae.Exists
         }
     },
     1023475722: {

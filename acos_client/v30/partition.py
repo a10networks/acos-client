@@ -38,7 +38,7 @@ class Partition(base.BaseV30):
             params = {
                 "partition": {
                     "partition-name": name,
-                    "id": p_id,
+                    #"id": p_id,
                 }
             }
             self._post("/partition", params)

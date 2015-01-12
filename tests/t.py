@@ -40,14 +40,14 @@ instances = {
     #     'password': 'i-9276ff9f',
     #     'axapi': '21',
     # }
-    '2.7.2': {
-        'host': 'dougw-softax-272',
-        'port': 8443,
-        'protocol': 'https',
-        'user': 'admin',
-        'password': 'a10',
-        'axapi': '21',
-    },
+    # '2.7.2': {
+    #     'host': 'dougw-softax-272',
+    #     'port': 8443,
+    #     'protocol': 'https',
+    #     'user': 'admin',
+    #     'password': 'a10',
+    #     'axapi': '21',
+    # },
     # '2.7.1': {
     #     'host': 'dougw-softax-271',
     #     'port': 8443,
@@ -56,37 +56,47 @@ instances = {
     #     'password': 'a10',
     #     'axapi': '21',
     # },
+    # '4.0.0': {
+    #     'host': 'dougw-softax-4',
+    #     'port': 443,
+    #     'protocol': 'https',
+    #     'user': 'admin',
+    #     'password': 'a10',
+    #     'axapi': '30',
+    # },
     '4.0.0': {
-        'host': 'dougw-softax-4',
+        'host': '172.18.61.29',
         'port': 443,
         'protocol': 'https',
         'user': 'admin',
         'password': 'a10',
         'axapi': '30',
     },
-
 }
 
-partitions = {
-    'p1': {
+partitions = [
+    {
+        'name': 'shared',
+        's1': '192.168.2.254',
+        'vip1': '192.168.2.250',
+        'vip2': '192.168.2.249',
+        'vip3': '192.168.2.248'
+    },
+    {
+        'name': 'p1',
         's1': '192.168.2.244',
         'vip1': '192.168.2.240',
         'vip2': '192.168.2.239',
         'vip3': '192.168.2.238'
     },
-    'p2': {
+    {
+        'name': 'p2',
         's1': '192.168.2.234',
         'vip1': '192.168.2.230',
         'vip2': '192.168.2.229',
         'vip3': '192.168.2.228'
     },
-    'shared': {
-        's1': '192.168.2.254',
-        'vip1': '192.168.2.250',
-        'vip2': '192.168.2.249',
-        'vip3': '192.168.2.248'
-    }
-}
+]
 
 
 class Nope(Exception):
@@ -152,16 +162,16 @@ def run_all(version, ax, partition, pmap):
     c.session.session_id = 'bad_session_id'
     c.session.close()
 
-    # print("=============================================================")
-    # print("")
-    # print("About to do a get info with bad session id")
-    # c.session.session_id = 'bad_session_id'
-    # try:
-    #     c.system.information()
-    # except acos_client.errors.InvalidSessionID:
-    #     print("got invalid session error, good")
-    # else:
-    #     raise Nope()
+    print("=============================================================")
+    print("")
+    print("About to do a get info with bad session id")
+    c.session.session_id = 'bad_session_id'
+    try:
+        c.system.information()
+    except acos_client.errors.InvalidSessionID:
+        print("got invalid session error, good")
+    else:
+        raise Nope()
 
     # Get a fresh client
 
@@ -209,59 +219,58 @@ def run_all(version, ax, partition, pmap):
     c.system.partition.active(partition)
 
     print("=============================================================")
+    print("")
+    print("Write mem")
+    c = get_client(ax)
+    print("A")
+    c.system.action.write_memory()
+
+    # print("=============================================================")
     # print("")
-    # print("Write mem")
-    # c = get_client(ax)
-    # print("A")
-    # c.system.write_memory()
+    # print("Client SSL Create")
+    # c.slb.template.client_ssl.delete("ss1")
+    # c.slb.template.client_ssl.create("ss1", "cert1", "cert1")
+    # c.slb.template.client_ssl.get("ss1")
+    # try:
+    #     c.slb.template.client_ssl.create("ss1", "cert1", "cert1")
+    # except acos_client.errors.Exists:
+    #     print("got already exists error, good")
+    # c.slb.template.client_ssl.update("ss1", "cert1", "cert1")
+    # try:
+    #     c.slb.template.client_ssl.update("sns1", "cert1", "cert1")
 
-    print("=============================================================")
-    print("")
-    print("Client SSL Create")
-    c.slb.template.client_ssl.delete("ss1")
-    c.slb.template.client_ssl.create("ss1", "cert1", "cert1")
-    c.slb.template.client_ssl.get("ss1")
-    try:
-        c.slb.template.client_ssl.create("ss1", "cert1", "cert1")
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    c.slb.template.client_ssl.update("ss1", "cert1", "cert1")
-    try:
-        c.slb.template.client_ssl.update("sns1", "cert1", "cert1")
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # c.slb.template.client_ssl.delete("ss1")
+    # c.slb.template.client_ssl.delete("ss1")
+    # try:
+    #     c.slb.template.client_ssl.get("ss1")
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # c.slb.template.client_ssl.create("ss1", "cert1", "cert1")
 
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    c.slb.template.client_ssl.delete("ss1")
-    c.slb.template.client_ssl.delete("ss1")
-    try:
-        c.slb.template.client_ssl.get("ss1")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    c.slb.template.client_ssl.create("ss1", "cert1", "cert1")
-
-    print("=============================================================")
-    print("")
-    print("Server SSL Create")
-    c.slb.template.server_ssl.delete("ss1")
-    c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
-    c.slb.template.server_ssl.get("ss1")
-    try:
-        c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    c.slb.template.server_ssl.update("ss1", "cert1", "cert1")
-    try:
-        c.slb.template.server_ssl.update("sns1", "cert1", "cert1")
-
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    c.slb.template.server_ssl.delete("ss1")
-    c.slb.template.server_ssl.delete("ss1")
-    try:
-        c.slb.template.server_ssl.get("ss1")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
+    # print("=============================================================")
+    # print("")
+    # print("Server SSL Create")
+    # c.slb.template.server_ssl.delete("ss1")
+    # c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
+    # c.slb.template.server_ssl.get("ss1")
+    # try:
+    #     c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
+    # except acos_client.errors.Exists:
+    #     print("got already exists error, good")
+    # c.slb.template.server_ssl.update("ss1", "cert1", "cert1")
+    # try:
+    #     c.slb.template.server_ssl.update("sns1", "cert1", "cert1")
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # c.slb.template.server_ssl.delete("ss1")
+    # c.slb.template.server_ssl.delete("ss1")
+    # try:
+    #     c.slb.template.server_ssl.get("ss1")
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
 
     print("=============================================================")
     print("")
@@ -332,7 +341,9 @@ def run_all(version, ax, partition, pmap):
     c.slb.virtual_server.create("vip3", pmap['vip3'])
     c.slb.virtual_server.get("vip3")
 
+    print "DELETING vFOOBAR"
     c.slb.virtual_server.delete("vfoobar")
+    print "CREATING vFOOBAR"
     c.slb.virtual_server.create("vfoobar", pmap['vip1'])
     r = c.slb.virtual_server.get("vfoobar")
     print("LIBRARY RESPONSE = %s", r)
@@ -363,16 +374,16 @@ def run_all(version, ax, partition, pmap):
                                       service_group_name="pfoobar",
                                       protocol=c.slb.virtual_server.vport.HTTP,
                                       port='80')
-    # try:
-    #     c.slb.virtual_server.vport.create(
-    #         "vip3", "vip3_VPORT",
-    #         service_group_name="pfoobar",
-    #         protocol=c.slb.virtual_server.vport.HTTP,
-    #         port='80')
-    # except acos_client.errors.Exists:
-    #     print("got already exists error, good")
-    # else:
-    #     raise Nope()
+    try:
+        c.slb.virtual_server.vport.create(
+            "vip3", "vip3_VPORT",
+            service_group_name="pfoobar",
+            protocol=c.slb.virtual_server.vport.HTTP,
+            port='80')
+    except acos_client.errors.Exists:
+        print("got already exists error, good")
+    else:
+        raise Nope()
     c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
                                       c.slb.virtual_server.vport.HTTP, 80)
     c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
@@ -501,14 +512,6 @@ def run_all(version, ax, partition, pmap):
     print("Vip with pers")
     c.slb.virtual_server.delete("vip2")
     c.slb.virtual_server.create("vip2", pmap['vip2'])
-    # c.slb.virtual_server.vport.create(
-    #     "vip2", "vip2_vport1",
-    #     protocol=c.slb.virtual_server.vport.HTTPS,
-    #     port=443,
-    #     service_group_name='pfoobar',
-    #     s_pers_name='sip1',
-    #     c_pers_name='cp1',
-    #     status=1)
     c.slb.virtual_server.vport.create(
         "vip2", "vip2_vport2",
         protocol=c.slb.virtual_server.vport.HTTPS,
@@ -537,21 +540,22 @@ def run_all(version, ax, partition, pmap):
 
 
 def main():
-    # for partition, v in partitions.items():
-    #     for version, ax in instances.items():
-    #         try:
-    #             run_all(version, ax, partition, v)
-    #         except Exception as e:
-    #             traceback.print_exc()
-    #             print(e)
-    #             sys.exit(1)
-    for version, ax in instances.items():
-        try:
-            run_all(version, ax, 'shared', partitions['shared'])
-        except Exception as e:
-            traceback.print_exc()
-            print(e)
-            sys.exit(1)
+    for v in partitions:
+        partition = v['name']
+        for version, ax in instances.items():
+            try:
+                run_all(version, ax, partition, v)
+            except Exception as e:
+                traceback.print_exc()
+                print(e)
+                sys.exit(1)
+    # for version, ax in instances.items():
+    #     try:
+    #         run_all(version, ax, 'shared', partitions['shared'])
+    #     except Exception as e:
+    #         traceback.print_exc()
+    #         print(e)
+    #         sys.exit(1)
 
 if __name__ == '__main__':
     main()

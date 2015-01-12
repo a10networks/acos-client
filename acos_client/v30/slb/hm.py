@@ -58,7 +58,7 @@ class HealthMonitor(base.BaseV30):
         return self._get(self.url_prefix + name)
 
     def _set(self, action, name, mon_method, interval, timeout, max_retries,
-             method=None, url=None, expect_code=None, port=None):
+             method=None, url=None, expect_code=None, port=None, update=False):
         params = {
             "monitor": {
                 "name": name,
@@ -87,6 +87,8 @@ class HealthMonitor(base.BaseV30):
                 k = '%s-port' % mon_method
             params['monitor']['method'][mon_method][k] = int(port)
 
+        if update:
+            action += name
         self._post(action, params)
 
     def create(self, name, mon_type, interval, timeout, max_retries,
@@ -105,7 +107,7 @@ class HealthMonitor(base.BaseV30):
                method=None, url=None, expect_code=None, port=None):
         self.get(name)  # We want a NotFound if it does not exist
         self._set(self.url_prefix, name, mon_type, interval, timeout,
-                  max_retries, method, url, expect_code, port)
+                  max_retries, method, url, expect_code, port, update=True)
 
     def delete(self, name):
         self._delete(self.url_prefix + name)
