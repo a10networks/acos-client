@@ -29,12 +29,14 @@ from v30.system import System as v30_System
 VERSION_IMPORTS = {
     '21': {
         'http': v21.axapi_http,
+        'HA': v21_HA,
         'Session': v21_Session,
         'SLB': v21_SLB,
         'System': v21_System,
     },
     '30': {
         'http': v30.axapi_http,
+        'HA': v30_HA,
         'Session': v30_Session,
         'SLB': v30_SLB,
         'System': v30_System,
@@ -60,7 +62,7 @@ class Client(object):
 
     @property
     def ha(self):
-        return HA(self)
+        return VERSION_IMPORTS[self._version]['HA'](self)
 
     @property
     def system(self):
