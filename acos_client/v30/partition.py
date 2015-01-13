@@ -12,6 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import random
+import time
+
 import acos_client.errors as acos_errors
 
 import base
@@ -59,7 +62,7 @@ class Partition(base.BaseV30):
 
         # For concurrency's sake, since we have to lookup the id and then
         # set it, loop if we get an exists error.
-        for i in xrange(1,1000):
+        for i in xrange(1, 1000):
             try:
                 self._create(name, self._next_available_id())
                 break

@@ -341,9 +341,7 @@ def run_all(version, ax, partition, pmap):
     c.slb.virtual_server.create("vip3", pmap['vip3'])
     c.slb.virtual_server.get("vip3")
 
-    print "DELETING vFOOBAR"
     c.slb.virtual_server.delete("vfoobar")
-    print "CREATING vFOOBAR"
     c.slb.virtual_server.create("vfoobar", pmap['vip1'])
     r = c.slb.virtual_server.get("vfoobar")
     print("LIBRARY RESPONSE = %s", r)

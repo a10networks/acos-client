@@ -74,8 +74,10 @@ class MemoryFault(ACOSException):
 class InvalidParameter(ACOSException):
     pass
 
+
 class OutOfPartitions(ACOSException):
     pass
+
 
 class PartitionIdExists(ACOSException):
     pass

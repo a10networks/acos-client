@@ -109,7 +109,6 @@ def raise_axapi_ex(response, method, api_url):
             # Now try to find specific API method exceptions
             matched = False
             for k in x.keys():
-                print k
                 if k != '*' and re.match('^'+k, api_url):
                     matched = True
                     ex = x[k]
