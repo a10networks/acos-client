@@ -92,6 +92,9 @@ class HttpClient(object):
         #     data = broken_replies[data]
         #     LOG.debug("axapi_http: broken reply, new response: %s", data)
 
+        if z.status_code == 204:
+            return None
+
         # r = json.loads(data, encoding='utf-8')
         r = z.json()
 

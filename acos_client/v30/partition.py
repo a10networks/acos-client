@@ -19,6 +19,9 @@ import base
 
 class Partition(base.BaseV30):
 
+    def available(self):
+        return self._get('/partition-available-id/oper/')
+
     def exists(self, name):
         if name == 'shared':
             return True
@@ -33,16 +36,36 @@ class Partition(base.BaseV30):
             self._post("/active-partition/" + name)
             self.client.current_partition = name
 
-    def create(self, name, p_id=100):
-        if name != 'shared':
-            params = {
-                "partition": {
-                    "partition-name": name,
-                    #"id": p_id,
-                }
+    def _next_available_id(self):
+        a = self.available()
+        if a is None:
+            raise acos_errors.OutOfPartitions()
+
+        z = a['partition-available-id']['oper']['range-list'][0]['start']
+        return int(z)
+
+    def _create(self, name, partition_id):
+        params = {
+            "partition": {
+                "partition-name": name,
+                "id": partition_id,
             }
-            self._post("/partition", params)
+        }
+        self._post("/partition", params)
+
+    def create(self, name):
+        if name == 'shared':
+            return
+
+        # For concurrency's sake, since we have to lookup the id and then
+        # set it, loop if we get an exists error.
+        for i in xrange(1,1000):
+            try:
+                self._create(name, self._next_available_id())
+                break
+            except acos_errors.PartitionIdExists:
+                time.sleep(0.05 + random.random()/100)
 
     def delete(self, name):
         if name != 'shared':
-            self._delete("/delete/partition/" + name)
+            self._delete("/partition/" + name)

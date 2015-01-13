@@ -58,7 +58,7 @@ class Session(object):
             return
 
         try:
-            h = {'Authorization': self.session_id}
+            h = {'Authorization': "A10 %s" % self.session_id}
             r = self.http.post('/axapi/v3/logoff', headers=h)
         finally:
             self.session_id = None

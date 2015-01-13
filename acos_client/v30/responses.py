@@ -16,7 +16,6 @@ import re
 
 import acos_client.errors as ae
 
-
 RESPONSE_CODES = {
     67371011: {
         '*': {
@@ -31,6 +30,11 @@ RESPONSE_CODES = {
     654311495: {
         '*': {
             '*': ae.Exists
+        }
+    },
+    754974733: {
+        '*': {
+            '*': ae.PartitionIdExists
         }
     },
     1023410176: {
@@ -58,6 +62,12 @@ RESPONSE_CODES = {
     1023475722: {
         '*': {
             '*': ae.NotFound
+        }
+    },
+    1207960052: {
+        '*': {
+            '/axapi/v3/logoff': None,
+            '*': ae.InvalidSessionID
         }
     },
     1207959957: {
@@ -97,12 +107,15 @@ def raise_axapi_ex(response, method, api_url):
                 x = ex_dict['*']
 
             # Now try to find specific API method exceptions
+            matched = False
             for k in x.keys():
+                print k
                 if k != '*' and re.match('^'+k, api_url):
+                    matched = True
                     ex = x[k]
 
             # If we get here, try for a fallback exception for this code
-            if not ex and '*' in x:
+            if not matched and not ex and '*' in x:
                 ex = x['*']
 
             # Alright, time to actually do something
