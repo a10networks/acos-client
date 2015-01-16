@@ -30,15 +30,12 @@ class ServerSSL(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def create(self, name, cert=None, key=None, passphrase=None):
+    def _set(self, name, cert=None, key=None, passphrase=None, update=False):
         # Unimplemented options:
         # encrypted, session_ticket_enable, version, forward_proxy_enable,
         # close_notify, session_cache_size, session_cache_timeout,
         # cipher_template, server_certificate_error, cipher_without_prio_list,
         # ca_certs
-
-        if self.exists(name):
-            raise acos_errors.Exists
 
         params = {
             "name": name,
@@ -58,7 +55,20 @@ class ServerSSL(base.BaseV30):
             # "cipher-without-prio-list": cipher_without_prio_list,
             # "ca-certs": ca_certs,
         }
-        self._post(self.url_prefix, params)
+
+        if not update:
+            name = ''
+
+        self._post(self.url_prefix + name, params)
+
+    def create(self, name, cert=None, key=None, passphrase=None):
+        if self.exists(name):
+            raise acos_errors.Exists
+
+        self._set(name, cert, key, passphrase)
+
+    def update(self, name, cert=None, key=None, passphrase=None):
+        self._set(name, cert, key, passphrase, update=True)
 
     def delete(self, name):
         self._delete(self.url_prefix + name)
