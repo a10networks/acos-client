@@ -18,22 +18,22 @@ import errno
 import httplib
 import json
 import logging
-import re
 import socket
 import ssl
+import sys
 import time
+import urlparse
 
 import responses as acos_responses
 
 import acos_client
 
+
 LOG = logging.getLogger(__name__)
 
-import sys
-out_hdlr = logging.StreamHandler(sys.stdout)
+out_hdlr = logging.StreamHandler(sys.stderr)
 out_hdlr.setLevel(logging.DEBUG)
 LOG.addHandler(out_hdlr)
-
 LOG.setLevel(logging.DEBUG)
 
 
@@ -49,10 +49,8 @@ def force_tlsv1_connect(self):
 
 
 def extract_method(api_url):
-    m = re.search("method=([^&]+)", api_url)
-    if m is not None:
-        return m.group(1)
-    return ""
+    q = urlparse.urlparse(api_url).query
+    return urlparse.parse_qs(q).get('method', [u''])[0]
 
 
 def merge_dicts(d1, d2):
@@ -67,25 +65,43 @@ def merge_dicts(d1, d2):
 
 broken_replies = {
     ('<?xml version="1.0" encoding="utf-8" ?><response status="ok">'
-     '</response>'): '{"response": {"status": "OK"}}',
+     '</response>'): (json.dumps({"response": {"status": "OK"}})),
 
     ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
      '<error code="999" msg=" Partition does not exist. '
      '(internal error: 520749062)" /></response>'):
-    ('{"response": {"status": "fail", "err": {"code": 999,'
-     '"msg": " Partition does not exist."}}}'),
+    (json.dumps({"response": {"status": "fail", "err": {"code": 999,
+     "msg": " Partition does not exist."}}})),
 
     ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
      '<error code="999" msg=" Failed to get partition. (internal error: '
      '402718800)" /></response>'):
-    ('{"response": {"status": "fail", "err": {"code": 999,'
-     '"msg": " Partition does not exist."}}}'),
+    (json.dumps({"response": {"status": "fail", "err": {"code": 999,
+     "msg": " Partition does not exist."}}})),
 
     ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
      '<error code="1076" msg="Invalid partition parameter." /></response>'):
-    ('{"response": {"status": "fail", "err": {"code": 1076,'
-     '"msg": "Invalid partition parameter."}}}'),
+    (json.dumps({"response": {"status": "fail", "err": {"code": 1076,
+     "msg": "Invalid partition parameter."}}})),
+
+    ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
+     '<error code="999" msg=" No such aFleX. (internal error: '
+     '17039361)" /></response>'):
+    (json.dumps({"response": {"status": "fail", "err": {"code": 17039361,
+     "msg": " No such aFleX."}}})),
+
+    ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
+     '<error code="999" msg=" This aFleX is in use. (internal error: '
+     '17039364)" /></response>'):
+    (json.dumps({"response": {"status": "fail", "err": {"code": 17039364,
+     "msg": " This aFleX is in use."}}})),
+
 }
+
+
+class EmptyHttpResponse(Exception):
+    def __init__(self, response):
+        self.response = response
 
 
 class HttpClient(object):
@@ -94,7 +110,9 @@ class HttpClient(object):
         "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
-    def __init__(self, host, port=None, protocol="https"):
+    headers = {}
+
+    def __init__(self, host, port=None, protocol="https", client=None):
         self.host = host
         self.port = port
         self.protocol = protocol
@@ -116,17 +134,24 @@ class HttpClient(object):
         LOG.debug("axapi_http: headers: %s", self.HEADERS)
         LOG.debug("axapi_http: payload: %s", payload)
 
-        http.request(method, api_url, payload, self.HEADERS)
+        http.request(method, api_url, body=payload, headers=self.headers)
 
-        resp = http.getresponse()
-        # print "RESP ", dir(resp)
-        # print "RESP HEADERS", resp.getheaders()
-        # LOG.debug("http response status %s", resp.status)
-        return resp.read()
+        r = http.getresponse()
+
+        # Workaround for zero length response
+        def handle_empty_response(data):
+            if not data:
+                raise EmptyHttpResponse(r)
+
+            return data
+
+        return handle_empty_response(r.read())
 
     def request(self, method, api_url, params={}, **kwargs):
         LOG.debug("axapi_http: url = %s", api_url)
         LOG.debug("axapi_http: params = %s", params)
+
+        self.headers = self.HEADERS
 
         if params:
             extra_params = kwargs.get('axapi_args', {})
@@ -135,7 +160,14 @@ class HttpClient(object):
 
             payload = json.dumps(params_copy, encoding='utf-8')
         else:
-            payload = None
+            try:
+                payload = kwargs.pop('payload', None)
+                self.headers = dict(self.headers, **kwargs.pop('headers', {}))
+                LOG.debug("axapi_http: headers_all = %s", self.headers)
+            except KeyError:
+                payload = None
+
+        last_e = None
 
         for i in xrange(0, 600):
             try:
@@ -154,6 +186,15 @@ class HttpClient(object):
                 time.sleep(0.1)
                 last_e = e
                 continue
+            except EmptyHttpResponse as e:
+                if e.response.status != httplib.OK:
+                    msg = dict(e.response.msg.items())
+                    data = json.dumps({"response": {'status': 'fail', 'err':
+                                      {'code': e.response.status,
+                                       'msg': msg}}})
+                else:
+                    data = json.dumps({"response": {"status": "OK"}})
+                break
 
         if last_e is not None:
             raise e
@@ -169,7 +210,12 @@ class HttpClient(object):
             data = broken_replies[data]
             LOG.debug("axapi_http: broken reply, new response: %s", data)
 
-        r = json.loads(data, encoding='utf-8')
+        try:
+            r = json.loads(data, encoding='utf-8')
+        except ValueError as e:
+            # Handle non json response
+            LOG.debug("axapi_http: json = %s", e)
+            return data
 
         if 'response' in r and 'status' in r['response']:
             if r['response']['status'] == 'fail':

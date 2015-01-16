@@ -69,3 +69,9 @@ class ServiceGroup(base.BaseV21):
 
     def delete(self, name, **kwargs):
         self._post("slb.service_group.delete", {'name': name}, **kwargs)
+
+    def all(self, **kwargs):
+        return self._get('slb.service_group.getAll', **kwargs)
+
+    def all_delete(self, **kwargs):
+        self._get('slb.service_group.deleteAll', **kwargs)

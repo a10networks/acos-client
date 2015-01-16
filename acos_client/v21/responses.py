@@ -53,6 +53,19 @@ RESPONSE_CODES = {
     2941: {
         '*': ae.Exists
     },
+    3602: {
+        'slb.class_list.update': ae.NotFound,
+        '*': ae.NotFound
+    },
+    17039361: {
+        'slb.aflex.delete': None,
+        '*': ae.NotFound
+    },
+    17039364: {
+        'slb.aflex.upload': ae.InUse,
+        'slb.aflex.delete': ae.InUse,
+        '*': ae.InUse
+    },
     33619968: {
         'slb.hm.delete': None,
         '*': ae.NotFound
@@ -62,11 +75,13 @@ RESPONSE_CODES = {
     },
     67174402: {
         'slb.server.delete': None,
+        'slb.server.port.delete': None,
         '*': ae.NotFound
     },
     67239937: {
         'slb.virtual_server.delete': None,
         'slb.virtual_service.delete': None,
+        'slb.virtual_service.update': ae.NotFound,
         '*': ae.NotFound
     },
     67239947: {
@@ -74,6 +89,7 @@ RESPONSE_CODES = {
     },
     67305473: {
         'slb.service_group.delete': None,
+        'slb.service_group.member.delete': None,
         'slb.service_group.member.create': ae.NotFound,
         'slb.service_group.member.update': ae.NotFound,
         '*': ae.NotFound
@@ -83,6 +99,10 @@ RESPONSE_CODES = {
         'slb.template.src_ip_persistence.delete': None,
         'slb.template.client_ssl.delete': None,
         'slb.template.server_ssl.delete': None,
+        '*': ae.NotFound
+    },
+    67371049: {
+        'slb.class_list.delete': None,
         '*': ae.NotFound
     },
     402653200: {
@@ -115,6 +135,14 @@ RESPONSE_CODES = {
     654311496: {
         '*': ae.AddressSpecifiedIsInUse
     },
+    654376968: {
+        'nat.pool.delete': None,
+        '*': ae.NotFound
+    },
+    654573574: {
+        'network.acl.ext.delete': None,
+        '*': ae.NotFound
+    }
 }
 
 
