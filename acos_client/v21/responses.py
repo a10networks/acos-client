@@ -54,17 +54,17 @@ RESPONSE_CODES = {
         '*': ae.Exists
     },
     3602: {
-        'slb.class_list.update': NotFound,
-        '*': NotFound
+        'slb.class_list.update': ae.NotFound,
+        '*': ae.NotFound
     },
     17039361: {
         'slb.aflex.delete': None,
-        '*': NotFound
+        '*': ae.NotFound
     },
     17039364: {
-        'slb.aflex.upload': InUse,
-        'slb.aflex.delete': InUse,
-        '*': InUse
+        'slb.aflex.upload': ae.InUse,
+        'slb.aflex.delete': ae.InUse,
+        '*': ae.InUse
     },
     33619968: {
         'slb.hm.delete': None,
@@ -81,7 +81,7 @@ RESPONSE_CODES = {
     67239937: {
         'slb.virtual_server.delete': None,
         'slb.virtual_service.delete': None,
-        'slb.virtual_service.update': NotFound,
+        'slb.virtual_service.update': ae.NotFound,
         '*': ae.NotFound
     },
     67239947: {
@@ -103,7 +103,7 @@ RESPONSE_CODES = {
     },
     67371049: {
         'slb.class_list.delete': None,
-        '*': NotFound
+        '*': ae.NotFound
     },
     402653200: {
         '*': ae.Exists
@@ -137,11 +137,11 @@ RESPONSE_CODES = {
     },
     654376968: {
         'nat.pool.delete': None,
-        '*': NotFound
+        '*': ae.NotFound
     },
     654573574: {
         'network.acl.ext.delete': None,
-        '*': NotFound
+        '*': ae.NotFound
     }
 }
 

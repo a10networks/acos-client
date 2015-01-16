@@ -14,14 +14,15 @@
 
 import acos_client.v21.base as base
 
+from aflex import Aflex
+from class_list import ClassList
 from hm import HealthMonitor
 from server import Server
 from service_group import ServiceGroup
 from template import Template
 from virtual_server import VirtualServer
-from class_list import ClassList
-from aflex import Aflex
 from virtual_service import VirtualService
+
 
 class SLB(base.BaseV21):
     # For status args

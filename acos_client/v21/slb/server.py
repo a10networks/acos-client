@@ -13,7 +13,9 @@
 #    under the License.
 
 import acos_client.v21.base as base
+
 from port import Port
+
 
 class Server(base.BaseV21):
 
@@ -62,8 +64,3 @@ class Server(base.BaseV21):
     @property
     def port(self):
         return Port(self.client)
-
-
-
-
-

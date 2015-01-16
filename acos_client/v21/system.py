@@ -14,12 +14,13 @@
 
 
 from action import Action
-from partition import Partition
-from log import Log
+import base
 from config_file import ConfigFile
 from device_info import DeviceInfo
-import base
-from acos_client.multipart import Multipart
+from log import Log
+from partition import Partition
+
+import acos_client.multipart as multipart
 
 
 class System(base.BaseV21):
@@ -27,7 +28,7 @@ class System(base.BaseV21):
         return self._get("system.backup", **kwargs)
 
     def restore(self, name, data, **kwargs):
-        m = Multipart()
+        m = multipart.Multipart()
         m.file(name="restore", filename=name, value=data)
         ct, payload = m.get()
         kwargs.update(payload=buffer(payload), headers={'Content-Type': ct})

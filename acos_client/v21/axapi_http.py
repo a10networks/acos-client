@@ -20,21 +20,20 @@ import json
 import logging
 import socket
 import ssl
+import sys
 import time
+import urlparse
 
 import responses as acos_responses
 
 import acos_client
 
-LOG = logging.getLogger(__name__)
 
-import sys
-from urlparse import urlparse, parse_qs
+LOG = logging.getLogger(__name__)
 
 out_hdlr = logging.StreamHandler(sys.stderr)
 out_hdlr.setLevel(logging.DEBUG)
 LOG.addHandler(out_hdlr)
-
 LOG.setLevel(logging.DEBUG)
 
 
@@ -50,7 +49,8 @@ def force_tlsv1_connect(self):
 
 
 def extract_method(api_url):
-    return parse_qs(urlparse(api_url).query).get('method',[u''])[0]
+    q = urlparse.urlparse(api_url).query
+    return urlparse.parse_qs(q).get('method', [u''])[0]
 
 
 def merge_dicts(d1, d2):
@@ -85,22 +85,24 @@ broken_replies = {
      "msg": "Invalid partition parameter."}}})),
 
     ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
-    '<error code="999" msg=" No such aFleX. (internal error: '
-    '17039361)" /></response>'):
+     '<error code="999" msg=" No such aFleX. (internal error: '
+     '17039361)" /></response>'):
     (json.dumps({"response": {"status": "fail", "err": {"code": 17039361,
-    "msg": " No such aFleX."}}})),
+     "msg": " No such aFleX."}}})),
 
     ('<?xml version="1.0" encoding="utf-8" ?><response status="fail">'
-    '<error code="999" msg=" This aFleX is in use. (internal error: '
-    '17039364)" /></response>'):
+     '<error code="999" msg=" This aFleX is in use. (internal error: '
+     '17039364)" /></response>'):
     (json.dumps({"response": {"status": "fail", "err": {"code": 17039364,
-    "msg": " This aFleX is in use."}}})),
+     "msg": " This aFleX is in use."}}})),
 
 }
+
 
 class EmptyHttpResponse(Exception):
     def __init__(self, response):
         self.response = response
+
 
 class HttpClient(object):
     HEADERS = {
@@ -187,9 +189,11 @@ class HttpClient(object):
             except EmptyHttpResponse as e:
                 if e.response.status != httplib.OK:
                     msg = dict(e.response.msg.items())
-                    data = json.dumps({"response": {'status': 'fail', 'err': {'code': e.response.status, 'msg': msg}}})
-                #else:
-                #   data = {"response": {"status": "OK"}}
+                    data = json.dumps({"response": {'status': 'fail', 'err':
+                                      {'code': e.response.status,
+                                       'msg': msg}}})
+                else:
+                    data = json.dumps({"response": {"status": "OK"}})
                 break
 
         if last_e is not None:
@@ -206,11 +210,10 @@ class HttpClient(object):
             data = broken_replies[data]
             LOG.debug("axapi_http: broken reply, new response: %s", data)
 
-
-        #Handle non json response
         try:
             r = json.loads(data, encoding='utf-8')
         except ValueError as e:
+            # Handle non json response
             LOG.debug("axapi_http: json = %s", e)
             return data
 
