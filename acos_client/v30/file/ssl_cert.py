@@ -72,6 +72,7 @@ class SSLCert(base.BaseV30):
 
     def create(self,
                file=None,
+               cert=None,
                size=None,
                file_handle=None,
                certificate_type=None,
@@ -83,11 +84,12 @@ class SSLCert(base.BaseV30):
         if self.exists(file):
             raise acos_errors.Exists
 
-        self._set(file, size, file_handle, certificate_type, pfx_password,
+        self._set(file, cert, size, file_handle, certificate_type, pfx_password,
                   csr_generate, action, dst_file, update=False)
 
     def update(self,
                file=None,
+               cert=None,
                size=None,
                file_handle=None,
                certificate_type=None,
@@ -96,7 +98,7 @@ class SSLCert(base.BaseV30):
                action=None,
                dst_file=None,
                update=False):
-        self._set(file, size, file_handle, certificate_type, pfx_password,
+        self._set(file, cert, size, file_handle, certificate_type, pfx_password,
                   csr_generate, action, dst_file, update=True)
 
     def delete(self, file):
