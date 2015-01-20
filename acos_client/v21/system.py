@@ -18,6 +18,7 @@ from partition import Partition
 from log import Log
 from config_file import ConfigFile
 from device_info import DeviceInfo
+from admin import Admin
 import base
 from acos_client.multipart import Multipart
 
@@ -38,6 +39,10 @@ class System(base.BaseV21):
 
     def information(self):
         return self._get("system.information.get")
+
+    @property
+    def admin(self):
+        return Admin(self.client)
 
     @property
     def device_info(self):
@@ -82,3 +87,6 @@ class System(base.BaseV21):
         def set(self, hostname, **kwargs):
             params = {"hostname": hostname}
             return self._post('system.hostname.set', params, **kwargs)
+
+
+
