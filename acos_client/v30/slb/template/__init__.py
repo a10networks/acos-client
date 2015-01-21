@@ -16,6 +16,7 @@ import acos_client.v30.base as base
 
 from persistence import CookiePersistence
 from persistence import SourceIpPersistence
+from server_ssl import ServerSSL
 
 
 class Template(base.BaseV30):
@@ -27,3 +28,7 @@ class Template(base.BaseV30):
     @property
     def src_ip_persistence(self):
         return SourceIpPersistence(self.client)
+
+    @property
+    def server_ssl(self):
+        return ServerSSL(self.client)

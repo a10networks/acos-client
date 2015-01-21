@@ -37,7 +37,7 @@ class ServerSSL(base.BaseV30):
         # cipher_template, server_certificate_error, cipher_without_prio_list,
         # ca_certs
 
-        params = {
+        obj_params = {
             "name": name,
             "cert": cert,
             "key": key,
@@ -55,6 +55,12 @@ class ServerSSL(base.BaseV30):
             # "cipher-without-prio-list": cipher_without_prio_list,
             # "ca-certs": ca_certs,
         }
+
+        params = {'server-ssl': {}}
+        for key, val in obj_params.iteritems():
+            if val is not None:
+                params['server-ssl'][key] = val
+
 
         if not update:
             name = ''
