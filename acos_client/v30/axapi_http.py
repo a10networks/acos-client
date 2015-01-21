@@ -66,7 +66,7 @@ class HttpClient(object):
         LOG.debug("axapi_http: params = %s", json.dumps(params, indent=4))
 
         if (file_name is None and file_content is not None) or \
-           (file_name is None and file_content is not None):
+           (file_name is not None and file_content is None):
             raise ValueError("file_name and file_content must both be populated if one is")
 
         hdrs = self.HEADERS.copy()
