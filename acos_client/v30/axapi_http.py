@@ -96,7 +96,14 @@ class HttpClient(object):
             return None
 
         # r = json.loads(data, encoding='utf-8')
-        r = z.json()
+        try:
+            r = z.json()
+        except ValueError as e:
+            # Suspect that the JSON response was empty
+            if z.status_code == 200:
+                return {}
+            else:
+                raise e
 
         LOG.debug("axapi_http: data = %s", json.dumps(r, indent=4))
 
