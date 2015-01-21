@@ -65,56 +65,44 @@ class HttpClient(object):
         LOG.debug("axapi_http: %s url = %s", method, api_url)
         LOG.debug("axapi_http: params = %s", json.dumps(params, indent=4))
 
-        # self.headers = self.HEADERS
-        #if (file_name is None or file_name is None) and (file_name is not None or file_content is not None):
-        #    raise ValueError("file_name and file_content must both be populated if one is")
+        if (file_name is None and file_content is not None) or \
+           (file_name is None and file_content is not None):
+            raise ValueError("file_name and file_content must both be populated if one is")
 
         hdrs = self.HEADERS.copy()
         if headers:
             hdrs.update(headers)
 
         if params:
-            #payload = json.dumps(params)
-            # If we are uploading a file, we can't encode using json
-            if file_name is None:
-                payload = json.dumps(params)
-            else:
-                payload = params
-                # hdrs.pop("Content-Type", None)
-                # hdrs.pop("Content-type", None)
+            payload = json.dumps(params)
         else:
             payload = None
 
         LOG.debug("axapi_http: headers = %s", json.dumps(hdrs, indent=4))
 
-        if file_name is not None and file_content is not None:
-            files = {'file': (file_name, file_content)}
+        if file_name is not None:
+            files = {
+                'file': (file_name, file_content, "application/octet-stream"),
+                'json': ('blob', payload, "application/json")
+            }
+
+            hdrs.pop("Content-type", None)
+            hdrs.pop("Content-Type", None)
+            z = requests.request(method, self.url_base + api_url, verify=False,
+                                 files=files, headers=hdrs)
         else:
-            files = None
-
-        z = requests.request(method, self.url_base + api_url, verify=False,
-                             data=payload, headers=hdrs, files=files)
-        # data = z.text
-
-        # LOG.debug("axapi_http: data = %s", data)
-
-        # # Fixup some broken stuff in an earlier version of the axapi
-        # # xmlok = ('<?xml version="1.0" encoding="utf-8" ?>'
-        # #          '<response status="ok"></response>')
-        # # if data == xmlok:
-        # #     return {'response': {'status': 'OK'}}
-        # if data in broken_replies:
-        #     data = broken_replies[data]
-        #     LOG.debug("axapi_http: broken reply, new response: %s", data)
+            files = None  # FIXME remove
+            z = requests.request(method, self.url_base + api_url, verify=False,
+                                 data=payload, headers=hdrs)
 
         if z.status_code == 204:
             return None
 
-        # r = json.loads(data, encoding='utf-8')
         try:
             r = z.json()
         except ValueError as e:
-            # Suspect that the JSON response was empty
+            # Suspect that the JSON response was empty, like in the case of a
+            # successful file import.
             if z.status_code == 200:
                 return {}
             else:

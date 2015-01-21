@@ -43,7 +43,6 @@ class SSLCert(base.BaseV30):
              update=False,
              **kwargs):
 
-
         obj_params = {
             "file": file,
             "size": size,
@@ -64,7 +63,7 @@ class SSLCert(base.BaseV30):
         if not update:
             file = ''
 
-        return self._post(self.url_prefix + file, file_name=file,
+        return self._post(self.url_prefix + file, file_name=obj_params["file"],
                           file_content=cert, **kwargs)
 
     def create(self,
