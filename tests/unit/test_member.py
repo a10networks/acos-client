@@ -52,7 +52,7 @@ class TestMember(unittest.TestCase):
 
     def test_member_update_no_such_service_group(self):
         with mocks.MemberUpdateNoSuchServiceGroup().client() as c:
-            with self.assertRaises(acos_errors.NoSuchServiceGroup):
+            with self.assertRaises(acos_errors.NotFound):
                 c.slb.service_group.member.update(
                     'pool1', 's1', 80,
                     c.slb.DOWN)

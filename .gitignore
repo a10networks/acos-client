@@ -41,6 +41,7 @@ coverage.xml
 .mr.developer.cfg
 .project
 .pydevproject
+.idea
 
 # Rope
 .ropeproject
@@ -60,3 +61,4 @@ docs/_build/
 .installed.cfg
 Vagrantfile
 .vagrant/
+tags
