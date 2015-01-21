@@ -14,7 +14,6 @@
 
 import acos_client.errors as acos_errors
 import acos_client.v30.base as base
-#from acos_client import multipart
 
 
 class SSLCert(base.BaseV30):

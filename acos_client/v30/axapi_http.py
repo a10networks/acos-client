@@ -67,7 +67,8 @@ class HttpClient(object):
 
         if (file_name is None and file_content is not None) or \
            (file_name is not None and file_content is None):
-            raise ValueError("file_name and file_content must both be populated if one is")
+            raise ValueError("file_name and file_content must both be "
+                             "populated if one is")
 
         hdrs = self.HEADERS.copy()
         if headers:
@@ -91,7 +92,6 @@ class HttpClient(object):
             z = requests.request(method, self.url_base + api_url, verify=False,
                                  files=files, headers=hdrs)
         else:
-            files = None  # FIXME remove
             z = requests.request(method, self.url_base + api_url, verify=False,
                                  data=payload, headers=hdrs)
 

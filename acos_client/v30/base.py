@@ -28,10 +28,6 @@ class BaseV30(object):
         return ("/axapi/v3" + action)
 
     def _request(self, method, action, params, retry_count=0, **kwargs):
-        #headers = self.auth_header
-        #if 'headers' in kwargs:
-        #    headers.update(kwargs.pop('headers'))
-
         return self.client.http.request(method, self.url(action), params,
                                         self.auth_header, **kwargs)
 
