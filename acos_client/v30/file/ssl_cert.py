@@ -30,27 +30,15 @@ class SSLCert(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def _set(self,
-             file=None,
-             cert=None,
-             size=None,
-             certificate_type=None,
-             pfx_password=None,
-             csr_generate=None,
-             action=None,
-             dst_file=None,
-             update=False,
-             **kwargs):
+    def _set(self, file=None, cert=None, size=None, certificate_type=None,
+             action=None, update=False, **kwargs):
 
         obj_params = {
             "file": file,
             "size": size,
             "file-handle": file,
             "certificate-type": certificate_type,
-            "pfx-password": pfx_password,
-            "csr-generate": csr_generate,
             "action": action,
-            "dst-file": dst_file
         }
 
         kwargs['params'] = {'ssl-cert': {}}
@@ -65,34 +53,16 @@ class SSLCert(base.BaseV30):
         return self._post(self.url_prefix + file, file_name=obj_params["file"],
                           file_content=cert, **kwargs)
 
-    def create(self,
-               file=None,
-               cert=None,
-               size=None,
-               certificate_type=None,
-               pfx_password=None,
-               csr_generate=None,
-               action=None,
-               dst_file=None,
-               update=False):
+    def create(self, file=None, cert=None, size=None, certificate_type=None,
+               action=None, update=False):
         if self.exists(file):
             raise acos_errors.Exists
 
-        self._set(file, cert, size, certificate_type, pfx_password,
-                  csr_generate, action, dst_file, update=False)
+        self._set(file, cert, size, certificate_type, action, update=False)
 
-    def update(self,
-               file=None,
-               cert=None,
-               size=None,
-               certificate_type=None,
-               pfx_password=None,
-               csr_generate=None,
-               action=None,
-               dst_file=None,
-               update=False):
-        self._set(file, cert, size, certificate_type, pfx_password,
-                  csr_generate, action, dst_file, update=True)
+    def update(self, file=None, cert=None, size=None, certificate_type=None,
+               action=None, update=False):
+        self._set(file, cert, size, certificate_type, action, update=True)
 
     def delete(self, file):
         self._delete(self.url_prefix + file)
