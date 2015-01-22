@@ -27,15 +27,15 @@ class BaseV30(object):
         self.auth_header['Authorization'] = "A10 %s" % self.client.session.id
         return ("/axapi/v3" + action)
 
-    def _request(self, method, action, params, retry_count=0):
+    def _request(self, method, action, params, retry_count=0, **kwargs):
         return self.client.http.request(method, self.url(action), params,
-                                        self.auth_header)
+                                        self.auth_header, **kwargs)
 
-    def _get(self, action, params={}):
-        return self._request('GET', action, params)
+    def _get(self, action, params={}, **kwargs):
+        return self._request('GET', action, params, **kwargs)
 
-    def _post(self, action, params={}):
-        return self._request('POST', action, params)
+    def _post(self, action, params={}, **kwargs):
+        return self._request('POST', action, params, **kwargs)
 
     def _delete(self, action, params={}):
         return self._request('DELETE', action, params)
