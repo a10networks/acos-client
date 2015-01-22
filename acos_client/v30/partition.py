@@ -84,4 +84,3 @@ class Partition(base.BaseV30):
         self._delete("/partition/" + name)
         self._post("/delete/partition", p)
         self.client.session.close()
-
