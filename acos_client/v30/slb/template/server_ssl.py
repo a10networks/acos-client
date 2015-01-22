@@ -62,7 +62,6 @@ class ServerSSL(base.BaseV30):
             if val is not None:
                 params['server-ssl'][key] = val
 
-
         if not update:
             name = ''
 

@@ -108,9 +108,13 @@ def raise_axapi_ex(response, method, api_url):
         # Check if this is a known error code that we want to map.
         if code in RESPONSE_CODES:
             ex_dict = RESPONSE_CODES[code]
+            ex = None
 
             # Now match against specific HTTP method exceptions
-            ex = ex_dict.get('method') or ex_dict.get('*')
+            if method in ex_dict:
+                x = ex_dict[method]
+            else:
+                x = ex_dict['*']
 
             # Now try to find specific API method exceptions
             matched = False

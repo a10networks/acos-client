@@ -1,27 +1,25 @@
-'''
-Classes for using multipart form data from Python, which does not (at the
-time of writing) support this directly.
+# Classes for using multipart form data from Python, which does not (at the
+# time of writing) support this directly.
 
-To use this, make an instance of Multipart and add parts to it via the factory
-methods field and file.  When you are done, get the content via the get method.
+# To use this, make an instance of Multipart and add parts to it via the factory
+# methods field and file.  When you are done, get the content via the get method.
 
-@author: Stacy Prowell (http://stacyprowell.com)
+# @author: Stacy Prowell (http://stacyprowell.com)
 
-Public domain:
+# Public domain:
 
-On 1/14/15, 9:58 AM, "Prowell, Stacy J." <prowellsj@ornl.gov> wrote:
+# On 1/14/15, 9:58 AM, "Prowell, Stacy J." <prowellsj@ornl.gov> wrote:
 
-Doug,
+# Doug,
 
-I am excited that someone found it useful.  At present it has no license
-attached; I regard it as public domain, so you are welcome to use it as
-you see fit.  If it is *better* that it have a license (so you can clearly
-indicate the use of the external code), then I can attach a compatible
-license.  Just let me know!
+# I am excited that someone found it useful.  At present it has no license
+# attached; I regard it as public domain, so you are welcome to use it as
+# you see fit.  If it is *better* that it have a license (so you can clearly
+# indicate the use of the external code), then I can attach a compatible
+# license.  Just let me know!
 
-Kind regards,
-Stacy
-'''
+# Kind regards,
+# Stacy
 
 import mimetypes
 
@@ -63,7 +61,7 @@ class Part(object):
         self._body = body
         # We respect any content type passed in, but otherwise set it here.
         # We set the content disposition now, overwriting any prior value.
-        if self._filename == None:
+        if self._filename is None:
             self._headers[Part.CONTENT_DISPOSITION] = \
                 ('form-data; name="%s"' % self._name)
             self._headers.setdefault(Part.CONTENT_TYPE,
