@@ -22,6 +22,12 @@ import base
 
 class Partition(base.BaseV30):
 
+    # def _part_id(self, name):
+    #     return int(name[:4])
+
+    # def _part_name(self, name, id):
+    #     return ("%04d_%s" % (id, name))[0:13]
+
     def available(self):
         return self._get('/partition-available-id/oper/')
 
@@ -76,11 +82,17 @@ class Partition(base.BaseV30):
         if name == 'shared':
             return
 
+        self.client.session.close()
         try:
             p = self._get("/partition/" + name)
         except acos_errors.NotFound:
             return
+        try:
+            self._delete("/partition/" + name)
+        except acos_errors.NotFound:
+            pass
 
-        self._delete("/partition/" + name)
+        self.client.session.close()
         self._post("/delete/partition", p)
+
         self.client.session.close()

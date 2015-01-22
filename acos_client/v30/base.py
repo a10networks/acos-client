@@ -20,8 +20,8 @@ class BaseV30(object):
         self.http = client.http
         self.auth_header = {}
 
-    def minimal_dict(self, my_dict):
-        return dict((k, v) for k, v in my_dict.items() if v is not None)
+    def minimal_dict(self, my_dict, exclude=[]):
+        return dict((k, v) for k, v in my_dict.items() if v is not None or k in exclude)
 
     def url(self, action):
         self.auth_header['Authorization'] = "A10 %s" % self.client.session.id

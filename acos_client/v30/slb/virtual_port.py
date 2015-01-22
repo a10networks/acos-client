@@ -69,7 +69,7 @@ class VirtualPort(base.BaseV30):
                 "template-persist-source-ip": s_pers_name,
                 "template-persist-cookie": c_pers_name,
                 "extended-stats": stats
-            })
+            }, exclude=['template-persist-source-ip', 'template-persist-cookie'])
         }
 
         url = self.url_server_tmpl.format(name=virtual_server_name)
