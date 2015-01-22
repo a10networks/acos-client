@@ -55,10 +55,13 @@ class ServiceGroup(base.BaseV30):
             "service-group": self.minimal_dict({
                 "name": name,
                 "protocol": protocol,
-                "lb-method": lb_method,
                 "health-monitor": hm_name
             })
         }
+        if lb_method[-16:] == 'least-connection':
+            params['service-group']['lc_method'] = lb_method
+        else:
+            params['service-group']['lb_method'] = lb_method
 
         if not update:
             name = ''
