@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.errors as acos_errors
 import acos_client.v21.base as base
 
 
@@ -25,9 +24,9 @@ class BaseSSL(base.BaseV21):
     def _set(self, action, name, cert_name, key_name, **kwargs):
         params = {
             "%s_template" % self.template_type: {
-                "cert_name" : cert_name,
-                "key_name" : key_name,
-                "name" : name
+                "cert_name": cert_name,
+                "key_name": key_name,
+                "name": name
             }
         }
         self._post(action, params, **kwargs)
@@ -42,7 +41,7 @@ class BaseSSL(base.BaseV21):
 
     def delete(self, name, **kwargs):
         self._post(("slb.template.%s.delete" % self.template_type),
-                    {"name": name}, **kwargs)
+                   {"name": name}, **kwargs)
 
 
 class ClientSSL(BaseSSL):

@@ -55,3 +55,6 @@ class VirtualServer(base.BaseV21):
     def stats(self, name, **kwargs):
         return self._post("slb.virtual_server.fetchStatistics", {"name": name},
                           **kwargs)
+
+    def all_stats(self, **kwargs):
+        return self._get("slb.virtual_server.fetchAllStatistics", **kwargs)

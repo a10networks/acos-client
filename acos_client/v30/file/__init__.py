@@ -1,4 +1,4 @@
-# Copyright 2014,  Doug Wiegley,  A10 Networks.
+# Copyright 2015,  Tobit Raff,  A10 Networks.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -12,4 +12,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-VERSION = '1.2.0'
+import acos_client.v30.base as base
+
+from ssl_cert import SSLCert
+
+
+class File(base.BaseV30):
+    @property
+    def ssl_cert(self):
+        return SSLCert(self.client)

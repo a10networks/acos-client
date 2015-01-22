@@ -14,11 +14,14 @@
 
 import acos_client.v21.base as base
 
+from aflex import Aflex
+from class_list import ClassList
 from hm import HealthMonitor
 from server import Server
 from service_group import ServiceGroup
 from template import Template
 from virtual_server import VirtualServer
+from virtual_service import VirtualService
 
 
 class SLB(base.BaseV21):
@@ -45,3 +48,15 @@ class SLB(base.BaseV21):
     @property
     def virtual_server(self):
         return VirtualServer(self.client)
+
+    @property
+    def aflex(self):
+        return Aflex(self.client)
+
+    @property
+    def class_list(self):
+        return ClassList(self.client)
+
+    @property
+    def virtual_service(self):
+        return VirtualService(self.client)
