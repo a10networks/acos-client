@@ -69,4 +69,5 @@ c.slb.service_group.member.create("pool1", "s2", 80)
 ## Supported Versions
 
   * axapi 2.1, ACOS 2.7.2+ (2.7.1 works if you avoid partitions)
+  * axapi 3.0, ACOS 4.0.0+
 
