@@ -28,7 +28,7 @@ class ServiceGroup(base.BaseV30):
     # Valid LB methods
     ROUND_ROBIN = 'round-robin'
     WEIGHTED_ROUND_ROBIN = 'weighted-rr'
-    LEAST_CONNECTION = 'least-request'
+    LEAST_CONNECTION = 'least-connection'
     WEIGHTED_LEAST_CONNECTION = 'weighted-least-connection'
     LEAST_CONNECTION_ON_SERVICE_PORT = 'service-least-connection'
     WEIGHTED_LEAST_CONNECTION_ON_SERVICE_PORT = \
@@ -55,10 +55,17 @@ class ServiceGroup(base.BaseV30):
             "service-group": self.minimal_dict({
                 "name": name,
                 "protocol": protocol,
-                "lb-method": lb_method,
                 "health-monitor": hm_name
             })
         }
+        if lb_method is None:
+            pass
+        elif lb_method[-16:] == 'least-connection':
+            params['service-group']['lc-method'] = lb_method
+        elif lb_method[:9] == 'stateless':
+            params['service-group']['stateless-lb-method'] = lb_method
+        else:
+            params['service-group']['lb-method'] = lb_method
 
         if not update:
             name = ''
