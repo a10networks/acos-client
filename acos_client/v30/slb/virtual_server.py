@@ -37,7 +37,6 @@ class VirtualServer(base.BaseV30):
             "virtual-server": self.minimal_dict({
                 "name": name,
                 "ip-address": ip_address,
-                # "stats-data-action": status,
             }),
         }
 
