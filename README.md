@@ -72,7 +72,7 @@ This project uses [tox](https://pypi.python.org/pypi/tox) for testing. To run
 the test suite simply:
 
 ```sh
-# pip install tox  # use pip2 if using Arch Linux
+$ sudo pip install tox  # use pip2 if using Arch Linux
 $ cd /path/to/acos_client
 $ tox
 ```
