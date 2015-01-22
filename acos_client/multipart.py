@@ -6,6 +6,21 @@ To use this, make an instance of Multipart and add parts to it via the factory
 methods field and file.  When you are done, get the content via the get method.
 
 @author: Stacy Prowell (http://stacyprowell.com)
+
+Public domain:
+
+On 1/14/15, 9:58 AM, "Prowell, Stacy J." <prowellsj@ornl.gov> wrote:
+
+Doug,
+
+I am excited that someone found it useful.  At present it has no license
+attached; I regard it as public domain, so you are welcome to use it as
+you see fit.  If it is *better* that it have a license (so you can clearly
+indicate the use of the external code), then I can attach a compatible
+license.  Just let me know!
+
+Kind regards,
+Stacy
 '''
 
 import mimetypes
