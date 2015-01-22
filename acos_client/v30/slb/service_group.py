@@ -28,7 +28,7 @@ class ServiceGroup(base.BaseV30):
     # Valid LB methods
     ROUND_ROBIN = 'round-robin'
     WEIGHTED_ROUND_ROBIN = 'weighted-rr'
-    LEAST_CONNECTION = 'least-request'
+    LEAST_CONNECTION = 'least-connection'
     WEIGHTED_LEAST_CONNECTION = 'weighted-least-connection'
     LEAST_CONNECTION_ON_SERVICE_PORT = 'service-least-connection'
     WEIGHTED_LEAST_CONNECTION_ON_SERVICE_PORT = \
