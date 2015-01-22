@@ -20,13 +20,13 @@ LBaaS driver; no longer supported.
 
 ### Install using pip
 
-```
+```sh
 $ pip install acos-client
 ```
 
 ### Install from source
 
-```
+```sh
 $ git clone https://github.com/a10networks/acos-client.git
 $ cd acos-client
 $ python setup.py install
