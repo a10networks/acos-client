@@ -46,6 +46,7 @@ class VirtualPort(base.BaseV30):
     SSL_PROXY = "ssl-proxy"
     TCP_PROXY = "tcp-proxy"
     TFTP = "tftp"
+    GENERIC_PROXY = "tcp-proxy"
 
     url_server_tmpl = '/slb/virtual-server/{name}/port/'
     url_port_tmpl = '{port_number}+{protocol}'
