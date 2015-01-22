@@ -14,12 +14,13 @@
 
 import json
 import logging
+import sys
 
 import requests
 
-try:
+if sys.version_info >= (3, 0):
     import http.client as http_client
-except ImportError:
+else:
     # Python 2
     import httplib as http_client
 http_client.HTTPConnection.debuglevel = 1
@@ -47,8 +48,6 @@ class HttpClient(object):
     HEADERS = {
         "Content-type": "application/json",
         "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
-        # 'Connection': 'keep-alive',
-        # 'Accept': '*/*',
     }
 
     def __init__(self, host, port=None, protocol="https"):

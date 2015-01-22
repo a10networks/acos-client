@@ -152,12 +152,11 @@ def raise_axapi_ex(response, action=None):
 
         if code in RESPONSE_CODES:
             ex_dict = RESPONSE_CODES[code]
-            ex = None
 
             if action is not None and action in ex_dict:
                 ex = ex_dict[action]
-            elif '*' in ex_dict:
-                ex = ex_dict['*']
+            else:
+                ex = ex_dict.get('*')
 
             if ex is not None:
                 raise ex(code, response['response']['err']['msg'])

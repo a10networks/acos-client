@@ -64,9 +64,6 @@ class HealthMonitor(base.BaseV30):
             "monitor": {
                 "name": name,
                 "retry": int(max_retries),
-                # "passive":0,
-                # "strict-retry-on-server-err-resp":0,
-                # "disable-after-down":0,
                 "interval": int(interval),
                 "timeout": int(timeout),
                 "method": {

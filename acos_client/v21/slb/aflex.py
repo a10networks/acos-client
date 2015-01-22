@@ -10,7 +10,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.multipart as multipart
+from acos_client import multipart
 import acos_client.v21.base as base
 
 
