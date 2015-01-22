@@ -74,9 +74,12 @@ class HttpClient(object):
             hdrs.update(headers)
 
         if params:
-            extra_params = kwargs.get('axapi_args', {})
+            # FIXME - re-enable kwargs merge at some point; dict keys
+            # between 2.1 and 3.0 do not match, and a10-neutron-lbaas
+            # uses 2.1 wrappers
+            #extra_params = kwargs.get('axapi_args', {})
             params_copy = params.copy()
-            params_copy.update(extra_params)
+            #params_copy.update(extra_params)
             LOG.debug("axapi_http: params_all = %s", params_copy)
 
             payload = json.dumps(params_copy, encoding='utf-8')
