@@ -71,11 +71,6 @@ class VirtualPort(base.BaseV30):
             })
         }
 
-        formatted_kwargs = dict([(k.replace('_', '-'), v) for k, v in kwargs.iteritems()])
-
-        # Account for extra arguments from people who know what they're doing
-        params["port"].update(formatted_kwargs)
-
         url = self.url_server_tmpl.format(name=virtual_server_name)
         if update:
             url += self.url_port_tmpl.format(

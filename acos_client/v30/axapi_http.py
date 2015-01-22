@@ -64,6 +64,16 @@ class HttpClient(object):
         LOG.debug("axapi_http: %s url = %s", method, api_url)
         LOG.debug("axapi_http: params = %s", json.dumps(params, indent=4))
 
+        # Update params with **kwargs for currently unsupported configuration
+        # of objects
+        formatted_kwargs = dict([(k.replace('_', '-'), v) for k, v in kwargs.iteritems()])
+        param_keys = params.keys()
+        if params != {}:
+            if len(param_keys) != 1:
+                raise KeyError("params must have exactly one key, not {}. "
+                               "params: {}".format(len(param_keys), params))
+            params[param_keys[0]].update(formatted_kwargs)
+
         if (file_name is None and file_content is not None) or \
            (file_name is not None and file_content is None):
             raise ValueError("file_name and file_content must both be "
