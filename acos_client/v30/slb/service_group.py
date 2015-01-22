@@ -55,7 +55,7 @@ class ServiceGroup(base.BaseV30):
             "service-group": self.minimal_dict({
                 "name": name,
                 "protocol": protocol,
-                "health-monitor": hm_name
+                "health-check": hm_name
             })
         }
         if lb_method is None:
