@@ -108,8 +108,7 @@ class HttpClient(object):
         try:
             r = z.json()
         except ValueError as e:
-            # Suspect that the JSON response was empty, like in the case of a
-            # successful file import.
+            # The response is not JSON but it still succeeded.
             if z.status_code == 200:
                 return {}
             else:
