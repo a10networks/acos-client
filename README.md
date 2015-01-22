@@ -66,6 +66,23 @@ c.slb.service_group.member.create("pool1", "s2", 80)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
+## Testing
+
+This project uses [tox](https://pypi.python.org/pypi/tox) for testing. To run
+the test suite simply:
+
+```sh
+# pip install tox  # use pip2 if using Arch Linux
+$ cd /path/to/acos_client
+$ tox
+```
+
+[pypy](http://pypy.org/index.html) needs to be installed as well as Python 2.6
+side by side 2.7 7. We recommend
+[deadsnakes](http://coreygoldberg.blogspot.com/2013/10/deadsnakes-using-old-versions-of-python.html)
+if you're on Ubuntu, and the [python26 AUR
+package](https://aur.archlinux.org/packages/python26/) if you use Arch Linux.
+
 ## Supported Versions
 
   * axapi 2.1, ACOS 2.7.2+ (2.7.1 works if you avoid partitions)
