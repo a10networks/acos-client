@@ -17,5 +17,5 @@ import base
 
 class HA(base.BaseV30):
 
-    def sync(self, destination_ip, username, password):
+    def sync(self, destination_ip, username, password, **kwargs):
         raise NotImplemented()

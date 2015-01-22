@@ -22,8 +22,8 @@ class BasePersistence(base.BaseV30):
         super(BasePersistence, self).__init__(client)
         self.prefix = "/slb/template/persist/%s/" % self.pers_type
 
-    def get(self, name):
-        return self._get(self.prefix + name)
+    def get(self, name, **kwargs):
+        return self._get(self.prefix + name, **kwargs)
 
     def exists(self, name):
         try:
@@ -32,13 +32,13 @@ class BasePersistence(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def create(self, name):
+    def create(self, name, **kwargs):
         if self.exists(name):
             raise acos_errors.Exists
-        self._post(self.prefix, self.get_params(name))
+        self._post(self.prefix, self.get_params(name), **kwargs)
 
-    def delete(self, name):
-        self._delete(self.prefix + name)
+    def delete(self, name, **kwargs):
+        self._delete(self.prefix + name, **kwargs)
 
 
 class CookiePersistence(BasePersistence):

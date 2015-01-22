@@ -59,8 +59,8 @@ class HttpClient(object):
                 port = 443
         self.url_base = "%s://%s:%s" % (protocol, host, port)
 
-    def request(self, method, api_url, params={}, headers=None, file_name=None,
-                file_content=None):
+    def request(self, method, api_url, params={}, headers=None,
+                file_name=None, file_content=None, **kwargs):
         LOG.debug("axapi_http: full url = %s", self.url_base + api_url)
         LOG.debug("axapi_http: %s url = %s", method, api_url)
         LOG.debug("axapi_http: params = %s", json.dumps(params, indent=4))
@@ -75,7 +75,12 @@ class HttpClient(object):
             hdrs.update(headers)
 
         if params:
-            payload = json.dumps(params)
+            extra_params = kwargs.get('axapi_args', {})
+            params_copy = params.copy()
+            params_copy.update(extra_params)
+            LOG.debug("axapi_http: params_all = %s", params_copy)
+
+            payload = json.dumps(params_copy, encoding='utf-8')
         else:
             payload = None
 
@@ -120,14 +125,14 @@ class HttpClient(object):
 
         return r
 
-    def get(self, api_url, params={}, headers=None):
-        return self.request("GET", api_url, params, headers)
+    def get(self, api_url, params={}, headers=None, **kwargs):
+        return self.request("GET", api_url, params, headers, **kwargs)
 
-    def post(self, api_url, params={}, headers=None):
-        return self.request("POST", api_url, params, headers)
+    def post(self, api_url, params={}, headers=None, **kwargs):
+        return self.request("POST", api_url, params, headers, **kwargs)
 
-    def put(self, api_url, params={}, headers=None):
-        return self.request("PUT", api_url, params, headers)
+    def put(self, api_url, params={}, headers=None, **kwargs):
+        return self.request("PUT", api_url, params, headers, **kwargs)
 
-    def delete(self, api_url, params={}, headers=None):
-        return self.request("DELETE", api_url, params, headers)
+    def delete(self, api_url, params={}, headers=None, **kwargs):
+        return self.request("DELETE", api_url, params, headers, **kwargs)

@@ -37,5 +37,5 @@ class BaseV30(object):
     def _post(self, action, params={}, **kwargs):
         return self._request('POST', action, params, **kwargs)
 
-    def _delete(self, action, params={}):
-        return self._request('DELETE', action, params)
+    def _delete(self, action, params={}, **kwargs):
+        return self._request('DELETE', action, params, **kwargs)

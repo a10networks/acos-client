@@ -20,10 +20,10 @@ class Server(base.BaseV30):
 
     url_prefix = '/slb/server/'
 
-    def get(self, name):
-        return self._get(self.url_prefix + name)
+    def get(self, name, **kwargs):
+        return self._get(self.url_prefix + name, **kwargs)
 
-    def create(self, name, ip_address):
+    def create(self, name, ip_address, **kwargs):
         params = {
             "server": {
                 "name": name,
@@ -33,13 +33,13 @@ class Server(base.BaseV30):
 
         # Two creates in a row apparently works in ACOS 4.0; stop that
         try:
-            self.get(name)
+            self.get(name, **kwargs)
         except acos_errors.NotFound:
             pass
         else:
             raise acos_errors.Exists()
 
-        return self._post(self.url_prefix, params)
+        return self._post(self.url_prefix, params, **kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)

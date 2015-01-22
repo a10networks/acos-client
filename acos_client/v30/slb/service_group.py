@@ -27,29 +27,30 @@ class ServiceGroup(base.BaseV30):
 
     # Valid LB methods
     ROUND_ROBIN = 'round-robin'
-    WEIGHTED_ROUND_ROBIN = 1
+    WEIGHTED_ROUND_ROBIN = 'weighted-rr'
     LEAST_CONNECTION = 'least-request'
-    WEIGHTED_LEAST_CONNECTION = 3
-    LEAST_CONNECTION_ON_SERVICE_PORT = 4
-    WEIGHTED_LEAST_CONNECTION_ON_SERVICE_PORT = 5
+    WEIGHTED_LEAST_CONNECTION = 'weighted-least-connection'
+    LEAST_CONNECTION_ON_SERVICE_PORT = 'service-least-connection'
+    WEIGHTED_LEAST_CONNECTION_ON_SERVICE_PORT = \
+        'service-weighted-least-connection'
     FAST_RESPONSE_TIME = 'fastest-response'
     LEAST_REQUEST = 'least-request'
     STRICT_ROUND_ROBIN = 'round-robin-strict'
-    STATELESS_SOURCE_IP_HASH = 9
-    STATELESS_SOURCE_IP_HASH_ONLY = 10
-    STATELESS_DESTINATION_IP_HASH = 11
-    STATELESS_SOURCE_DESTINATION_IP_HASH = 12
-    STATELESS_PER_PACKAGE_ROUND_ROBIN = 13
+    STATELESS_SOURCE_IP_HASH = 'stateless-src-ip-hash'
+    STATELESS_SOURCE_IP_HASH_ONLY = 'stateless-src-ip-only-hash'
+    STATELESS_DESTINATION_IP_HASH = 'stateless-dst-ip-hash'
+    STATELESS_SOURCE_DESTINATION_IP_HASH = 'stateless-src-dst-ip-hash'
+    STATELESS_PER_PACKET_ROUND_ROBIN = 'stateless-per-pkt-round-robin'
 
     # Valid protocols
     TCP = 'tcp'
     UDP = 'udp'
 
-    def get(self, name):
-        return self._get(self.url_prefix + name)
+    def get(self, name, **kwargs):
+        return self._get(self.url_prefix + name, **kwargs)
 
     def _set(self, name, protocol=None, lb_method=None, hm_name=None,
-             update=False):
+             update=False, **kwargs):
         params = {
             "service-group": self.minimal_dict({
                 "name": name,
@@ -62,9 +63,9 @@ class ServiceGroup(base.BaseV30):
         if not update:
             name = ''
 
-        self._post(self.url_prefix + name, params)
+        self._post(self.url_prefix + name, params, **kwargs)
 
-    def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN):
+    def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, **kwargs):
         try:
             self.get(name)
         except acos_errors.NotFound:
@@ -72,11 +73,12 @@ class ServiceGroup(base.BaseV30):
         else:
             raise acos_errors.Exists
 
-        self._set(name, protocol, lb_method)
+        self._set(name, protocol, lb_method, **kwargs)
 
-    def update(self, name, protocol=None, lb_method=None, health_monitor=None):
+    def update(self, name, protocol=None, lb_method=None, health_monitor=None,
+               **kwargs):
         self._set(name, protocol, lb_method,
-                  health_monitor, update=True)
+                  health_monitor, update=True, **kwargs)
 
     def delete(self, name):
         self._delete(self.url_prefix + name)

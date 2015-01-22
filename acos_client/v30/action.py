@@ -17,10 +17,10 @@ import base
 
 class Action(base.BaseV30):
 
-    def write_memory(self):
+    def write_memory(self, **kwargs):
         payload = {
             "memory": {
                 "primary": True
             }
         }
-        self._post("/write/memory/", payload)
+        self._post("/write/memory/", payload, **kwargs)

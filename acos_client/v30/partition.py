@@ -60,6 +60,9 @@ class Partition(base.BaseV30):
         if name == 'shared':
             return
 
+        if self.exists(name):
+            raise acos_errors.Exists
+
         # For concurrency's sake, since we have to lookup the id and then
         # set it, loop if we get an exists error.
         for i in xrange(1, 1000):
@@ -70,5 +73,13 @@ class Partition(base.BaseV30):
                 time.sleep(0.05 + random.random()/100)
 
     def delete(self, name):
-        if name != 'shared':
-            self._delete("/partition/" + name)
+        if name == 'shared':
+            return
+
+        try:
+            p = self._get("/partition/" + name)
+        except acos_errors.NotFound:
+            return
+
+        self._delete("/partition/" + name)
+        self._post("/delete/partition", p)

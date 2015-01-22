@@ -50,13 +50,14 @@ class VirtualPort(base.BaseV30):
     url_server_tmpl = '/slb/virtual-server/{name}/port/'
     url_port_tmpl = '{port_number}+{protocol}'
 
-    def all(self, virtual_server_name):
+    def all(self, virtual_server_name, **kwargs):
         url = self.url_server_tmpl.format(name=virtual_server_name)
-        return self._get(url)
+        return self._get(url, **kwargs)
 
     def _set(self, virtual_server_name, name, protocol, port,
              service_group_name,
-             s_pers_name=None, c_pers_name=None, stats=0, update=False):
+             s_pers_name=None, c_pers_name=None, stats=0, update=False,
+             **kwargs):
 
         params = {
             "port": self.minimal_dict({
@@ -76,21 +77,21 @@ class VirtualPort(base.BaseV30):
                 port_number=port, protocol=protocol
             )
 
-        return self._post(url, params)
+        return self._post(url, params, **kwargs)
 
     def create(self, virtual_server_name, name, protocol, port,
                service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1):
+               s_pers_name=None, c_pers_name=None, status=1, **kwargs):
         return self._set(virtual_server_name,
                          name, protocol, port, service_group_name,
-                         s_pers_name, c_pers_name, status)
+                         s_pers_name, c_pers_name, status, **kwargs)
 
     def update(self, virtual_server_name, name, protocol, port,
                service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1):
+               s_pers_name=None, c_pers_name=None, status=1, **kwargs):
         return self._set(virtual_server_name,
                          name, protocol, port, service_group_name,
-                         s_pers_name, c_pers_name, status, True)
+                         s_pers_name, c_pers_name, status, True, **kwargs)
 
     def delete(self, virtual_server_name, name, protocol, port):
         url = self.url_server_tmpl.format(name=virtual_server_name)

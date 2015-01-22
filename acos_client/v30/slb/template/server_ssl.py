@@ -20,8 +20,8 @@ class ServerSSL(base.BaseV30):
 
     url_prefix = '/slb/template/server-ssl/'
 
-    def get(self, name):
-        return self._get(self.url_prefix + name)
+    def get(self, name, **kwargs):
+        return self._get(self.url_prefix + name, **kwargs)
 
     def exists(self, name):
         try:
@@ -30,7 +30,8 @@ class ServerSSL(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def _set(self, name, cert=None, key=None, passphrase=None, update=False):
+    def _set(self, name, cert=None, key=None, passphrase=None, update=False,
+             **kwargs):
         # Unimplemented options:
         # encrypted, session_ticket_enable, version, forward_proxy_enable,
         # close_notify, session_cache_size, session_cache_timeout,
@@ -65,16 +66,16 @@ class ServerSSL(base.BaseV30):
         if not update:
             name = ''
 
-        self._post(self.url_prefix + name, params)
+        self._post(self.url_prefix + name, params, **kwargs)
 
-    def create(self, name, cert=None, key=None, passphrase=None):
+    def create(self, name, cert=None, key=None, passphrase=None, **kwargs):
         if self.exists(name):
             raise acos_errors.Exists
 
-        self._set(name, cert, key, passphrase)
+        self._set(name, cert, key, passphrase, **kwargs)
 
-    def update(self, name, cert=None, key=None, passphrase=None):
-        self._set(name, cert, key, passphrase, update=True)
+    def update(self, name, cert=None, key=None, passphrase=None, **kwargs):
+        self._set(name, cert, key, passphrase, update=True, **kwargs)
 
-    def delete(self, name):
-        self._delete(self.url_prefix + name)
+    def delete(self, name, **kwargs):
+        self._delete(self.url_prefix + name, **kwargs)

@@ -24,21 +24,21 @@ class Member(base.BaseV30):
     STATUS_ENABLE = 0
     STATUS_DISABLE = 1
 
-    def get(self, service_group_name, server_name, server_port):
+    def get(self, service_group_name, server_name, server_port, **kwargs):
         url = self.url_base_tmpl.format(gname=service_group_name)
         url += self.url_mbr_tmpl.format(
             name=server_name,
             port=server_port
         )
 
-        return self._get(url)
+        return self._get(url, **kwargs)
 
     def _write(self,
                service_group_name,
                server_name,
                server_port,
                status=STATUS_ENABLE,
-               update=False):
+               update=False, **kwargs):
 
         url = self.url_base_tmpl.format(gname=service_group_name)
         if update:
@@ -56,13 +56,13 @@ class Member(base.BaseV30):
             })
         }
 
-        self._post(url, params)
+        self._post(url, params, **kwargs)
 
     def create(self,
                service_group_name,
                server_name,
                server_port,
-               status=STATUS_ENABLE):
+               status=STATUS_ENABLE, **kwargs):
         try:
             self.get(service_group_name, server_name, server_port)
         except acos_errors.NotFound:
@@ -71,15 +71,15 @@ class Member(base.BaseV30):
             raise acos_errors.Exists()
 
         self._write(service_group_name,
-                    server_name, server_port, status)
+                    server_name, server_port, status, **kwargs)
 
     def update(self,
                service_group_name,
                server_name,
                server_port,
-               status=STATUS_ENABLE):
+               status=STATUS_ENABLE, **kwargs):
         self._write(service_group_name,
-                    server_name, server_port, status, update=True)
+                    server_name, server_port, status, update=True, **kwargs)
 
     def delete(self, service_group_name, server_name, server_port):
         url = self.url_base_tmpl.format(gname=service_group_name)

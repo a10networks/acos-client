@@ -32,6 +32,11 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    754974732: {
+        '*': {
+            '*': ae.Exists
+        }
+    },
     754974733: {
         '*': {
             '*': ae.PartitionIdExists

@@ -20,8 +20,8 @@ class SSLCert(base.BaseV30):
 
     url_prefix = '/file/ssl-cert/'
 
-    def get(self, file):
-        return self._get(self.url_prefix + file)
+    def get(self, file, **kwargs):
+        return self._get(self.url_prefix + file, **kwargs)
 
     def exists(self, file):
         try:
@@ -54,15 +54,17 @@ class SSLCert(base.BaseV30):
                           file_content=cert, **kwargs)
 
     def create(self, file=None, cert=None, size=None, certificate_type=None,
-               action=None, update=False):
+               action=None, update=False, **kwargs):
         if self.exists(file):
             raise acos_errors.Exists
 
-        self._set(file, cert, size, certificate_type, action, update=False)
+        self._set(file, cert, size, certificate_type, action, update=False,
+                  **kwargs)
 
     def update(self, file=None, cert=None, size=None, certificate_type=None,
-               action=None, update=False):
-        self._set(file, cert, size, certificate_type, action, update=True)
+               action=None, update=False, **kwargs):
+        self._set(file, cert, size, certificate_type, action, update=True,
+                  **kwargs)
 
-    def delete(self, file):
-        self._delete(self.url_prefix + file)
+    def delete(self, file, **kwargs):
+        self._delete(self.url_prefix + file, **kwargs)

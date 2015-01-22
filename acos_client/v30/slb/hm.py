@@ -54,11 +54,12 @@ class HealthMonitor(base.BaseV30):
         },
     }
 
-    def get(self, name):
-        return self._get(self.url_prefix + name)
+    def get(self, name, **kwargs):
+        return self._get(self.url_prefix + name, **kwargs)
 
     def _set(self, action, name, mon_method, interval, timeout, max_retries,
-             method=None, url=None, expect_code=None, port=None, update=False):
+             method=None, url=None, expect_code=None, port=None, update=False,
+             **kwargs):
         params = {
             "monitor": {
                 "name": name,
@@ -89,10 +90,10 @@ class HealthMonitor(base.BaseV30):
 
         if update:
             action += name
-        self._post(action, params)
+        self._post(action, params, **kwargs)
 
     def create(self, name, mon_type, interval, timeout, max_retries,
-               method=None, url=None, expect_code=None, port=None):
+               method=None, url=None, expect_code=None, port=None, **kwargs):
         try:
             self.get(name)
         except acos_errors.NotFound:
@@ -101,13 +102,14 @@ class HealthMonitor(base.BaseV30):
             raise acos_errors.Exists()
 
         self._set(self.url_prefix, name, mon_type, interval, timeout,
-                  max_retries, method, url, expect_code, port)
+                  max_retries, method, url, expect_code, port, **kwargs)
 
     def update(self, name, mon_type, interval, timeout, max_retries,
-               method=None, url=None, expect_code=None, port=None):
+               method=None, url=None, expect_code=None, port=None, **kwargs):
         self.get(name)  # We want a NotFound if it does not exist
         self._set(self.url_prefix, name, mon_type, interval, timeout,
-                  max_retries, method, url, expect_code, port, update=True)
+                  max_retries, method, url, expect_code, port, update=True,
+                  **kwargs)
 
     def delete(self, name):
         self._delete(self.url_prefix + name)

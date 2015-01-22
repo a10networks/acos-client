@@ -32,7 +32,7 @@ class VirtualServer(base.BaseV30):
         return self._get(self.url_prefix + name)
 
     def _set(self, name, ip_address=None, status='stats-data-enable',
-             update=False):
+             update=False, **kwargs):
         params = {
             "virtual-server": self.minimal_dict({
                 "name": name,
@@ -44,9 +44,9 @@ class VirtualServer(base.BaseV30):
         if not update:
             name = ''
 
-        self._post(self.url_prefix + name, params)
+        self._post(self.url_prefix + name, params, **kwargs)
 
-    def create(self, name, ip_address, status='stats-data-enable'):
+    def create(self, name, ip_address, status='stats-data-enable', **kwargs):
         try:
             self.get(name)
         except acos_errors.NotFound:
@@ -54,16 +54,17 @@ class VirtualServer(base.BaseV30):
         else:
             raise acos_errors.Exists
 
-        self._set(name, ip_address, status)
+        self._set(name, ip_address, status, **kwargs)
 
-    def update(self, name, ip_address=None, status='stats-data-enable'):
-        self._set(name, ip_address, status, update=True)
+    def update(self, name, ip_address=None, status='stats-data-enable',
+               **kwargs):
+        self._set(name, ip_address, status, update=True, **kwargs)
 
     def delete(self, name):
         self._delete(self.url_prefix + name)
 
-    def stats(self, name=''):
+    def stats(self, name='', **kwargs):
         # resp = self._get(self.url_prefix + name + '/stats/')
-        resp = self._get(self.url_prefix + name + '/stats')
+        resp = self._get(self.url_prefix + name + '/stats', **kwargs)
         return resp
         # raise acos_errors.NotImplemented()
