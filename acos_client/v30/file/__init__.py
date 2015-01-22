@@ -1,4 +1,4 @@
-# Copyright 2014,  Jeff Buttars,  A10 Networks.
+# Copyright 2015,  Tobit Raff,  A10 Networks.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -14,21 +14,10 @@
 
 import acos_client.v30.base as base
 
-from persistence import CookiePersistence
-from persistence import SourceIpPersistence
-from server_ssl import ServerSSL
+from ssl_cert import SSLCert
 
 
-class Template(base.BaseV30):
-
+class File(base.BaseV30):
     @property
-    def cookie_persistence(self):
-        return CookiePersistence(self.client)
-
-    @property
-    def src_ip_persistence(self):
-        return SourceIpPersistence(self.client)
-
-    @property
-    def server_ssl(self):
-        return ServerSSL(self.client)
+    def ssl_cert(self):
+        return SSLCert(self.client)

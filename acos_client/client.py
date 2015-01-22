@@ -29,6 +29,7 @@ from v30.network import Network as v30_Network
 from v30.session import Session as v30_Session
 from v30.slb import SLB as v30_SLB
 from v30.system import System as v30_System
+from v30.file import File as v30_File
 
 VERSION_IMPORTS = {
     '21': {
@@ -48,6 +49,7 @@ VERSION_IMPORTS = {
         'Session': v30_Session,
         'SLB': v30_SLB,
         'System': v30_System,
+        'File': v30_File
     },
 }
 
@@ -87,3 +89,7 @@ class Client(object):
     @property
     def nat(self):
         return VERSION_IMPORTS[self._version]['Nat'](self)
+
+    @property
+    def file(self):
+        return VERSION_IMPORTS[self._version]['File'](self)
