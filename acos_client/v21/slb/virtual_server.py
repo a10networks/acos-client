@@ -57,4 +57,4 @@ class VirtualServer(base.BaseV21):
                           **kwargs)
 
     def all_stats(self, **kwargs):
-        return self._get("slb.virtual_server.fetchAllStatistics",**kwargs)
+        return self._get("slb.virtual_server.fetchAllStatistics", **kwargs)

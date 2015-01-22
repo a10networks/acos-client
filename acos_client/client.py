@@ -23,13 +23,13 @@ from v21.session import Session as v21_Session
 from v21.slb import SLB as v21_SLB
 from v21.system import System as v21_System
 import v30.axapi_http
+from v30.file import File as v30_File
 from v30.ha import HA as v30_HA
 from v30.nat import Nat as v30_Nat
 from v30.network import Network as v30_Network
 from v30.session import Session as v30_Session
 from v30.slb import SLB as v30_SLB
 from v30.system import System as v30_System
-from v30.file import File as v30_File
 
 VERSION_IMPORTS = {
     '21': {
