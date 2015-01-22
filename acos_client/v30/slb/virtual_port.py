@@ -71,7 +71,7 @@ class VirtualPort(base.BaseV30):
             })
         }
 
-        formatted_kwargs = {k.replace('_', '-'): v for k, v in kwargs.iteritems()}
+        formatted_kwargs = dict([(k.replace('_', '-'), v) for k, v in kwargs.iteritems()])
 
         # Account for extra arguments from people who know what they're doing
         params["port"].update(formatted_kwargs)
