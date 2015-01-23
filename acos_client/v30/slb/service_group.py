@@ -51,6 +51,11 @@ class ServiceGroup(base.BaseV30):
 
     def _set(self, name, protocol=None, lb_method=None, hm_name=None,
              update=False, **kwargs):
+
+        # Normalize "" -> None for json
+        if not hm_name:
+            hm_name = None
+
         params = {
             "service-group": self.minimal_dict({
                 "name": name,
