@@ -55,10 +55,10 @@ class BaseSSL(base.BaseV30):
             # "ca-certs": ca_certs,
         }
 
-        params = {'server-ssl': {}}
+        params = {'%s-ssl' % self.prefix: {}}
         for key, val in obj_params.iteritems():
             if val is not None:
-                params['server-ssl'][key] = val
+                params['%s-ssl' % self.prefix][key] = val
 
         if not update:
             name = ''
@@ -81,8 +81,10 @@ class BaseSSL(base.BaseV30):
 class ClientSSL(BaseSSL):
 
     url_prefix = '/slb/template/client-ssl/'
+    prefix = 'client'
 
 
 class ServerSSL(BaseSSL):
 
     url_prefix = '/slb/template/server-ssl/'
+    prefix = 'server'
