@@ -16,9 +16,7 @@ import acos_client.errors as acos_errors
 import acos_client.v30.base as base
 
 
-class ServerSSL(base.BaseV30):
-
-    url_prefix = '/slb/template/server-ssl/'
+class BaseSSL(base.BaseV30):
 
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
@@ -78,3 +76,13 @@ class ServerSSL(base.BaseV30):
 
     def delete(self, name, **kwargs):
         self._delete(self.url_prefix + name, **kwargs)
+
+
+class ClientSSL(BaseSSL):
+
+    url_prefix = '/slb/template/client-ssl/'
+
+
+class ServerSSL(BaseSSL):
+
+    url_prefix = '/slb/template/server-ssl/'
