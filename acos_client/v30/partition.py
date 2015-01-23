@@ -30,6 +30,8 @@ class Partition(base.BaseV30):
 
     def get(self, name):
         z = self.all()
+        if not z:
+            raise acos_errors.NotFound()
         for p in z['partition-all']['oper']['partition-list']:
             if p['partition-name'] == name:
                 return p
