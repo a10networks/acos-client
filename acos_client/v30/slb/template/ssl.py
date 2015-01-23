@@ -40,7 +40,7 @@ class BaseSSL(base.BaseV30):
             "name": name,
             "cert": cert,
             "key": key,
-            "passphrase": passphrase,
+            self.passphrase: passphrase,
             # Unimplemented options:
             # "encrypted": encrypted,
             # "session-ticket-enable": session_ticket_enable,
@@ -82,9 +82,11 @@ class ClientSSL(BaseSSL):
 
     url_prefix = '/slb/template/client-ssl/'
     prefix = 'client'
+    passphrase = 'server-passphrase'
 
 
 class ServerSSL(BaseSSL):
 
     url_prefix = '/slb/template/server-ssl/'
     prefix = 'server'
+    passphrase = 'passphrase'
