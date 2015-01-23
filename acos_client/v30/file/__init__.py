@@ -15,9 +15,14 @@
 import acos_client.v30.base as base
 
 from ssl_cert import SSLCert
+from ssl_key import SSLKey
 
 
 class File(base.BaseV30):
     @property
     def ssl_cert(self):
         return SSLCert(self.client)
+
+    @property
+    def ssl_key(self):
+        return SSLKey(self.client)
