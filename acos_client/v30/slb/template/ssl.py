@@ -16,9 +16,7 @@ import acos_client.errors as acos_errors
 import acos_client.v30.base as base
 
 
-class ServerSSL(base.BaseV30):
-
-    url_prefix = '/slb/template/server-ssl/'
+class BaseSSL(base.BaseV30):
 
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
@@ -42,7 +40,7 @@ class ServerSSL(base.BaseV30):
             "name": name,
             "cert": cert,
             "key": key,
-            "passphrase": passphrase,
+            self.passphrase: passphrase,
             # Unimplemented options:
             # "encrypted": encrypted,
             # "session-ticket-enable": session_ticket_enable,
@@ -57,10 +55,10 @@ class ServerSSL(base.BaseV30):
             # "ca-certs": ca_certs,
         }
 
-        params = {'server-ssl': {}}
+        params = {'%s-ssl' % self.prefix: {}}
         for key, val in obj_params.iteritems():
             if val is not None:
-                params['server-ssl'][key] = val
+                params['%s-ssl' % self.prefix][key] = val
 
         if not update:
             name = ''
@@ -78,3 +76,17 @@ class ServerSSL(base.BaseV30):
 
     def delete(self, name, **kwargs):
         self._delete(self.url_prefix + name, **kwargs)
+
+
+class ClientSSL(BaseSSL):
+
+    url_prefix = '/slb/template/client-ssl/'
+    prefix = 'client'
+    passphrase = 'server-passphrase'
+
+
+class ServerSSL(BaseSSL):
+
+    url_prefix = '/slb/template/server-ssl/'
+    prefix = 'server'
+    passphrase = 'passphrase'
