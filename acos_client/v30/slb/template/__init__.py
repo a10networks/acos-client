@@ -16,10 +16,15 @@ import acos_client.v30.base as base
 
 from persistence import CookiePersistence
 from persistence import SourceIpPersistence
-from server_ssl import ServerSSL
+from ssl import ClientSSL
+from ssl import ServerSSL
 
 
 class Template(base.BaseV30):
+
+    @property
+    def client_ssl(self):
+        return ClientSSL(self.client)
 
     @property
     def cookie_persistence(self):
