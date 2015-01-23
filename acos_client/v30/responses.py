@@ -17,6 +17,11 @@ import re
 import acos_client.errors as ae
 
 RESPONSE_CODES = {
+    33619969: {
+        '*': {
+            '*': ae.InUse
+        }
+    },
     67371011: {
         '*': {
             '*': ae.Exists
