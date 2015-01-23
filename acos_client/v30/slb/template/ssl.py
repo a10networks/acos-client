@@ -78,11 +78,11 @@ class BaseSSL(base.BaseV30):
         self._delete(self.url_prefix + name, **kwargs)
 
 
-class ClientSSL(base.BaseV30):
+class ClientSSL(BaseSSL):
 
     url_prefix = '/slb/template/client-ssl/'
 
 
-class ServerSSL(base.BaseV30):
+class ServerSSL(BaseSSL):
 
     url_prefix = '/slb/template/server-ssl/'
