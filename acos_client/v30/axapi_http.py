@@ -59,20 +59,16 @@ class HttpClient(object):
         self.url_base = "%s://%s:%s" % (protocol, host, port)
 
     def request(self, method, api_url, params={}, headers=None,
-                file_name=None, file_content=None, **kwargs):
+                file_name=None, file_content=None, axapi_args=None, **kwargs):
         LOG.debug("axapi_http: full url = %s", self.url_base + api_url)
         LOG.debug("axapi_http: %s url = %s", method, api_url)
         LOG.debug("axapi_http: params = %s", json.dumps(params, indent=4))
 
-        # Update params with **kwargs for currently unsupported configuration
-        # of objects
-        formatted_kwargs = dict([(k.replace('_', '-'), v) for k, v in kwargs.iteritems()])
-        param_keys = params.keys()
-        if params != {}:
-            if len(param_keys) != 1:
-                raise KeyError("params must have exactly one key, not {}. "
-                               "params: {}".format(len(param_keys), params))
-            params[param_keys[0]].update(formatted_kwargs)
+        # Update params with axapi_args for currently unsupported configuration of objects
+        if axapi_args is not None:
+            formatted_axapi_args = dict([(k.replace('_', '-'), v) for k, v in
+                                        axapi_args.iteritems()])
+            params.update(formatted_axapi_args)
 
         if (file_name is None and file_content is not None) or \
            (file_name is not None and file_content is None):
@@ -84,10 +80,6 @@ class HttpClient(object):
             hdrs.update(headers)
 
         if params:
-            # FIXME - re-enable kwargs merge at some point; dict keys
-            # between 2.1 and 3.0 do not match, and a10-neutron-lbaas
-            # uses 2.1 wrappers
-            # extra_params = kwargs.get('axapi_args', {})
             params_copy = params.copy()
             # params_copy.update(extra_params)
             LOG.debug("axapi_http: params_all = %s", params_copy)
