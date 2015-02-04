@@ -82,7 +82,7 @@ class ClientSSL(BaseSSL):
 
     url_prefix = '/slb/template/client-ssl/'
     prefix = 'client'
-    passphrase = 'server-passphrase'
+    passphrase = 'key-passphrase'
 
 
 class ServerSSL(BaseSSL):
