@@ -68,7 +68,7 @@ class HttpClient(object):
         if axapi_args is not None:
             formatted_axapi_args = dict([(k.replace('_', '-'), v) for k, v in
                                         axapi_args.iteritems()])
-            params.update(formatted_axapi_args)
+            params = acos_client.v21.axapi_http.merge_dicts(params, formatted_axapi_args)
 
         if (file_name is None and file_content is not None) or \
            (file_name is not None and file_content is None):
