@@ -30,7 +30,7 @@ class SSLKey(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def _set(self, file=None, cert=None, size=None, action=None, update=False,
+    def _set(self, file="", cert="", size="", action="", update=False,
              **kwargs):
 
         obj_params = {
@@ -43,7 +43,7 @@ class SSLKey(base.BaseV30):
         kwargs['params'] = {'ssl-key': {}}
 
         for key, val in obj_params.iteritems():
-            if val is not None:
+            if val != "":
                 kwargs['params']['ssl-key'][key] = val
 
         if not update:
@@ -52,14 +52,14 @@ class SSLKey(base.BaseV30):
         return self._post(self.url_prefix + file, file_name=obj_params["file"],
                           file_content=cert, **kwargs)
 
-    def create(self, file=None, cert=None, size=None, action=None,
+    def create(self, file="", cert="", size="", action="",
                update=False):
         if self.exists(file):
             raise acos_errors.Exists
 
         self._set(file, cert, size, action, update=False)
 
-    def update(self, file=None, cert=None, size=None, action=None,
+    def update(self, file="", cert="", size="", action="",
                update=False):
         self._set(file, cert, size, action, update=True)
 
