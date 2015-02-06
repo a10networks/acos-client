@@ -66,5 +66,6 @@ class SSLCert(base.BaseV30):
         self._set(file, cert, size, certificate_type, action, update=True,
                   **kwargs)
 
-    def delete(self, file, **kwargs):
-        self._delete(self.url_prefix + file, **kwargs)
+    def delete(self, file):
+        """This is the very inconsistent way to delete a certificate."""
+        self._request("POST", "/pki/delete-oper", {"delete-oper": {"filename": file}})
