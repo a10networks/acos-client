@@ -57,6 +57,7 @@ class BaseSSL(base.BaseV30):
 
         params = {'%s-ssl' % self.prefix: {}}
         for key, val in obj_params.iteritems():
+            # Filter out invalid, or unset keys
             if val != "":
                 params['%s-ssl' % self.prefix][key] = val
 

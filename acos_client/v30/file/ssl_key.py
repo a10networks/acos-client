@@ -43,6 +43,7 @@ class SSLKey(base.BaseV30):
         kwargs['params'] = {'ssl-key': {}}
 
         for key, val in obj_params.iteritems():
+            # Filter out invalid, or unset keys
             if val != "":
                 kwargs['params']['ssl-key'][key] = val
 
