@@ -53,15 +53,13 @@ class SSLKey(base.BaseV30):
         return self._post(self.url_prefix + file, file_name=obj_params["file"],
                           file_content=cert, **kwargs)
 
-    def create(self, file="", cert="", size="", action="",
-               update=False):
+    def create(self, file="", cert="", size="", action=""):
         if self.exists(file):
             raise acos_errors.Exists
 
         self._set(file, cert, size, action, update=False)
 
-    def update(self, file="", cert="", size="", action="",
-               update=False):
+    def update(self, file="", cert="", size="", action=""):
         self._set(file, cert, size, action, update=True)
 
     def delete(self, file):
