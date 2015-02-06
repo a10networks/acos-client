@@ -28,7 +28,7 @@ class BaseSSL(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def _set(self, name, cert=None, key=None, passphrase=None, update=False,
+    def _set(self, name, cert="", key="", passphrase="", update=False,
              **kwargs):
         # Unimplemented options:
         # encrypted, session_ticket_enable, version, forward_proxy_enable,
@@ -57,7 +57,8 @@ class BaseSSL(base.BaseV30):
 
         params = {'%s-ssl' % self.prefix: {}}
         for key, val in obj_params.iteritems():
-            if val is not None:
+            # Filter out invalid, or unset keys
+            if val != "":
                 params['%s-ssl' % self.prefix][key] = val
 
         if not update:
@@ -65,13 +66,13 @@ class BaseSSL(base.BaseV30):
 
         self._post(self.url_prefix + name, params, **kwargs)
 
-    def create(self, name, cert=None, key=None, passphrase=None, **kwargs):
+    def create(self, name, cert="", key="", passphrase="", **kwargs):
         if self.exists(name):
             raise acos_errors.Exists
 
         self._set(name, cert, key, passphrase, **kwargs)
 
-    def update(self, name, cert=None, key=None, passphrase=None, **kwargs):
+    def update(self, name, cert="", key="", passphrase="", **kwargs):
         self._set(name, cert, key, passphrase, update=True, **kwargs)
 
     def delete(self, name, **kwargs):
