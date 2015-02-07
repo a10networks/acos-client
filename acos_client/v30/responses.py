@@ -90,6 +90,11 @@ RESPONSE_CODES = {
             '*': ae.NotFound
         }
     },
+    67240011: {
+        '*': {
+            '*': ae.Exists
+        }
+    }
 }
 
 
