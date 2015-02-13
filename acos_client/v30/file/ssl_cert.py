@@ -30,8 +30,7 @@ class SSLCert(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def _set(self, file="", cert="", size="", certificate_type="",
-             action="", update=False, **kwargs):
+    def _set(self, file="", cert="", size="", certificate_type="", action="", **kwargs):
 
         obj_params = {
             "file": file,
@@ -48,17 +47,14 @@ class SSLCert(base.BaseV30):
             if val != "":
                 kwargs['params']['ssl-cert'][key] = val
 
-        if not update:
-            file = ''
-
-        return self._post(self.url_prefix + file, file_name=obj_params["file"],
+        return self._post(self.url_prefix, file_name=obj_params["file"],
                           file_content=cert, **kwargs)
 
     def create(self, file="", cert="", size="", certificate_type="", action="", **kwargs):
         if self.exists(file):
             raise acos_errors.Exists
 
-        self._set(file, cert, size, certificate_type, action, update=False, **kwargs)
+        self._set(file, cert, size, certificate_type, action, **kwargs)
 
     def update(self, file="", cert="", size="", certificate_type="", action="", **kwargs):
         self._set(file, cert, size, certificate_type, action, update=True, **kwargs)

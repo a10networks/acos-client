@@ -30,8 +30,7 @@ class SSLKey(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def _set(self, file="", cert="", size="", action="", update=False,
-             **kwargs):
+    def _set(self, file="", cert="", size="", action="", **kwargs):
 
         obj_params = {
             "file": file,
@@ -47,20 +46,17 @@ class SSLKey(base.BaseV30):
             if val != "":
                 kwargs['params']['ssl-key'][key] = val
 
-        if not update:
-            file = ''
-
-        return self._post(self.url_prefix + file, file_name=obj_params["file"],
+        return self._post(self.url_prefix, file_name=obj_params["file"],
                           file_content=cert, **kwargs)
 
     def create(self, file="", cert="", size="", action=""):
         if self.exists(file):
             raise acos_errors.Exists
 
-        self._set(file, cert, size, action, update=False)
+        self._set(file, cert, size, action)
 
     def update(self, file="", cert="", size="", action=""):
-        self._set(file, cert, size, action, update=True)
+        self._set(file, cert, size, action)
 
     def delete(self, file):
         """This is the very inconsistent way to delete a certificate."""
