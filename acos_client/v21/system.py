@@ -40,6 +40,9 @@ class System(base.BaseV21):
     def information(self):
         return self._get("system.information.get")
 
+    def performance(self):
+        return self._get("system.performance.get")
+
     @property
     def admin(self):
         return Admin(self.client)
@@ -87,6 +90,3 @@ class System(base.BaseV21):
         def set(self, hostname, **kwargs):
             params = {"hostname": hostname}
             return self._post('system.hostname.set', params, **kwargs)
-
-
-
