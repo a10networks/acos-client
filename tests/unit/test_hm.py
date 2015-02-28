@@ -31,21 +31,21 @@ class TestHealthMonitor(unittest.TestCase):
 
     def test_hm_create(self):
         with mocks.HealthMonitorCreate().client() as c:
-            c.slb.hm.create('hm1', 'HTTP', 5, 5, 5, 'GET', '/', '200', 80)
+            c.slb.hm.create('hm1', 'HTTP', 5, 5, 5, 5, 'GET', '/', '200', 80)
 
     def test_hm_create_exists(self):
         with mocks.HealthMonitorCreateExists().client() as c:
             with self.assertRaises(acos_errors.Exists):
-                c.slb.hm.create('hm1', 'HTTP', 5, 5, 5, 'GET', '/', '200', 80)
+                c.slb.hm.create('hm1', 'HTTP', 5, 5, 5, 5, 'GET', '/', '200', 80)
 
     def test_hm_update(self):
         with mocks.HealthMonitorUpdate().client() as c:
-            c.slb.hm.update('hm1', 'HTTP', 5, 5, 5, 'GET', '/', '200', 80)
+            c.slb.hm.update('hm1', 'HTTP', 5, 5, 5, 5, 'GET', '/', '200', 80)
 
     def test_hm_update_not_found(self):
         with mocks.HealthMonitorUpdateNotFound().client() as c:
             with self.assertRaises(acos_errors.NotFound):
-                c.slb.hm.update('hm1', 'HTTP', 5, 5, 5, 'GET', '/', '200', 80)
+                c.slb.hm.update('hm1', 'HTTP', 5, 5, 5, 5, 'GET', '/', '200', 80)
 
     def test_hm_search(self):
         with mocks.HealthMonitorSearch().client() as c:
