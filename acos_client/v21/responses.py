@@ -41,6 +41,9 @@ RESPONSE_CODES = {
     1163: {
         '*': ae.InvalidParameter
     },
+    1165: {
+        '*': ae.HMMissingHttpPassive
+    },
     1405: {
         '*': ae.Exists
     },

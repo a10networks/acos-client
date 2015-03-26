@@ -12,8 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client.errors as acos_errors
 import acos_client.v21.base as base
-
 
 class HealthMonitor(base.BaseV21):
 
@@ -37,6 +37,9 @@ class HealthMonitor(base.BaseV21):
                 'protocol': 'https',
                 'port': 443
             },
+            self.ICMP: {
+                'protocol': 'icmp',
+            },
             self.TCP: {
                 'protocol': 'tcp',
                 'port': 80
@@ -53,11 +56,18 @@ class HealthMonitor(base.BaseV21):
         }
         if mon_type in defs:
             params[defs[mon_type]['protocol']] = {
-                'port': port or defs[mon_type]['port'],
                 'url': "%s %s" % (method, url),
                 'expect_code': expect_code,
             }
-        self._post(action, params, **kwargs)
+            n = port or defs[mon_type].get('port')
+            if n:
+                params[defs[mon_type]['protocol']]['port'] = n
+        try:
+            self._post(action, params, **kwargs)
+        except acos_errors.HMMissingHttpPassive:
+            # Some version of AxAPI 2.1 require this arg
+            params[defs[mon_type]['protocol']]['passive'] = 0
+            self._post(action, params, **kwargs)
 
     def create(self, name, mon_type, interval, timeout, max_retries,
                method=None, url=None, expect_code=None, port=None, **kwargs):
