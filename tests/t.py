@@ -40,14 +40,14 @@ instances = {
     #     'password': 'i-9276ff9f',
     #     'axapi': '21',
     # }
-     '2.7.2': {
-         'host': 'dougw-softax-272',
-         'port': 8443,
-         'protocol': 'https',
-         'user': 'admin',
-         'password': 'a10',
-         'axapi': '21',
-     },
+    '2.7.2': {
+        'host': 'dougw-softax-272',
+        'port': 8443,
+        'protocol': 'https',
+        'user': 'admin',
+        'password': 'a10',
+        'axapi': '21',
+    },
     # '2.7.1': {
     #     'host': 'dougw-softax-271',
     #     'port': 8443,
@@ -64,14 +64,14 @@ instances = {
     #     'password': 'a10',
     #     'axapi': '30',
     # },
-    #'4.0.0': {
+    # '4.0.0': {
     #    'host': '172.18.61.29',
     #    'port': 443,
     #    'protocol': 'https',
     #    'user': 'admin',
     #    'password': 'a10',
     #    'axapi': '30',
-    #},
+    # },
 }
 
 partitions = [
@@ -402,7 +402,7 @@ def run_all(version, ax, partition, pmap):
         print("got already exists error, good")
     else:
         raise Nope()
-    c.slb.hm.update("hfoobar", c.slb.hm.HTTP, 10, 10, 10,'GET', '/', '200', 80)
+    c.slb.hm.update("hfoobar", c.slb.hm.HTTP, 10, 10, 10, 'GET', '/', '200', 80)
     try:
         c.slb.hm.update("hnfoobar", c.slb.hm.HTTP, 10, 10, 10, 'GET', '/', '200', 80)
     except acos_client.errors.NotFound:
