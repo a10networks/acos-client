@@ -81,3 +81,7 @@ class OutOfPartitions(ACOSException):
 
 class PartitionIdExists(ACOSException):
     pass
+
+
+class HMMissingHttpPassive(ACOSException):
+    pass
