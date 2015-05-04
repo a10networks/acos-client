@@ -14,12 +14,12 @@
 
 from acos_client import multipart
 from action import Action
+from admin import Admin
 import base
 from config_file import ConfigFile
 from device_info import DeviceInfo
 from log import Log
 from partition import Partition
-from admin import Admin
 
 
 class System(base.BaseV21):
