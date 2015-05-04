@@ -1,5 +1,6 @@
 import base
 
+
 class Admin(base.BaseV21):
 
     @property
@@ -35,7 +36,7 @@ class Admin(base.BaseV21):
 
 
         def delete(self, name, **kwargs):
-            params = {"admin_name": name }
+            params = {"admin_name": name}
             return self._post('system.admin.administrator.delete', params, **kwargs)
 
         def all_delete(self, **kwargs):
