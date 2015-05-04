@@ -12,17 +12,14 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-
+from acos_client import multipart
 from action import Action
 import base
 from config_file import ConfigFile
 from device_info import DeviceInfo
-from acos_client.multipart import Multipart
 from log import Log
 from partition import Partition
 from admin import Admin
-
-import acos_client.multipart as multipart
 
 
 class System(base.BaseV21):

@@ -1,4 +1,4 @@
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
 #
@@ -13,13 +13,14 @@
 import json
 import re
 
-import acos_client.multipart as multipart
+from acos_client import multipart
 import acos_client.v21.base as base
 
 
 class ClassList(base.BaseV21):
 
-    def _fix_json(self, data):
+    @staticmethod
+    def _fix_json(data):
         p = re.compile(r'(?<=[^:{\[,])"(?![:,}\]])')
         return json.loads(re.sub(p, '\\"', data))
 
@@ -27,8 +28,8 @@ class ClassList(base.BaseV21):
         return self._fix_json(self._get("slb.class_list.getAll", **kwargs))
 
     def get(self, name, **kwargs):
-        return self._fix_json(self._post("slb.class_list.search",
-                              {'name': name}, **kwargs))
+        return ClassList._fix_json(self._post("slb.class_list.search",
+                                              {'name': name}, **kwargs))
 
     def download(self, name, **kwargs):
         return self._post('slb.class_list.download',
