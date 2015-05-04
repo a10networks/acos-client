@@ -12,15 +12,14 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-
+from acos_client import multipart
 from action import Action
+from admin import Admin
 import base
 from config_file import ConfigFile
 from device_info import DeviceInfo
 from log import Log
 from partition import Partition
-
-import acos_client.multipart as multipart
 
 
 class System(base.BaseV21):
@@ -39,6 +38,13 @@ class System(base.BaseV21):
 
     def information(self):
         return self._get("system.information.get")
+
+    def performance(self):
+        return self._get("system.performance.get")
+
+    @property
+    def admin(self):
+        return Admin(self.client)
 
     @property
     def device_info(self):
