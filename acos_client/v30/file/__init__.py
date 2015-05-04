@@ -1,3 +1,5 @@
+# Copyright 2015,  Tobit Raff,  A10 Networks.
+#
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
@@ -10,18 +12,17 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import base
+import acos_client.v30.base as base
+
+from ssl_cert import SSLCert
+from ssl_key import SSLKey
 
 
-class DeviceInfo(base.BaseV21):
+class File(base.BaseV30):
+    @property
+    def ssl_cert(self):
+        return SSLCert(self.client)
 
-        def get(self, **kwargs):
-            return self._get('system.device_info.get', **kwargs)
-
-        def cpu_current_usage(self, **kwargs):
-            return self._get('system.device_info.cpu.current_usage.get',
-                             **kwargs)
-
-        def cpu_historical_usage(self, **kwargs):
-            return self._get('system.device_info.cpu.historical_usage.get',
-                             **kwargs)
+    @property
+    def ssl_key(self):
+        return SSLKey(self.client)

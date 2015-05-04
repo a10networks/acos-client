@@ -1,3 +1,5 @@
+# Copyright 2014,  Jeff Buttars,  A10 Networks.
+#
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
@@ -10,18 +12,20 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from action import Action
 import base
+from partition import Partition
 
 
-class DeviceInfo(base.BaseV21):
+class System(base.BaseV30):
 
-        def get(self, **kwargs):
-            return self._get('system.device_info.get', **kwargs)
+    @property
+    def action(self):
+        return Action(self.client)
 
-        def cpu_current_usage(self, **kwargs):
-            return self._get('system.device_info.cpu.current_usage.get',
-                             **kwargs)
+    @property
+    def partition(self):
+        return Partition(self.client)
 
-        def cpu_historical_usage(self, **kwargs):
-            return self._get('system.device_info.cpu.historical_usage.get',
-                             **kwargs)
+    def information(self):
+        return self._get("/system")

@@ -20,6 +20,8 @@ import base
 class Partition(base.BaseV21):
 
     def exists(self, name):
+        if name == 'shared':
+            return True
         try:
             self._post("system.partition.search", {'name': name})
             return True

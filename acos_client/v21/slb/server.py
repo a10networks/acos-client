@@ -13,7 +13,9 @@
 #    under the License.
 
 import acos_client.v21.base as base
+
 from port import Port
+
 
 class Server(base.BaseV21):
 
@@ -29,8 +31,19 @@ class Server(base.BaseV21):
         }
         self._post("slb.server.create", params, **kwargs)
 
+    def update(self, name, ip_address, **kwargs):
+        params = {
+            "server": {
+                "name": name,
+                "host": ip_address,
+                "status": kwargs.get('status', 1)
+            }
+        }
+        self._post("slb.server.update", params, **kwargs)
+
     def fetchStatistics(self, name, **kwargs):
-        return self._post("slb.server.fetchStatistics", {"name": name}, **kwargs)
+        return self._post("slb.server.fetchStatistics", {"name": name},
+                          **kwargs)
 
     def delete(self, name, **kwargs):
         self._post("slb.server.delete", {"server": {"name": name}}, **kwargs)
@@ -38,22 +51,12 @@ class Server(base.BaseV21):
     def all(self, **kwargs):
         return self._get('slb.server.getAll', **kwargs)
 
-    def update(self, name, ip_address, **kwargs):
-
-        params = {
-            "server": {
-                "name": name,
-                "host": ip_address,
-                }
-        }
-
-        return self._post('slb.server.update', params, **kwargs)
-
     def all_delete(self, **kwargs):
         self._get('slb.server.deleteAll', **kwargs)
 
     def stats(self, name, **kwargs):
-        return self._post("slb.server.fetchStatistics", {"server": {"name": name}}, **kwargs)
+        return self._post("slb.server.fetchStatistics",
+                          {"server": {"name": name}}, **kwargs)
 
     def all_stats(self, **kwargs):
         return self._get('fetchAllStatistics', **kwargs)

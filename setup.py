@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = "acos-client",
-    version = "1.1.1",
+    version = "1.2.4",
     packages = find_packages(),
 
     author = "A10 Networks",
@@ -29,5 +29,5 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
 
-    install_requires = ['hash_ring>=1.3.1']
+    install_requires = ['hash_ring>=1.3.1', 'requests>=2.3.0']
 )
