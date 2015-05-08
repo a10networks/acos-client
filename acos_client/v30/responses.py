@@ -94,7 +94,12 @@ RESPONSE_CODES = {
         '*': {
             '*': ae.Exists
         }
-    }
+    },
+    1023443968: {
+        '*': {
+            '*': ae.NotFound
+        }
+    },
 }
 
 
