@@ -53,16 +53,26 @@ class ServiceGroup(base.BaseV30):
              update=False, **kwargs):
 
         # Normalize "" -> None for json
-        if not hm_name:
-            hm_name = None
+        hm_name = hm_name or None
+
+        # v30 needs unit tests badly...
 
         params = {
             "service-group": self.minimal_dict({
                 "name": name,
                 "protocol": protocol,
-                "health-check": hm_name
             })
         }
+
+        health_check_disable = 1 if kwargs["health_check_disable"] is True else 0
+
+        # When enabling/disabling a health monitor, you can't specify
+        # health-check-disable and health-check at the same time.
+        if hm_name is None:
+            params["service-group"]["health-check-disable"] = health_check_disable
+        else:
+            params["service-group"]["health-check"] = hm_name
+
         if lb_method is None:
             pass
         elif lb_method[-16:] == 'least-connection':

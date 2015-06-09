@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = "acos-client",
-    version = "1.2.5",
+    version = "1.2.6",
     packages = find_packages(),
 
     author = "A10 Networks",
