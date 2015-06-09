@@ -50,11 +50,12 @@ class ServiceGroup(base.BaseV30):
         return self._get(self.url_prefix + name, **kwargs)
 
     def _set(self, name, protocol=None, lb_method=None, hm_name=None,
-             hm_disable=0, update=False, **kwargs):
+             update=False, **kwargs):
 
         # Normalize "" -> None for json
-        if not hm_name or hm_name == "":
-            hm_name = None
+        hm_name = hm_name or None
+
+        # v30 needs unit tests badly...
 
         params = {
             "service-group": self.minimal_dict({
@@ -63,10 +64,12 @@ class ServiceGroup(base.BaseV30):
             })
         }
 
+        health_check_disable = 1 if kwargs["health_check_disable"] is True else 0
+
         # When enabling/disabling a health monitor, you can't specify
         # health-check-disable and health-check at the same time.
         if hm_name is None:
-            params["service-group"]["health-check-disable"] = 1
+            params["service-group"]["health-check-disable"] = health_check_disable
         else:
             params["service-group"]["health-check"] = hm_name
 
@@ -95,9 +98,9 @@ class ServiceGroup(base.BaseV30):
         self._set(name, protocol, lb_method, **kwargs)
 
     def update(self, name, protocol=None, lb_method=None, health_monitor=None,
-               health_monitor_disable=0, **kwargs):
+               **kwargs):
         self._set(name, protocol, lb_method,
-                  health_monitor, health_monitor_disable, update=True, **kwargs)
+                  health_monitor, update=True, **kwargs)
 
     def delete(self, name):
         self._delete(self.url_prefix + name)
