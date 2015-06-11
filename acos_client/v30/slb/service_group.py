@@ -64,7 +64,13 @@ class ServiceGroup(base.BaseV30):
             })
         }
 
-        health_check_disable = 1 if kwargs["health_check_disable"] is True else 0
+        health_check_disable_key = "health_check_disable"
+        health_check_disable = 1
+
+        # If we explicitly disable health checks, ensure it happens
+        # Else, we implicitly disable health checks if not specified.
+        if health_check_disable_key in kwargs:
+            health_check_disable = 1 if kwargs[health_check_disable_key] is True else 0
 
         # When enabling/disabling a health monitor, you can't specify
         # health-check-disable and health-check at the same time.
