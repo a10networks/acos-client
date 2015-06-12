@@ -64,7 +64,9 @@ class ServiceGroup(base.BaseV30):
             })
         }
 
-        health_check_disable = 1 if kwargs["health_check_disable"] is True else 0
+        # If we explicitly disable health checks, ensure it happens
+        # Else, we implicitly disable health checks if not specified.
+        health_check_disable = 1 if kwargs.get("health_check_disable", False) else 0
 
         # When enabling/disabling a health monitor, you can't specify
         # health-check-disable and health-check at the same time.
