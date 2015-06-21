@@ -50,7 +50,7 @@ class HttpClient(object):
         "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
-    def __init__(self, host, port=None, protocol="https"):
+    def __init__(self, host, port=None, protocol="https", timeout=None):
         if port is None:
             if protocol is 'http':
                 port = 80

@@ -112,10 +112,11 @@ class HttpClient(object):
 
     headers = {}
 
-    def __init__(self, host, port=None, protocol="https", client=None):
+    def __init__(self, host, port=None, protocol="https", client=None, timeout=None):
         self.host = host
         self.port = port
         self.protocol = protocol
+        self.timeout = timeout
         if port is None:
             if protocol is 'http':
                 self.port = 80
@@ -124,10 +125,10 @@ class HttpClient(object):
 
     def _http(self, method, api_url, payload):
         if self.protocol == 'https':
-            http = httplib.HTTPSConnection(self.host, self.port)
+            http = httplib.HTTPSConnection(self.host, self.port, timeout=self.timeout)
             http.connect = lambda: force_tlsv1_connect(http)
         else:
-            http = httplib.HTTPConnection(self.host, self.port)
+            http = httplib.HTTPConnection(self.host, self.port, timeout=self.timeout)
 
         LOG.debug("axapi_http: url:     %s", api_url)
         LOG.debug("axapi_http: method:  %s", method)

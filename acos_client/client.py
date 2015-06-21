@@ -57,12 +57,12 @@ VERSION_IMPORTS = {
 class Client(object):
 
     def __init__(self, host, version, username, password, port=None,
-                 protocol="https"):
+                 protocol="https", timeout=None):
         self._version = self._just_digits(version)
         if self._version not in acos_client.AXAPI_VERSIONS:
             raise acos_errors.ACOSUnsupportedVersion()
         self.http = VERSION_IMPORTS[self._version]['http'].HttpClient(
-            host, port, protocol)
+            host, port, protocol, timeout=timeout)
         self.session = VERSION_IMPORTS[self._version]['Session'](
             self, username, password)
         self.current_partition = 'shared'
