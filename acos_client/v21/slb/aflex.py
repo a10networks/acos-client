@@ -20,7 +20,7 @@ class Aflex(base.BaseV21):
         m = multipart.Multipart()
         m.file(name="upload_aflex", filename=name, value=aflex)
         ct, payload = m.get()
-        kwargs.update(payload=payload, headers={'Content-Type': ct})
+        kwargs.update(payload=payload, headers={'Content-type': ct})
         return self._post(action, **kwargs)
 
     def upload(self, name, aflex, **kwargs):

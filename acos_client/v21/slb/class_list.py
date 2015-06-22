@@ -39,7 +39,7 @@ class ClassList(base.BaseV21):
         m = multipart.Multipart()
         m.file(name=name, filename=name, value=class_list)
         ct, payload = m.get()
-        kwargs.update(payload=payload, headers={'Content-Type': ct})
+        kwargs.update(payload=payload, headers={'Content-type': ct})
         return self._post('slb.class_list.upload', **kwargs)
 
     def _set(self, action, class_list, **kwargs):

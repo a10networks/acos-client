@@ -30,7 +30,7 @@ class System(base.BaseV21):
         m = multipart.Multipart()
         m.file(name="restore", filename=name, value=data)
         ct, payload = m.get()
-        kwargs.update(payload=buffer(payload), headers={'Content-Type': ct})
+        kwargs.update(payload=buffer(payload), headers={'Content-type': ct})
         return self._post("system.restore", **kwargs)
 
     def tech_download(self, **kwargs):
