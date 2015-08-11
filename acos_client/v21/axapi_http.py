@@ -17,12 +17,12 @@
 import errno
 import json
 import logging
-import socket
+import requests
+import requests.exceptions
 import sys
 import time
 import urlparse
-import requests
-import requests.exceptions
+
 import responses as acos_responses
 
 import acos_client
