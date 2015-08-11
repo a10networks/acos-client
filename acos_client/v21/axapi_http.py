@@ -15,15 +15,14 @@
 #    under the License.
 
 import errno
-import httplib
 import json
 import logging
 import socket
-import ssl
 import sys
 import time
 import urlparse
-
+import requests
+import requests.exceptions
 import responses as acos_responses
 
 import acos_client
@@ -35,17 +34,6 @@ out_hdlr = logging.StreamHandler(sys.stderr)
 out_hdlr.setLevel(logging.DEBUG)
 LOG.addHandler(out_hdlr)
 LOG.setLevel(logging.DEBUG)
-
-
-# Monkey patch for ssl connect, for specific TLS version required by
-# ACOS hardware.
-def force_tlsv1_connect(self):
-    sock = socket.create_connection((self.host, self.port), self.timeout)
-    if self._tunnel_host:
-        self.sock = sock
-        self._tunnel()
-    self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file,
-                                ssl_version=ssl.PROTOCOL_TLSv1)
 
 
 def extract_method(api_url):
@@ -112,32 +100,34 @@ class HttpClient(object):
 
     headers = {}
 
-    def __init__(self, host, port=None, protocol="https", client=None, timeout=None):
+    def __init__(self, host, port=None, protocol="https", client=None, timeout=None, verify=False):
         self.host = host
         self.port = port
         self.protocol = protocol
         self.timeout = timeout
+        self.verify = verify
         if port is None:
             if protocol is 'http':
                 self.port = 80
             else:
                 self.port = 443
+        self.url_base = '%s://%s:%s' % (self.protocol, self.host, self.port)
 
     def _http(self, method, api_url, payload):
-        if self.protocol == 'https':
-            http = httplib.HTTPSConnection(self.host, self.port, timeout=self.timeout)
-            http.connect = lambda: force_tlsv1_connect(http)
-        else:
-            http = httplib.HTTPConnection(self.host, self.port, timeout=self.timeout)
 
         LOG.debug("axapi_http: url:     %s", api_url)
         LOG.debug("axapi_http: method:  %s", method)
         LOG.debug("axapi_http: headers: %s", self.HEADERS)
         LOG.debug("axapi_http: payload: %s", payload)
-
-        http.request(method, api_url, body=payload, headers=self.headers)
-
-        r = http.getresponse()
+        LOG.debug("axapi_http: timeout: %s", self.timeout)
+        r = requests.request(
+            method,
+            self.url_base + api_url,
+            data=payload,
+            headers=self.headers,
+            verify=self.verify,
+            timeout=self.timeout,
+        )
 
         # Workaround for zero length response
         def handle_empty_response(data):
@@ -146,7 +136,7 @@ class HttpClient(object):
 
             return data
 
-        return handle_empty_response(r.read())
+        return handle_empty_response(r.text)
 
     def request(self, method, api_url, params={}, **kwargs):
         LOG.debug("axapi_http: url = %s", api_url)
@@ -175,21 +165,23 @@ class HttpClient(object):
                 last_e = None
                 data = self._http(method, api_url, payload)
                 break
-            except socket.error as e:
+            except requests.exceptions.ConnectionError as e:
                 # Workaround some bogosity in the API
-                if (e.errno == errno.ECONNRESET or
-                   e.errno == errno.ECONNREFUSED):
-                    time.sleep(0.1)
-                    last_e = e
-                    continue
+                if len(e.args) >= 1 and hasattr(e.args[0], 'errno'):
+                    sock_errno = e.args[0].errno
+                    if (sock_errno == errno.ECONNRESET or
+                       sock_errno == errno.ECONNREFUSED):
+                        time.sleep(0.1)
+                        last_e = e
+                        continue
                 raise e
-            except httplib.BadStatusLine as e:
+            except requests.exceptions.HTTPError as e:
                 time.sleep(0.1)
                 last_e = e
                 continue
             except EmptyHttpResponse as e:
-                if e.response.status != httplib.OK:
-                    msg = dict(e.response.msg.items())
+                if e.response.status_code != requests.codes.ok:
+                    msg = dict(e.response.headers, body=e.response.text)
                     data = json.dumps({"response": {'status': 'fail', 'err':
                                       {'code': e.response.status,
                                        'msg': msg}}})
