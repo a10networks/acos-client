@@ -19,24 +19,25 @@ class Port(base.BaseV21):
     TCP = 2
     UDP = 3
 
-    def _set(self, action, name, port_num, protocol, **kwargs):
+    def _set(self, action, name, port_num, protocol, status=None, **kwargs):
 
         params = {
             "name": name,
-            "port": {
+            "port": self.minimal_dict({
                 "port_num": port_num,
                 "protocol": protocol,
-            }
+                "status": status,
+            })
         }
 
         return self._post(action, params, **kwargs)
 
-    def create(self, name, port_num, protocol, **kwargs):
-        return self._set("slb.server.port.create", name, port_num, protocol,
+    def create(self, name, port_num, protocol, status=None, **kwargs):
+        return self._set("slb.server.port.create", name, port_num, protocol, status=status,
                          **kwargs)
 
-    def update(self, name, port_num, protocol, **kwargs):
-        return self._set("slb.server.port.update", name, port_num, protocol,
+    def update(self, name, port_num, protocol, status=None, **kwargs):
+        return self._set("slb.server.port.update", name, port_num, protocol, status=status,
                          **kwargs)
 
     def all_update(self, name, port_num, protocol, **kwargs):
