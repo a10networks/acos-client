@@ -82,3 +82,6 @@ class HealthMonitor(base.BaseV21):
 
     def delete(self, name, **kwargs):
         self._post("slb.hm.delete", {"name": name}, **kwargs)
+
+    def all(self, **kwargs):
+        return self._get('slb.hm.getAll', **kwargs)
