@@ -19,7 +19,7 @@ class Port(base.BaseV21):
     TCP = 2
     UDP = 3
 
-    def _set(self, action, name, port_num, protocol, status=None, **kwargs):
+    def _set(self, action, name, port_num, protocol, status=None, hm=None, **kwargs):
 
         params = {
             "name": name,
@@ -27,17 +27,18 @@ class Port(base.BaseV21):
                 "port_num": port_num,
                 "protocol": protocol,
                 "status": status,
+                "health_monitor": hm,
             })
         }
 
         return self._post(action, params, **kwargs)
 
-    def create(self, name, port_num, protocol, status=None, **kwargs):
-        return self._set("slb.server.port.create", name, port_num, protocol, status=status,
+    def create(self, name, port_num, protocol, status=None, hm=None, **kwargs):
+        return self._set("slb.server.port.create", name, port_num, protocol, status=status, hm=hm,
                          **kwargs)
 
-    def update(self, name, port_num, protocol, status=None, **kwargs):
-        return self._set("slb.server.port.update", name, port_num, protocol, status=status,
+    def update(self, name, port_num, protocol, status=None, hm=None, **kwargs):
+        return self._set("slb.server.port.update", name, port_num, protocol, status=status, hm=hm,
                          **kwargs)
 
     def all_update(self, name, port_num, protocol, **kwargs):
