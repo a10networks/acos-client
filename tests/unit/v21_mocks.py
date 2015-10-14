@@ -15,6 +15,7 @@
 import json
 
 import mock
+import unittest
 
 import acos_client
 
@@ -42,13 +43,14 @@ class MockPairClient(object):
         self.parent.post_validate()
 
 
-class MockPair(object):
+class MockPair(unittest.TestCase):
     method = 'POST'
     action = None
     params = None
     response = None
 
     def __init__(self, fields={}):
+        self.testMethodPrefix = "DONTRUNME"
         self.fields = fields
         self.session_id = fields.get('session_id', 'session0')
         self.username = fields.get('username', 'defuser')
@@ -80,7 +82,11 @@ class MockPair(object):
                     if args and len(args) > 2 and args[2].__class__ == str:
                         if json.loads(args[2]) == self.params:
                             validated = True
-            self._mock.assertTrue(validated)
+                    else:
+                        validated = True
+            else:
+                validated = True
+            self.assertTrue(validated)
 
 
 class AuthenticatedMockPair(MockPair):
@@ -132,6 +138,7 @@ class CloseBadSession(Close):
 class SystemInformation(AuthenticatedMockPair):
     method = 'GET'
     action = 'system.information.get'
+    params = {}
     response = {
         'system_information': {
             'advanced_core_os_on_compact_flash1': 'No Software',
@@ -154,6 +161,7 @@ class SystemInformation(AuthenticatedMockPair):
 class SystemWriteMemory(AuthenticatedMockPair):
     method = 'GET'
     action = 'system.action.write_memory'
+    params = {}
 
 
 class Server(AuthenticatedMockPair):
@@ -616,7 +624,7 @@ class HASync(AuthenticatedMockPair):
     params = {
         'ha_config_sync': {
             'peer_operation': 0,
-            'destination_ip': '172.18.61.27',
+            'destination_ip': '192.168.2.254',
             'peer_reload': 0,
             'user': 'admin',
             'auto_authentication': 0,
