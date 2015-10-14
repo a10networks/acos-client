@@ -22,7 +22,7 @@ class TestSystem(unittest.TestCase):
         m = mocks.SystemInformation()
         with m.client() as c:
             r = c.system.information()
-            self.assertTrue('system_information' in r)
+            self.assertIn('system_information', r)
 
     def test_write_memory(self):
         m = mocks.SystemWriteMemory()
