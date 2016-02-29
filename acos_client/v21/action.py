@@ -35,3 +35,14 @@ class Action(base.BaseV21):
         write_memory = 1 if write_memory else 0
         return self._post("system.action.reload",
                           params={"write_memory": write_memory}, **kwargs)
+
+    def write_all_partitions(self, device_config, **kwargs):
+        username = device_config.get("username")
+        password = device_config.get("password")
+        enable_password = device_config.get("enable_password". "")
+        action = "cli.deploy"
+
+        url_fmt = "/services/rest/v2.1/?sessionid={0}&format=json&method={1}&username={2}&password={3}&enable_password={4}"
+        write_url = url_fmt.format(self.client.session.id, "cli.deploy", username, password, enable_password)
+
+        return self._post(write_url)
