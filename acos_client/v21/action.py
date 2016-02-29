@@ -37,12 +37,6 @@ class Action(base.BaseV21):
                           params={"write_memory": write_memory}, **kwargs)
 
     def write_all_partitions(self, device_config, **kwargs):
-        username = device_config.get("username")
-        password = device_config.get("password")
-        enable_password = device_config.get("enable_password". "")
-        action = "cli.deploy"
+        post_body = 'write memory\r\nactive-partition shared\r\nwrite memory\r\n'
 
-        url_fmt = "/services/rest/v2.1/?sessionid={0}&format=json&method={1}&username={2}&password={3}&enable_password={4}"
-        write_url = url_fmt.format(self.client.session.id, "cli.deploy", username, password, enable_password)
-
-        return self._post(write_url)
+        return self._request("POST", "cli.deploy", params=None, payload=post_body, **kwargs)
