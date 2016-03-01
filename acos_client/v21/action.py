@@ -36,7 +36,6 @@ class Action(base.BaseV21):
         return self._post("system.action.reload",
                           params={"write_memory": write_memory}, **kwargs)
 
-    def write_all_partitions(self, device_config, **kwargs):
+    def write_active(self, **kwargs):
         post_body = 'write memory\r\nactive-partition shared\r\nwrite memory\r\n'
-
         return self._request("POST", "cli.deploy", params=None, payload=post_body, **kwargs)
