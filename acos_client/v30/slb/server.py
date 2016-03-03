@@ -28,6 +28,7 @@ class Server(base.BaseV30):
             "server": {
                 "name": name,
                 "host": ip_address,
+                 "action": kwargs.get('admin_state'),
             }
         }
 
