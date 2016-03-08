@@ -32,6 +32,14 @@ class Member(base.BaseV30):
         )
 
         return self._get(url, **kwargs)
+        
+    def get_oper(self, service_group_name, server_name, server_port, **kwargs):
+        url = self.url_base_tmpl.format(gname=service_group_name)
+        url += self.url_mbr_tmpl.format(
+            name=server_name,
+            port=server_port
+        )
+        return self._get(url+'oper', **kwargs)
 
     def _write(self,
                service_group_name,
