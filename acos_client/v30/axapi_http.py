@@ -33,10 +33,10 @@ LOG = logging.getLogger(__name__)
 
 import sys
 out_hdlr = logging.StreamHandler(sys.stdout)
-out_hdlr.setLevel(logging.DEBUG)
+out_hdlr.setLevel(logging.WARNING)
 LOG.addHandler(out_hdlr)
 
-LOG.setLevel(logging.DEBUG)
+LOG.setLevel(logging.WARNING)
 
 
 broken_replies = {
