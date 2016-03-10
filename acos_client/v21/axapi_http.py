@@ -32,9 +32,9 @@ import acos_client
 LOG = logging.getLogger(__name__)
 
 out_hdlr = logging.StreamHandler(sys.stderr)
-out_hdlr.setLevel(logging.DEBUG)
+out_hdlr.setLevel(logging.WARNING)
 LOG.addHandler(out_hdlr)
-LOG.setLevel(logging.DEBUG)
+LOG.setLevel(logging.WARNING)
 
 
 # Monkey patch for ssl connect, for specific TLS version required by
