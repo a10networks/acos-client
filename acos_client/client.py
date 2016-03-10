@@ -20,6 +20,7 @@ from v21.ha import HA as v21_HA
 from v21.nat import Nat as v21_Nat
 from v21.network import Network as v21_Network
 from v21.session import Session as v21_Session
+from v21.sflow import SFlow as v21_SFlow
 from v21.slb import SLB as v21_SLB
 from v21.system import System as v21_System
 import v30.axapi_http
@@ -28,6 +29,7 @@ from v30.ha import HA as v30_HA
 from v30.nat import Nat as v30_Nat
 from v30.network import Network as v30_Network
 from v30.session import Session as v30_Session
+from v30.sflow import SFlow as v30_SFlow
 from v30.slb import SLB as v30_SLB
 from v30.system import System as v30_System
 
@@ -38,6 +40,7 @@ VERSION_IMPORTS = {
         'Nat': v21_Nat,
         'Network': v21_Network,
         'Session': v21_Session,
+        'SFlow': v21_SFlow,
         'SLB': v21_SLB,
         'System': v21_System,
     },
@@ -47,6 +50,7 @@ VERSION_IMPORTS = {
         'Nat': v30_Nat,
         'Network': v30_Network,
         'Session': v30_Session,
+        'SFlow': v30_SFlow,
         'SLB': v30_SLB,
         'System': v30_System,
         'File': v30_File
@@ -93,3 +97,7 @@ class Client(object):
     @property
     def file(self):
         return VERSION_IMPORTS[self._version]['File'](self)
+
+    @property
+    def sflow(self):
+        return VERSION_IMPORTS[self._version]['SFlow'](self)
