@@ -27,14 +27,14 @@ import urlparse
 import responses as acos_responses
 
 import acos_client
-
+from acos_client import logutils
 
 LOG = logging.getLogger(__name__)
 
 out_hdlr = logging.StreamHandler(sys.stderr)
-out_hdlr.setLevel(logging.DEBUG)
+out_hdlr.setLevel(logging.ERROR)
 LOG.addHandler(out_hdlr)
-LOG.setLevel(logging.DEBUG)
+LOG.setLevel(logging.ERROR)
 
 
 # Monkey patch for ssl connect, for specific TLS version required by
@@ -132,8 +132,8 @@ class HttpClient(object):
 
         LOG.debug("axapi_http: url:     %s", api_url)
         LOG.debug("axapi_http: method:  %s", method)
-        LOG.debug("axapi_http: headers: %s", self.HEADERS)
-        LOG.debug("axapi_http: payload: %s", payload)
+        LOG.debug("axapi_http: headers: %s", logutils.clean(self.HEADERS))
+        LOG.debug("axapi_http: payload: %s", logutils.clean(payload))
 
         http.request(method, api_url, body=payload, headers=self.headers)
 
@@ -150,21 +150,21 @@ class HttpClient(object):
 
     def request(self, method, api_url, params={}, **kwargs):
         LOG.debug("axapi_http: url = %s", api_url)
-        LOG.debug("axapi_http: params = %s", params)
+        LOG.debug("axapi_http: params = %s", logutils.clean(params))
 
         self.headers = self.HEADERS
 
         if params:
             extra_params = kwargs.get('axapi_args', {})
             params_copy = merge_dicts(params, extra_params)
-            LOG.debug("axapi_http: params_all = %s", params_copy)
+            LOG.debug("axapi_http: params_all = %s", logutils.clean(params_copy))
 
             payload = json.dumps(params_copy, encoding='utf-8')
         else:
             try:
                 payload = kwargs.pop('payload', None)
                 self.headers = dict(self.headers, **kwargs.pop('headers', {}))
-                LOG.debug("axapi_http: headers_all = %s", self.headers)
+                LOG.debug("axapi_http: headers_all = %s", logutils.clean(self.headers))
             except KeyError:
                 payload = None
 
@@ -200,16 +200,18 @@ class HttpClient(object):
         if last_e is not None:
             raise e
 
-        LOG.debug("axapi_http: data = %s", data)
+        LOG.debug("axapi_http: data = %s", logutils.clean(data))
 
         # Fixup some broken stuff in an earlier version of the axapi
         # xmlok = ('<?xml version="1.0" encoding="utf-8" ?>'
         #          '<response status="ok"></response>')
         # if data == xmlok:
         #     return {'response': {'status': 'OK'}}
+        # TODO()
         if data in broken_replies:
             data = broken_replies[data]
-            LOG.debug("axapi_http: broken reply, new response: %s", data)
+            LOG.debug("axapi_http: broken reply, new response: %s",
+                      logutils.clean(data))
 
         try:
             r = json.loads(data, encoding='utf-8')

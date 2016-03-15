@@ -12,22 +12,26 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+
+# TODO(mdurrant) - Organize these imports
 import json
 import logging
 import sys
 
 import requests
 
+
 if sys.version_info >= (3, 0):
     import http.client as http_client
 else:
     # Python 2
     import httplib as http_client
-http_client.HTTPConnection.debuglevel = 1
+http_client.HTTPConnection.debuglevel = logging.INFO
 
 import responses as acos_responses
 
 import acos_client
+from acos_client import logutils
 
 LOG = logging.getLogger(__name__)
 
@@ -62,7 +66,7 @@ class HttpClient(object):
                 file_name=None, file_content=None, axapi_args=None, **kwargs):
         LOG.debug("axapi_http: full url = %s", self.url_base + api_url)
         LOG.debug("axapi_http: %s url = %s", method, api_url)
-        LOG.debug("axapi_http: params = %s", json.dumps(params, indent=4))
+        LOG.debug("axapi_http: params = %s", json.dumps(logutils.clean(params), indent=4))
 
         # Update params with axapi_args for currently unsupported configuration of objects
         if axapi_args is not None:
@@ -82,13 +86,13 @@ class HttpClient(object):
         if params:
             params_copy = params.copy()
             # params_copy.update(extra_params)
-            LOG.debug("axapi_http: params_all = %s", params_copy)
+            LOG.debug("axapi_http: params_all = %s", logutils.clean(params_copy))
 
             payload = json.dumps(params_copy, encoding='utf-8')
         else:
             payload = None
 
-        LOG.debug("axapi_http: headers = %s", json.dumps(hdrs, indent=4))
+        LOG.debug("axapi_http: headers = %s", json.dumps(logutils.clean(hdrs), indent=4))
 
         if file_name is not None:
             files = {
@@ -116,7 +120,7 @@ class HttpClient(object):
             else:
                 raise e
 
-        LOG.debug("axapi_http: data = %s", json.dumps(r, indent=4))
+        LOG.debug("axapi_http: data = %s", json.dumps(logutils.clean(r), indent=4))
 
         if 'response' in r and 'status' in r['response']:
             if r['response']['status'] == 'fail':
