@@ -24,3 +24,6 @@ class Action(base.BaseV30):
             }
         }
         self._post("/write/memory/", payload, **kwargs)
+
+    def write_active(self, shared_partition=None, tenant_partition=None, **kwargs):
+        self.write_memory()
