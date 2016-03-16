@@ -17,14 +17,17 @@ import acos_client
 import errors as acos_errors
 import v21.axapi_http
 from v21.ha import HA as v21_HA
+#from v21.interface import Interface as v21_Interface
 from v21.nat import Nat as v21_Nat
 from v21.network import Network as v21_Network
 from v21.session import Session as v21_Session
 from v21.slb import SLB as v21_SLB
 from v21.system import System as v21_System
+
 import v30.axapi_http
 from v30.file import File as v30_File
 from v30.ha import HA as v30_HA
+from v30.interface import Interface as v30_Interface
 from v30.nat import Nat as v30_Nat
 from v30.network import Network as v30_Network
 from v30.session import Session as v30_Session
@@ -43,6 +46,7 @@ VERSION_IMPORTS = {
     },
     '30': {
         'http': v30.axapi_http,
+        'Interface': v30_Interface,
         'HA': v30_HA,
         'Nat': v30_Nat,
         'Network': v30_Network,
@@ -73,6 +77,10 @@ class Client(object):
     @property
     def ha(self):
         return VERSION_IMPORTS[self._version]['HA'](self)
+
+    @property
+    def interface(self):
+        return VERSION_IMPORTS[self._version]['Interface'](self)
 
     @property
     def system(self):
