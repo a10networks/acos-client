@@ -25,5 +25,5 @@ class Action(base.BaseV30):
         }
         self._post("/write/memory/", payload, **kwargs)
 
-    def write_active(self, partitions=[], **kwargs):
+    def activate_and_write(self, partition, **kwargs):
         self.write_memory()
