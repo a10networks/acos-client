@@ -37,10 +37,14 @@ class Action(base.BaseV21):
                           params={"write_memory": write_memory}, **kwargs)
 
     def write_active(self, partitions=[], **kwargs):
+        rv = None
         write_format = "active-partition {0}\r\nwrite memory\r\n"
         post_body = ""
         for p in partitions:
             if p:
                 post_body += write_format.format(p)
-
-        return self._request("POST", "cli.deploy", params=None, payload=post_body, **kwargs)
+        # Perform CLI partition activation/persistence
+        rv = self._request("POST", "cli.deploy", params=None, payload=post_body, **kwargs)
+        # Perform normal persistence
+        self.write_memory()
+        return rv
