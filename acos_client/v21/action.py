@@ -35,3 +35,9 @@ class Action(base.BaseV21):
         write_memory = 1 if write_memory else 0
         return self._post("system.action.reload",
                           params={"write_memory": write_memory}, **kwargs)
+
+    def activate_and_write(self, partition, **kwargs):
+        write_format = "active-partition {0}\r\nwrite memory\r\n"
+        post_body = write_format.format(partition)
+
+        return self._request("POST", "cli.deploy", params=None, payload=post_body, **kwargs)
