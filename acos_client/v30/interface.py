@@ -18,6 +18,7 @@ import base
 class Interface(base.BaseV30):
     def __init__(self, client):
         super(Interface, self).__init__(client)
+        self.iftype = "interface"
         self.url_prefix = "/interface/"
 
     def _url_from_ifnum(self, ifnum=None):
@@ -26,7 +27,8 @@ class Interface(base.BaseV30):
     def _ifnum_to_str(self, ifnum=None):
         return str(ifnum if ifnum else "")
 
-    def _build_payload(self, ifnum=None, ip_address=None, dhcp=True):
+    def _build_payload(self, ifnum=None, ip_address=None, dhcp=True, enable=True, speed="auto",
+                       **kwargs):
         rv = {
             "interface": {
                 "ip": {
@@ -39,8 +41,8 @@ class Interface(base.BaseV30):
 
         if ip_address:
             rv["interface"]["ip"]["address"] = ip_address
-        elif dhcp:
-            rv["interface"]["ip"]["dhcp"] = 1 if dhcp else 0
+        else:
+            rv["interface"]["ip"]["dhcp"] = 1 if dhcp is True else 0
 
         return rv
 
@@ -54,13 +56,17 @@ class Interface(base.BaseV30):
         url = self.url_prefix + self._ifnum_to_str(ifnum)
         return self._delete(url)
 
-    def create(self, ifnum, ip_address=None, dhcp=True):
-        payload = self._build_payload(ifnum, ip_address, dhcp)
-        return self._post(self.url_prefix + self._ifnum_to_str(ifnum))
+    def create(self, ifnum, ip_address=None, dhcp=True, enable=True, speed="auto"):
+        payload = self._build_payload(ifnum=ifnum, ip_address=ip_address,
+                                      dhcp=dhcp, enabled=enable, speed=speed)
+        return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
+                          payload)
 
     def update(self, ifnum, ip_address=None, dhcp=True, enable=True, speed="auto"):
-        payload = self._build_payload(ifnum, ip_address, dhcp)
-        return self._post(self.url_prefix + self._ifnum_to_str(ifnum), payload)
+        payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, dhcp=dhcp,
+                                      enable=enable, speed=speed)
+        return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
+                          payload)
 
     @property
     def ethernet(self):
@@ -77,10 +83,9 @@ class EthernetInterface(Interface):
         self.iftype = "ethernet"
         self.url_prefix = "{0}{1}/".format(self.url_prefix, self.iftype)
 
-
-    def _build_payload(self, ifnum, ip_address=None, dhcp=True):
-        rv = super(EthernetInterface, self)._build_payload(ifnum, ip_address, dhcp)
-        # Allows us to use the Interface class for non-ethernet ifs
+    def _build_payload(self, **kwargs):
+        rv = super(EthernetInterface, self)._build_payload(**kwargs)
+        # Allows us to use the Interface class for ethernet ifs
         rv[self.iftype] = rv.pop("interface")
         return rv
 
@@ -91,8 +96,8 @@ class ManagementInterface(Interface):
         self.iftype = "management"
         self.url_prefix = "{0}{1}/".format(self.url_prefix, self.iftype)
 
-    def _build_payload(self, ifnum, ip_address=None, dhcp=True):
-        rv = super(ManagementInterface, self)._build_payload(None, ip_address, dhcp)
-        # Allows us to use the Interface class for non-management ifs
+    def _build_payload(self, **kwargs):
+        rv = super(ManagementInterface, self)._build_payload(**kwargs)
+        # Allows us to use the Interface class for management ifs
         rv[self.iftype] = rv.pop("interface")
         return rv
