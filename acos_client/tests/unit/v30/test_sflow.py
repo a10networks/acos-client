@@ -24,14 +24,19 @@ class TestSFlow(unittest.TestCase):
         self.target = sflow.SFlow(self.client)
 
     def test_collector_ip_create(self):
-        self.target.collector.ip.create("127.0.0.1", 4242)
-        expected = {"sflow-collector": {"ip": "127.0.0.1", "port": 4242}}
+        ip_address = "127.0.0.1"
+        port = 4242
+        self.target.collector.ip.create(ip_address, port)
+        expected = {"ip": [{"addr": ip_address, "port": int(port)}]}
         actual = self.client.http.request.call_args[0]
         self.assertTrue(expected in actual)
 
     def test_collector_ip_get(self):
-        self.target.collector.ip.get("127.0.0.1", 4242)
-        expected = "/axapi/v3/sflow/collector/ip/ip/127.0.0.1+4242"
+        ip_address = "127.0.0.1"
+        port = 4242
+
+        self.target.collector.ip.get(ip_address, port)
+        expected = "/axapi/v3/sflow/collector/ip/{0}+{1}".format(ip_address, port)
         actual = self.client.http.request.call_args[0]
         self.assertTrue(expected in actual)
 

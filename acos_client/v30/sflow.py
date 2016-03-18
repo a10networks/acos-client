@@ -55,7 +55,7 @@ class SFlowSetting(base.BaseV30):
 
 
 class SFlowCollectorIP(base.BaseV30):
-    url_prefix = "/sflow/collector/ip/"
+    url_prefix = "/sflow/collector/ip"
 
     def create(self, ip_address, port, **kwargs):
         params = {
@@ -70,7 +70,7 @@ class SFlowCollectorIP(base.BaseV30):
         return self._post(self.url_prefix, params, **kwargs)
 
     def get(self, ip_address, port, **kwargs):
-        url = "{0}/ip/{1}+{2}".format(self.url_prefix, ip_address, port)
+        url = "{0}/{1}+{2}".format(self.url_prefix, ip_address, port)
         return self._get(url, **kwargs)
 
 
