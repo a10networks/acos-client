@@ -120,9 +120,8 @@ class VirtualPort(base.BaseV30):
 
     def _set_sampling_enable(self, sample_list, dest_obj):
         dest_array = []
-        if len(sample_list) > 0:
-            for x in sample_list:
-                entry = {"counters1": x}
-                dest_array.append(entry)
+        for x in sample_list:
+            entry = {"counters1": x}
+            dest_array.append(entry)
 
-            dest_obj["port"]["sampling-enable"] = dest_array
+        dest_obj["port"]["sampling-enable"] = dest_array
