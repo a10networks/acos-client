@@ -1,4 +1,4 @@
-# Copyright 2014,  Jeff Buttars,  A10 Networks.
+# Copyright 2014-2016 A10 Networks.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -14,6 +14,7 @@
 
 import acos_client.v30.base as base
 
+from common import SLBCommon
 from hm import HealthMonitor
 from server import Server
 from service_group import ServiceGroup
@@ -45,3 +46,7 @@ class SLB(base.BaseV30):
     @property
     def virtual_server(self):
         return VirtualServer(self.client)
+
+    @property
+    def common(self):
+        return SLBCommon(self.client)
