@@ -72,8 +72,9 @@ class VirtualPort(base.BaseV30):
             }, exclude=['template-persist-source-ip', 'template-persist-cookie'])
         }
 
-        sampling_enable = kwargs.get('sampling_enable', [])
-        self._set_sampling_enable(sampling_enable, params)
+        sampling_enable = kwargs.get('sampling_enable')
+        if sampling_enable is not None:
+            self._set_sampling_enable(sampling_enable, params)
 
         url = self.url_server_tmpl.format(name=virtual_server_name)
         if update:
