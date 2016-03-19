@@ -69,6 +69,11 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    1023460352: {
+        '*': {
+            '*': ae.NotFound
+        }
+    },
     1023475722: {
         '*': {
             '*': ae.NotFound
