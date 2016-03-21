@@ -27,12 +27,23 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    419495936: {
+        '*': {
+            '/axapi/v3/logoff': None,
+            '*': ae.InvalidSessionID
+        }
+    },
     520749062: {
         '*': {
             '*': ae.NotFound
         }
     },
     654311495: {
+        '*': {
+            '*': ae.Exists
+        }
+    },
+    67240011: {
         '*': {
             '*': ae.Exists
         }
@@ -69,9 +80,37 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    1023451145: {
+        '*': {
+            '*': ae.Exists
+        }
+    },
+    1023459393: {
+        '*': {
+            '*': ae.InvalidParameter
+        }
+    },
+    1023459335: {
+        '*': {
+            '*': ae.Exists
+        }
+    },
+    1023460352: {
+        'DELETE': {
+            '*': None
+        },
+        '*': {
+            '*': ae.NotFound
+        }
+    },
     1023475722: {
         '*': {
             '*': ae.NotFound
+        }
+    },
+    1023524874: {
+        '*': {
+            '*': ae.AxapiJsonFormatError
         }
     },
     1207960052: {
@@ -85,17 +124,20 @@ RESPONSE_CODES = {
             '*': ae.NotFound
         }
     },
-    1023475727: {
+    1023443968: {
+        'DELETE': {
+            '*': None
+        },
         '*': {
             '*': ae.NotFound
         }
     },
-    67240011: {
+    1023451144: {
         '*': {
             '*': ae.Exists
         }
     },
-    1023443968: {
+    1023475727: {
         '*': {
             '*': ae.NotFound
         }
