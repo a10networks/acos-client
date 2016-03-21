@@ -27,6 +27,12 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    419495936: {
+        '*': {
+            '/axapi/v3/logoff': None,
+            '*': ae.InvalidSessionID
+        }
+    },
     520749062: {
         '*': {
             '*': ae.NotFound
