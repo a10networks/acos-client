@@ -92,6 +92,11 @@ RESPONSE_CODES = {
             '*': ae.NotFound
         }
     },
+    1023524874: {
+        '*': {
+            '*': ae.AxapiJsonFormatError
+        }
+    },
     1207960052: {
         '*': {
             '/axapi/v3/logoff': None,

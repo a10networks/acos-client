@@ -40,14 +40,14 @@ instances = {
     #     'password': 'i-9276ff9f',
     #     'axapi': '21',
     # }
-    '2.7.2': {
-        'host': 'dougw-softax-272',
-        'port': 8443,
-        'protocol': 'https',
-        'user': 'admin',
-        'password': 'a10',
-        'axapi': '21',
-    },
+#    '2.7.2': {
+#        'host': 'dougw-softax-272',
+#        'port': 8443,
+#        'protocol': 'https',
+#        'user': 'admin',
+#        'password': 'a10',
+#        'axapi': '21',
+#    },
     # '2.7.1': {
     #     'host': 'dougw-softax-271',
     #     'port': 8443,
@@ -72,6 +72,22 @@ instances = {
     #    'password': 'a10',
     #    'axapi': '30',
     # },
+    # '4.0.1': {
+    #    'host': '10.48.7.77',
+    #    'port': 443,
+    #    'protocol': 'https',
+    #    'user': 'admin',
+    #    'password': 'a10',
+    #    'axapi': '30',
+    # },
+    '4.1.0': {
+       'host': '10.48.7.74',
+       'port': 443,
+       'protocol': 'https',
+       'user': 'admin',
+       'password': 'a10',
+       'axapi': '30',
+    },
 }
 
 partitions = [
