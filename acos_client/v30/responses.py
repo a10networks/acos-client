@@ -69,7 +69,15 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    1023459335: {
+        '*': {
+            '*': ae.Exists
+        }
+    },
     1023460352: {
+        'DELETE': {
+            '*': None
+        },
         '*': {
             '*': ae.NotFound
         }
