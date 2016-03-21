@@ -85,6 +85,11 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    1023459393: {
+        '*': {
+            '*': ae.InvalidParameter
+        }
+    },
     1023459335: {
         '*': {
             '*': ae.Exists

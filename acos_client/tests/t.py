@@ -39,22 +39,38 @@ instances = {
     #    'password': 'a10',
     #    'axapi': '30',
     # },
-    '4.0.3-P1': {
-        'host': '10.48.7.78',
+    # '4.0.3-P1': {
+    #     'host': '10.48.7.78',
+    #     'port': 443,
+    #     'protocol': 'https',
+    #     'user': 'admin',
+    #     'password': 'a10',
+    #     'axapi': '30',
+    # },
+    # '4.0.3-GA': {
+    #     'host': '10.48.7.80',
+    #     'port': 443,
+    #     'protocol': 'https',
+    #     'user': 'admin',
+    #     'password': 'a10',
+    #     'axapi': '30',
+    # },
+    '4.0.1-GA-SP11': {
+        'host': '10.48.7.79',
         'port': 443,
         'protocol': 'https',
         'user': 'admin',
         'password': 'a10',
         'axapi': '30',
     },
-    '4.1.0': {
-        'host': '10.48.7.74',
-        'port': 443,
-        'protocol': 'https',
-        'user': 'admin',
-        'password': 'a10',
-        'axapi': '30',
-    },
+    # '4.1.0': {
+    #     'host': '10.48.7.74',
+    #     'port': 443,
+    #     'protocol': 'https',
+    #     'user': 'admin',
+    #     'password': 'a10',
+    #     'axapi': '30',
+    # },
 }
 
 partitions = [
