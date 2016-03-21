@@ -41,9 +41,9 @@ class SFlowSetting(base.BaseV30):
                packet_sampling_rate, counter_polling_interval, **kwargs):
         params = {
             "setting": {
-                "max-header": max_header,
-                "source-ip-use-mgmt": int(source_ip_use_mgmt),
-                "packet-sampling-rate": packet_sampling_rate,
+                # "max-header": max_header,
+                # "source-ip-use-mgmt": int(source_ip_use_mgmt),
+                # "packet-sampling-rate": packet_sampling_rate,
                 "counter-polling-interval": counter_polling_interval
             }
         }
