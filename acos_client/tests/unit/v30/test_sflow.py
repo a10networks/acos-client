@@ -41,12 +41,9 @@ class TestSFlow(unittest.TestCase):
         self.assertTrue(expected in actual)
 
     def test_setting_create(self):
-        self.target.setting.create(60, False, 20, 600)
+        self.target.setting.create(None, None, None, 1)
         expected = {'setting': {
-                    'source-ip-use-mgmt': 0,
-                    'counter-polling-interval': 600,
-                    'packet-sampling-rate': 20,
-                    'max-header': 60}}
+                    'counter-polling-interval': 1}}
         actual = self.client.http.request.call_args[0]
         self.assertTrue(expected in actual)
 
