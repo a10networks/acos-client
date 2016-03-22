@@ -48,18 +48,6 @@ class TestInterface(unittest.TestCase):
     def test_interface_create_dhcp_positive(self):
         self._test_interface_create_dhcp()
 
-    def test_interface_create_ipaddress_negative(self):
-        raise NotImplementedError()
-
-    def test_interface_create_ipaddress_positive(self):
-        raise NotImplementedError()
-
-    def test_interface_delete(self):
-        raise NotImplementedError()
-
-    def test_interface_update(self):
-        raise NotImplementedError()
-
 
 class TestEthernetInterface(TestInterface):
         def setUp(self):
