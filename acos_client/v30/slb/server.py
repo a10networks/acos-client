@@ -28,6 +28,7 @@ class Server(base.BaseV30):
             "server": {
                 "name": name,
                 "host": ip_address,
+                "action": kwargs.get('admin_state'),
             }
         }
 
@@ -40,6 +41,25 @@ class Server(base.BaseV30):
             raise acos_errors.Exists()
 
         return self._post(self.url_prefix, params, **kwargs)
+
+    def update(self, name, ip_address, **kwargs):
+        params = {
+            "server": {
+                "name": name,
+                "host": ip_address,
+                "action": kwargs.get('admin_state'),
+            }
+        }
+
+        try:
+            self.get(name, **kwargs)
+        except acos_errors.NotFound:
+            raise acos_errors.NotFound()
+
+
+
+
+        return self._post(self.url_prefix + name, params, **kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)
