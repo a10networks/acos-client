@@ -17,6 +17,7 @@ import acos_client
 import errors as acos_errors
 import v21.axapi_http
 from v21.ha import HA as v21_HA
+from v21.interface import Interface as v21_Interface
 from v21.nat import Nat as v21_Nat
 from v21.network import Network as v21_Network
 from v21.session import Session as v21_Session
