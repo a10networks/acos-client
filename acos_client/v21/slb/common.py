@@ -15,5 +15,5 @@
 import acos_client.v30.base as base
 
 
-class SLBCommon(base.BaseV30):
-    pass
+class SLBCommon(base.BaseV21):
+    raise NotImplementedError("slb.common support is not available using AXAPI v2.1")
