@@ -38,6 +38,7 @@ VERSION_IMPORTS = {
     '21': {
         'http': v21.axapi_http,
         'HA': v21_HA,
+        'Interface': v21_Interface,
         'Nat': v21_Nat,
         'Network': v21_Network,
         'Session': v21_Session,

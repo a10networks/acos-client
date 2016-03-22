@@ -16,12 +16,12 @@ import base
 
 
 class Interface(base.BaseV21):
-    raise NotImplementedError("Interface modification not enabled in AXAPI v21")
+    pass
 
 
 class EthernetInterface(Interface):
-    raise NotImplementedError("Interface modification not enabled in AXAPI v21")
+    pass
 
 
 class ManagementInterface(Interface):
-    raise NotImplementedError("Interface modification not enabled in AXAPI v21")
+    pass
