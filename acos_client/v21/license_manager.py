@@ -15,4 +15,16 @@
 import base
 
 class LicenseManager(base.BaseV21):
-    raise NotImplementedError("LicenseManager is not yet supported using AXAPI v2.1")
+    """v2.1 LicenseManager is not yet supported"""
+    def create(self, host_list=[], serial=None, instance_name=None,  use_mgmt_port=False,
+               interval=None, bandwidth_base=None, bandwidth_unrestricted=None):
+        raise NotImplementedError("LicenseManager is not yet supported using AXAPI v2.1")
+
+    def get(self):
+        raise NotImplementedError("LicenseManager is not yet supported using AXAPI v2.1")
+
+    def connect(self, connect=False):
+        raise NotImplementedError("LicenseManager is not yet supported using AXAPI v2.1")
+
+    def delete(self):
+        raise NotImplementedError("LicenseManager is not yet supported using AXAPI v2.1")
