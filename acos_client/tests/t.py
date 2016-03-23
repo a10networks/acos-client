@@ -56,7 +56,7 @@ instances = {
     #     'axapi': '30',
     # },
     '4.0.1-GA-SP11': {
-        'host': '10.48.7.91',
+        'host': '10.48.7.79',
         'port': 443,
         'protocol': 'https',
         'user': 'admin',
