@@ -48,6 +48,29 @@ class TestInterface(unittest.TestCase):
     def test_interface_create_dhcp_positive(self):
         self._test_interface_create_dhcp()
 
+    def test_interface_create_ipaddress(self):
+        ifnum = 1
+        ip_address = "128.0.0.1"
+        ip_netmask = "255.255.255.0"
+        self.target.create(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask)
+        self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
+                                                    mock.ANY, mock.ANY)
+
+    def test_interface_delete(self):
+        ifnum = 1
+        self.target.delete(1)
+        self.client.http.request.assert_called_with("DELETE", self.url_prefix + str(ifnum),
+                                                    mock.ANY, mock.ANY)
+
+    def test_interface_update(self):
+        ifnum = 1
+        ip_address = "128.0.0.1"
+        ip_netmask = "255.255.255.0"
+
+        self.target.update(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask)
+        self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
+                                                    mock.ANY, mock.ANY)
+
 
 class TestEthernetInterface(TestInterface):
         def setUp(self):

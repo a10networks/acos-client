@@ -27,8 +27,9 @@ class Interface(base.BaseV30):
     def _ifnum_to_str(self, ifnum=None):
         return str(ifnum if ifnum else "")
 
-    def _build_payload(self, ifnum=None, ip_address=None, dhcp=True, enable=True, speed="auto",
-                       **kwargs):
+    def _build_payload(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=True, enable=True,
+                       speed="auto", **kwargs):
+        # TODO(mdurrant) - Check ip/netmask for validity.
         rv = {
             "interface": {
                 "ip": {
@@ -38,9 +39,10 @@ class Interface(base.BaseV30):
 
         if ifnum:
             rv["interface"]["ifnum"] = ifnum
-
-        if ip_address:
-            rv["interface"]["ip"]["address"] = ip_address
+        if ip_address and not dhcp:
+            rv["interface"]["ip"]["address-list"] = [
+                {"ipv4-address": ip_address, "ipv4-netmask": ip_netmask}
+            ]
         else:
             rv["interface"]["ip"]["dhcp"] = 1 if dhcp is True else 0
 
@@ -56,15 +58,16 @@ class Interface(base.BaseV30):
         url = self.url_prefix + self._ifnum_to_str(ifnum)
         return self._delete(url)
 
-    def create(self, ifnum, ip_address=None, dhcp=True, enable=True, speed="auto"):
-        payload = self._build_payload(ifnum=ifnum, ip_address=ip_address,
+    def create(self, ifnum, ip_address=None, ip_netmask=None, dhcp=True, enable=True, speed="auto"):
+
+        payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
                                       dhcp=dhcp, enabled=enable, speed=speed)
         return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
                           payload)
 
-    def update(self, ifnum, ip_address=None, dhcp=True, enable=True, speed="auto"):
-        payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, dhcp=dhcp,
-                                      enable=enable, speed=speed)
+    def update(self, ifnum, ip_address=None, ip_netmask=None, dhcp=True, enable=True, speed="auto"):
+        payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
+                                      dhcp=dhcp, enable=enable, speed=speed)
         return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
                           payload)
 
