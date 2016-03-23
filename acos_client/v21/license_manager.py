@@ -14,6 +14,7 @@
 
 import base
 
+
 class LicenseManager(base.BaseV21):
     """v2.1 LicenseManager is not yet supported"""
     def create(self, host_list=[], serial=None, instance_name=None,  use_mgmt_port=False,

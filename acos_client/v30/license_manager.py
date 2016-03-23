@@ -44,6 +44,25 @@ class LicenseManager(base.BaseV30):
                                       bandwidth_base, bandwidth_unrestricted)
         return self._post(self.url_base, payload)
 
+    def update(self, host_list=[], serial=None, instance_name=None, use_mgmt_port=False,
+               interval=None, bandwidth_base=None, bandwidth_unrestricted=None):
+        """Form a complex number.
+
+        Keyword arguments:
+        instance_name -- license manager instance name
+        host_list -- list(dict) a list of dictionaries of the format:
+            {'ip': '127.0.0.1', 'port': 443}
+        serial - (str) appliance serial number
+        use_mgmt_port - (bool) use management for license interactions
+        interval - (int) 1=Monthly, 2=Daily, 3=Hourly
+        bandwidth_base - (int) Configure feature bandwidth base (Mb)
+            Valid range - 10-102400
+        bandwidth_unrestricted - (bool) Set the bandwidth to maximum
+        """
+
+        return self.create(host_list, serial, instance_name, use_mgmt_port,
+                           interval, bandwidth_base, bandwidth_unrestricted)
+
     def get(self):
         return self._get(self.url_base)
 
@@ -67,7 +86,7 @@ class LicenseManager(base.BaseV30):
             rv["license-manager"]["host-list"] = hosts
 
         self._set_if_set(instance_name, rv["license-manager"], "instance-name")
-        self._set_if_set(serial, rv["license-manager"], "serial")
+        self._set_if_set(serial, rv["license-manager"], "sn")
         self._set_if_set(use_mgmt_port, rv["license-manager"], "use-mgmt-port")
         self._set_if_set(interval, rv["license-manager"], "interval")
         self._set_if_set(bandwidth_base, rv["license-manager"], "bandwidth-base")
@@ -81,6 +100,3 @@ class LicenseManager(base.BaseV30):
     def _set_if_set(self, src, dest, dest_key):
         if src is not None:
             dest[dest_key] = src
-
-    def delete(self):
-        self._delete(self.url_base)

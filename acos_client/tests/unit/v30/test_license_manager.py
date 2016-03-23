@@ -72,7 +72,7 @@ class TestLicenseManager(unittest.TestCase):
 
         result = self._test_create(hosts, serial, payload)
 
-        actual = result["params"]["license-manager"]["serial"]
+        actual = result["params"]["license-manager"]["sn"]
         self.assertEqual(serial, actual)
 
     def test_get(self):
@@ -101,8 +101,14 @@ class TestLicenseManager(unittest.TestCase):
         self.assertEqual(URL_BASE + "/connect", url)
         self.assertEqual(params, payload)
 
-    def test_delete(self):
-        self.target.delete()
+    def test_update(self):
+        hosts = [{"ip": "127.0.0.2", "port": 443}]
+        serial = "sn1234567890"
+
+        payload = self.target._build_payload(hosts, serial)
+        self.target.create(hosts, serial)
         ((method, url, params, header), kwargs) = self.client.http.request.call_args
-        self.assertEqual("DELETE", method)
+        self.assertEqual("POST", method)
         self.assertEqual(URL_BASE, url)
+        self.assertEqual(payload, params)
+        return {"method": method, "url": url, "params": params, "header": header, "kwargs": kwargs}
