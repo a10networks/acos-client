@@ -56,7 +56,7 @@ instances = {
     #     'axapi': '30',
     # },
     '4.0.1-GA-SP11': {
-        'host': '10.48.7.79',
+        'host': '10.48.7.91',
         'port': 443,
         'protocol': 'https',
         'user': 'admin',
@@ -522,6 +522,22 @@ def run_all(version, ax, partition, pmap):
         service_group_name='pfoobar',
         c_pers_name='cp1')
 
+    print("=============================================================")
+    print("")
+    print("License Manager")
+    print("... Create")
+    lm_host = {"ip": "10.200.0.1", "port": 443}
+    c.license_manager.create([lm_host])
+    print("... Get")
+    c.license_manager.get()
+    print("...Update")
+    lm_host["ip"] = "10.200.0.2"
+    c.license_manager.update([lm_host])
+
+
+    print("... Get updated")
+    lm_u = c.license_manager.get()
+ 
     print("=============================================================")
     print("")
     print("About half the time, delete the partition!")
