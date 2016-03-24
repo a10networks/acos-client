@@ -25,52 +25,37 @@ import acos_client
 
 instances = {
     # '2.7.2': {
-    #     'host': '10.10.100.20',
-    #     'port': 8443,
+    #     'host': '10.48.7.98',
+    #     'port': 443,
     #     'protocol': 'https',
     #     'user': 'admin',
     #     'password': 'a10',
     #     'axapi': '21',
-    # '4.0.1': {
-    #    'host': '10.48.7.77',
-    #    'port': 443,
-    #    'protocol': 'https',
-    #    'user': 'admin',
-    #    'password': 'a10',
-    #    'axapi': '30',
     # },
-    # '4.0.3-P1': {
-    #     'host': '10.48.7.78',
-    #     'port': 443,
-    #     'protocol': 'https',
-    #     'user': 'admin',
-    #     'password': 'a10',
-    #     'axapi': '30',
-    # },
-    # '4.0.3-GA': {
-    #     'host': '10.48.7.80',
-    #     'port': 443,
-    #     'protocol': 'https',
-    #     'user': 'admin',
-    #     'password': 'a10',
-    #     'axapi': '30',
-    # },
-    '4.0.1-GA-SP11': {
-        'host': '10.48.7.79',
+    '4.0.1': {
+        'host': '10.48.7.100',
         'port': 443,
         'protocol': 'https',
         'user': 'admin',
         'password': 'a10',
         'axapi': '30',
     },
-    # '4.1.0': {
-    #     'host': '10.48.7.74',
-    #     'port': 443,
-    #     'protocol': 'https',
-    #     'user': 'admin',
-    #     'password': 'a10',
-    #     'axapi': '30',
-    # },
+    '4.0.3-GA': {
+        'host': '10.48.7.99',
+        'port': 443,
+        'protocol': 'https',
+        'user': 'admin',
+        'password': 'a10',
+        'axapi': '30',
+    },
+    '4.1.0': {
+        'host': '10.48.7.101',
+        'port': 443,
+        'protocol': 'https',
+        'user': 'admin',
+        'password': 'a10',
+        'axapi': '30',
+    },
 }
 
 partitions = [
