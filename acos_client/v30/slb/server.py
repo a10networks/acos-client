@@ -23,11 +23,12 @@ class Server(base.BaseV30):
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
 
-    def create(self, name, ip_address, **kwargs):
+    def create(self, name, ip_address, status=1, **kwargs):
         params = {
             "server": {
                 "name": name,
                 "host": ip_address,
+                "action": 'enable' if status else 'disable',
             }
         }
 
@@ -40,6 +41,19 @@ class Server(base.BaseV30):
             raise acos_errors.Exists()
 
         return self._post(self.url_prefix, params, **kwargs)
+
+    def update(self, name, ip_address, status=1, **kwargs):
+        params = {
+            "server": {
+                "name": name,
+                "host": ip_address,
+                "action": 'enable' if status else 'disable',
+            }
+        }
+
+        self.get(name, **kwargs)
+        return self._post(self.url_prefix + name, params, **kwargs)
+
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)
