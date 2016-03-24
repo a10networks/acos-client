@@ -27,7 +27,7 @@ class LicenseManager(base.BaseV30):
 
     def create(self, host_list=[], serial=None, instance_name=None,  use_mgmt_port=False,
                interval=None, bandwidth_base=None, bandwidth_unrestricted=None):
-        """Form a complex number.
+        """Creates a license manager entry
 
         Keyword arguments:
         instance_name -- license manager instance name
@@ -40,13 +40,16 @@ class LicenseManager(base.BaseV30):
             Valid range - 10-102400
         bandwidth_unrestricted - (bool) Set the bandwidth to maximum
         """
-        payload = self._build_payload(host_list, serial, instance_name, use_mgmt_port,
-                                      interval, bandwidth_base, bandwidth_unrestricted)
+        payload = self._build_payload(host_list=host_list, serial=serial,
+                                      instance_name=instance_name,
+                                      use_mgmt_port=use_mgmt_port,
+                                      interval=interval, bandwidth_base=bandwidth_base,
+                                      bandwidth_unrestricted=bandwidth_unrestricted)
         return self._post(self.url_base, payload)
 
     def update(self, host_list=[], serial=None, instance_name=None, use_mgmt_port=False,
                interval=None, bandwidth_base=None, bandwidth_unrestricted=None):
-        """Form a complex number.
+        """Update a license manager entry
 
         Keyword arguments:
         instance_name -- license manager instance name
@@ -60,8 +63,10 @@ class LicenseManager(base.BaseV30):
         bandwidth_unrestricted - (bool) Set the bandwidth to maximum
         """
 
-        return self.create(host_list, serial, instance_name, use_mgmt_port,
-                           interval, bandwidth_base, bandwidth_unrestricted)
+        return self.create(host_list=host_list, serial=serial, instance_name=instance_name,
+                           use_mgmt_port=use_mgmt_port,
+                           interval=interval, bandwidth_base=bandwidth_base,
+                           bandwidth_unrestricted=bandwidth_unrestricted)
 
     def get(self):
         return self._get(self.url_base)
