@@ -99,5 +99,9 @@ class Client(object):
         return VERSION_IMPORTS[self._version]['File'](self)
 
     @property
+    def sflow(self):
+        return VERSION_IMPORTS[self._version]['SFlow'](self)
+
+    @property
     def license_manager(self):
         return VERSION_IMPORTS[self._version]["LicenseManager"](self)

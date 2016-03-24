@@ -41,7 +41,7 @@ class LicenseManager(base.BaseV30):
         bandwidth_unrestricted - (bool) Set the bandwidth to maximum
         """
         payload = self._build_payload(host_list, serial, instance_name, use_mgmt_port,
-                                      bandwidth_base, bandwidth_unrestricted)
+                                      interval, bandwidth_base, bandwidth_unrestricted)
         return self._post(self.url_base, payload)
 
     def update(self, host_list=[], serial=None, instance_name=None, use_mgmt_port=False,
@@ -70,7 +70,7 @@ class LicenseManager(base.BaseV30):
         url = self.url_base + "/connect"
         payload = {
             "connect": {
-                "connect": 1 if connect else 0
+                "connect": 1 if connect else 0,
             }
         }
         return self._post(url, payload)
