@@ -58,14 +58,16 @@ class Interface(base.BaseV30):
         url = self.url_prefix + self._ifnum_to_str(ifnum)
         return self._delete(url)
 
-    def create(self, ifnum, ip_address=None, ip_netmask=None, dhcp=True, enable=True, speed="auto"):
+    def create(self, ifnum, ip_address=None, ip_netmask=None, dhcp=True, enable=True,
+               speed="auto"):
 
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
                                       dhcp=dhcp, enabled=enable, speed=speed)
         return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
                           payload)
 
-    def update(self, ifnum, ip_address=None, ip_netmask=None, dhcp=True, enable=True, speed="auto"):
+    def update(self, ifnum, ip_address=None, ip_netmask=None, dhcp=True, enable=True,
+               speed="auto"):
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
                                       dhcp=dhcp, enable=enable, speed=speed)
         return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
@@ -103,4 +105,24 @@ class ManagementInterface(Interface):
         rv = super(ManagementInterface, self)._build_payload(**kwargs)
         # Allows us to use the Interface class for management ifs
         rv[self.iftype] = rv.pop("interface")
+        default_gateway = kwargs.get("default_gateway")
+        if default_gateway:
+            rv[self.iftype]["ip"]["default-gateway"] = default_gateway
+
         return rv
+
+    def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=True, enable=True,
+               speed="auto", default_gateway=None):
+        payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
+                                      dhcp=dhcp, enabled=enable, speed=speed,
+                                      default_gateway=default_gateway)
+        return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
+                          payload)
+
+    def update(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=True, enable=True,
+               speed="auto", default_gateway=None):
+        payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
+                                      dhcp=dhcp, enable=enable, speed=speed,
+                                      default_gateway=default_gateway)
+        return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
+                          payload)
