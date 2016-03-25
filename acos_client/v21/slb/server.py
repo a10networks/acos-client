@@ -27,6 +27,7 @@ class Server(base.BaseV21):
             "server": {
                 "name": name,
                 "host": ip_address,
+                "status": kwargs.get('status', 1)
             }
         }
         self._post("slb.server.create", params, **kwargs)

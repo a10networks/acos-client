@@ -80,12 +80,14 @@ class MockPair(unittest.TestCase):
             if self.params is not None:
                 for name, args, kwargs in self._mock.mock_calls:
                     if args and len(args) > 2 and args[2].__class__ == str:
+                        print("json = %s" % args[2])
                         if json.loads(args[2]) == self.params:
                             validated = True
                     else:
                         validated = True
             else:
                 validated = True
+            print("params = %s" % self.params)
             self.assertTrue(validated)
 
 
@@ -186,7 +188,7 @@ class ServerDeleteNotFound(ServerDelete):
 
 class ServerCreate(Server):
     action = 'slb.server.create'
-    params = {'server': {'host': '192.168.2.254', 'name': 's1'}}
+    params = {'server': {'host': '192.168.2.254', "status": 1, 'name': 's1'}}
 
 
 class ServerCreateExists(ServerCreate):
