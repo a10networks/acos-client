@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client.errors as ae
 import acos_client.v30.base as base
 
 
@@ -55,9 +56,17 @@ class VirtualPort(base.BaseV30):
         url = self.url_server_tmpl.format(name=virtual_server_name)
         return self._get(url, **kwargs)
 
+    def get(self, virtual_server_name, name, protocol, port):
+        url = self.url_server_tmpl.format(name=virtual_server_name)
+        url += self.url_port_tmpl.format(
+            port_number=port, protocol=protocol
+        )
+        return self._get(url)
+
     def _set(self, virtual_server_name, name, protocol, port,
              service_group_name,
              s_pers_name=None, c_pers_name=None, stats=0, update=False,
+             exclude_minimize=[],
              **kwargs):
 
         params = {
@@ -69,7 +78,7 @@ class VirtualPort(base.BaseV30):
                 "template-persist-source-ip": s_pers_name,
                 "template-persist-cookie": c_pers_name,
                 "extended-stats": stats
-            }, exclude=['template-persist-source-ip', 'template-persist-cookie'])
+            }, exclude=exclude_minimize)
         }
 
         url = self.url_server_tmpl.format(name=virtual_server_name)
@@ -90,9 +99,16 @@ class VirtualPort(base.BaseV30):
     def update(self, virtual_server_name, name, protocol, port,
                service_group_name,
                s_pers_name=None, c_pers_name=None, status=1, **kwargs):
+        vp = self.get(virtual_server_name, name, protocol, port)
+        if vp is None:
+            raise ae.NotFound()
+
+        exclu = ['template-persist-source-ip', 'template-persist-cookie']
         return self._set(virtual_server_name,
                          name, protocol, port, service_group_name,
-                         s_pers_name, c_pers_name, status, True, **kwargs)
+                         s_pers_name, c_pers_name, status, True,
+                         exclude_minimize=exclu,
+                         **kwargs)
 
     def delete(self, virtual_server_name, name, protocol, port):
         url = self.url_server_tmpl.format(name=virtual_server_name)

@@ -335,6 +335,7 @@ def run_all(ax, partition, pmap):
                                       service_group_name="pfoobar",
                                       protocol=c.slb.virtual_server.vport.HTTP,
                                       port='80')
+    c.slb.virtual_server.vport.get("vip3", )
     try:
         c.slb.virtual_server.vport.create(
             "vip3", "vip3_VPORT",
