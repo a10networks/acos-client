@@ -15,6 +15,7 @@
 #    under the License.
 
 
+import argparse
 import random
 import sys
 import traceback
@@ -23,64 +24,42 @@ sys.path.append(".")
 
 import acos_client
 
-instances = {
-    # '2.7.2': {
-    #     'host': '10.48.7.98',
-    #     'port': 443,
-    #     'protocol': 'https',
-    #     'user': 'admin',
-    #     'password': 'a10',
-    #     'axapi': '21',
-    # },
-    '4.0.1': {
-        'host': '10.48.7.100',
-        'port': 443,
-        'protocol': 'https',
-        'user': 'admin',
-        'password': 'a10',
-        'axapi': '30',
-    },
-    '4.0.3-GA': {
-        'host': '10.48.7.99',
-        'port': 443,
-        'protocol': 'https',
-        'user': 'admin',
-        'password': 'a10',
-        'axapi': '30',
-    },
-    '4.1.0': {
-        'host': '10.48.7.101',
-        'port': 443,
-        'protocol': 'https',
-        'user': 'admin',
-        'password': 'a10',
-        'axapi': '30',
-    },
-}
 
-partitions = [
-    {
+parser = argparse.ArgumentParser(description='acos-client smoke test')
+parser.add_argument('host')
+parser.add_argument('--port', type=int, default=443)
+parser.add_argument('--protocol', default='https')
+parser.add_argument('--user', default='admin')
+parser.add_argument('--password', default='a10')
+parser.add_argument('--axapi-version', required=True, choices=['2.1', '3.0'])
+parser.add_argument('--partition', default='shared', choices=['shared','p1','p2','all'])
+ARGS = parser.parse_args()
+
+
+partitions = ['shared', 'p1', 'p2']
+partition_map = {
+    'shared': {
         'name': 'shared',
         's1': '192.168.2.254',
         'vip1': '192.168.2.250',
         'vip2': '192.168.2.249',
         'vip3': '192.168.2.248'
     },
-    {
+    'p1': {
         'name': 'p1',
         's1': '192.168.2.244',
         'vip1': '192.168.2.240',
         'vip2': '192.168.2.239',
         'vip3': '192.168.2.238'
     },
-    {
+    'p2': {
         'name': 'p2',
         's1': '192.168.2.234',
         'vip1': '192.168.2.230',
         'vip2': '192.168.2.229',
         'vip3': '192.168.2.228'
     },
-]
+}
 
 
 class Nope(Exception):
@@ -95,12 +74,12 @@ def get_client(h, password=None):
     return c
 
 
-def run_all(version, ax, partition, pmap):
+def run_all(ax, partition, pmap):
     print("=============================================================")
     print("=============================================================")
     print("=============================================================")
     print("=============================================================")
-    print("RUNNING WITH ACOS VERSION ", version)
+    print("RUNNING AGAINST ACOS HOST ", ax)
 
     print("=============================================================")
     print("")
@@ -522,18 +501,22 @@ def run_all(version, ax, partition, pmap):
 
 
 def main():
-    # for v in partitions:
-    #     partition = v['name']
-    #     for version, ax in instances.items():
-    #         try:
-    #             run_all(version, ax, partition, v)
-    #         except Exception as e:
-    #             traceback.print_exc()
-    #             print(e)
-    #             sys.exit(1)
-    for version, ax in instances.items():
+    ax = {
+        'host': ARGS.host,
+        'port': ARGS.port,
+        'protocol': ARGS.protocol,
+        'user': ARGS.user,
+        'password': ARGS.password,
+        'axapi': ARGS.axapi_version,
+    }
+    z = [ARGS.partition]
+    if z[0] == 'all':
+        z = partitions
+    for k in z:
+        v = partition_map[k]
+        partition = v['name']
         try:
-            run_all(version, ax, 'shared', partitions[0])
+            run_all(ax, partition, v)
         except Exception as e:
             traceback.print_exc()
             print(e)
