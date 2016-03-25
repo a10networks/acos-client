@@ -99,7 +99,7 @@ class VirtualPort(base.BaseV30):
     def update(self, virtual_server_name, name, protocol, port,
                service_group_name,
                s_pers_name=None, c_pers_name=None, status=1, **kwargs):
-        vp = self.get(virtual_server_name, protocol, port)
+        vp = self.get(virtual_server_name, name, protocol, port)
         if vp is None:
             raise ae.NotFound()
 
