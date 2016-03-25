@@ -32,7 +32,7 @@ parser.add_argument('--protocol', default='https')
 parser.add_argument('--user', default='admin')
 parser.add_argument('--password', default='a10')
 parser.add_argument('--axapi-version', required=True, choices=['2.1', '3.0'])
-parser.add_argument('--partition', default='shared', choices=['shared','p1','p2','all'])
+parser.add_argument('--partition', default='shared', choices=['shared', 'p1', 'p2', 'all'])
 ARGS = parser.parse_args()
 
 
