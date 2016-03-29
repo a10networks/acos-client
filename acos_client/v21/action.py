@@ -39,5 +39,9 @@ class Action(base.BaseV21):
     def activate_and_write(self, partition, **kwargs):
         write_format = "active-partition {0}\r\nwrite memory\r\n"
         post_body = write_format.format(partition)
-
-        return self._request("POST", "cli.deploy", params=None, payload=post_body, **kwargs)
+        # Request raises an exception when the "maybe error" is returned.
+        # We can't do anything about "maybe" errors or otherwise at this stage
+        try:
+            return self._request("POST", "cli.deploy", params=None, payload=post_body, **kwargs)
+        except:
+            pass
