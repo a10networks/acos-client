@@ -124,6 +124,12 @@ RESPONSE_CODES = {
             '*': ae.NotFound
         }
     },
+    1208025092: {
+        '*': {
+            '/axapi/v3/logoff': None,
+            '*': ae.InvalidSessionID
+        }
+    },
     1023443968: {
         'DELETE': {
             '*': None
