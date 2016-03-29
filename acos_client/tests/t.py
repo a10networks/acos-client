@@ -489,6 +489,22 @@ def run_all(ax, partition, pmap):
 
     print("=============================================================")
     print("")
+    print("License Manager")
+    print("... Create")
+    lm_host = {"ip": "10.200.0.1", "port": 443}
+    c.license_manager.create([lm_host])
+    print("... Get")
+    c.license_manager.get()
+    print("...Update")
+    lm_host["ip"] = "10.200.0.2"
+    c.license_manager.update([lm_host])
+
+    print("... Get updated")
+    lm_u = c.license_manager.get()
+    print("Updated license: {0}".format(lm_u))
+
+    print("=============================================================")
+    print("")
     print("About half the time, delete the partition!")
 
     if int(random.random() * 2):
