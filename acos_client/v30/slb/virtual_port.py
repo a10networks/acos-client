@@ -66,6 +66,7 @@ class VirtualPort(base.BaseV30):
     def _set(self, virtual_server_name, name, protocol, port,
              service_group_name,
              s_pers_name=None, c_pers_name=None, stats=0, update=False,
+             no_dest_nat=None,
              exclude_minimize=[],
              **kwargs):
 
@@ -81,9 +82,13 @@ class VirtualPort(base.BaseV30):
             }, exclude=exclude_minimize)
         }
 
+
         sampling_enable = kwargs.get('sampling_enable')
         if sampling_enable is not None:
             self._set_sampling_enable(sampling_enable, params)
+
+        if no_dest_nat is not None:
+            params["port"]["no-dest-nat"] = 1 if no_dest_nat else 0
 
         url = self.url_server_tmpl.format(name=virtual_server_name)
         if update:
@@ -95,14 +100,17 @@ class VirtualPort(base.BaseV30):
 
     def create(self, virtual_server_name, name, protocol, port,
                service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1, **kwargs):
+               s_pers_name=None, c_pers_name=None, status=1,
+               no_dest_nat=None, **kwargs):
         return self._set(virtual_server_name,
                          name, protocol, port, service_group_name,
-                         s_pers_name, c_pers_name, status, **kwargs)
+                         s_pers_name, c_pers_name, status,
+                         no_dest_nat=no_dest_nat, **kwargs)
 
     def update(self, virtual_server_name, name, protocol, port,
                service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1, **kwargs):
+               s_pers_name=None, c_pers_name=None, status=1,
+               no_dest_nat=None, **kwargs):
         vp = self.get(virtual_server_name, name, protocol, port)
         if vp is None:
             raise ae.NotFound()
@@ -113,13 +121,13 @@ class VirtualPort(base.BaseV30):
             return self._set(virtual_server_name,
                              name, protocol, port, service_group_name,
                              s_pers_name, c_pers_name, status, True,
-                             exclude_minimize=exclu,
+                             exclude_minimize=exclu, no_dest_nat=no_dest_nat,
                              **kwargs)
         except ae.AxapiJsonFormatError:
             return self._set(virtual_server_name,
                              name, protocol, port, service_group_name,
                              s_pers_name, c_pers_name, status, True,
-                             exclude_minimize=[],
+                             exclude_minimize=[], no_dest_nat=no_dest_nat,
                              **kwargs)
 
     def delete(self, virtual_server_name, name, protocol, port):
