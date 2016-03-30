@@ -335,7 +335,7 @@ def run_all(ax, partition, pmap):
                                       service_group_name="pfoobar",
                                       protocol=c.slb.virtual_server.vport.HTTP,
                                       port='80')
-    c.slb.virtual_server.vport.get("vip3", )
+    c.slb.virtual_server.vport.get("vip3", "vip3_VPORT", c.slb.virtual_server.vport.HTTP, 80)
     try:
         c.slb.virtual_server.vport.create(
             "vip3", "vip3_VPORT",
@@ -486,6 +486,29 @@ def run_all(ax, partition, pmap):
         port=445,
         service_group_name='pfoobar',
         c_pers_name='cp1')
+
+    print("=============================================================")
+    print("sflow settings")
+    print("=============================================================")
+    print("")
+
+    sflow_ip="10.48.9.50"
+    sflow_port=6343
+
+    c.sflow.setting.create(60, True, 60, 60)
+
+    try:
+        c.sflow.collector.ip.create(sflow_ip, sflow_port)
+    except acos_client.errors.Exists:
+        pass
+    except:
+        print("Failed setting sflow collector")
+
+    try:
+        c.sflow.polling.create(True)
+    except:
+        print("Failed setting sflow polling")
+
 
     print("=============================================================")
     print("")
