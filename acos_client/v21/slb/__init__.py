@@ -60,3 +60,7 @@ class SLB(base.BaseV21):
     @property
     def virtual_service(self):
         return VirtualService(self.client)
+
+    @property
+    def common(self):
+        raise NotImplementedError("slb.common support is not available using AXAPI v2.1")
