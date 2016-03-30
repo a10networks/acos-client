@@ -335,7 +335,7 @@ def run_all(ax, partition, pmap):
                                       service_group_name="pfoobar",
                                       protocol=c.slb.virtual_server.vport.HTTP,
                                       port='80')
-    c.slb.virtual_server.vport.get("vip3", )
+    c.slb.virtual_server.vport.get("vip3", "vip3_VPORT", c.slb.virtual_server.vport.HTTP, 80)
     try:
         c.slb.virtual_server.vport.create(
             "vip3", "vip3_VPORT",
@@ -502,6 +502,33 @@ def run_all(ax, partition, pmap):
     print("... Get updated")
     lm_u = c.license_manager.get()
     print("Updated license: {0}".format(lm_u))
+
+
+    print("=============================================================")
+    print("")
+    print("Interface Tests")
+    print("=============================================================")
+    eth_ifs = c.interface.ethernet.get()
+    mgmt_if = c.interface.management.get()
+    print("Ethernet Interfaces:\r\n{0}".format(eth_ifs))
+    print("Manage Interfaces:\r\n{0}".format(mgmt_if))
+    eth1 = c.interface.ethernet.get(1)
+    print("Ethernet Interface 1:\r\n{0}".format(eth1))
+    print("Updating interface 1 with DHCP...")
+    c.interface.ethernet.update(1, enable=False)
+    print("Updating interface 1 with fake IP...")
+    try:
+        c.interface.ethernet.update(1, dhcp=False, ip_address="",
+                                   ip_netmask="", enable=False)
+        c.interface.ethernet.update(1, dhcp=False, ip_address="10.200.0.1",
+                                   ip_netmask="255.255.255.0", enable=True)
+    except:
+        print("Could not update interface")
+
+    eth1_u = c.interface.ethernet.get(1)
+
+    eth1_dhcp = c.interface.ethernet.get(1)
+    print("Updated interface 1 DHCP: {0}".format(eth1_dhcp))
 
     print("=============================================================")
     print("")
