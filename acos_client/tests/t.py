@@ -488,6 +488,29 @@ def run_all(ax, partition, pmap):
         c_pers_name='cp1')
 
     print("=============================================================")
+    print("sflow settings")
+    print("=============================================================")
+    print("")
+
+    sflow_ip="10.48.9.50"
+    sflow_port=6343
+
+    c.sflow.setting.create(60, True, 60, 60)
+
+    try:
+        c.sflow.collector.ip.create(sflow_ip, sflow_port)
+    except acos_client.errors.Exists:
+        pass
+    except:
+        print("Failed setting sflow collector")
+
+    try:
+        c.sflow.polling.create(True)
+    except:
+        print("Failed setting sflow polling")
+
+
+    print("=============================================================")
     print("")
     print("License Manager")
     print("... Create")
