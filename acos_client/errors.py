@@ -85,3 +85,7 @@ class PartitionIdExists(ACOSException):
 
 class HMMissingHttpPassive(ACOSException):
     pass
+
+
+class AxapiJsonFormatError(ACOSException):
+    pass

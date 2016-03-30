@@ -12,6 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client.errors as ae
+
 import base
 
 
@@ -23,4 +25,11 @@ class Action(base.BaseV30):
                 "primary": True
             }
         }
-        self._post("/write/memory/", payload, **kwargs)
+        try:
+            self._post("/write/memory/", payload, **kwargs)
+        except ae.AxapiJsonFormatError:
+            # Workaround regression in 4.1.0 backwards compat
+            self._post("/write/memory/", "", **kwargs)
+
+    def activate_and_write(self, partition, **kwargs):
+        self.write_memory()

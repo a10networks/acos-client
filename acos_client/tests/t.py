@@ -15,6 +15,7 @@
 #    under the License.
 
 
+import argparse
 import random
 import sys
 import traceback
@@ -23,80 +24,42 @@ sys.path.append(".")
 
 import acos_client
 
-instances = {
-    # '2.7.2': {
-    #     'host': '10.10.100.20',
-    #     'port': 8443,
-    #     'protocol': 'https',
-    #     'user': 'admin',
-    #     'password': 'a10',
-    #     'axapi': '21',
-    # },
-    # '2.7.1': {
-    #     'host': 'softax.a10boise.net',
-    #     'port': 8443,
-    #     'protocol': 'https',
-    #     'user': 'admin',
-    #     'password': 'i-9276ff9f',
-    #     'axapi': '21',
-    # }
-    '2.7.2': {
-        'host': 'dougw-softax-272',
-        'port': 8443,
-        'protocol': 'https',
-        'user': 'admin',
-        'password': 'a10',
-        'axapi': '21',
-    },
-    # '2.7.1': {
-    #     'host': 'dougw-softax-271',
-    #     'port': 8443,
-    #     'protocol': 'https',
-    #     'user': 'admin',
-    #     'password': 'a10',
-    #     'axapi': '21',
-    # },
-    # '4.0.0': {
-    #     'host': 'dougw-softax-4',
-    #     'port': 443,
-    #     'protocol': 'https',
-    #     'user': 'admin',
-    #     'password': 'a10',
-    #     'axapi': '30',
-    # },
-    # '4.0.0': {
-    #    'host': '172.18.61.29',
-    #    'port': 443,
-    #    'protocol': 'https',
-    #    'user': 'admin',
-    #    'password': 'a10',
-    #    'axapi': '30',
-    # },
-}
 
-partitions = [
-    {
+parser = argparse.ArgumentParser(description='acos-client smoke test')
+parser.add_argument('host')
+parser.add_argument('--port', type=int, default=443)
+parser.add_argument('--protocol', default='https')
+parser.add_argument('--user', default='admin')
+parser.add_argument('--password', default='a10')
+parser.add_argument('--axapi-version', required=True, choices=['2.1', '3.0'])
+parser.add_argument('--partition', default='shared', choices=['shared', 'p1', 'p2', 'all'])
+ARGS = parser.parse_args()
+
+
+partitions = ['shared', 'p1', 'p2']
+partition_map = {
+    'shared': {
         'name': 'shared',
         's1': '192.168.2.254',
         'vip1': '192.168.2.250',
         'vip2': '192.168.2.249',
         'vip3': '192.168.2.248'
     },
-    {
+    'p1': {
         'name': 'p1',
         's1': '192.168.2.244',
         'vip1': '192.168.2.240',
         'vip2': '192.168.2.239',
         'vip3': '192.168.2.238'
     },
-    {
+    'p2': {
         'name': 'p2',
         's1': '192.168.2.234',
         'vip1': '192.168.2.230',
         'vip2': '192.168.2.229',
         'vip3': '192.168.2.228'
     },
-]
+}
 
 
 class Nope(Exception):
@@ -111,12 +74,12 @@ def get_client(h, password=None):
     return c
 
 
-def run_all(version, ax, partition, pmap):
+def run_all(ax, partition, pmap):
     print("=============================================================")
     print("=============================================================")
     print("=============================================================")
     print("=============================================================")
-    print("RUNNING WITH ACOS VERSION ", version)
+    print("RUNNING AGAINST ACOS HOST ", ax)
 
     print("=============================================================")
     print("")
@@ -372,6 +335,7 @@ def run_all(version, ax, partition, pmap):
                                       service_group_name="pfoobar",
                                       protocol=c.slb.virtual_server.vport.HTTP,
                                       port='80')
+    c.slb.virtual_server.vport.get("vip3", )
     try:
         c.slb.virtual_server.vport.create(
             "vip3", "vip3_VPORT",
@@ -525,6 +489,22 @@ def run_all(version, ax, partition, pmap):
 
     print("=============================================================")
     print("")
+    print("License Manager")
+    print("... Create")
+    lm_host = {"ip": "10.200.0.1", "port": 443}
+    c.license_manager.create([lm_host])
+    print("... Get")
+    c.license_manager.get()
+    print("...Update")
+    lm_host["ip"] = "10.200.0.2"
+    c.license_manager.update([lm_host])
+
+    print("... Get updated")
+    lm_u = c.license_manager.get()
+    print("Updated license: {0}".format(lm_u))
+
+    print("=============================================================")
+    print("")
     print("About half the time, delete the partition!")
 
     if int(random.random() * 2):
@@ -538,18 +518,22 @@ def run_all(version, ax, partition, pmap):
 
 
 def main():
-    # for v in partitions:
-    #     partition = v['name']
-    #     for version, ax in instances.items():
-    #         try:
-    #             run_all(version, ax, partition, v)
-    #         except Exception as e:
-    #             traceback.print_exc()
-    #             print(e)
-    #             sys.exit(1)
-    for version, ax in instances.items():
+    ax = {
+        'host': ARGS.host,
+        'port': ARGS.port,
+        'protocol': ARGS.protocol,
+        'user': ARGS.user,
+        'password': ARGS.password,
+        'axapi': ARGS.axapi_version,
+    }
+    z = [ARGS.partition]
+    if z[0] == 'all':
+        z = partitions
+    for k in z:
+        v = partition_map[k]
+        partition = v['name']
         try:
-            run_all(version, ax, 'shared', partitions[0])
+            run_all(ax, partition, v)
         except Exception as e:
             traceback.print_exc()
             print(e)

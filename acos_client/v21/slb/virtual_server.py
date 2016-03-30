@@ -39,15 +39,15 @@ class VirtualServer(base.BaseV21):
             }),
         }
 
-        self._post(action, params, **kwargs)
+        return self._post(action, params, **kwargs)
 
     def create(self, name, ip_address, status=1, **kwargs):
-        self._set("slb.virtual_server.create", name, ip_address, status,
-                  **kwargs)
+        return self._set("slb.virtual_server.create", name, ip_address, status,
+                         **kwargs)
 
     def update(self, name, ip_address=None, status=1, **kwargs):
-        self._set("slb.virtual_server.update", name, ip_address, status,
-                  **kwargs)
+        return self._set("slb.virtual_server.update", name, ip_address, status,
+                         **kwargs)
 
     def delete(self, name, **kwargs):
         self._post("slb.virtual_server.delete", {"name": name}, **kwargs)
