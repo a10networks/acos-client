@@ -27,7 +27,7 @@ class Interface(base.BaseV30):
     def _ifnum_to_str(self, ifnum=None):
         return str(ifnum if ifnum else "")
 
-    def _build_payload(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=True, enable=True,
+    def _build_payload(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                        speed="auto", **kwargs):
         # TODO(mdurrant) - Check ip/netmask for validity.
         rv = {
@@ -46,6 +46,9 @@ class Interface(base.BaseV30):
         else:
             rv["interface"]["ip"]["dhcp"] = 1 if dhcp is True else 0
 
+        if enable is not None:
+            rv["interface"]["action"] = "enabled" if enable else "disabled"
+
         return rv
 
     def get_list(self):
@@ -58,7 +61,7 @@ class Interface(base.BaseV30):
         url = self.url_prefix + self._ifnum_to_str(ifnum)
         return self._delete(url)
 
-    def create(self, ifnum, ip_address=None, ip_netmask=None, dhcp=True, enable=True,
+    def create(self, ifnum, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                speed="auto"):
 
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
@@ -66,7 +69,7 @@ class Interface(base.BaseV30):
         return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
                           payload)
 
-    def update(self, ifnum, ip_address=None, ip_netmask=None, dhcp=True, enable=True,
+    def update(self, ifnum, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                speed="auto"):
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
                                       dhcp=dhcp, enable=enable, speed=speed)
@@ -111,7 +114,7 @@ class ManagementInterface(Interface):
 
         return rv
 
-    def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=True, enable=True,
+    def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                speed="auto", default_gateway=None):
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
                                       dhcp=dhcp, enabled=enable, speed=speed,
@@ -119,7 +122,7 @@ class ManagementInterface(Interface):
         return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
                           payload)
 
-    def update(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=True, enable=True,
+    def update(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                speed="auto", default_gateway=None):
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
                                       dhcp=dhcp, enable=enable, speed=speed,
