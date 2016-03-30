@@ -68,9 +68,36 @@ class TestInterface(unittest.TestCase):
         ip_netmask = "255.255.255.0"
 
         self.target.update(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask)
+
         self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
                                                     mock.ANY, mock.ANY)
 
+    def test_interface_enable_positive(self):
+        ifnum = 1
+        ip_address = "128.0.0.1"
+        ip_netmask = "255.255.255.0"
+
+        self.target.update(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask, enable=True)
+
+        ((method, url, params, header), kwargs) = self.client.http.request.call_args
+        self.assertEqual("enable", params[self.target.iftype]["action"])
+
+        self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
+                                                    mock.ANY, mock.ANY)
+
+    def test_interface_enable_negative(self):
+        ifnum = 1
+        ip_address = "128.0.0.1"
+        ip_netmask = "255.255.255.0"
+
+        self.target.update(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask, enable=False)
+
+        ((method, url, params, header), kwargs) = self.client.http.request.call_args
+
+        self.assertEqual("disable", params[self.target.iftype]["action"])
+
+        self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
+                                                    mock.ANY, mock.ANY)
 
 class TestEthernetInterface(TestInterface):
         def setUp(self):

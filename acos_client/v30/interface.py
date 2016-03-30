@@ -47,7 +47,7 @@ class Interface(base.BaseV30):
             rv["interface"]["ip"]["dhcp"] = 1 if dhcp is True else 0
 
         if enable is not None:
-            rv["interface"]["action"] = "enabled" if enable else "disabled"
+            rv["interface"]["action"] = "enable" if enable else "disable"
 
         return rv
 
