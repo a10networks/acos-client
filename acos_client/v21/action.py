@@ -40,8 +40,10 @@ class Action(base.BaseV21):
         write_format = "active-partition {0}\r\nwrite memory\r\n"
         post_body = write_format.format(partition)
         # Request raises an exception when the "maybe error" is returned.
-        # We can't do anything about "maybe" errors or otherwise at this stage
         try:
             return self._request("POST", "cli.deploy", params=None, payload=post_body, **kwargs)
-        except:
+        except acos_errors.ACOSException:
             pass
+
+
+
