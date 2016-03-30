@@ -60,7 +60,6 @@ class VirtualServer(base.BaseV30):
                arp_disable=None, **kwargs):
         self._set(name, ip_address, status, update=True, arp_disable=arp_disable, **kwargs)
 
-
     def delete(self, name):
         return self._delete(self.url_prefix + name)
 
