@@ -335,7 +335,7 @@ def run_all(ax, partition, pmap):
                                       service_group_name="pfoobar",
                                       protocol=c.slb.virtual_server.vport.HTTP,
                                       port='80')
-    c.slb.virtual_server.vport.get("vip3", "vip3_VPORT", c.slb.virtual_server.vport.HTTP, 80)
+    c.slb.virtual_server.vport.get("vip3", "vip3_VPORT", protocol=c.slb.virtual_server.vport.HTTP, port=80)
     try:
         c.slb.virtual_server.vport.create(
             "vip3", "vip3_VPORT",
@@ -498,6 +498,13 @@ def run_all(ax, partition, pmap):
     print("...Update")
     lm_host["ip"] = "10.200.0.2"
     c.license_manager.update([lm_host])
+
+
+    print("=============================================================")
+    print("")
+    print("slb.common")
+    print("dsr_health_check")
+    c.slb.common.create(dsr_health_check_enable=1)
 
     print("... Get updated")
     lm_u = c.license_manager.get()
