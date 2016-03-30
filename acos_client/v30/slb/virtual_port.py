@@ -87,7 +87,20 @@ class VirtualPort(base.BaseV30):
                 port_number=port, protocol=protocol
             )
 
-        return self._post(url, params, **kwargs)
+	try:
+            return self._post(url, params, **kwargs)
+        except ae.AxapiJsonFormatError as e:
+            # Workaround for 4.0.3
+            # Try again without the nulls
+            changed = False
+            for exclude_key in exclude_minimize:
+                if params["port"].get(exclude_key, '') is None:
+                    del params["port"][exclude_key]
+                    changed = True
+            if changed:
+                return self._post(url, params, **kwargs)
+            else:
+                raise e
 
     def create(self, virtual_server_name, name, protocol, port,
                service_group_name,
