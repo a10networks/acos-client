@@ -87,20 +87,7 @@ class VirtualPort(base.BaseV30):
                 port_number=port, protocol=protocol
             )
 
-        try:
-            return self._post(url, params, **kwargs)
-        except ae.AxapiJsonFormatError as e:
-            # Workaround for 4.0.3
-            # Try again without the nulls
-            changed = False
-            for exclude_key in exclude_minimize:
-                if params["port"].get(exclude_key, '') is None:
-                    del params["port"][exclude_key]
-                    changed = True
-            if changed:
-                return self._post(url, params, **kwargs)
-            else:
-                raise e
+        return self._post(url, params, **kwargs)
 
     def create(self, virtual_server_name, name, protocol, port,
                service_group_name,
@@ -117,11 +104,19 @@ class VirtualPort(base.BaseV30):
             raise ae.NotFound()
 
         exclu = ['template-persist-source-ip', 'template-persist-cookie']
-        return self._set(virtual_server_name,
-                         name, protocol, port, service_group_name,
-                         s_pers_name, c_pers_name, status, True,
-                         exclude_minimize=exclu,
-                         **kwargs)
+
+        try:
+            return self._set(virtual_server_name,
+                             name, protocol, port, service_group_name,
+                             s_pers_name, c_pers_name, status, True,
+                             exclude_minimize=exclu,
+                             **kwargs)
+        except ae.AxapiJsonFormatError:
+            return self.self._set(virtual_server_name,
+                                  name, protocol, port, service_group_name,
+                                  s_pers_name, c_pers_name, status, True,
+                                  exclude_minimize=[],
+                                  **kwargs)
 
     def delete(self, virtual_server_name, name, protocol, port):
         url = self.url_server_tmpl.format(name=virtual_server_name)
