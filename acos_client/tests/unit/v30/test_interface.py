@@ -77,7 +77,8 @@ class TestInterface(unittest.TestCase):
         ip_address = "128.0.0.1"
         ip_netmask = "255.255.255.0"
 
-        self.target.update(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask, enable=True)
+        self.target.update(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask,
+                           enable=True)
 
         ((method, url, params, header), kwargs) = self.client.http.request.call_args
         self.assertEqual("enable", params[self.target.iftype]["action"])
@@ -90,7 +91,8 @@ class TestInterface(unittest.TestCase):
         ip_address = "128.0.0.1"
         ip_netmask = "255.255.255.0"
 
-        self.target.update(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask, enable=False)
+        self.target.update(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask,
+                           enable=False)
 
         ((method, url, params, header), kwargs) = self.client.http.request.call_args
 
@@ -98,6 +100,7 @@ class TestInterface(unittest.TestCase):
 
         self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
                                                     mock.ANY, mock.ANY)
+
 
 class TestEthernetInterface(TestInterface):
         def setUp(self):
