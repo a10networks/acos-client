@@ -44,6 +44,3 @@ class Action(base.BaseV21):
             return self._request("POST", "cli.deploy", params=None, payload=post_body, **kwargs)
         except acos_errors.ACOSException:
             pass
-
-
-
