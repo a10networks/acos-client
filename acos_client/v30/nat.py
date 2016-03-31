@@ -12,8 +12,49 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import base
+import acos_client.errors as acos_errors
+import acos_client.v30.base as base
 
 
 class Nat(base.BaseV30):
-    pass
+    @property
+    def pool(self):
+        return self.Pool(self.client)
+
+    class Pool(base.BaseV30):
+        url_prefix = "/ip/nat/pool/"
+
+        def _set(self, name, start_ip, end_ip, mask, **kwargs):
+            params = {
+                "pool": self.minimal_dict({
+                    'pool-name': name,
+                    'start-address': start_ip,
+                    'end-address': end_ip,
+                    'netmask': mask,
+                    }),
+            }
+            self._post(self.url_prefix + name, params, **kwargs)
+
+        def get(self, name):
+            return self._get(self.url_prefix + name)
+
+        def all(self):
+            return self._get(self.url_prefix)
+
+        def create(self, name, start_ip, end_ip, mask, **kwargs):
+            try:
+                self.get(name)
+            except acos_errors.NotFound:
+                pass
+            else:
+                raise acos_errors.Exists
+            self._set(name, start_ip, end_ip, mask, **kwargs)
+
+        def delete(self, name, **kwargs):
+            self._delete(self.url_prefix + name)
+
+        def stats(self, name='', **kwargs):
+            return self._get(self.url_prefix + name + '/stats', **kwargs)
+
+        def all_stats(self, **kwargs):
+            return self.stats()
