@@ -42,5 +42,9 @@ class Action(base.BaseV21):
         # Request raises an exception when the "maybe error" is returned.
         try:
             return self._request("POST", "cli.deploy", params=None, payload=post_body, **kwargs)
-        except acos_errors.ACOSException:
-            pass
+        except acos_errors.ACOSException as e:
+            # Catch 'might fail error'
+            if e.msg.startswith("write memory"):
+                pass
+            else:
+                raise e
