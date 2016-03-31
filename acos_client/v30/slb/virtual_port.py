@@ -81,6 +81,10 @@ class VirtualPort(base.BaseV30):
             }, exclude=exclude_minimize)
         }
 
+        sampling_enable = kwargs.get('sampling_enable')
+        if sampling_enable is not None:
+            self._set_sampling_enable(sampling_enable, params)
+
         url = self.url_server_tmpl.format(name=virtual_server_name)
         if update:
             url += self.url_port_tmpl.format(
@@ -104,13 +108,29 @@ class VirtualPort(base.BaseV30):
             raise ae.NotFound()
 
         exclu = ['template-persist-source-ip', 'template-persist-cookie']
-        return self._set(virtual_server_name,
-                         name, protocol, port, service_group_name,
-                         s_pers_name, c_pers_name, status, True,
-                         exclude_minimize=exclu,
-                         **kwargs)
+
+        try:
+            return self._set(virtual_server_name,
+                             name, protocol, port, service_group_name,
+                             s_pers_name, c_pers_name, status, True,
+                             exclude_minimize=exclu,
+                             **kwargs)
+        except ae.AxapiJsonFormatError:
+            return self._set(virtual_server_name,
+                             name, protocol, port, service_group_name,
+                             s_pers_name, c_pers_name, status, True,
+                             exclude_minimize=[],
+                             **kwargs)
 
     def delete(self, virtual_server_name, name, protocol, port):
         url = self.url_server_tmpl.format(name=virtual_server_name)
         url += self.url_port_tmpl.format(port_number=port, protocol=protocol)
         return self._delete(url)
+
+    def _set_sampling_enable(self, sample_list, dest_obj):
+        dest_array = []
+        for x in sample_list:
+            entry = {"counters1": x}
+            dest_array.append(entry)
+
+        dest_obj["port"]["sampling-enable"] = dest_array

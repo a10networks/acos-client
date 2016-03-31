@@ -335,7 +335,10 @@ def run_all(ax, partition, pmap):
                                       service_group_name="pfoobar",
                                       protocol=c.slb.virtual_server.vport.HTTP,
                                       port='80')
-    c.slb.virtual_server.vport.get("vip3", )
+    c.slb.virtual_server.vport.get("vip3",
+                                   "vip3_VPORT",
+                                   protocol=c.slb.virtual_server.vport.HTTP,
+                                   port=80)
     try:
         c.slb.virtual_server.vport.create(
             "vip3", "vip3_VPORT",
@@ -488,6 +491,28 @@ def run_all(ax, partition, pmap):
         c_pers_name='cp1')
 
     print("=============================================================")
+    print("sflow settings")
+    print("=============================================================")
+    print("")
+
+    sflow_ip = "10.48.9.50"
+    sflow_port = 6343
+
+    c.sflow.setting.create(60, True, 60, 60)
+
+    try:
+        c.sflow.collector.ip.create(sflow_ip, sflow_port)
+    except acos_client.errors.Exists:
+        pass
+    except Exception:
+        print("Failed setting sflow collector")
+
+    try:
+        c.sflow.polling.create(True)
+    except Exception:
+        print("Failed setting sflow polling")
+
+    print("=============================================================")
     print("")
     print("License Manager")
     print("... Create")
@@ -499,9 +524,41 @@ def run_all(ax, partition, pmap):
     lm_host["ip"] = "10.200.0.2"
     c.license_manager.update([lm_host])
 
+    print("=============================================================")
+    print("")
+    print("slb.common")
+    print("dsr_health_check")
+    c.slb.common.create(dsr_health_check_enable=1)
+
     print("... Get updated")
     lm_u = c.license_manager.get()
     print("Updated license: {0}".format(lm_u))
+
+    print("=============================================================")
+    print("")
+    print("Interface Tests")
+    print("=============================================================")
+    eth_ifs = c.interface.ethernet.get()
+    mgmt_if = c.interface.management.get()
+    print("Ethernet Interfaces:\r\n{0}".format(eth_ifs))
+    print("Manage Interfaces:\r\n{0}".format(mgmt_if))
+    eth1 = c.interface.ethernet.get(1)
+    print("Ethernet Interface 1:\r\n{0}".format(eth1))
+    print("Updating interface 1 with DHCP...")
+    c.interface.ethernet.update(1, enable=False)
+    print("Updating interface 1 with fake IP...")
+    try:
+        c.interface.ethernet.update(1, dhcp=False, ip_address="",
+                                    ip_netmask="", enable=False)
+        c.interface.ethernet.update(1, dhcp=False, ip_address="10.200.0.1",
+                                    ip_netmask="255.255.255.0", enable=True)
+    except acos_client.errors.ACOSException:
+        print("Could not update interface")
+
+    c.interface.ethernet.get(1)
+
+    eth1_dhcp = c.interface.ethernet.get(1)
+    print("Updated interface 1 DHCP: {0}".format(eth1_dhcp))
 
     print("=============================================================")
     print("")

@@ -1,4 +1,4 @@
-# Copyright 2014,  Jeff Buttars,  A10 Networks.
+# Copyright 2014-2016, A10 Networks.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -32,11 +32,12 @@ class VirtualServer(base.BaseV30):
         return self._get(self.url_prefix + name)
 
     def _set(self, name, ip_address=None, status='stats-data-enable',
-             update=False, **kwargs):
+             update=False, arp_disable=None, **kwargs):
         params = {
             "virtual-server": self.minimal_dict({
                 "name": name,
                 "ip-address": ip_address,
+                "arp-disable": None if arp_disable is None else int(arp_disable)
             }),
         }
 
@@ -45,7 +46,7 @@ class VirtualServer(base.BaseV30):
 
         return self._post(self.url_prefix + name, params, **kwargs)
 
-    def create(self, name, ip_address, status='stats-data-enable', **kwargs):
+    def create(self, name, ip_address, status='stats-data-enable', arp_disable=None, **kwargs):
         try:
             self.get(name)
         except acos_errors.NotFound:
@@ -53,11 +54,11 @@ class VirtualServer(base.BaseV30):
         else:
             raise acos_errors.Exists
 
-        return self._set(name, ip_address, status, **kwargs)
+        self._set(name, ip_address, status, arp_disable=arp_disable, **kwargs)
 
     def update(self, name, ip_address=None, status='stats-data-enable',
-               **kwargs):
-        return self._set(name, ip_address, status, update=True, **kwargs)
+               arp_disable=None, **kwargs):
+        self._set(name, ip_address, status, update=True, arp_disable=arp_disable, **kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)
