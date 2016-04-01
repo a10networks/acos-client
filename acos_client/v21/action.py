@@ -46,5 +46,9 @@ class Action(base.BaseV21):
             # Catch 'might fail error'
             if e.msg.startswith("write memory"):
                 pass
+                # Get partition 'cdc164edcb4f4': Partition does not exist.
+            # The partition no longer exists
+            if "Get partition '{0}': Partition does not exist.".format(partition) in e.msg:
+                pass
             else:
                 raise e
