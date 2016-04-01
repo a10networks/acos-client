@@ -37,18 +37,17 @@ class Action(base.BaseV21):
                           params={"write_memory": write_memory}, **kwargs)
 
     def activate_and_write(self, partition, **kwargs):
-        write_format = "active-partition {0}\r\nwrite memory\r\n"
-        post_body = write_format.format(partition)
+        write_cmd = "write memory\r\n"
+
+        if partition is not None:
+            write_cmd = "active-partition {0}\r\n{1}".format(partition, write_cmd)
+
         # Request raises an exception when the "maybe error" is returned.
         try:
-            return self._request("POST", "cli.deploy", params=None, payload=post_body, **kwargs)
+            return self._request("POST", "cli.deploy", params=None, payload=write_cmd, **kwargs)
         except acos_errors.ACOSException as e:
             # Catch 'might fail error'
             if e.msg.startswith("write memory"):
-                pass
-                # Get partition 'cdc164edcb4f4': Partition does not exist.
-            # The partition no longer exists
-            if "Get partition '{0}': Partition does not exist.".format(partition) in e.msg:
                 pass
             else:
                 raise e
