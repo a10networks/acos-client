@@ -75,3 +75,7 @@ class ServiceGroup(base.BaseV21):
 
     def all_delete(self, **kwargs):
         self._get('slb.service_group.deleteAll', **kwargs)
+
+    def stats(self, name, **kwargs):
+        return self._post("slb.service_group.fetchStatistics",
+                          {"name": name}, **kwargs)

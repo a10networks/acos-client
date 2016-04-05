@@ -106,3 +106,6 @@ class ServiceGroup(base.BaseV30):
 
     def delete(self, name):
         self._delete(self.url_prefix + name)
+
+    def stats(self, name, *args, **kwargs):
+        return self._get(self.url_prefix + name + "/stats", **kwargs)

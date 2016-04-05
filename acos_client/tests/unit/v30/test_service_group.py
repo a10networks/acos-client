@@ -53,3 +53,14 @@ class TestServiceGroup(unittest.TestCase):
         ((method, url, params, header), kwargs) = client.http.request.call_args
 
         self.assertEqual(expected, params)
+
+    def test_stats(self):
+        client = mock.MagicMock()
+        sg = service_group.ServiceGroup(client)
+        sgname = "fake-pool"
+        sg.stats(sgname)
+
+        ((method, url, params, header), kwargs) = client.http.request.call_args
+        expected_url = "/axapi/v3/slb/service-group/{0}/stats".format(sgname)
+        self.assertEqual(method, "GET")
+        self.assertEqual(expected_url, url)
