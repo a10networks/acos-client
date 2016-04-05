@@ -42,3 +42,8 @@ class Member(base.BaseV21):
     def delete(self, service_group_name, server_name, server_port, **kwargs):
         self._write("slb.service_group.member.delete", service_group_name,
                     server_name, int(server_port), **kwargs)
+
+    def get_oper(self, service_group_name, server_name, server_port, **kwargs):
+        return self._post("slb.service_group.member.oper", service_group_name,
+                          server_name, int(server_port), **kwargs)
+

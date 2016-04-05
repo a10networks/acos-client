@@ -409,6 +409,11 @@ def run_all(ax, partition, pmap):
     else:
         raise Nope()
 
+    print("Member get_oper")
+    oper = c.slb.service_group.member.get_oper("pfoobar", "foorbar", 80)
+    print(oper)
+
+
     c.slb.service_group.member.update("pfoobar", "foobar", 80,
                                       c.slb.DOWN)
     try:
