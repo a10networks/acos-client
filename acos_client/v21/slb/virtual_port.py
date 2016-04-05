@@ -68,7 +68,7 @@ class VirtualPort(base.BaseV21):
         # Instead, we get the virtual server and get the desired vport.
         results = self._post('slb.virtual_server.search', {'name': virtual_server_name}, **kwargs)
 
-        vports = results.get("virtual_server"].get("vport_list", [])
+        vports = results.get("virtual_server").get("vport_list", [])
         filtered_vports = filter(lambda x: x.get("name") == name, vports)
         if len(filtered_vports) > 0:
             return filtered_vports[0]
