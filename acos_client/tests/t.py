@@ -262,10 +262,10 @@ def run_all(ax, partition, pmap):
     print("")
     print("SG Create")
     # temp -- odd that we have to delete this vport
-    c.slb.virtual_server.vport.delete(
-        "vip3", "vip3_VPORT", c.slb.virtual_server.vport.HTTP, 80)
-    # temp -- odd that we have to delete this vport
-    c.slb.service_group.delete("pfoobar")
+    # c.slb.virtual_server.vport.delete(
+    #     "vip3", "vip3_VPORT", c.slb.virtual_server.vport.HTTP, 80)
+    # # temp -- odd that we have to delete this vport
+    # c.slb.service_group.delete("pfoobar")
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.ROUND_ROBIN)
     r = c.slb.service_group.get("pfoobar")
@@ -408,6 +408,7 @@ def run_all(ax, partition, pmap):
         print("got already exists error, good")
     else:
         raise Nope()
+
     c.slb.service_group.member.update("pfoobar", "foobar", 80,
                                       c.slb.DOWN)
     try:

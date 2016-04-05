@@ -63,6 +63,16 @@ class VirtualPort(base.BaseV21):
         }
         self._post(action, params, **kwargs)
 
+    def get(self, virtual_server_name, name, protocol, port, **kwargs):
+        # There is no slb.virtual_server.vport.search.
+        # Instead, we get the virtual server and get the desired vport.
+        results = self._post('slb.virtual_server.search', {'name': virtual_server_name}, **kwargs)
+
+        vports = results.get("virtual_server"].get("vport_list", [])
+        filtered_vports = filter(lambda x: x.get("name") == name, vports)
+        if len(filtered_vports) > 0:
+            return filtered_vports[0]
+
     def create(self, virtual_server_name, name, protocol, port,
                service_group_name,
                s_pers_name=None, c_pers_name=None, status=1, **kwargs):
