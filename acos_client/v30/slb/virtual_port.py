@@ -82,7 +82,6 @@ class VirtualPort(base.BaseV30):
             }, exclude=exclude_minimize)
         }
 
-
         sampling_enable = kwargs.get('sampling_enable')
         if sampling_enable is not None:
             self._set_sampling_enable(sampling_enable, params)
