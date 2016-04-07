@@ -48,7 +48,10 @@ class VirtualPort(base.BaseV21):
 
     def _set(self, action, virtual_server_name, name, protocol, port,
              service_group_name,
-             s_pers_name=None, c_pers_name=None, status=1, **kwargs):
+             s_pers_name=None, c_pers_name=None, status=1,
+             autosnat=False,
+             ipinip=False,
+             **kwargs):
         params = {
             "name": virtual_server_name,
             "vport": self.minimal_dict({
@@ -61,6 +64,11 @@ class VirtualPort(base.BaseV21):
                 "status": status
             })
         }
+        if autosnat:
+            params['port']['source_nat_auto'] = int(autosnat)
+        if ipinip:
+            params['port']['ip_in_ip'] = int(ipinip)
+
         self._post(action, params, **kwargs)
 
     def get(self, virtual_server_name, name, protocol, port, **kwargs):
@@ -75,17 +83,25 @@ class VirtualPort(base.BaseV21):
 
     def create(self, virtual_server_name, name, protocol, port,
                service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1, **kwargs):
+               s_pers_name=None, c_pers_name=None, status=1,
+               autosnat=False,
+               ipinip=False,
+               **kwargs):
         self._set('slb.virtual_server.vport.create', virtual_server_name,
                   name, protocol, port, service_group_name,
-                  s_pers_name, c_pers_name, status, **kwargs)
+                  s_pers_name, c_pers_name, status, 
+                  autosnat=autosnat, ipinip=ipinip, **kwargs)
 
     def update(self, virtual_server_name, name, protocol, port,
                service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1, **kwargs):
+               s_pers_name=None, c_pers_name=None, status=1,
+               autosnat=False,
+               ipinip=False,
+               **kwargs):
             self._set('slb.virtual_server.vport.update', virtual_server_name,
                       name, protocol, port, service_group_name,
-                      s_pers_name, c_pers_name, status, **kwargs)
+                      s_pers_name, c_pers_name, status,
+                      autosnat=autosnat, ipinip=ipinip, **kwargs)
 
     def delete(self, virtual_server_name, name, protocol, port, **kwargs):
         params = {
