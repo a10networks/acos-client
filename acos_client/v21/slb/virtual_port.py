@@ -89,7 +89,7 @@ class VirtualPort(base.BaseV21):
                **kwargs):
         self._set('slb.virtual_server.vport.create', virtual_server_name,
                   name, protocol, port, service_group_name,
-                  s_pers_name, c_pers_name, status,
+                  s_pers_name, c_pers_name, status, 
                   autosnat=autosnat, ipinip=ipinip, **kwargs)
 
     def update(self, virtual_server_name, name, protocol, port,
