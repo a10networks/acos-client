@@ -30,7 +30,7 @@ class VirtualServer(base.BaseV21):
         return self._post("slb.virtual_server.search", {'name': name},
                           **kwargs)
 
-    def _set(self, action, name, ip_address=None, status=1, **kwargs):
+    def _set(self, action, name, ip_address=None, status=1, vrid=None, **kwargs):
         params = {
             "virtual_server": self.minimal_dict({
                 "name": name,
@@ -38,16 +38,18 @@ class VirtualServer(base.BaseV21):
                 "status": status,
             }),
         }
+        if vrid:
+            params['virtual_server']['vrid'] = vrid
 
         return self._post(action, params, **kwargs)
 
-    def create(self, name, ip_address, status=1, **kwargs):
+    def create(self, name, ip_address, status=1, vrid=None, **kwargs):
         return self._set("slb.virtual_server.create", name, ip_address, status,
-                         **kwargs)
+                         vrid=vrid, **kwargs)
 
-    def update(self, name, ip_address=None, status=1, **kwargs):
+    def update(self, name, ip_address=None, status=1, vrid=None, **kwargs):
         return self._set("slb.virtual_server.update", name, ip_address, status,
-                         **kwargs)
+                         vrid=vrid, **kwargs)
 
     def delete(self, name, **kwargs):
         self._post("slb.virtual_server.delete", {"name": name}, **kwargs)

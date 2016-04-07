@@ -67,6 +67,8 @@ class VirtualPort(base.BaseV30):
              service_group_name,
              s_pers_name=None, c_pers_name=None, stats=0, update=False,
              exclude_minimize=[],
+             autosnat=False,
+             ipinip=False,
              **kwargs):
 
         params = {
@@ -80,6 +82,10 @@ class VirtualPort(base.BaseV30):
                 "extended-stats": stats
             }, exclude=exclude_minimize)
         }
+        if autosnat:
+            params['port']['auto'] = int(autosnat)
+        if ipinip:
+            params['port']['ipinip'] = int(ipinip)
 
         sampling_enable = kwargs.get('sampling_enable')
         if sampling_enable is not None:
@@ -95,14 +101,21 @@ class VirtualPort(base.BaseV30):
 
     def create(self, virtual_server_name, name, protocol, port,
                service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1, **kwargs):
+               s_pers_name=None, c_pers_name=None, status=1,
+               autosnat=False,
+               ipinip=False,
+               **kwargs):
         return self._set(virtual_server_name,
                          name, protocol, port, service_group_name,
-                         s_pers_name, c_pers_name, status, **kwargs)
+                         s_pers_name, c_pers_name, status,
+                         autosnat=autosnat, ipinip=ipinip, **kwargs)
 
     def update(self, virtual_server_name, name, protocol, port,
                service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1, **kwargs):
+               s_pers_name=None, c_pers_name=None, status=1,
+               autosnat=False,
+               ipinip=False,
+               **kwargs):
         vp = self.get(virtual_server_name, name, protocol, port)
         if vp is None:
             raise ae.NotFound()
@@ -113,12 +126,14 @@ class VirtualPort(base.BaseV30):
             return self._set(virtual_server_name,
                              name, protocol, port, service_group_name,
                              s_pers_name, c_pers_name, status, True,
+                             autosnat=autosnat, ipinip=ipinip,
                              exclude_minimize=exclu,
                              **kwargs)
         except ae.AxapiJsonFormatError:
             return self._set(virtual_server_name,
                              name, protocol, port, service_group_name,
                              s_pers_name, c_pers_name, status, True,
+                             autosnat=autosnat, ipinip=ipinip,
                              exclude_minimize=[],
                              **kwargs)
 
