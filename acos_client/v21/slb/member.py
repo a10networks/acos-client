@@ -47,4 +47,5 @@ class Member(base.BaseV21):
         sg_stats = self._post("slb.service_group.fetchStatistics",
                               {"name": service_group_name}, **kwargs)
         members_stats = sg_stats["service_group_stat"]["member_stat_list"]
-        member_stats = filter(lambda x: x["name"] == server_name)
+        member_stats = filter(lambda x: x.get("server") == server_name, members_stats)
+        return member_stats
