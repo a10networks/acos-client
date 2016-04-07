@@ -32,7 +32,7 @@ class VirtualServer(base.BaseV30):
         return self._get(self.url_prefix + name)
 
     def _set(self, name, ip_address=None, status='stats-data-enable',
-             update=False, arp_disable=None, **kwargs):
+             update=False, arp_disable=None, vrid=None, **kwargs):
         params = {
             "virtual-server": self.minimal_dict({
                 "name": name,
@@ -40,13 +40,16 @@ class VirtualServer(base.BaseV30):
                 "arp-disable": None if arp_disable is None else int(arp_disable)
             }),
         }
+        if vrid:
+            params['virtual-server']['vrid'] = vrid
 
         if not update:
             name = ''
 
         return self._post(self.url_prefix + name, params, **kwargs)
 
-    def create(self, name, ip_address, status='stats-data-enable', arp_disable=None, **kwargs):
+    def create(self, name, ip_address, status='stats-data-enable', arp_disable=None, vrid=None,
+               **kwargs):
         try:
             self.get(name)
         except acos_errors.NotFound:
@@ -54,11 +57,12 @@ class VirtualServer(base.BaseV30):
         else:
             raise acos_errors.Exists
 
-        self._set(name, ip_address, status, arp_disable=arp_disable, **kwargs)
+        self._set(name, ip_address, status, arp_disable=arp_disable, vrid=vrid, **kwargs)
 
     def update(self, name, ip_address=None, status='stats-data-enable',
-               arp_disable=None, **kwargs):
-        self._set(name, ip_address, status, update=True, arp_disable=arp_disable, **kwargs)
+               arp_disable=None, vrid=None, **kwargs):
+        self._set(name, ip_address, status, update=True, arp_disable=arp_disable, vrid=vrid,
+                  **kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)
