@@ -123,10 +123,9 @@ class HttpClient(object):
                 self.port = 80
             else:
                 self.port = 443
+        self.retry_errnos = [errno.ECONNRESET, errno.ECONNREFUSED]
         if retry_errno_list is not None:
-            self.retry_errnos = retry_errno_list
-        else:
-            self.retry_errnos = [errno.ECONNRESET, errno.ECONNREFUSED]
+            self.retry_errnos += retry_errno_list
 
     def _http(self, method, api_url, payload):
         if self.protocol == 'https':
