@@ -28,8 +28,24 @@ class BaseV30(object):
         return ("/axapi/v3" + action)
 
     def _request(self, method, action, params, retry_count=0, **kwargs):
-        return self.client.http.request(method, self.url(action), params,
-                                        self.auth_header, **kwargs)
+        if retry_count > 6:
+            raise acos_errors.ACOSUnknownError()
+
+        try:
+            return self.client.http.request(method, self.url(action), params,
+                                            self.auth_header, **kwargs)
+        except acos_errors.InvalidSessionID:
+            if retry_count < 5:
+                time.sleep(0.1)
+                try:
+                    p = self.client.current_partition
+                    self.client.session.close()
+                    self.client.partition.active(p)
+                except Exception:
+                    pass
+                return self._request(method, action, params, retry_count+1,
+                                     **kwargs)
+            raise e
 
     def _get(self, action, params={}, **kwargs):
         return self._request('GET', action, params, **kwargs)
