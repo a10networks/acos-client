@@ -42,7 +42,7 @@ class BaseV21(object):
                 return self._request(method, action, params, retry_count+1,
                                      **kwargs)
             raise e
-        except acos_errors.InvalidSessionID:
+        except acos_errors.InvalidSessionID as e:
             if retry_count < 5:
                 time.sleep(0.1)
                 try:

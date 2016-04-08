@@ -12,6 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import time
+
+import acos_client.errors as acos_errors
+
 
 class BaseV30(object):
 
@@ -34,7 +38,7 @@ class BaseV30(object):
         try:
             return self.client.http.request(method, self.url(action), params,
                                             self.auth_header, **kwargs)
-        except acos_errors.InvalidSessionID:
+        except acos_errors.InvalidSessionID as e:
             if retry_count < 5:
                 time.sleep(0.1)
                 try:
