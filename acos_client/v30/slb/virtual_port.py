@@ -109,7 +109,6 @@ class VirtualPort(base.BaseV30):
                autosnat=False,
                ipinip=False,
                no_dest_nat=None, **kwargs):
-               **kwargs):
         return self._set(virtual_server_name,
                          name, protocol, port, service_group_name,
                          s_pers_name, c_pers_name, status,
@@ -122,7 +121,6 @@ class VirtualPort(base.BaseV30):
                autosnat=False,
                ipinip=False,
                no_dest_nat=None, **kwargs):
-               **kwargs):
         vp = self.get(virtual_server_name, name, protocol, port)
         if vp is None:
             raise ae.NotFound()
