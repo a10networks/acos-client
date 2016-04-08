@@ -64,10 +64,9 @@ class HttpClient(object):
             else:
                 port = 443
         self.url_base = "%s://%s:%s" % (protocol, host, port)
+        self.retry_errnos = []
         if retry_errno_list is not None:
-            self.retry_errnos = retry_errno_list
-        else:
-            self.retry_errnos = []
+            self.retry_errnos += retry_errno_list
 
     def request(self, method, api_url, params={}, headers=None,
                 file_name=None, file_content=None, axapi_args=None, **kwargs):
@@ -128,15 +127,13 @@ class HttpClient(object):
                                          data=payload, headers=hdrs)
 
                 break
-            except socket.error as e:
+            except (socket.error, requests.exceptions.ConnectionError) as e:
                 # Workaround some bogosity in the API
                 if e.errno in self.retry_errnos:
                     time.sleep(0.1)
                     last_e = e
                     continue
-                raise e
-            except requests.exceptions.ConnectionError as e:
-                if 'BadStatusLine' in str(e):
+                elif 'BadStatusLine' in str(e):
                     time.sleep(0.1)
                     last_e = e
                     continue
