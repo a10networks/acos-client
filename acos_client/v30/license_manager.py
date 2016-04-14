@@ -12,6 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import time
+
+import acos_client.errors as acos_errors
+
 import base
 
 INTERVAL_MONTHLY = 1
@@ -105,3 +109,62 @@ class LicenseManager(base.BaseV30):
     def _set_if_set(self, src, dest, dest_key):
         if src is not None:
             dest[dest_key] = src
+
+    #
+    # The method below, 'paygo', works more reliably than the axapi above.
+    # But be forewarned, looking further might cause blindness.
+    #
+
+    def _paygo_setup(self, llp_hosts=[], sn=None, instance_name=None,
+                     use_mgmt_port=False, interval=None, bandwidth_base=None):
+        url = "/clideploy/"
+        commands = []
+        if use_mgmt_port:
+            commands += ["license-manager use-mgmt-port"]
+        for host in llp_hosts:
+            commands += ["license-manager host %s" % host]
+        commands += [
+            "license-manager sn %s" % sn,
+            "license-manager interval %s" % interval,
+            "license-manager instance-name %s" % instance_name,
+            "license-manager bandwidth-base %s" % bandwidth_base,
+        ]
+        payload = {
+            "commandlist": commands
+        }
+        self._post(url, payload)
+
+    def _paygo_connect(self):
+        url = "/clideploy/"
+        payload = {
+            "commandlist": [
+                "license-manager connect"
+            ]
+        }
+
+        # There is some lag between the setup call above and being able
+        # to successfully retrieve a license.
+
+        for i in range(0, 60):
+            try:
+                return self._post(url, payload)
+            except acos_errors.ACOSException as e:
+                if 'Invalid message' in str(e):
+                    time.sleep(5)
+                    continue
+                raise e
+
+    def paygo(self, llp_hosts=[], sn=None, instance_name=None,
+              use_mgmt_port=False, interval=None, bandwidth_base=None):
+
+        for i in range(0, 4):
+            self._paygo_setup(llp_hosts, sn, instance_name, use_mgmt_port,
+                              interval, bandwidth_base)
+            try:
+                self._paygo_connect()
+            except acos_errors.ACOSException as e:
+                if 'Communication error' in str(e):
+                    self.client.session.close()
+                    time.sleep(5)
+                    continue
+                raise e
