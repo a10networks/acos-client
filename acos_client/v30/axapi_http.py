@@ -16,7 +16,9 @@
 # TODO(mdurrant) - Organize these imports
 import json
 import logging
+import socket
 import sys
+import time
 
 import requests
 
@@ -54,13 +56,17 @@ class HttpClient(object):
         "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
-    def __init__(self, host, port=None, protocol="https", timeout=None):
+    def __init__(self, host, port=None, protocol="https", timeout=None,
+                 retry_errno_list=None):
         if port is None:
             if protocol is 'http':
                 port = 80
             else:
                 port = 443
         self.url_base = "%s://%s:%s" % (protocol, host, port)
+        self.retry_errnos = []
+        if retry_errno_list is not None:
+            self.retry_errnos += retry_errno_list
 
     def request(self, method, api_url, params={}, headers=None,
                 file_name=None, file_content=None, axapi_args=None, **kwargs):
@@ -107,6 +113,34 @@ class HttpClient(object):
         else:
             z = requests.request(method, self.url_base + api_url, verify=False,
                                  data=payload, headers=hdrs)
+
+        last_e = None
+
+        for i in xrange(0, 600):
+            try:
+                last_e = None
+                if file_name is not None:
+                    z = requests.request(method, self.url_base + api_url, verify=False,
+                                         files=files, headers=hdrs)
+                else:
+                    z = requests.request(method, self.url_base + api_url, verify=False,
+                                         data=payload, headers=hdrs)
+
+                break
+            except (socket.error, requests.exceptions.ConnectionError) as e:
+                # Workaround some bogosity in the API
+                if e.errno in self.retry_errnos:
+                    time.sleep(0.1)
+                    last_e = e
+                    continue
+                elif 'BadStatusLine' in str(e):
+                    time.sleep(0.1)
+                    last_e = e
+                    continue
+                raise e
+
+        if last_e is not None:
+            raise e
 
         if z.status_code == 204:
             return None
