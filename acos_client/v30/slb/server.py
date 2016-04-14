@@ -51,10 +51,8 @@ class Server(base.BaseV30):
             }
         }
 
-        try:
-            self.get(name, **kwargs)
-        except acos_errors.NotFound:
-            raise acos_errors.NotFound()
+        self.get(name, **kwargs)
+
         return self._post(self.url_prefix + name, params, **kwargs)
 
     def delete(self, name):
