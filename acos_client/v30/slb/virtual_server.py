@@ -54,11 +54,11 @@ class VirtualServer(base.BaseV30):
         else:
             raise acos_errors.Exists
 
-        self._set(name, ip_address, status, arp_disable=arp_disable, **kwargs)
+        return self._set(name, ip_address, status, arp_disable=arp_disable, **kwargs)
 
     def update(self, name, ip_address=None, status='stats-data-enable',
                arp_disable=None, **kwargs):
-        self._set(name, ip_address, status, update=True, arp_disable=arp_disable, **kwargs)
+        return self._set(name, ip_address, status, update=True, arp_disable=arp_disable, **kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)
