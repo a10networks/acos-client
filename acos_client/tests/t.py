@@ -262,10 +262,18 @@ def run_all(ax, partition, pmap):
     print("")
     print("SG Create")
     # temp -- odd that we have to delete this vport
-    # c.slb.virtual_server.vport.delete(
-    #     "vip3", "vip3_VPORT", c.slb.virtual_server.vport.HTTP, 80)
-    # # temp -- odd that we have to delete this vport
-    # c.slb.service_group.delete("pfoobar")
+    try:
+        c.slb.virtual_server.vport.delete(
+            "vip3", "vip3_VPORT", c.slb.virtual_server.vport.HTTP, 80)
+    except acos_client.errors.NotFound:
+        print("vip3 doesn't exist, that's OK")
+
+    # temp -- odd that we have to delete this vport
+    try:
+        c.slb.service_group.delete("pfoobar")
+    except acos_client.errors.NotExist:
+        print("sg pfoobar doesn't exist, that's OK")
+
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.ROUND_ROBIN)
     r = c.slb.service_group.get("pfoobar")
@@ -409,6 +417,10 @@ def run_all(ax, partition, pmap):
     else:
         raise Nope()
 
+    print("Member get_oper")
+    oper = c.slb.service_group.member.get_oper("pfoobar", "foobar", 80)
+    print(oper)
+
     c.slb.service_group.member.update("pfoobar", "foobar", 80,
                                       c.slb.DOWN)
     try:
@@ -499,7 +511,10 @@ def run_all(ax, partition, pmap):
     sflow_ip = "10.48.9.50"
     sflow_port = 6343
 
-    c.sflow.setting.create(60, True, 60, 60)
+    try:
+        c.sflow.setting.create(60, True, 60, 60)
+    except NotImplementedError:
+        print("sflow not implemented in 2.1")
 
     try:
         c.sflow.collector.ip.create(sflow_ip, sflow_port)
@@ -516,50 +531,71 @@ def run_all(ax, partition, pmap):
     print("=============================================================")
     print("")
     print("License Manager")
-    print("... Create")
     lm_host = {"ip": "10.200.0.1", "port": 443}
-    c.license_manager.create([lm_host])
-    print("... Get")
-    c.license_manager.get()
-    print("...Update")
-    lm_host["ip"] = "10.200.0.2"
-    c.license_manager.update([lm_host])
-
-    print("=============================================================")
-    print("")
-    print("slb.common")
-    print("dsr_health_check")
-    c.slb.common.create(dsr_health_check_enable=1)
-
-    print("... Get updated")
-    lm_u = c.license_manager.get()
-    print("Updated license: {0}".format(lm_u))
-
-    print("=============================================================")
-    print("")
-    print("Interface Tests")
-    print("=============================================================")
-    eth_ifs = c.interface.ethernet.get()
-    mgmt_if = c.interface.management.get()
-    print("Ethernet Interfaces:\r\n{0}".format(eth_ifs))
-    print("Manage Interfaces:\r\n{0}".format(mgmt_if))
-    eth1 = c.interface.ethernet.get(1)
-    print("Ethernet Interface 1:\r\n{0}".format(eth1))
-    print("Updating interface 1 with DHCP...")
-    c.interface.ethernet.update(1, enable=False)
-    print("Updating interface 1 with fake IP...")
     try:
-        c.interface.ethernet.update(1, dhcp=False, ip_address="",
-                                    ip_netmask="", enable=False)
-        c.interface.ethernet.update(1, dhcp=False, ip_address="10.200.0.1",
-                                    ip_netmask="255.255.255.0", enable=True)
-    except acos_client.errors.ACOSException:
-        print("Could not update interface")
+        print("... Create")
+        c.license_manager.create([lm_host])
+    except NotImplementedError:
 
-    c.interface.ethernet.get(1)
+        print("License Manager not implemented in %s " % ARGS.axapi_version)
 
-    eth1_dhcp = c.interface.ethernet.get(1)
-    print("Updated interface 1 DHCP: {0}".format(eth1_dhcp))
+    try:
+        print("... Get")
+        c.license_manager.get()
+    except NotImplementedError:
+        print("License Manager not implemented in %s " % ARGS.axapi_version)
+
+    lm_host["ip"] = "10.200.0.2"
+    try:
+        print("... Update")
+        c.license_manager.update([lm_host])
+    except NotImplementedError:
+        print("License Manager not implemented in %s " % ARGS.axapi_version)
+
+    if float(ARGS.axapi_version) >= 3.0:
+        print("=============================================================")
+        print("")
+        print("slb.common")
+        print("dsr_health_check")
+        try:
+            c.slb.common.create(dsr_health_check_enable=1)
+        except NotImplementedError:
+            print("DSR Health Check not implemented in %s" % ARGS.axapi_version)
+        print("... Get updated")
+
+    if float(ARGS.axapi_version) >= 3.0:
+        print("=============================================================")
+        print("")
+        print("Interface Tests")
+        print("=============================================================")
+        try:
+            eth_ifs = c.interface.ethernet.get()
+        except NotImplementedError:
+            print("Interface Manipulation is implemented in AXAPI 2.1 but not acos-client")
+        try:
+            mgmt_if = c.interface.management.get()
+        except NotImplementedError:
+            print("Interface Manipulation is implemented in AXAPI 2.1 but not acos-client")
+
+        print("Ethernet Interfaces:\r\n{0}".format(eth_ifs))
+        print("Manage Interfaces:\r\n{0}".format(mgmt_if))
+        eth1 = c.interface.ethernet.get(1)
+        print("Ethernet Interface 1:\r\n{0}".format(eth1))
+        print("Updating interface 1 with DHCP...")
+        c.interface.ethernet.update(1, enable=False)
+        print("Updating interface 1 with fake IP...")
+        try:
+            c.interface.ethernet.update(1, dhcp=False, ip_address="",
+                                        ip_netmask="", enable=False)
+            c.interface.ethernet.update(1, dhcp=False, ip_address="10.200.0.1",
+                                        ip_netmask="255.255.255.0", enable=True)
+        except acos_client.errors.ACOSException:
+            print("Could not update interface")
+
+        c.interface.ethernet.get(1)
+
+        eth1_dhcp = c.interface.ethernet.get(1)
+        print("Updated interface 1 DHCP: {0}".format(eth1_dhcp))
 
     print("=============================================================")
     print("")
@@ -573,6 +609,10 @@ def run_all(ax, partition, pmap):
             pass
 
     c.session.close()
+
+    print("=============================================================")
+    print("t.py completed successfully!")
+    print("=============================================================")
 
 
 def main():

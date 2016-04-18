@@ -52,6 +52,7 @@ class Server(base.BaseV30):
         }
 
         self.get(name, **kwargs)
+
         return self._post(self.url_prefix + name, params, **kwargs)
 
     def delete(self, name):

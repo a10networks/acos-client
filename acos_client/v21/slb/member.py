@@ -42,3 +42,10 @@ class Member(base.BaseV21):
     def delete(self, service_group_name, server_name, server_port, **kwargs):
         self._write("slb.service_group.member.delete", service_group_name,
                     server_name, int(server_port), **kwargs)
+
+    def get_oper(self, service_group_name, server_name, server_port, **kwargs):
+        sg_stats = self._post("slb.service_group.fetchStatistics",
+                              {"name": service_group_name}, **kwargs)
+        members_stats = sg_stats["service_group_stat"]["member_stat_list"]
+        member_stats = filter(lambda x: x.get("server") == server_name, members_stats)
+        return member_stats
