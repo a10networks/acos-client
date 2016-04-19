@@ -16,7 +16,30 @@ import base
 
 
 class Interface(base.BaseV21):
-    pass
+    def get_list(self):
+        raise NotImplementedError("Not implemented in AXAPI v2.1")
+
+    def get(self, ifnum=None):
+        raise NotImplementedError("Not implemented in AXAPI v2.1")
+
+    def delete(self, ifnum):
+        raise NotImplementedError("Not implemented in AXAPI v2.1")
+
+    def create(self, ifnum, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
+               speed="auto"):
+        raise NotImplementedError("Not implemented in AXAPI v2.1")
+
+    def update(self, ifnum, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
+               speed="auto"):
+        raise NotImplementedError("Not implemented in AXAPI v2.1")
+
+    @property
+    def ethernet(self):
+        return EthernetInterface(self.client)
+
+    @property
+    def management(self):
+        return ManagementInterface(self.client)
 
 
 class EthernetInterface(Interface):
