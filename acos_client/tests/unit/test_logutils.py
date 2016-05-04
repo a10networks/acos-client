@@ -114,8 +114,7 @@ class TestLogutils(unittest2.TestCase):
         actual = target.clean(
             [{'credentials': {
                 'username': 'admin',
-                'password': 'secret'}
-            }])
+                'password': 'secret'}}])
         expected = [{'credentials': {
             'username': target.REPLACEMENT,
             'password': target.REPLACEMENT}
