@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import collections
 import copy
 
 CLEAN_FIELDS = ["username", "password"]
@@ -20,21 +21,23 @@ REPLACEMENT = "*" * 8
 PRIMITIVES = [int, float, str]
 
 
-def clean(data):
-    data = copy.copy(data)
+def clean(data, field=None):
+    if field in CLEAN_FIELDS:
+        return REPLACEMENT
 
     if type(data) is dict:
-        for x, y in data.iteritems():
-            if type(y) is dict:
-                data[x] = clean(y)
-            else:
-                if x in CLEAN_FIELDS:
-                    data[x] = REPLACEMENT
+        return dict(
+            (x, clean(y, field=x))
+            for x, y in data.iteritems()
+            )
+    elif issubclass(type(data), str):
+        return data
+    elif issubclass(type(data), collections.Iterable):
+        return type(data)(clean(x) for x in data)
     elif hasattr(data, "__dict__"):
+        data = copy.copy(data)
         for x, y in data.__dict__.iteritems():
-            if type(y) is dict or hasattr(y, "__dict__"):
-                setattr(data, x, clean(y))
-            else:
-                if x in CLEAN_FIELDS:
-                    setattr(data, x, REPLACEMENT)
+            setattr(data, x, clean(y, field=x))
+        return data
+
     return data

@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import mock
 import unittest2
 
 from acos_client import logutils as target
@@ -96,6 +97,37 @@ class TestLogutils(unittest2.TestCase):
         actual = target.clean(self.obj_twolevel).credentials.inside_secret
         self.assertEqual(target.REPLACEMENT, actual.username)
         self.assertEqual(target.REPLACEMENT, actual.password)
+
+    def test_tuple_dict(self):
+        actual = target.clean(
+            (1, {'credentials': {
+                'username': 'admin',
+                'password': 'secret'}
+            }))
+        expected = (1, {'credentials': {
+            'username': target.REPLACEMENT,
+            'password': target.REPLACEMENT}
+            })
+        self.assertEqual(expected, actual)
+
+    def test_list_dict(self):
+        actual = target.clean(
+            [{'credentials': {
+                'username': 'admin',
+                'password': 'secret'}}])
+        expected = [{'credentials': {
+            'username': target.REPLACEMENT,
+            'password': target.REPLACEMENT}
+            }]
+        self.assertEqual(expected, actual)
+
+    def test_mock(self):
+        # It's likely that clean will be called with a mock during testing.
+        # It shouldn't blow up
+
+        m = mock.MagicMock()
+        str(m)
+        target.clean(m)
 
 
 class FakeObject(object):
