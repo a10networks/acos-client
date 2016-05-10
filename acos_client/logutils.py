@@ -30,9 +30,9 @@ def clean(data, field=None):
             (x, clean(y, field=x))
             for x, y in data.iteritems()
             )
-    elif issubclass(type(data), str):
+    elif isinstance(data, basestring):
         return data
-    elif issubclass(type(data), collections.Iterable):
+    elif isinstance(data, collections.Iterable):
         return type(data)(clean(x) for x in data)
     elif hasattr(data, "__dict__"):
         data = copy.copy(data)

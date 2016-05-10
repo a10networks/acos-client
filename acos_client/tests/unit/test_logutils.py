@@ -121,6 +121,14 @@ class TestLogutils(unittest2.TestCase):
             }]
         self.assertEqual(expected, actual)
 
+    def test_string(self):
+        actual = target.clean('sometext')
+        self.assertEqual('sometext', actual)
+
+    def test_ustring(self):
+        actual = target.clean(u'sometext')
+        self.assertEqual(u'sometext', actual)
+
     def test_mock(self):
         # It's likely that clean will be called with a mock during testing.
         # It shouldn't blow up
