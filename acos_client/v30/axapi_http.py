@@ -14,6 +14,7 @@
 
 
 # TODO(mdurrant) - Organize these imports
+import errno
 import json
 import logging
 import socket
@@ -67,6 +68,10 @@ class HttpClient(object):
         self.retry_errnos = []
         if retry_errno_list is not None:
             self.retry_errnos += retry_errno_list
+        self.retry_err_strings = (['BadStatusLine'] +
+                                  ['[Errno %s]' % n for n in self.retry_errnos] +
+                                  [errno.errorcode[n] for n in self.retry_errnos
+                                   if n in errno.errorcode])
 
     def request(self, method, api_url, params={}, headers=None,
                 file_name=None, file_content=None, axapi_args=None, **kwargs):
@@ -108,11 +113,6 @@ class HttpClient(object):
 
             hdrs.pop("Content-type", None)
             hdrs.pop("Content-Type", None)
-            z = requests.request(method, self.url_base + api_url, verify=False,
-                                 files=files, headers=hdrs)
-        else:
-            z = requests.request(method, self.url_base + api_url, verify=False,
-                                 data=payload, headers=hdrs)
 
         last_e = None
 
@@ -129,11 +129,8 @@ class HttpClient(object):
                 break
             except (socket.error, requests.exceptions.ConnectionError) as e:
                 # Workaround some bogosity in the API
-                if e.errno in self.retry_errnos:
-                    time.sleep(0.1)
-                    last_e = e
-                    continue
-                elif 'BadStatusLine' in str(e):
+                if e.errno in self.retry_errnos or \
+                   any(s in str(e) for s in self.retry_err_strings):
                     time.sleep(0.1)
                     last_e = e
                     continue
