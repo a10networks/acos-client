@@ -112,7 +112,8 @@ class HttpClient(object):
 
     headers = {}
 
-    def __init__(self, host, port=None, protocol="https", client=None, timeout=None):
+    def __init__(self, host, port=None, protocol="https", client=None, timeout=None,
+                 retry_errno_list=None):
         self.host = host
         self.port = port
         self.protocol = protocol
@@ -122,6 +123,9 @@ class HttpClient(object):
                 self.port = 80
             else:
                 self.port = 443
+        self.retry_errnos = [errno.ECONNRESET, errno.ECONNREFUSED]
+        if retry_errno_list is not None:
+            self.retry_errnos += retry_errno_list
 
     def _http(self, method, api_url, payload):
         if self.protocol == 'https':
@@ -177,8 +181,7 @@ class HttpClient(object):
                 break
             except socket.error as e:
                 # Workaround some bogosity in the API
-                if (e.errno == errno.ECONNRESET or
-                   e.errno == errno.ECONNREFUSED):
+                if e.errno in self.retry_errnos:
                     time.sleep(0.1)
                     last_e = e
                     continue
