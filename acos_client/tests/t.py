@@ -552,7 +552,6 @@ def run_all(ax, partition, pmap):
     except NotImplementedError:
         print("License Manager not implemented in %s " % ARGS.axapi_version)
 
-
     if float(ARGS.axapi_version) >= 3.0:
         print("=============================================================")
         print("")
@@ -564,18 +563,14 @@ def run_all(ax, partition, pmap):
             print("DSR Health Check not implemented in %s" % ARGS.axapi_version)
         print("... Get updated")
 
-
     print("=============================================================")
     print("")
     print("Interface Tests")
+    print("")
     print("=============================================================")
+
     fake_static = "10.200.13.42"
     fake_mask = "255.255.255.0"
-
-    print("=============================================================")
-    print("")
-    print("Interface Tests")
-    print("=============================================================")
     if float(ARGS.axapi_version) >= 3.0:
         try:
             eth_ifs = c.interface.ethernet.get()
