@@ -552,6 +552,7 @@ def run_all(ax, partition, pmap):
     except NotImplementedError:
         print("License Manager not implemented in %s " % ARGS.axapi_version)
 
+
     if float(ARGS.axapi_version) >= 3.0:
         print("=============================================================")
         print("")
@@ -563,39 +564,59 @@ def run_all(ax, partition, pmap):
             print("DSR Health Check not implemented in %s" % ARGS.axapi_version)
         print("... Get updated")
 
-    if float(ARGS.axapi_version) >= 3.0:
-        print("=============================================================")
-        print("")
-        print("Interface Tests")
-        print("=============================================================")
-        try:
-            eth_ifs = c.interface.ethernet.get()
-        except NotImplementedError:
-            print("Interface Manipulation is implemented in AXAPI 2.1 but not acos-client")
-        try:
-            mgmt_if = c.interface.management.get()
-        except NotImplementedError:
-            print("Interface Manipulation is implemented in AXAPI 2.1 but not acos-client")
 
-        print("Ethernet Interfaces:\r\n{0}".format(eth_ifs))
-        print("Manage Interfaces:\r\n{0}".format(mgmt_if))
-        eth1 = c.interface.ethernet.get(1)
-        print("Ethernet Interface 1:\r\n{0}".format(eth1))
-        print("Updating interface 1 with DHCP...")
-        c.interface.ethernet.update(1, enable=False)
-        print("Updating interface 1 with fake IP...")
-        try:
-            c.interface.ethernet.update(1, dhcp=False, ip_address="",
-                                        ip_netmask="", enable=False)
-            c.interface.ethernet.update(1, dhcp=False, ip_address="10.200.0.1",
-                                        ip_netmask="255.255.255.0", enable=True)
-        except acos_client.errors.ACOSException:
-            print("Could not update interface")
+    print("=============================================================")
+    print("")
+    print("Interface Tests")
+    print("=============================================================")
+    fake_static = "10.200.13.42"
+    fake_mask = "255.255.255.0"
 
-        c.interface.ethernet.get(1)
+    try:
+        eth_ifs = c.interface.ethernet.get_list()
+        mgmt_if = c.interface.management.get()
+    except NotImplementedError:
+        print("Interface Manipulation is implemented in AXAPI 2.1 but not acos-client")
 
+    print("INITIAL Ethernet Interfaces:\r\n{0}".format(eth_ifs))
+    print("INITIAL Management Interfaces:\r\n{0}".format(mgmt_if))
+    eth1 = c.interface.ethernet.get(1)
+    print("INITIAL Ethernet Interface 1:\r\n{0}".format(eth1))
+    print("Updating interface 1 with DHCP...")
+    c.interface.ethernet.create(1, enable=False)
+    c.interface.ethernet.create(1, dhcp=True, enable=False)
+    eth1_updated = c.interface.ethernet.get(1)
+
+    if float(ARGS.axapi_version) == 2.1:
+        eth1_dhcp_ip = eth1_updated["interface"]["ipv4_list"][0]["ipv4_address"]
+        eth1_dhcp_mask = eth1_updated["interface"]["ipv4_list"][0]["ipv4_mask"]
+    else:
+        eth1_dhcp_ip = fake_static
+        eth1_dhcp_mask = fake_mask
+
+    print("DHCP INFO: IP: {0}  NETMASK:{1}".format(eth1_dhcp_ip, eth1_dhcp_mask))
+    print("Interface post-DHCP update: {0}".format(eth1_updated))
+    print("Updating interface 1 with fake IP...")
+    try:
+        # c.interface.ethernet.update(1, dhcp=False, ip_address="",
+        #                             ip_netmask="", enable=False)
+        c.interface.ethernet.create(1, dhcp=False, ip_address=fake_static,
+                                    ip_netmask=fake_mask, enable=False)
+        c.interface.ethernet.create(1, dhcp=False, ip_address=fake_static,
+                                    ip_netmask=fake_mask, enable=True)
+    except acos_client.errors.ACOSException:
+        print("Could not update interface")
+    eth1_static = c.interface.ethernet.get(1)
+    print("Updated interface 1 static: {0}".format(eth1_static))
+    if float(ARGS.axapi_version) == 2.1:
+        if eth1_static["interface"]["ipv4_list"][0]["ipv4_address"] != fake_static:
+            raise Nope("Interface IPs don't match.")
+    try:
+        c.interface.ethernet.create(1, dhcp=True, enable=True)
         eth1_dhcp = c.interface.ethernet.get(1)
         print("Updated interface 1 DHCP: {0}".format(eth1_dhcp))
+    except acos_client.errors.ACOSException:
+        print("Could not update interface")
 
     print("=============================================================")
     print("")
