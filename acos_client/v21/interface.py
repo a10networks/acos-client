@@ -19,19 +19,17 @@ class Interface(base.BaseV21):
     def _build_payload(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                        speed="auto", **kwargs):
         # TODO(mdurrant) - Check ip/netmask for validity.
-        rv = {"status": 1, "type": "ethernet"}
+        cli_cmds = []
 
         if ifnum:
-            rv["port_num"] = ifnum
+            cli_cmds += ["interface ethernet {port_num}".format(port_num=ifnum)]
         if ip_address and not dhcp:
-            rv["ipv4_list"] = [
-                {"ipv4_address": ip_address, "ipv4_mask": ip_netmask}
-            ]
+            cli_cmds += ['ip address {ip} {mask}'.format(ip=ip_address,
+                                                         mask=ip_netmask)]
         elif dhcp:
-            rv["ipv4_list"] = [
-                {"ipv4_address": "", "ipv4_mask": ""}
-            ]
-        return {"interface": rv}
+            cli_cmds += ['ip address dhcp']
+        cli_cmds += ['write mem']
+        return "\n".join(cli_cmds)
 
     def get_list(self):
         return self._get('network.interface.getAll')
@@ -49,15 +47,15 @@ class Interface(base.BaseV21):
                speed="auto"):
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
                                       dhcp=dhcp, enabled=enable, speed=speed)
-        return self._post("network.interface.set",
-                          params=payload)
+        return self._post("cli.deploy", params=None,
+                          payload=payload)
 
     def update(self, ifnum, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                speed="auto"):
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
                                       dhcp=dhcp, enable=enable, speed=speed)
-        return self._post("network.interface.set",
-                          params=payload)
+        return self._request("POST", "cli.deploy", params=None,
+                          payload=payload)
 
     @property
     def ethernet(self):

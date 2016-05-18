@@ -25,12 +25,10 @@ class TestInterface(unittest.TestCase):
         self.url_prefix = "/axapi/v3/interface/"
 
     def test_interface_get_list(self):
-        # import pdb; pdb.set_trace()
         self.target.get_list()
         self.client.http.request.assert_called_with("GET", self.url_prefix, {}, mock.ANY)
 
     def test_interface_get(self):
-        # import pdb; pdb.set_trace()
         self.target.get()
         self.client.http.request.assert_called_with("GET", self.url_prefix, {}, mock.ANY)
 

@@ -235,274 +235,275 @@ def run_all(ax, partition, pmap):
     #     print("got not found, good")
     # c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
 
-    print("=============================================================")
-    print("")
-    print("Server Create")
-    c.slb.server.delete("foobar")
-    c.slb.server.create("foobar", pmap['s1'])
-    r = c.slb.server.get("foobar")
-    print("LIBRARY RESPONSE = %s", r)
-    try:
-        c.slb.server.create("foobar", pmap['s1'])
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    else:
-        raise Nope()
-    c.slb.server.delete("foobar")
-    c.slb.server.delete("foobar")
-    try:
-        c.slb.server.get("foobar")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    else:
-        raise Nope()
-    c.slb.server.create("foobar", pmap['s1'])
+    # # BEGIN SLB COMMENT BLOCK
+    # print("=============================================================")
+    # print("")
+    # print("Server Create")
+    # c.slb.server.delete("foobar")
+    # c.slb.server.create("foobar", pmap['s1'])
+    # r = c.slb.server.get("foobar")
+    # print("LIBRARY RESPONSE = %s", r)
+    # try:
+    #     c.slb.server.create("foobar", pmap['s1'])
+    # except acos_client.errors.Exists:
+    #     print("got already exists error, good")
+    # else:
+    #     raise Nope()
+    # c.slb.server.delete("foobar")
+    # c.slb.server.delete("foobar")
+    # try:
+    #     c.slb.server.get("foobar")
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # else:
+    #     raise Nope()
+    # c.slb.server.create("foobar", pmap['s1'])
 
-    print("=============================================================")
-    print("")
-    print("SG Create")
-    # temp -- odd that we have to delete this vport
-    try:
-        c.slb.virtual_server.vport.delete(
-            "vip3", "vip3_VPORT", c.slb.virtual_server.vport.HTTP, 80)
-    except acos_client.errors.NotFound:
-        print("vip3 doesn't exist, that's OK")
+    # print("=============================================================")
+    # print("")
+    # print("SG Create")
+    # # temp -- odd that we have to delete this vport
+    # try:
+    #     c.slb.virtual_server.vport.delete(
+    #         "vip3", "vip3_VPORT", c.slb.virtual_server.vport.HTTP, 80)
+    # except acos_client.errors.NotFound:
+    #     print("vip3 doesn't exist, that's OK")
 
-    # temp -- odd that we have to delete this vport
-    try:
-        c.slb.service_group.delete("pfoobar")
-    except acos_client.errors.NotExist:
-        print("sg pfoobar doesn't exist, that's OK")
+    # # temp -- odd that we have to delete this vport
+    # try:
+    #     c.slb.service_group.delete("pfoobar")
+    # except acos_client.errors.NotExist:
+    #     print("sg pfoobar doesn't exist, that's OK")
 
-    c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
-                               c.slb.service_group.ROUND_ROBIN)
-    r = c.slb.service_group.get("pfoobar")
-    print("LIBRARY RESPONSE = %s", r)
-    try:
-        c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
-                                   c.slb.service_group.ROUND_ROBIN)
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    else:
-        raise Nope()
-    c.slb.service_group.update("pfoobar", c.slb.service_group.TCP,
-                               c.slb.service_group.LEAST_CONNECTION)
-    try:
-        c.slb.service_group.update("pnfoobar", c.slb.service_group.TCP,
-                                   c.slb.service_group.LEAST_CONNECTION)
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    else:
-        raise Nope()
-    c.slb.service_group.delete("pfoobar")
-    c.slb.service_group.delete("pfoobar")
-    try:
-        c.slb.service_group.get("pfoobar")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    else:
-        raise Nope()
-    c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
-                               c.slb.service_group.ROUND_ROBIN)
+    # c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
+    #                            c.slb.service_group.ROUND_ROBIN)
+    # r = c.slb.service_group.get("pfoobar")
+    # print("LIBRARY RESPONSE = %s", r)
+    # try:
+    #     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
+    #                                c.slb.service_group.ROUND_ROBIN)
+    # except acos_client.errors.Exists:
+    #     print("got already exists error, good")
+    # else:
+    #     raise Nope()
+    # c.slb.service_group.update("pfoobar", c.slb.service_group.TCP,
+    #                            c.slb.service_group.LEAST_CONNECTION)
+    # try:
+    #     c.slb.service_group.update("pnfoobar", c.slb.service_group.TCP,
+    #                                c.slb.service_group.LEAST_CONNECTION)
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # else:
+    #     raise Nope()
+    # c.slb.service_group.delete("pfoobar")
+    # c.slb.service_group.delete("pfoobar")
+    # try:
+    #     c.slb.service_group.get("pfoobar")
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # else:
+    #     raise Nope()
+    # c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
+    #                            c.slb.service_group.ROUND_ROBIN)
 
-    print("=============================================================")
-    print("")
-    print("VIP Create")
-    c.slb.virtual_server.delete("vip3")
-    c.slb.virtual_server.create("vip3", pmap['vip3'])
-    c.slb.virtual_server.get("vip3")
+    # print("=============================================================")
+    # print("")
+    # print("VIP Create")
+    # c.slb.virtual_server.delete("vip3")
+    # c.slb.virtual_server.create("vip3", pmap['vip3'])
+    # c.slb.virtual_server.get("vip3")
 
-    c.slb.virtual_server.delete("vfoobar")
-    c.slb.virtual_server.create("vfoobar", pmap['vip1'])
-    r = c.slb.virtual_server.get("vfoobar")
-    print("LIBRARY RESPONSE = %s", r)
-    r = c.slb.virtual_server.all()
-    print("LIBRARY RESPONSE = %s", r)
-    try:
-        c.slb.virtual_server.create("vfoobar", pmap['vip1'])
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    else:
-        raise Nope()
-    try:
-        c.slb.virtual_server.stats("vfoobar")
-    except Exception:
-        pass
-    c.slb.virtual_server.delete("vfoobar")
-    c.slb.virtual_server.delete("vfoobar")
-    try:
-        c.slb.virtual_server.get("vfoobar")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    else:
-        raise Nope()
+    # c.slb.virtual_server.delete("vfoobar")
+    # c.slb.virtual_server.create("vfoobar", pmap['vip1'])
+    # r = c.slb.virtual_server.get("vfoobar")
+    # print("LIBRARY RESPONSE = %s", r)
+    # r = c.slb.virtual_server.all()
+    # print("LIBRARY RESPONSE = %s", r)
+    # try:
+    #     c.slb.virtual_server.create("vfoobar", pmap['vip1'])
+    # except acos_client.errors.Exists:
+    #     print("got already exists error, good")
+    # else:
+    #     raise Nope()
+    # try:
+    #     c.slb.virtual_server.stats("vfoobar")
+    # except Exception:
+    #     pass
+    # c.slb.virtual_server.delete("vfoobar")
+    # c.slb.virtual_server.delete("vfoobar")
+    # try:
+    #     c.slb.virtual_server.get("vfoobar")
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # else:
+    #     raise Nope()
 
-    c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
-                                      c.slb.virtual_server.vport.HTTP, 80)
-    c.slb.virtual_server.vport.create("vip3", "vip3_VPORT",
-                                      service_group_name="pfoobar",
-                                      protocol=c.slb.virtual_server.vport.HTTP,
-                                      port='80')
-    c.slb.virtual_server.vport.get("vip3",
-                                   "vip3_VPORT",
-                                   protocol=c.slb.virtual_server.vport.HTTP,
-                                   port=80)
-    try:
-        c.slb.virtual_server.vport.create(
-            "vip3", "vip3_VPORT",
-            service_group_name="pfoobar",
-            protocol=c.slb.virtual_server.vport.HTTP,
-            port='80')
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    else:
-        raise Nope()
-    c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
-                                      c.slb.virtual_server.vport.HTTP, 80)
-    c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
-                                      c.slb.virtual_server.vport.HTTP, 80)
+    # c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
+    #                                   c.slb.virtual_server.vport.HTTP, 80)
+    # c.slb.virtual_server.vport.create("vip3", "vip3_VPORT",
+    #                                   service_group_name="pfoobar",
+    #                                   protocol=c.slb.virtual_server.vport.HTTP,
+    #                                   port='80')
+    # c.slb.virtual_server.vport.get("vip3",
+    #                                "vip3_VPORT",
+    #                                protocol=c.slb.virtual_server.vport.HTTP,
+    #                                port=80)
+    # try:
+    #     c.slb.virtual_server.vport.create(
+    #         "vip3", "vip3_VPORT",
+    #         service_group_name="pfoobar",
+    #         protocol=c.slb.virtual_server.vport.HTTP,
+    #         port='80')
+    # except acos_client.errors.Exists:
+    #     print("got already exists error, good")
+    # else:
+    #     raise Nope()
+    # c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
+    #                                   c.slb.virtual_server.vport.HTTP, 80)
+    # c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
+    #                                   c.slb.virtual_server.vport.HTTP, 80)
 
-    print("=============================================================")
-    print("")
-    print("HM Create")
-    c.slb.hm.delete("hnfoobar")
-    c.slb.hm.delete("hfoobar")
-    c.slb.hm.create("hfoobar", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200', 80)
-    r = c.slb.hm.get("hfoobar")
-    print("LIBRARY RESPONSE = %s", r)
-    try:
-        c.slb.hm.create("hfoobar", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200',
-                        80)
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    else:
-        raise Nope()
-    c.slb.hm.update("hfoobar", c.slb.hm.HTTP, 10, 10, 10, 'GET', '/', '200', 80)
-    try:
-        c.slb.hm.update("hnfoobar", c.slb.hm.HTTP, 10, 10, 10, 'GET', '/', '200', 80)
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    else:
-        raise Nope()
-    c.slb.hm.delete("hfoobar")
-    c.slb.hm.delete("hfoobar")
-    try:
-        c.slb.hm.get("hfoobar")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    else:
-        raise Nope()
+    # print("=============================================================")
+    # print("")
+    # print("HM Create")
+    # c.slb.hm.delete("hnfoobar")
+    # c.slb.hm.delete("hfoobar")
+    # c.slb.hm.create("hfoobar", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200', 80)
+    # r = c.slb.hm.get("hfoobar")
+    # print("LIBRARY RESPONSE = %s", r)
+    # try:
+    #     c.slb.hm.create("hfoobar", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200',
+    #                     80)
+    # except acos_client.errors.Exists:
+    #     print("got already exists error, good")
+    # else:
+    #     raise Nope()
+    # c.slb.hm.update("hfoobar", c.slb.hm.HTTP, 10, 10, 10, 'GET', '/', '200', 80)
+    # try:
+    #     c.slb.hm.update("hnfoobar", c.slb.hm.HTTP, 10, 10, 10, 'GET', '/', '200', 80)
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # else:
+    #     raise Nope()
+    # c.slb.hm.delete("hfoobar")
+    # c.slb.hm.delete("hfoobar")
+    # try:
+    #     c.slb.hm.get("hfoobar")
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # else:
+    #     raise Nope()
 
-    c.slb.hm.delete("hm2")
-    c.slb.hm.create("hm2", c.slb.hm.ICMP, 5, 5, 5)
-    r = c.slb.hm.get("hm2")
+    # c.slb.hm.delete("hm2")
+    # c.slb.hm.create("hm2", c.slb.hm.ICMP, 5, 5, 5)
+    # r = c.slb.hm.get("hm2")
 
-    c.slb.hm.delete("hm4")
-    c.slb.hm.create("hm4", c.slb.hm.TCP, 5, 5, 5, port=25)
-    r = c.slb.hm.get("hm4")
+    # c.slb.hm.delete("hm4")
+    # c.slb.hm.create("hm4", c.slb.hm.TCP, 5, 5, 5, port=25)
+    # r = c.slb.hm.get("hm4")
 
-    c.slb.hm.delete("hm3")
-    c.slb.hm.create("hm3", c.slb.hm.HTTPS, 5, 5, 5, 'GET', '/', '200', 443)
-    r = c.slb.hm.get("hm3")
+    # c.slb.hm.delete("hm3")
+    # c.slb.hm.create("hm3", c.slb.hm.HTTPS, 5, 5, 5, 'GET', '/', '200', 443)
+    # r = c.slb.hm.get("hm3")
 
-    print("=============================================================")
-    print("")
-    print("Member Create")
-    c.slb.service_group.member.delete("pfoobar", "foobar", 80)
-    c.slb.service_group.member.create("pfoobar", "foobar", 80)
-    try:
-        c.slb.service_group.member.create("pfoobar", "foobar", 80)
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    else:
-        raise Nope()
+    # print("=============================================================")
+    # print("")
+    # print("Member Create")
+    # c.slb.service_group.member.delete("pfoobar", "foobar", 80)
+    # c.slb.service_group.member.create("pfoobar", "foobar", 80)
+    # try:
+    #     c.slb.service_group.member.create("pfoobar", "foobar", 80)
+    # except acos_client.errors.Exists:
+    #     print("got already exists error, good")
+    # else:
+    #     raise Nope()
 
-    print("Member get_oper")
-    oper = c.slb.service_group.member.get_oper("pfoobar", "foobar", 80)
-    print(oper)
+    # print("Member get_oper")
+    # oper = c.slb.service_group.member.get_oper("pfoobar", "foobar", 80)
+    # print(oper)
 
-    c.slb.service_group.member.update("pfoobar", "foobar", 80,
-                                      c.slb.DOWN)
-    try:
-        c.slb.service_group.member.update("pfoobar", "nfoobar", 80)
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    else:
-        raise Nope()
-    try:
-        c.slb.service_group.member.update("pnfoobar", "foobar", 80)
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    else:
-        raise Nope()
-    c.slb.service_group.member.delete("pfoobar", "foobar", 80)
-    c.slb.service_group.member.delete("pfoobar", "foobar", 80)
+    # c.slb.service_group.member.update("pfoobar", "foobar", 80,
+    #                                   c.slb.DOWN)
+    # try:
+    #     c.slb.service_group.member.update("pfoobar", "nfoobar", 80)
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # else:
+    #     raise Nope()
+    # try:
+    #     c.slb.service_group.member.update("pnfoobar", "foobar", 80)
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # else:
+    #     raise Nope()
+    # c.slb.service_group.member.delete("pfoobar", "foobar", 80)
+    # c.slb.service_group.member.delete("pfoobar", "foobar", 80)
 
-    print("=============================================================")
-    print("")
-    print("Source Ip Persistence")
-    c.slb.template.src_ip_persistence.delete("sip1")
-    c.slb.template.src_ip_persistence.create("sip1")
-    try:
-        c.slb.template.src_ip_persistence.create("sip1")
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    else:
-        raise Nope()
-    r = c.slb.template.src_ip_persistence.get("sip1")
-    print("LIBRARY RESPONSE = %s", r)
-    c.slb.template.src_ip_persistence.exists("sip1")
-    c.slb.template.src_ip_persistence.delete("sip1")
-    c.slb.template.src_ip_persistence.delete("sip1")
-    try:
-        c.slb.template.src_ip_persistence.get("sip1")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    else:
-        raise Nope()
-    c.slb.template.src_ip_persistence.create("sip1")
+    # print("=============================================================")
+    # print("")
+    # print("Source Ip Persistence")
+    # c.slb.template.src_ip_persistence.delete("sip1")
+    # c.slb.template.src_ip_persistence.create("sip1")
+    # try:
+    #     c.slb.template.src_ip_persistence.create("sip1")
+    # except acos_client.errors.Exists:
+    #     print("got already exists error, good")
+    # else:
+    #     raise Nope()
+    # r = c.slb.template.src_ip_persistence.get("sip1")
+    # print("LIBRARY RESPONSE = %s", r)
+    # c.slb.template.src_ip_persistence.exists("sip1")
+    # c.slb.template.src_ip_persistence.delete("sip1")
+    # c.slb.template.src_ip_persistence.delete("sip1")
+    # try:
+    #     c.slb.template.src_ip_persistence.get("sip1")
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # else:
+    #     raise Nope()
+    # c.slb.template.src_ip_persistence.create("sip1")
 
-    print("=============================================================")
-    print("")
-    print("Http Cookie Persistence")
-    c.slb.template.cookie_persistence.delete("cp1")
-    c.slb.template.cookie_persistence.create("cp1")
-    try:
-        c.slb.template.cookie_persistence.create("cp1")
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    else:
-        raise Nope()
-    c.slb.template.cookie_persistence.get("cp1")
-    c.slb.template.cookie_persistence.exists("cp1")
-    c.slb.template.cookie_persistence.delete("cp1")
-    c.slb.template.cookie_persistence.delete("cp1")
-    try:
-        c.slb.template.cookie_persistence.get("cp1")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    else:
-        raise Nope()
-    c.slb.template.cookie_persistence.create("cp1")
+    # print("=============================================================")
+    # print("")
+    # print("Http Cookie Persistence")
+    # c.slb.template.cookie_persistence.delete("cp1")
+    # c.slb.template.cookie_persistence.create("cp1")
+    # try:
+    #     c.slb.template.cookie_persistence.create("cp1")
+    # except acos_client.errors.Exists:
+    #     print("got already exists error, good")
+    # else:
+    #     raise Nope()
+    # c.slb.template.cookie_persistence.get("cp1")
+    # c.slb.template.cookie_persistence.exists("cp1")
+    # c.slb.template.cookie_persistence.delete("cp1")
+    # c.slb.template.cookie_persistence.delete("cp1")
+    # try:
+    #     c.slb.template.cookie_persistence.get("cp1")
+    # except acos_client.errors.NotFound:
+    #     print("got not found, good")
+    # else:
+    #     raise Nope()
+    # c.slb.template.cookie_persistence.create("cp1")
 
-    print("=============================================================")
-    print("")
-    print("Vip with pers")
-    c.slb.virtual_server.delete("vip2")
-    c.slb.virtual_server.create("vip2", pmap['vip2'])
-    c.slb.virtual_server.vport.create(
-        "vip2", "vip2_vport2",
-        protocol=c.slb.virtual_server.vport.HTTPS,
-        port=444,
-        service_group_name='pfoobar',
-        s_pers_name='sip1')
-    c.slb.virtual_server.vport.create(
-        "vip2", "vip2_vport3",
-        protocol=c.slb.virtual_server.vport.HTTPS,
-        port=445,
-        service_group_name='pfoobar',
-        c_pers_name='cp1')
-
+    # print("=============================================================")
+    # print("")
+    # print("Vip with pers")
+    # c.slb.virtual_server.delete("vip2")
+    # c.slb.virtual_server.create("vip2", pmap['vip2'])
+    # c.slb.virtual_server.vport.create(
+    #     "vip2", "vip2_vport2",
+    #     protocol=c.slb.virtual_server.vport.HTTPS,
+    #     port=444,
+    #     service_group_name='pfoobar',
+    #     s_pers_name='sip1')
+    # c.slb.virtual_server.vport.create(
+    #     "vip2", "vip2_vport3",
+    #     protocol=c.slb.virtual_server.vport.HTTPS,
+    #     port=445,
+    #     service_group_name='pfoobar',
+    #     c_pers_name='cp1')
+    # # END SLB COMMENT BLOCK
     print("=============================================================")
     print("sflow settings")
     print("=============================================================")
@@ -569,17 +570,12 @@ def run_all(ax, partition, pmap):
     print("")
     print("=============================================================")
 
-    fake_static = "10.200.13.42"
+    fake_static = "10.200.13.142"
     fake_mask = "255.255.255.0"
+
     if float(ARGS.axapi_version) >= 3.0:
-        try:
-            eth_ifs = c.interface.ethernet.get()
-        except NotImplementedError:
-            print("Interface Manipulation is implemented in AXAPI 2.1 but not acos-client")
-        try:
-            mgmt_if = c.interface.management.get()
-        except NotImplementedError:
-            print("Interface Manipulation is implemented in AXAPI 2.1 but not acos-client")
+        eth_ifs = c.interface.ethernet.get()
+        mgmt_if = c.interface.management.get()
 
         print("Ethernet Interfaces:\r\n{0}".format(eth_ifs))
         print("Manage Interfaces:\r\n{0}".format(mgmt_if))
@@ -600,12 +596,10 @@ def run_all(ax, partition, pmap):
 
         eth1_dhcp = c.interface.ethernet.get(1)
         print("Updated interface 1 DHCP: {0}".format(eth1_dhcp))
-    elif float(ARGS.axapi_version == 2.1):
-        try:
-            eth_ifs = c.interface.ethernet.get_list()
-            mgmt_if = c.interface.management.get()
-        except NotImplementedError:
-            print("Interface Manipulation is implemented in AXAPI 2.1 but not acos-client")
+    elif float(ARGS.axapi_version) == 2.1:
+
+        eth_ifs = c.interface.ethernet.get_list()
+        mgmt_if = c.interface.management.get()
 
         print("INITIAL Ethernet Interfaces:\r\n{0}".format(eth_ifs))
         print("INITIAL Management Interfaces:\r\n{0}".format(mgmt_if))
@@ -625,8 +619,6 @@ def run_all(ax, partition, pmap):
         print("Interface post-DHCP update: {0}".format(eth1_updated))
         print("Updating interface 1 with fake IP...")
         try:
-            # c.interface.ethernet.update(1, dhcp=False, ip_address="",
-            #                             ip_netmask="", enable=False)
             c.interface.ethernet.update(1, dhcp=False, ip_address=fake_static,
                                         ip_netmask=fake_mask, enable=False)
             c.interface.ethernet.update(1, dhcp=False, ip_address=fake_static,
