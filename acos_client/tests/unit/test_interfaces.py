@@ -21,17 +21,11 @@ class TestInterfaces(unittest.TestCase):
     def test_get(self):
         m = mocks.InterfaceGet()
         with m.client() as c:
-            r = c.network.interface.get(1)
+            r = c.interface.ethernet.get(1)
             self.assertIn("interface", r)
 
     def test_get_list(self):
         m = mocks.InterfaceGet()
         with m.client() as c:
-            r = c.network.interface.get(1)
+            r = c.interface.get_list()
             self.assertIn("interface", r)
-
-    def test_set(self):
-        m = mocks.InterfaceSet()
-        with m.client() as c:
-            r = c.network.interface.set(1, m.params)
-            self.assertIn("OK", r["response"]["status"])

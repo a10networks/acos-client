@@ -18,7 +18,6 @@ import base
 class Interface(base.BaseV21):
     def _build_payload(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                        speed="auto", **kwargs):
-        # TODO(mdurrant) - Check ip/netmask for validity.
         cli_cmds = []
 
         if ifnum:
@@ -54,8 +53,7 @@ class Interface(base.BaseV21):
                speed="auto"):
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
                                       dhcp=dhcp, enable=enable, speed=speed)
-        return self._request("POST", "cli.deploy", params=None,
-                          payload=payload)
+        return self._request("POST", "cli.deploy", params=None, payload=payload)
 
     @property
     def ethernet(self):

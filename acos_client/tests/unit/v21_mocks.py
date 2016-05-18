@@ -635,3 +635,36 @@ class HASync(AuthenticatedMockPair):
             'password': 'a10'
         }
     }
+
+
+class Interface(AuthenticatedMockPair):
+    params = {
+        "port_num": 1
+    }
+
+
+class InterfaceGet(AuthenticatedMockPair):
+    action = "network.interface.get"
+    response = {
+        "interface": {
+            "port_num": 1,
+            "type": "ethernet",
+        }
+    }
+
+
+class InterfaceList(Interface):
+    response = [
+        {"interface": {
+            "port_num": 1,
+            "type": "ethernet",
+        }},
+        {"interface": {
+            "port_num": 2,
+            "type": "ethernet",
+        }}
+    ]
+
+
+class InterfaceSet(Interface):
+    action = "network.interface.set"
