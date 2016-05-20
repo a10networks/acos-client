@@ -116,7 +116,7 @@ class HttpClient(object):
 
         last_e = None
 
-        for i in xrange(0, 600):
+        for i in xrange(0, 1800):
             try:
                 last_e = None
                 if file_name is not None:

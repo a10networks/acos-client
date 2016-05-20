@@ -174,7 +174,7 @@ class HttpClient(object):
 
         last_e = None
 
-        for i in xrange(0, 600):
+        for i in xrange(0, 1200):
             try:
                 last_e = None
                 data = self._http(method, api_url, payload)
