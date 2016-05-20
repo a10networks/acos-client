@@ -121,6 +121,18 @@ class TestLogutils(unittest2.TestCase):
             }]
         self.assertEqual(expected, actual)
 
+    def test_int(self):
+        actual = target.clean(1)
+        self.assertEqual(1, actual)
+
+    def test_float(self):
+        actual = target.clean(3.7)
+        self.assertEqual(3.7, actual)
+
+    def test_none(self):
+        actual = target.clean(None)
+        self.assertEqual(None, actual)
+
     def test_string(self):
         actual = target.clean('sometext')
         self.assertEqual('sometext', actual)

@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import copy
+# import copy
 
 CLEAN_FIELDS = ["username", "password"]
 
@@ -37,10 +37,10 @@ def clean(data, field=None):
         return data
     elif isinstance(data, (list, tuple)):
         return type(data)(clean(x) for x in data)
-    elif hasattr(data, "__dict__"):
-        data = copy.copy(data)
-        for x, y in data.__dict__.iteritems():
-            setattr(data, x, clean(y, field=x))
-        return data
+#    elif hasattr(data, "__dict__"):
+#        data = copy.copy(data)
+#        for x, y in data.__dict__.iteritems():
+#            setattr(data, x, clean(y, field=x))
+#        return data
 
     return data
