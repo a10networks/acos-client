@@ -83,21 +83,6 @@ class TestLogutils(unittest2.TestCase):
         self.assertEqual(target.REPLACEMENT, actual["username"])
         self.assertEqual(target.REPLACEMENT, actual["password"])
 
-    def test_obj_flat(self):
-        actual = target.clean(self.obj_flat)
-        self.assertEqual(target.REPLACEMENT, actual.username)
-        self.assertEqual(target.REPLACEMENT, actual.password)
-
-    def test_obj_onelevel(self):
-        actual = target.clean(self.obj_onelevel).credentials
-        self.assertEqual(target.REPLACEMENT, actual.username)
-        self.assertEqual(target.REPLACEMENT, actual.password)
-
-    def test_obj_twolevel(self):
-        actual = target.clean(self.obj_twolevel).credentials.inside_secret
-        self.assertEqual(target.REPLACEMENT, actual.username)
-        self.assertEqual(target.REPLACEMENT, actual.password)
-
     def test_tuple_dict(self):
         actual = target.clean(
             (1, {'credentials': {
