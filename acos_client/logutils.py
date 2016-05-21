@@ -12,32 +12,30 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import collections
-import copy
+# import copy
 
 CLEAN_FIELDS = ["username", "password"]
 
 REPLACEMENT = "*" * 8
-PRIMITIVES = [int, float, str]
 
 
 def clean(data, field=None):
     if field in CLEAN_FIELDS:
         return REPLACEMENT
 
+    # Mocks are gross and they don't live in production code.
+    # We can ignore them.
+    if type(data).__module__ == 'mock.mock':
+        return data
+
     if type(data) is dict:
-        return dict(
+        return type(data)(
             (x, clean(y, field=x))
             for x, y in data.iteritems()
             )
-    elif issubclass(type(data), str):
+    elif isinstance(data, basestring):
         return data
-    elif issubclass(type(data), collections.Iterable):
+    elif isinstance(data, (list, tuple)):
         return type(data)(clean(x) for x in data)
-    elif hasattr(data, "__dict__"):
-        data = copy.copy(data)
-        for x, y in data.__dict__.iteritems():
-            setattr(data, x, clean(y, field=x))
-        return data
 
     return data
