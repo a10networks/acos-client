@@ -40,7 +40,10 @@ class BaseV30(object):
                                             self.auth_header, **kwargs)
         except (ae.InvalidSessionID, ae.ConfigManagerNotReady) as e:
             if retry_count < 5:
-                time.sleep(0.1)
+                if type(e) == ae.ConfigManagerNotReady:
+                    time.sleep(20)
+                else:
+                    time.sleep(1.0)
                 try:
                     p = self.client.current_partition
                     self.client.session.close()
