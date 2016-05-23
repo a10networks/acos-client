@@ -14,7 +14,7 @@
 
 import time
 
-import acos_client.errors as acos_errors
+import acos_client.errors as ae
 
 
 class BaseV30(object):
@@ -33,12 +33,12 @@ class BaseV30(object):
 
     def _request(self, method, action, params, retry_count=0, **kwargs):
         if retry_count > 6:
-            raise acos_errors.ACOSUnknownError()
+            raise ae.ACOSUnknownError()
 
         try:
             return self.client.http.request(method, self.url(action), params,
                                             self.auth_header, **kwargs)
-        except acos_errors.InvalidSessionID as e:
+        except (ae.InvalidSessionID, ae.ConfigManagerNotReady) as e:
             if retry_count < 5:
                 time.sleep(0.1)
                 try:

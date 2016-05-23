@@ -103,6 +103,11 @@ RESPONSE_CODES = {
             '*': ae.NotFound
         }
     },
+    1023463424: {
+        '*': {
+            '*': ae.ConfigManagerNotReady
+        }
+    },
     1023475722: {
         '*': {
             '*': ae.NotFound
