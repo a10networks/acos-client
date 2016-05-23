@@ -32,18 +32,21 @@ class BaseV30(object):
         return ("/axapi/v3" + action)
 
     def _request(self, method, action, params, retry_count=0, **kwargs):
-        if retry_count > 6:
+        if retry_count > 120:
             raise ae.ACOSUnknownError()
 
         try:
             return self.client.http.request(method, self.url(action), params,
                                             self.auth_header, **kwargs)
         except (ae.InvalidSessionID, ae.ConfigManagerNotReady) as e:
-            if retry_count < 5:
-                if type(e) == ae.ConfigManagerNotReady:
-                    time.sleep(20)
-                else:
-                    time.sleep(1.0)
+            if type(e) == ae.ConfigManagerNotReady:
+                retry_limit = 120
+            else:
+                retry_limit = 5
+            sleep_secs = 1.0
+
+            if retry_count < retry_limit:
+                time.sleep(sleep_secs)
                 try:
                     p = self.client.current_partition
                     self.client.session.close()
