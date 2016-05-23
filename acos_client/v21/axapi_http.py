@@ -55,6 +55,7 @@ def extract_method(api_url):
 
 def merge_dicts(d1, d2):
     d = d1.copy()
+    # if isinstance(d1, dict) else {}
     for k, v in d2.items():
         if k in d and isinstance(d[k], dict):
             d[k] = merge_dicts(d[k], d2[k])
