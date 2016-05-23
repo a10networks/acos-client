@@ -32,7 +32,7 @@ class BaseV30(object):
         return ("/axapi/v3" + action)
 
     def _request(self, method, action, params, retry_count=0, **kwargs):
-        if retry_count > 120:
+        if retry_count > 24:
             raise ae.ACOSUnknownError()
 
         try:
@@ -40,10 +40,11 @@ class BaseV30(object):
                                             self.auth_header, **kwargs)
         except (ae.InvalidSessionID, ae.ConfigManagerNotReady) as e:
             if type(e) == ae.ConfigManagerNotReady:
-                retry_limit = 120
+                retry_limit = 24
+                sleep_secs = 5
             else:
                 retry_limit = 5
-            sleep_secs = 1.0
+                sleep_secs = 1.0
 
             if retry_count < retry_limit:
                 time.sleep(sleep_secs)
