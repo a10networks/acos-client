@@ -129,5 +129,5 @@ class Client(object):
                 s = socket.create_connection((self.host, self.port), 1.0)
                 s.close()
                 break
-            except socket.timeout:
+            except socket.error:
                 pass
