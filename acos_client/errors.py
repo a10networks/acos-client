@@ -89,3 +89,7 @@ class HMMissingHttpPassive(ACOSException):
 
 class AxapiJsonFormatError(ACOSException):
     pass
+
+
+class ConfigManagerNotReady(ACOSException):
+    pass

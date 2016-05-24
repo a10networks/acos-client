@@ -14,7 +14,7 @@
 
 import time
 
-import acos_client.errors as acos_errors
+import acos_client.errors as ae
 
 
 class BaseV30(object):
@@ -32,15 +32,22 @@ class BaseV30(object):
         return ("/axapi/v3" + action)
 
     def _request(self, method, action, params, retry_count=0, **kwargs):
-        if retry_count > 6:
-            raise acos_errors.ACOSUnknownError()
+        if retry_count > 24:
+            raise ae.ACOSUnknownError()
 
         try:
             return self.client.http.request(method, self.url(action), params,
                                             self.auth_header, **kwargs)
-        except acos_errors.InvalidSessionID as e:
-            if retry_count < 5:
-                time.sleep(0.1)
+        except (ae.InvalidSessionID, ae.ConfigManagerNotReady) as e:
+            if type(e) == ae.ConfigManagerNotReady:
+                retry_limit = 24
+                sleep_secs = 5
+            else:
+                retry_limit = 5
+                sleep_secs = 1.0
+
+            if retry_count < retry_limit:
+                time.sleep(sleep_secs)
                 try:
                     p = self.client.current_partition
                     self.client.session.close()
