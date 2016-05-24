@@ -109,3 +109,6 @@ class ServiceGroup(base.BaseV30):
 
     def stats(self, name, *args, **kwargs):
         return self._get(self.url_prefix + name + "/stats", **kwargs)
+
+    def oper(self, name, *args, **kwargs):
+        return self._get(self.url_prefix + name + "/oper", **kwargs)
