@@ -44,13 +44,18 @@ class Action(base.BaseV21):
         if partition is not None:
             write_cmd = "active-partition {0}\r\n{1}".format(partition, write_cmd)
 
+        last_e = None
         for i in range(0, 5):
             # Request raises an exception when the "maybe error" is returned.
             try:
                 return self._request("POST", "cli.deploy", params=None, payload=write_cmd, **kwargs)
             except acos_errors.ACOSException as e:
+                last_e = e
                 # Catch 'might fail error'
                 if e.msg.startswith("write memory") or '2039 ' in e.msg:
                     time.sleep(1)
                     continue
                 raise e
+
+        if last_e is not None:
+            raise last_e
