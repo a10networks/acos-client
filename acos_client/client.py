@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import logging
 import socket
 
 import acos_client
@@ -67,6 +68,8 @@ VERSION_IMPORTS = {
         'File': v30_File
     },
 }
+
+LOG = logging.getLogger(__name__)
 
 
 class Client(object):
@@ -126,8 +129,10 @@ class Client(object):
     def wait_for_connect(self, max_timeout=60):
         for i in range(0, max_timeout):
             try:
+                LOG.debug("wait_for_connect: attempting %s", self.host)
                 s = socket.create_connection((self.host, self.port), 1.0)
                 s.close()
+                LOG.debug("wait_for_connect: connected %s", self.host)
                 break
             except socket.error:
                 pass
