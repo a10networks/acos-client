@@ -85,6 +85,11 @@ def run_all(ax, partition, pmap):
     print("")
     print("Basic login/get info twice")
     c = get_client(ax)
+
+    print("WAIT FOR CONNECT")
+    c.wait_for_connect()
+    print("WAIT FOR CONNECT END")
+
     r = c.system.information()
     print("LIBRARY RESPONSE = %s", r)
 

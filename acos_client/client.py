@@ -12,6 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import logging
+import socket
+
 import acos_client
 
 import errors as acos_errors
@@ -66,6 +69,8 @@ VERSION_IMPORTS = {
     },
 }
 
+LOG = logging.getLogger(__name__)
+
 
 class Client(object):
 
@@ -74,6 +79,8 @@ class Client(object):
         self._version = self._just_digits(version)
         if self._version not in acos_client.AXAPI_VERSIONS:
             raise acos_errors.ACOSUnsupportedVersion()
+        self.host = host
+        self.port = port
         self.http = VERSION_IMPORTS[self._version]['http'].HttpClient(
             host, port, protocol, timeout=timeout, retry_errno_list=retry_errno_list)
         self.session = VERSION_IMPORTS[self._version]['Session'](
@@ -118,3 +125,14 @@ class Client(object):
     @property
     def license_manager(self):
         return VERSION_IMPORTS[self._version]["LicenseManager"](self)
+
+    def wait_for_connect(self, max_timeout=60):
+        for i in range(0, max_timeout):
+            try:
+                LOG.debug("wait_for_connect: attempting %s", self.host)
+                s = socket.create_connection((self.host, self.port), 1.0)
+                s.close()
+                LOG.debug("wait_for_connect: connected %s", self.host)
+                break
+            except socket.error:
+                pass
