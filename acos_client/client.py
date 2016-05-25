@@ -19,6 +19,7 @@ import acos_client
 
 import errors as acos_errors
 import v21.axapi_http
+from v21.dns import DNS as v21_DNS
 from v21.ha import HA as v21_HA
 from v21.interface import Interface as v21_Interface
 from v21.license_manager import LicenseManager as v21_LicenseManager
@@ -30,6 +31,7 @@ from v21.slb import SLB as v21_SLB
 from v21.system import System as v21_System
 
 import v30.axapi_http
+from v30.dns import DNS as v30_DNS
 from v30.file import File as v30_File
 from v30.ha import HA as v30_HA
 from v30.interface import Interface as v30_Interface
@@ -43,6 +45,7 @@ from v30.system import System as v30_System
 
 VERSION_IMPORTS = {
     '21': {
+        'DNS': v21_DNS,
         'http': v21.axapi_http,
         'HA': v21_HA,
         'Interface': v21_Interface,
@@ -55,6 +58,7 @@ VERSION_IMPORTS = {
         'System': v21_System,
     },
     '30': {
+        'DNS': v30_DNS,
         'http': v30.axapi_http,
         'Interface': v30_Interface,
         'HA': v30_HA,
@@ -89,6 +93,10 @@ class Client(object):
 
     def _just_digits(self, s):
         return ''.join(i for i in str(s) if i.isdigit())
+
+    @property
+    def dns(self):
+        return VERSION_IMPORTS[self._version]['DNS'](self)
 
     @property
     def ha(self):
