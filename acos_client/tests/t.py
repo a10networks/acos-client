@@ -328,6 +328,12 @@ def run_all(ax, partition, pmap):
         c.slb.virtual_server.stats("vfoobar")
     except Exception:
         pass
+    try:
+        oper = c.slb.virtual_server.oper("vfoobar")
+        print("OPERATIONAL STATS (VIRTUAL SERVER):")
+        print(oper)
+    except Exception as ex:
+        print(ex)
     c.slb.virtual_server.delete("vfoobar")
     c.slb.virtual_server.delete("vfoobar")
     try:
@@ -416,6 +422,12 @@ def run_all(ax, partition, pmap):
         print("got already exists error, good")
     else:
         raise Nope()
+    try:
+        oper = c.slb.service_group.oper("vfoobar")
+        print("OPERATIONAL STATS (SERVICE GROUP):")
+        print(oper)
+    except Exception:
+        pass
 
     print("Member get_oper")
     oper = c.slb.service_group.member.get_oper("pfoobar", "foobar", 80)
