@@ -12,4 +12,4 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-VERSION = '1.3.5alpha'
+VERSION = '1.3.5'
