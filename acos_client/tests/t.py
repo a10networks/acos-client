@@ -73,6 +73,17 @@ def get_client(h, password=None):
                            protocol=h['protocol'])
     return c
 
+def print_sep_string(src="", header=True, footer=False):
+    print(p_sep)
+    if header:
+        print(p_sep)
+    print("{0}".format(src))
+    if footer:
+        print(p_sep)
+
+# pretty separator.
+p_sep = "============================================================="
+
 
 def run_all(ax, partition, pmap):
     print("=============================================================")
@@ -239,6 +250,8 @@ def run_all(ax, partition, pmap):
     # except acos_client.errors.NotFound:
     #     print("got not found, good")
     # c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
+
+
 
     print("=============================================================")
     print("")
@@ -442,6 +455,25 @@ def run_all(ax, partition, pmap):
         raise Nope()
     c.slb.service_group.member.delete("pfoobar", "foobar", 80)
     c.slb.service_group.member.delete("pfoobar", "foobar", 80)
+
+    print_sep_string("HTTP Template", footer=True)
+    http_template_name = "http_template1"
+    print_sep_string("* CREATE *", header=False)
+    try:
+        c.slb.template.http_template.create(http_template_name)
+    except acos_client.errors.Exists:
+        print("already exists, OK")
+    print_sep_string("* READ *", header=False)
+    try:
+        http_template = c.slb.template.http_template.get(http_template_name)
+    except acos_client.errors.NotFound:
+        raise Nope()
+
+    print_sep_string("* DELETE *", header=False)
+    try:
+        c.slb.template.http_template.delete(http_template_name)
+    except acos_client.errors.NotFound:
+        raise Nope()
 
     print("=============================================================")
     print("")

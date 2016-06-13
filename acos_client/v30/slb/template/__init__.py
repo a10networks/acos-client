@@ -14,11 +14,11 @@
 
 import acos_client.v30.base as base
 
+from http import HttpTemplate
 from persistence import CookiePersistence
 from persistence import SourceIpPersistence
 from ssl import ClientSSL
 from ssl import ServerSSL
-
 
 class Template(base.BaseV30):
 
@@ -37,3 +37,8 @@ class Template(base.BaseV30):
     @property
     def server_ssl(self):
         return ServerSSL(self.client)
+
+    # Yes, http_template is redundant.  We already have a http member (http client)
+    @property
+    def http_template(self):
+        return HttpTemplate(self.client)
