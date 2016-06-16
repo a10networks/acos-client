@@ -475,6 +475,27 @@ def run_all(ax, partition, pmap):
     except acos_client.errors.NotFound:
         raise Nope()
 
+
+    print_sep_string("aFleX Management", footer=True)
+    aflex_name = "test_aflex"
+    aflex_script = \
+    "# Script with comments\n# Doesn't do anything"
+
+    print_sep_string("* CREATE *", header=False)
+
+    try:
+        c.file.aflex.create(file=aflex_name, content=aflex_script)
+    except acos_client.errors.Exists:
+        pass
+    except:
+        raise Nope("Could not create aflex script")
+    import pdb; pdb.set_trace()
+    print_sep_string("* DELETE *", header=False)
+    try:
+        c.file.aflex.delete(file=aflex_name)
+    except acos_client.errors.NotFound:
+        raise Nope("Can't delete file that doesn't exist.")
+
     print("=============================================================")
     print("")
     print("Source Ip Persistence")
