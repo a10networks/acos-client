@@ -42,7 +42,6 @@ class AFlex(base.BaseV30):
         return self._post(self.url_prefix, file_name=obj_params["file"],
                           file_content=content, **kwargs)
 
-
     def get(self, file):
         return self._set(file=file, action="check")
 

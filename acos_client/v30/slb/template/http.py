@@ -37,26 +37,6 @@ class HttpTemplate(base.BaseV30):
             "redirect-rewrite": site_switching,
             "host-switching": host_switching,
             "site-switching": site_switching,
-            # "compression-enable": 0,
-            # "compression-keep-accept-encoding": 0,
-            # "compression-level": 1,
-            # "compression-minimum-content-length": 120,
-            # "insert-client-ip": 0,
-            # "insert-client-port": 0,
-            # "log-retry": 0,
-            # "non-http-bypass": 0,
-            # "redirect": 0,
-            # "redirect-rewrite": {
-            #     "match-list": match_list,
-            #     "redirect-secure": 0
-            # },
-            # "retry-on-5xx": 0,
-            # "strict-transaction-switch": 0,
-            # "term-11client-hdr-conn-close": 0,
-            # "url-hash-persist": 0,
-            # "req-hdr-wait-time": 0,
-            # "request-line-case-insensitive": 0,
-            # "keep-client-alive": 0
         }
 
 

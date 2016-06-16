@@ -70,6 +70,8 @@ class VirtualPort(base.BaseV30):
              exclude_minimize=[],
              autosnat=False,
              ipinip=False,
+             http_template=None,
+             aflex_scripts=[],
              **kwargs):
 
         params = {
@@ -83,6 +85,13 @@ class VirtualPort(base.BaseV30):
                 "extended-stats": stats
             }, exclude=exclude_minimize)
         }
+
+        if http_template is not None:
+            params["port"]["http-template"] = http_template
+
+        if aflex_scripts is not None and len(aflex_scripts) > 0:
+            params["port"]["aflex-scripts"] = [{"aflex": x} for x in aflex_scripts]
+
         if autosnat:
             params['port']['auto'] = int(autosnat)
         if ipinip:
@@ -108,7 +117,9 @@ class VirtualPort(base.BaseV30):
                s_pers_name=None, c_pers_name=None, status=1,
                autosnat=False,
                ipinip=False,
-               no_dest_nat=None, **kwargs):
+               no_dest_nat=None,
+               http_template=None,
+                **kwargs):
         return self._set(virtual_server_name,
                          name, protocol, port, service_group_name,
                          s_pers_name, c_pers_name, status,
