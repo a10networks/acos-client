@@ -123,6 +123,11 @@ RESPONSE_CODES = {
             '*': ae.AxapiJsonFormatError
         }
     },
+    1023656960: {
+        '*': {
+            '*': ae.NotFound
+     }
+    },
     1023656962: {
         '*': {
             '*': ae.NotFound
