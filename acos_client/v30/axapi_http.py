@@ -116,7 +116,7 @@ class HttpClient(object):
 
         last_e = None
 
-        for i in xrange(0, 600):
+        for i in xrange(0, 1500):
             try:
                 last_e = None
                 if file_name is not None:
@@ -136,7 +136,10 @@ class HttpClient(object):
                     continue
                 raise e
 
+        LOG.debug("acos_client retried %s %s times", self.url_base + api_url, i)
+
         if last_e is not None:
+            LOG.error("acos_client failing with error %s after %s retries ignoring %s", last_e, i, self.retry_err_strings)
             raise e
 
         if z.status_code == 204:
