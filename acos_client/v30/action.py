@@ -26,10 +26,14 @@ class Action(base.BaseV30):
             }
         }
         try:
-            self._post("/write/memory/", payload, **kwargs)
-        except ae.AxapiJsonFormatError:
-            # Workaround regression in 4.1.0 backwards compat
-            self._post("/write/memory/", "", **kwargs)
+            try:
+                self._post("/write/memory/", payload, **kwargs)
+            except ae.AxapiJsonFormatError:
+                # Workaround regression in 4.1.0 backwards compat
+                self._post("/write/memory/", "", **kwargs)
+        except ae.ConfigManagerNotReady:
+            # If the retry loop missed this, catch it next time.
+            pass
 
     def activate_and_write(self, partition, **kwargs):
         self.write_memory()

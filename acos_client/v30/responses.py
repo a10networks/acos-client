@@ -145,6 +145,11 @@ RESPONSE_CODES = {
             '*': ae.InvalidSessionID
         }
     },
+    1208025095: {
+        '*': {
+            '*': ae.ConfigManagerNotReady
+        }
+    },
     1023443968: {
         'DELETE': {
             '*': None
