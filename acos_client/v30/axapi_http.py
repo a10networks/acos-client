@@ -139,7 +139,8 @@ class HttpClient(object):
         LOG.debug("acos_client retried %s %s times", self.url_base + api_url, i)
 
         if last_e is not None:
-            LOG.error("acos_client failing with error %s after %s retries ignoring %s", last_e, i, self.retry_err_strings)
+            LOG.error("acos_client failing with error %s after %s retries ignoring %s",
+                      last_e, i, self.retry_err_strings)
             raise e
 
         if z.status_code == 204:
