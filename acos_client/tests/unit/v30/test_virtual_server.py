@@ -45,3 +45,14 @@ class TestVirtualServer(unittest.TestCase):
         call_source = self.client.http
         expected_payload = self._build_payload(arp_disable=arp_disable)
         call_source.request.assert_called_with('POST', EXPECTED_URL, expected_payload, mock.ANY)
+
+    def test_oper(self):
+        client = mock.MagicMock()
+        vs = virtual_server.VirtualServer(client)
+        vsname = "fake-loadbalancer"
+        vs.oper(vsname)
+
+        ((method, url, params, header), kwargs) = client.http.request.call_args
+        expected_url = "/axapi/v3/slb/virtual-server/{0}/oper".format(vsname)
+        self.assertEqual(method, "GET")
+        self.assertEqual(expected_url, url)

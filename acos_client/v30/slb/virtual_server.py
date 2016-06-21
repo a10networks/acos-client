@@ -68,7 +68,9 @@ class VirtualServer(base.BaseV30):
         return self._delete(self.url_prefix + name)
 
     def stats(self, name='', **kwargs):
-        # resp = self._get(self.url_prefix + name + '/stats/')
         resp = self._get(self.url_prefix + name + '/stats', **kwargs)
         return resp
-        # raise acos_errors.NotImplemented()
+
+    def oper(self, name='', **kwargs):
+        resp = self._get(self.url_prefix + name + '/oper', **kwargs)
+        return resp
