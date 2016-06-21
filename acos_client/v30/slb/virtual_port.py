@@ -87,6 +87,13 @@ class VirtualPort(base.BaseV30):
             params['port']['auto'] = int(autosnat)
         if ipinip:
             params['port']['ipinip'] = int(ipinip)
+        server_ssl_tmpl = kwargs.get("template_server_ssl", None)
+        client_ssl_tmpl = kwargs.get("template_client_ssl")
+
+        if server_ssl_tmpl:
+            params['port']['template-server-ssl'] = server_ssl_tmpl
+        if client_ssl_tmpl:
+            params['port']['template-client-ssl'] = client_ssl_tmpl
 
         sampling_enable = kwargs.get('sampling_enable')
         if sampling_enable is not None:
