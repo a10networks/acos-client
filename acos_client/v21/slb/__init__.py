@@ -19,6 +19,7 @@ from class_list import ClassList
 from hm import HealthMonitor
 from server import Server
 from service_group import ServiceGroup
+from ssl import SSLFile
 from template import Template
 from virtual_server import VirtualServer
 from virtual_service import VirtualService
@@ -64,3 +65,7 @@ class SLB(base.BaseV21):
     @property
     def common(self):
         raise NotImplementedError("slb.common support is not available using AXAPI v2.1")
+
+    @property
+    def ssl(self):
+        return SSLFile(self.client)
