@@ -776,7 +776,6 @@ def run_all(ax, partition, pmap):
     c.session.close()
 
     if float(ARGS.axapi_version) >= 3.0:
-        import pdb; pdb.set_trace()
         c.file.ssl_key.delete(c_key)
         c.file.ssl_key.delete(s_key)
         c.file.ssl_cert.delete(c_cert)

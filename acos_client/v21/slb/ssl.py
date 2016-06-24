@@ -18,13 +18,17 @@ class SSLFile(base.BaseV21):
 
     def _set(self, action, name, content, filetype, **kwargs):
         m = multipart.Multipart()
-        m.file(name="upload_cert", filename=name, value=content)
+        m.file(name=name, filename=name, value=content)
         ct, payload = m.get()
         kwargs.update(payload=payload, headers={'Content-type': ct})
-        return self._post(action, **kwargs)
+        params = {
+            "file_name": name,
+            "type": filetype
+        }
+        return self._post(action, params, **kwargs)
 
     def upload(self, name, content, filetype, **kwargs):
-        return self._set('slb.ssl.upload', name, content, filetype=filetype,
+        return self._set('slb.ssl.upload&type={0}'.format(filetype), name, content, filetype=filetype,
                          **kwargs)
 
     def all(self, **kwargs):
