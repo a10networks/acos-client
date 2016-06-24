@@ -110,10 +110,14 @@ def create_key(key_path, c):
     key_data = get_cert_from_path(key_path)
     key.update(key_data)
 
-    c.file.ssl_key.create(key_path,
-                          key_data["cert"],
-                          len(key_data["cert"]),
-                          action="import")
+    try:
+        c.file.ssl_key.create(key_path,
+                              key_data["cert"],
+                              len(key_data["cert"]),
+                              action="import")
+    except acos_client.errors.Exists:
+        print("Got exists... should have been deleted in previous.")
+
     try:
         key_get = c.file.ssl_key.get(key_path)
     except acos_client.errors.NotFound:
@@ -139,11 +143,14 @@ def create_cert(cert_path, c):
     cert_data = get_cert_from_path(cert_path)
     cert.update(cert_data)
 
-    c.file.ssl_cert.create(cert_path,
-                           cert_data["cert"],
-                           len(cert_data["cert"]),
-                           certificate_type="pem",
-                           action="import")
+    try:
+        c.file.ssl_cert.create(cert_path,
+                               cert_data["cert"],
+                               len(cert_data["cert"]),
+                               certificate_type="pem",
+                               action="import")
+    except acos_client.errors.Exists:
+        print("Got exists... should have been deleted in previous.")
     try:
         cert_get = c.file.ssl_cert.get(cert_path)
     except acos_client.errors.NotFound:
@@ -280,31 +287,18 @@ def run_all(ax, partition, pmap):
     c_key = "client_key.pem"
     s_key = "server_key.pem"
 
-    cert = {
-        "cert": None,
-        "file": None,
-        "size": 0,
-        "certificate_type": "pem",
-        "action": "import"
-    }
-
-    key = {
-        "cert": None,
-        "file": None,
-        "size": 0,
-        "action": "import"
-    }
-
     print("=============================================================")
     print("")
     print("SSL Certificate Create")
-    print("Create Certificate")
 
     if ARGS.axapi_version == "3.0":
+        print("Create Client Certificate")
         cert_data = create_cert(c_cert, c)
+        print("Create Server Certificate")
         s_cert_data = create_cert(s_cert, c)
-
+        print("Create Client Key")
         key_data = create_key(c_key, c)
+        print("Create Server Key")
         s_key_data = create_key(s_key, c)
     else:
         # This test is probably going to fail.  2.1 cert uploading support isn't there
@@ -780,6 +774,13 @@ def run_all(ax, partition, pmap):
             pass
 
     c.session.close()
+
+    if float(ARGS.axapi_version) >= 3.0:
+        import pdb; pdb.set_trace()
+        c.file.ssl_key.delete(c_key)
+        c.file.ssl_key.delete(s_key)
+        c.file.ssl_cert.delete(c_cert)
+        c.file.ssl_cert.delete(s_cert)
 
     print("=============================================================")
     print("t.py completed successfully!")
