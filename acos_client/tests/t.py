@@ -101,7 +101,6 @@ def create_key(key_path, c):
         "action": "import"
     }
 
-
     try:
         c.file.ssl_key.delete(key_path)
     except acos_client.errors.NotFound:
@@ -157,7 +156,6 @@ def create_cert(cert_path, c):
         raise Nope("Certificate retrieval failed.")
 
     return cert_get
-
 
 
 def run_all(ax, partition, pmap):
@@ -279,7 +277,6 @@ def run_all(ax, partition, pmap):
     print("A")
     c.system.action.write_memory()
 
-
     c_tmpl = "ssl_client"
     s_tmpl = "ssl_server"
     c_cert = "client_cert.pem"
@@ -293,13 +290,13 @@ def run_all(ax, partition, pmap):
 
     if ARGS.axapi_version == "3.0":
         print("Create Client Certificate")
-        cert_data = create_cert(c_cert, c)
+        create_cert(c_cert, c)
         print("Create Server Certificate")
-        s_cert_data = create_cert(s_cert, c)
+        create_cert(s_cert, c)
         print("Create Client Key")
-        key_data = create_key(c_key, c)
+        create_key(c_key, c)
         print("Create Server Key")
-        s_key_data = create_key(s_key, c)
+        create_key(s_key, c)
     else:
         # This test is probably going to fail.  2.1 cert uploading support isn't there
         print("Certificate upload not supported in 2.1")
