@@ -64,3 +64,13 @@ class SLB(base.BaseV21):
     @property
     def common(self):
         raise NotImplementedError("slb.common support is not available using AXAPI v2.1")
+
+
+class File(base.BaseV21):
+    @property
+    def ssl_key(self):
+        raise NotImplementedError("Not implemented in AXAPI v2.1")
+
+    @property
+    def ssl_cert(self):
+        raise NotImplementedError("Not implemented in AXAPI v2.1")

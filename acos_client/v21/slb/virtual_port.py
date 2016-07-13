@@ -46,6 +46,15 @@ class VirtualPort(base.BaseV21):
     SPDYS = 27
     FTP_PROXY = 28
 
+    # The keys as specified in the ACOS JSON message.
+    CLIENT_SSL_TMPL_KEY = "client_ssl_template"
+    SERVER_SSL_TMPL_KEY = "server_ssl_template"
+
+    # The keys as sent from a10-neutron-lbaas
+    # They match what we use in v4 so we transform here
+    CLIENT_SSL_ANL_KEY = "template_client_ssl"
+    SERVER_SSL_ANL_KEY = "template_server_ssl"
+
     def _set(self, action, virtual_server_name, name, protocol, port,
              service_group_name,
              s_pers_name=None, c_pers_name=None, status=1,
@@ -64,6 +73,16 @@ class VirtualPort(base.BaseV21):
                 "status": status
             })
         }
+
+        client_ssl_template = kwargs.get(self.CLIENT_SSL_TMPL_KEY)
+        server_ssl_template = kwargs.get(self.SERVER_SSL_TMPL_KEY)
+
+        if client_ssl_template:
+            params['port'][self.CLIENT_SSL_ANL_KEY] = client_ssl_template
+
+        if server_ssl_template:
+            params['port'][self.SERVER_SSL_ANL_KEY] = server_ssl_template
+
         if autosnat:
             params['port']['source_nat_auto'] = int(autosnat)
         if ipinip:

@@ -16,6 +16,7 @@
 
 
 import argparse
+import os.path
 import random
 import sys
 import traceback
@@ -72,6 +73,89 @@ def get_client(h, password=None):
                            port=h['port'],
                            protocol=h['protocol'])
     return c
+
+
+def get_cert_from_path(cpath):
+    if not os.path.exists(cpath):
+        raise Nope("Can't open {0}".format(cpath))
+
+    with open(cpath) as f:
+        cert_data = f.read()
+
+    filename = os.path.split(cpath)[1]
+
+    rv = {
+        "file": filename,
+        "cert": cert_data,
+        "size": len(cert_data),
+    }
+
+    return rv
+
+
+def create_key(key_path, c):
+    key = {
+        "cert": None,
+        "file": None,
+        "size": 0,
+        "action": "import"
+    }
+
+    try:
+        c.file.ssl_key.delete(key_path)
+    except acos_client.errors.NotFound:
+        print("key not found, that's OK")
+
+    key_data = get_cert_from_path(key_path)
+    key.update(key_data)
+
+    try:
+        c.file.ssl_key.create(key_path,
+                              key_data["cert"],
+                              len(key_data["cert"]),
+                              action="import")
+    except acos_client.errors.Exists:
+        print("Got exists... should have been deleted in previous.")
+
+    try:
+        key_get = c.file.ssl_key.get(key_path)
+    except acos_client.errors.NotFound:
+        raise Nope("Key retrieval failed.")
+
+    return key_get
+
+
+def create_cert(cert_path, c):
+    cert = {
+        "cert": None,
+        "file": None,
+        "size": 0,
+        "certificate_type": "pem",
+        "action": "import"
+    }
+
+    try:
+        c.file.ssl_cert.delete(cert_path)
+    except acos_client.errors.NotFound:
+        print("got not found, that's OK")
+
+    cert_data = get_cert_from_path(cert_path)
+    cert.update(cert_data)
+
+    try:
+        c.file.ssl_cert.create(cert_path,
+                               cert_data["cert"],
+                               len(cert_data["cert"]),
+                               certificate_type="pem",
+                               action="import")
+    except acos_client.errors.Exists:
+        print("Got exists... should have been deleted in previous.")
+    try:
+        cert_get = c.file.ssl_cert.get(cert_path)
+    except acos_client.errors.NotFound:
+        raise Nope("Certificate retrieval failed.")
+
+    return cert_get
 
 
 def run_all(ax, partition, pmap):
@@ -193,52 +277,86 @@ def run_all(ax, partition, pmap):
     print("A")
     c.system.action.write_memory()
 
-    # print("=============================================================")
-    # print("")
-    # print("Client SSL Create")
-    # c.slb.template.client_ssl.delete("ss1")
-    # c.slb.template.client_ssl.create("ss1", "cert1", "cert1")
-    # c.slb.template.client_ssl.get("ss1")
-    # try:
-    #     c.slb.template.client_ssl.create("ss1", "cert1", "cert1")
-    # except acos_client.errors.Exists:
-    #     print("got already exists error, good")
-    # c.slb.template.client_ssl.update("ss1", "cert1", "cert1")
-    # try:
-    #     c.slb.template.client_ssl.update("sns1", "cert1", "cert1")
+    c_tmpl = "ssl_client"
+    s_tmpl = "ssl_server"
+    c_cert = "client_cert.pem"
+    s_cert = "server_cert.pem"
+    c_key = "client_key.pem"
+    s_key = "server_key.pem"
 
-    # except acos_client.errors.NotFound:
-    #     print("got not found, good")
-    # c.slb.template.client_ssl.delete("ss1")
-    # c.slb.template.client_ssl.delete("ss1")
-    # try:
-    #     c.slb.template.client_ssl.get("ss1")
-    # except acos_client.errors.NotFound:
-    #     print("got not found, good")
-    # c.slb.template.client_ssl.create("ss1", "cert1", "cert1")
+    print("=============================================================")
+    print("")
+    print("SSL Certificate Create")
 
-    # print("=============================================================")
-    # print("")
-    # print("Server SSL Create")
-    # c.slb.template.server_ssl.delete("ss1")
-    # c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
-    # c.slb.template.server_ssl.get("ss1")
-    # try:
-    #     c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
-    # except acos_client.errors.Exists:
-    #     print("got already exists error, good")
-    # c.slb.template.server_ssl.update("ss1", "cert1", "cert1")
-    # try:
-    #     c.slb.template.server_ssl.update("sns1", "cert1", "cert1")
-    # except acos_client.errors.NotFound:
-    #     print("got not found, good")
-    # c.slb.template.server_ssl.delete("ss1")
-    # c.slb.template.server_ssl.delete("ss1")
-    # try:
-    #     c.slb.template.server_ssl.get("ss1")
-    # except acos_client.errors.NotFound:
-    #     print("got not found, good")
-    # c.slb.template.server_ssl.create("ss1", "cert1", "cert1")
+    if ARGS.axapi_version == "3.0":
+        print("Create Client Certificate")
+        create_cert(c_cert, c)
+        print("Create Server Certificate")
+        create_cert(s_cert, c)
+        print("Create Client Key")
+        create_key(c_key, c)
+        print("Create Server Key")
+        create_key(s_key, c)
+    else:
+        # This test is probably going to fail.  2.1 cert uploading support isn't there
+        print("Certificate upload not supported in 2.1")
+
+    print("=============================================================")
+
+    print("=============================================================")
+    print("")
+    print("Client SSL Create")
+
+    try:
+        c.slb.template.client_ssl.delete(c_tmpl)
+    except acos_client.errors.NotFound:
+        print("got not found, OK")
+
+    c.slb.template.client_ssl.create(c_tmpl, c_cert, c_key)
+    c.slb.template.client_ssl.get(c_tmpl)
+    try:
+        c.slb.template.client_ssl.create(c_tmpl, c_cert, c_key)
+    except acos_client.errors.Exists:
+        print("got already exists error, good")
+    c.slb.template.client_ssl.update(c_tmpl, c_cert, c_key)
+
+    try:
+        c.slb.template.client_ssl.update("sns1", "cert1", "cert1")
+
+    except acos_client.errors.NotFound:
+        print("got not found, good")
+    c.slb.template.client_ssl.delete(c_tmpl)
+    c.slb.template.client_ssl.delete(c_tmpl)
+    try:
+        c.slb.template.client_ssl.get(c_tmpl)
+    except acos_client.errors.NotFound:
+        print("got not found, good")
+
+    print("=============================================================")
+    print("")
+    print("Server SSL Create")
+    try:
+        c.slb.template.server_ssl.delete(s_tmpl)
+    except acos_client.errors.NotFound:
+        print("got not found, OK")
+
+    c.slb.template.server_ssl.create(s_tmpl, s_cert, s_key)
+    c.slb.template.server_ssl.get(s_tmpl)
+    try:
+        c.slb.template.server_ssl.create(s_tmpl, s_cert, s_key)
+    except acos_client.errors.Exists:
+        print("got already exists error, good")
+    c.slb.template.server_ssl.update(s_tmpl, s_cert, s_key)
+    try:
+        c.slb.template.server_ssl.update("sns1", "cert1", "cert1")
+    except acos_client.errors.NotFound:
+        print("got not found, good")
+
+    c.slb.template.server_ssl.delete(s_tmpl)
+    try:
+        c.slb.template.server_ssl.get(s_tmpl)
+    except acos_client.errors.NotFound:
+        print("got not found, good")
 
     print("=============================================================")
     print("")
@@ -665,6 +783,12 @@ def run_all(ax, partition, pmap):
             pass
 
     c.session.close()
+
+    if float(ARGS.axapi_version) >= 3.0:
+        c.file.ssl_key.delete(c_key)
+        c.file.ssl_key.delete(s_key)
+        c.file.ssl_cert.delete(c_cert)
+        c.file.ssl_cert.delete(s_cert)
 
     print("=============================================================")
     print("t.py completed successfully!")

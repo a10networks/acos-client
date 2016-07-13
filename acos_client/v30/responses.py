@@ -118,9 +118,19 @@ RESPONSE_CODES = {
             '*': ae.AxapiJsonFormatError
         }
     },
+    1023509504: {
+        '*': {
+            '*': ae.NotFound
+        }
+    },
     1023524874: {
         '*': {
             '*': ae.AxapiJsonFormatError
+        }
+    },
+    1023656960: {
+        '*': {
+            '*': ae.NotFound
         }
     },
     1023656962: {
