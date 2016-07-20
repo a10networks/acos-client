@@ -70,6 +70,7 @@ class VirtualPort(base.BaseV30):
              exclude_minimize=[],
              autosnat=False,
              ipinip=False,
+             syn_cookie=False,
              **kwargs):
 
         params = {
@@ -87,6 +88,8 @@ class VirtualPort(base.BaseV30):
             params['port']['auto'] = int(autosnat)
         if ipinip:
             params['port']['ipinip'] = int(ipinip)
+        if syn_cookie:
+            params['port']['syn-cookie'] = int(syn_cookie)
         server_ssl_tmpl = kwargs.get("template_server_ssl", None)
         client_ssl_tmpl = kwargs.get("template_client_ssl")
 
@@ -115,11 +118,13 @@ class VirtualPort(base.BaseV30):
                s_pers_name=None, c_pers_name=None, status=1,
                autosnat=False,
                ipinip=False,
+               syn_cookie=False,
                no_dest_nat=None, **kwargs):
         return self._set(virtual_server_name,
                          name, protocol, port, service_group_name,
                          s_pers_name, c_pers_name, status,
                          autosnat=autosnat, ipinip=ipinip,
+                         syn_cookie=syn_cookie,
                          no_dest_nat=no_dest_nat, **kwargs)
 
     def update(self, virtual_server_name, name, protocol, port,
@@ -127,6 +132,7 @@ class VirtualPort(base.BaseV30):
                s_pers_name=None, c_pers_name=None, status=1,
                autosnat=False,
                ipinip=False,
+               syn_cookie=False,
                no_dest_nat=None, **kwargs):
         vp = self.get(virtual_server_name, name, protocol, port)
         if vp is None:
@@ -139,6 +145,7 @@ class VirtualPort(base.BaseV30):
                              name, protocol, port, service_group_name,
                              s_pers_name, c_pers_name, status, True,
                              autosnat=autosnat, ipinip=ipinip,
+                             syn_cookie=syn_cookie,
                              exclude_minimize=exclu, no_dest_nat=no_dest_nat,
                              **kwargs)
         except ae.AxapiJsonFormatError:
@@ -146,6 +153,7 @@ class VirtualPort(base.BaseV30):
                              name, protocol, port, service_group_name,
                              s_pers_name, c_pers_name, status, True,
                              autosnat=autosnat, ipinip=ipinip,
+                             syn_cookie=syn_cookie,
                              exclude_minimize=[], no_dest_nat=no_dest_nat,
                              **kwargs)
 
