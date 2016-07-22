@@ -44,21 +44,24 @@ partition_map = {
         's1': '192.168.2.254',
         'vip1': '192.168.2.250',
         'vip2': '192.168.2.249',
-        'vip3': '192.168.2.248'
+        'vip3': '192.168.2.248',
+        'vip4': '192.168.2.247'
     },
     'p1': {
         'name': 'p1',
         's1': '192.168.2.244',
         'vip1': '192.168.2.240',
         'vip2': '192.168.2.239',
-        'vip3': '192.168.2.238'
+        'vip3': '192.168.2.238',
+        'vip4': '192.168.2.237'
     },
     'p2': {
         'name': 'p2',
         's1': '192.168.2.234',
         'vip1': '192.168.2.230',
         'vip2': '192.168.2.229',
-        'vip3': '192.168.2.228'
+        'vip3': '192.168.2.228',
+        'vip4': '192.168.2.228'
     },
 }
 
@@ -637,6 +640,44 @@ def run_all(ax, partition, pmap):
         port=445,
         service_group_name='pfoobar',
         c_pers_name='cp1')
+
+    print("=============================================================")
+    print("")
+    print("vip for vport-only tests")
+    c.slb.virtual_server.delete("vip4")
+    c.slb.virtual_server.create("vip4", pmap['vip4'])
+
+    print("=============================================================")
+    print("")
+    print("vport with auto source nat pool")
+    c.slb.virtual_server.vport.create(
+        "vip4", "vip4-autosnat",
+        protocol=c.slb.virtual_server.vport.HTTP,
+        port=80,
+        service_group_name='pfoobar',
+        autosnat=True)
+    c.slb.virtual_server.vport.create(
+        "vip4", "vip4-noautosnat",
+        protocol=c.slb.virtual_server.vport.HTTP,
+        port=81,
+        service_group_name='pfoobar',
+        autosnat=False)
+
+    print("=============================================================")
+    print("")
+    print("vport with ip in ip")
+    c.slb.virtual_server.vport.create(
+        "vip4", "vip4-ipinip",
+        protocol=c.slb.virtual_server.vport.HTTP,
+        port=90,
+        service_group_name='pfoobar',
+        ipinip=True)
+    c.slb.virtual_server.vport.create(
+        "vip4", "vip4-noipinip",
+        protocol=c.slb.virtual_server.vport.HTTP,
+        port=91,
+        service_group_name='pfoobar',
+        ipinip=False)
 
     print("=============================================================")
     print("sflow settings")
