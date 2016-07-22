@@ -78,15 +78,15 @@ class VirtualPort(base.BaseV21):
         server_ssl_template = kwargs.get(self.SERVER_SSL_TMPL_KEY)
 
         if client_ssl_template:
-            params['port'][self.CLIENT_SSL_ANL_KEY] = client_ssl_template
+            params['vport'][self.CLIENT_SSL_ANL_KEY] = client_ssl_template
 
         if server_ssl_template:
-            params['port'][self.SERVER_SSL_ANL_KEY] = server_ssl_template
+            params['vport'][self.SERVER_SSL_ANL_KEY] = server_ssl_template
 
         if autosnat:
-            params['port']['source_nat_auto'] = int(autosnat)
+            params['vport']['source_nat_auto'] = int(autosnat)
         if ipinip:
-            params['port']['ip_in_ip'] = int(ipinip)
+            params['vport']['ip_in_ip'] = int(ipinip)
 
         self._post(action, params, **kwargs)
 
