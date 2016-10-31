@@ -23,7 +23,7 @@ class Server(base.BaseV30):
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
 
-    def create(self, name, ip_address, conn_limit, status=1, **kwargs):
+    def create(self, name, ip_address, status=1, conn_limit=8000000, **kwargs):
         params = {
             "server": {
                 "name": name,
