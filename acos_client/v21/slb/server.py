@@ -22,7 +22,7 @@ class Server(base.BaseV21):
     def get(self, name, **kwargs):
         return self._post("slb.server.search", {'name': name}, **kwargs)
 
-    def create(self, name, ip_address, conn_limit, **kwargs):
+    def create(self, name, ip_address, conn_limit=8000000, **kwargs):
         params = {
             "server": {
                 "name": name,
