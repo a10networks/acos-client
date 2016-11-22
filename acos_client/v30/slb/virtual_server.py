@@ -68,7 +68,7 @@ class VirtualServer(base.BaseV30):
         return self._delete(self.url_prefix + name)
 
     def stats(self, name='', **kwargs):
-        resp = self._get(self.url_prefix + name + '/stats', **kwargs)
+        resp = self._get(self.url_prefix + name + '/port/stats', **kwargs)
         return resp
 
     def oper(self, name='', **kwargs):
