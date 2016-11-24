@@ -143,6 +143,7 @@ class HttpClient(object):
         http.request(method, api_url, body=payload, headers=self.headers)
 
         r = http.getresponse()
+        r_data = r.read()
 
         # Workaround for zero length response
         def handle_empty_response(data):
@@ -151,7 +152,9 @@ class HttpClient(object):
 
             return data
 
-        return handle_empty_response(r.read())
+        http.close()
+
+        return handle_empty_response(r_data)
 
     def request(self, method, api_url, params={}, **kwargs):
         LOG.debug("axapi_http: url = %s", api_url)
