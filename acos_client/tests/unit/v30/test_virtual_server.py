@@ -56,3 +56,13 @@ class TestVirtualServer(unittest.TestCase):
         expected_url = "/axapi/v3/slb/virtual-server/{0}/oper".format(vsname)
         self.assertEqual(method, "GET")
         self.assertEqual(expected_url, url)
+
+    def test_stats(self):
+        client = mock.MagicMock()
+        vs = virtual_server.VirtualServer(client)
+        vsname = "fake-loadbalancer"
+        vs.stats(vsname)
+        ((method, url, params, header), kwargs) = client.http.request.call_args
+        expected_url = "/axapi/v3/slb/virtual-server/{0}/port/stats".format(vsname)
+        self.assertEqual(method, "GET")
+        self.assertEqual(expected_url, url)
