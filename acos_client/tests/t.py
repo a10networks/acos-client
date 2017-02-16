@@ -45,7 +45,9 @@ partition_map = {
         'vip1': '192.168.2.250',
         'vip2': '192.168.2.249',
         'vip3': '192.168.2.248',
-        'vip4': '192.168.2.247'
+        'vip4': '192.168.2.247',
+        'vip5': '192.168.2.246',
+        'vip6': '192.168.2.245',
     },
     'p1': {
         'name': 'p1',
@@ -53,7 +55,9 @@ partition_map = {
         'vip1': '192.168.2.240',
         'vip2': '192.168.2.239',
         'vip3': '192.168.2.238',
-        'vip4': '192.168.2.237'
+        'vip4': '192.168.2.237',
+        'vip5': '192.168.2.236',
+        'vip6': '192.168.2.235',
     },
     'p2': {
         'name': 'p2',
@@ -61,7 +65,9 @@ partition_map = {
         'vip1': '192.168.2.230',
         'vip2': '192.168.2.229',
         'vip3': '192.168.2.228',
-        'vip4': '192.168.2.228'
+        'vip4': '192.168.2.227',
+        'vip5': '192.168.2.226',
+        'vip6': '192.168.2.225',
     },
 }
 
@@ -315,17 +321,24 @@ def run_all(ax, partition, pmap):
     except acos_client.errors.NotFound:
         print("got not found, OK")
 
-    c.slb.template.client_ssl.create(c_tmpl, c_cert, c_key)
+    try:
+        c.slb.template.client_ssl.create(c_tmpl, c_cert, c_key)
+    except Exception as ex:
+        print(ex)
+
     c.slb.template.client_ssl.get(c_tmpl)
     try:
         c.slb.template.client_ssl.create(c_tmpl, c_cert, c_key)
     except acos_client.errors.Exists:
         print("got already exists error, good")
-    c.slb.template.client_ssl.update(c_tmpl, c_cert, c_key)
+
+    try:
+        c.slb.template.client_ssl.update(c_tmpl, c_cert, c_key)
+    except Exception as ex:
+        print(ex)
 
     try:
         c.slb.template.client_ssl.update("sns1", "cert1", "cert1")
-
     except acos_client.errors.NotFound:
         print("got not found, good")
     c.slb.template.client_ssl.delete(c_tmpl)
@@ -343,19 +356,33 @@ def run_all(ax, partition, pmap):
     except acos_client.errors.NotFound:
         print("got not found, OK")
 
-    c.slb.template.server_ssl.create(s_tmpl, s_cert, s_key)
-    c.slb.template.server_ssl.get(s_tmpl)
+    try:
+        c.slb.template.server_ssl.create(s_tmpl, s_cert, s_key)
+    except Exception as ex:
+        print(ex)
+    try:
+        c.slb.template.server_ssl.get(s_tmpl)
+    except Exception as ex:
+        print(ex)
+
     try:
         c.slb.template.server_ssl.create(s_tmpl, s_cert, s_key)
     except acos_client.errors.Exists:
         print("got already exists error, good")
-    c.slb.template.server_ssl.update(s_tmpl, s_cert, s_key)
+    try:
+        c.slb.template.server_ssl.update(s_tmpl, s_cert, s_key)
+    except Exception as ex:
+        print(ex)
     try:
         c.slb.template.server_ssl.update("sns1", "cert1", "cert1")
     except acos_client.errors.NotFound:
         print("got not found, good")
 
-    c.slb.template.server_ssl.delete(s_tmpl)
+    try:
+        c.slb.template.server_ssl.delete(s_tmpl)
+    except acos_client.Exception:
+        print(ex)
+
     try:
         c.slb.template.server_ssl.get(s_tmpl)
     except acos_client.errors.NotFound:
@@ -430,7 +457,22 @@ def run_all(ax, partition, pmap):
         raise Nope()
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.ROUND_ROBIN)
+    try:
+        c.slb.service_group.delete("pudp")
+    except acos_client.errors.NotFound:
+        pass
+    c.slb.service_group.create("pudp", c.slb.service_group.UDP,
+                               c.slb.service_group.ROUND_ROBIN)
+    print("Test stats call")
+    try:
+      sg_stats = c.slb.service_group.all_stats()
+      print sg_stats
+    except NotImplementedError as version_ex:
+        print(version_ex) 
+    except Exception as ex:
+        raise ex
 
+    print("=============================================================") 
     print("=============================================================")
     print("")
     print("VIP Create")
@@ -469,8 +511,12 @@ def run_all(ax, partition, pmap):
     else:
         raise Nope()
 
-    c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
-                                      c.slb.virtual_server.vport.HTTP, 80)
+    try:
+        c.slb.virtual_server.vport.delete("vip3", "vip3_VPORT",
+                                          c.slb.virtual_server.vport.HTTP, 80)
+    except acos_client.errors.NotFound:
+        pass
+
     c.slb.virtual_server.vport.create("vip3", "vip3_VPORT",
                                       service_group_name="pfoobar",
                                       protocol=c.slb.virtual_server.vport.HTTP,
@@ -662,23 +708,29 @@ def run_all(ax, partition, pmap):
         port=81,
         service_group_name='pfoobar',
         autosnat=False)
-
+    c.slb.virtual_server.delete("vip5")
     print("=============================================================")
     print("")
     print("vport with ip in ip")
+    c.slb.virtual_server.delete("vip5")
+    c.slb.virtual_server.create("vip5", pmap["vip5"])
     c.slb.virtual_server.vport.create(
-        "vip4", "vip4-ipinip",
-        protocol=c.slb.virtual_server.vport.HTTP,
+        "vip5", "vip5-ipinip",
+        protocol=c.slb.virtual_server.vport.UDP,
         port=90,
-        service_group_name='pfoobar',
+        service_group_name='pudp',
         ipinip=True)
+    c.slb.virtual_server.vport.delete("vip5", "vip5-ipinip", c.slb.virtual_server.vport.UDP, 90)
+    c.slb.virtual_server.delete("vip5")
+    c.slb.virtual_server.create("vip5", pmap["vip5"])
     c.slb.virtual_server.vport.create(
-        "vip4", "vip4-noipinip",
-        protocol=c.slb.virtual_server.vport.HTTP,
+        "vip5", "vip5-noipinip",
+        protocol=c.slb.virtual_server.vport.UDP,
         port=91,
-        service_group_name='pfoobar',
+        service_group_name='pudp',
         ipinip=False)
-
+    c.slb.virtual_server.vport.delete("vip5", "vip5-noipinip", c.slb.virtual_server.vport.UDP, 91)
+    c.slb.virtual_server.delete("vip5")
     print("=============================================================")
     print("sflow settings")
     print("=============================================================")
@@ -822,6 +874,12 @@ def run_all(ax, partition, pmap):
             c.system.partition.delete(partition)
         except acos_client.errors.NotFound:
             pass
+
+    try:
+        c.slb.common.create(dsr_health_check_enable=0)
+    except NotImplementedError:
+        print("DSR Health Check not implemented in %s" % ARGS.axapi_version)
+        print("... Get updated")
 
     c.session.close()
 
