@@ -114,4 +114,5 @@ class ServiceGroup(base.BaseV30):
         return self._get(self.url_prefix + name + "/oper", **kwargs)
 
     def all_stats(self, **kwargs):
-        raise NotImplementedError("AXAPI v3.0 does not support getting stats for all service groups")
+        raise NotImplementedError(
+            "AXAPI v3.0 does not support getting stats for all service groups")

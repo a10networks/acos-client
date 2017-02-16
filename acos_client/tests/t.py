@@ -465,14 +465,14 @@ def run_all(ax, partition, pmap):
                                c.slb.service_group.ROUND_ROBIN)
     print("Test stats call")
     try:
-      sg_stats = c.slb.service_group.all_stats()
-      print sg_stats
+        sg_stats = c.slb.service_group.all_stats()
+        print("Stats result {0}".format(sg_stats))
     except NotImplementedError as version_ex:
-        print(version_ex) 
+        print(version_ex)
     except Exception as ex:
         raise ex
 
-    print("=============================================================") 
+    print("=============================================================")
     print("=============================================================")
     print("")
     print("VIP Create")
