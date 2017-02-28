@@ -41,6 +41,10 @@ class ServiceGroup(base.BaseV30):
     STATELESS_DESTINATION_IP_HASH = 'stateless-dst-ip-hash'
     STATELESS_SOURCE_DESTINATION_IP_HASH = 'stateless-src-dst-ip-hash'
     STATELESS_PER_PACKET_ROUND_ROBIN = 'stateless-per-pkt-round-robin'
+    SOURCE_IP_HASH_ONLY = 'src-ip-only-hash'
+    SOURCE_IP_HASH = 'src-ip-hash'
+    DESTINATION_IP_HASH_ONLY = 'dst-ip-only-hash'
+    DESTINATION_IP_HASH = 'dst-ip-hash'
 
     # Valid protocols
     TCP = 'tcp'
