@@ -70,6 +70,7 @@ class VirtualPort(base.BaseV30):
              exclude_minimize=[],
              autosnat=False,
              ipinip=False,
+             source_nat_pool=None,
              **kwargs):
 
         params = {
@@ -87,6 +88,9 @@ class VirtualPort(base.BaseV30):
             params['port']['auto'] = int(autosnat)
         if ipinip:
             params['port']['ipinip'] = int(ipinip)
+        if source_nat_pool and len(source_nat_pool) > 0:
+            params['port']['pool'] = source_nat_pool
+
         server_ssl_tmpl = kwargs.get("template_server_ssl", None)
         client_ssl_tmpl = kwargs.get("template_client_ssl")
 
@@ -115,19 +119,24 @@ class VirtualPort(base.BaseV30):
                s_pers_name=None, c_pers_name=None, status=1,
                autosnat=False,
                ipinip=False,
-               no_dest_nat=None, **kwargs):
+               no_dest_nat=None,
+               source_nat_pool=None,
+               **kwargs):
         return self._set(virtual_server_name,
                          name, protocol, port, service_group_name,
                          s_pers_name, c_pers_name, status,
                          autosnat=autosnat, ipinip=ipinip,
-                         no_dest_nat=no_dest_nat, **kwargs)
+                         no_dest_nat=no_dest_nat, source_nat_pool=source_nat_pool,
+                         **kwargs)
 
     def update(self, virtual_server_name, name, protocol, port,
                service_group_name,
                s_pers_name=None, c_pers_name=None, status=1,
                autosnat=False,
                ipinip=False,
-               no_dest_nat=None, **kwargs):
+               no_dest_nat=None,
+               source_nat_pool=None,
+               **kwargs):
         vp = self.get(virtual_server_name, name, protocol, port)
         if vp is None:
             raise ae.NotFound()
@@ -140,6 +149,7 @@ class VirtualPort(base.BaseV30):
                              s_pers_name, c_pers_name, status, True,
                              autosnat=autosnat, ipinip=ipinip,
                              exclude_minimize=exclu, no_dest_nat=no_dest_nat,
+                             source_nat_pool=source_nat_pool,
                              **kwargs)
         except ae.AxapiJsonFormatError:
             return self._set(virtual_server_name,
@@ -147,6 +157,7 @@ class VirtualPort(base.BaseV30):
                              s_pers_name, c_pers_name, status, True,
                              autosnat=autosnat, ipinip=ipinip,
                              exclude_minimize=[], no_dest_nat=no_dest_nat,
+                             source_nat_pool=source_nat_pool,
                              **kwargs)
 
     def delete(self, virtual_server_name, name, protocol, port):

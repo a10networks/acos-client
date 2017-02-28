@@ -60,6 +60,7 @@ class VirtualPort(base.BaseV21):
              s_pers_name=None, c_pers_name=None, status=1,
              autosnat=False,
              ipinip=False,
+             source_nat_pool=None,
              **kwargs):
         params = {
             "name": virtual_server_name,
@@ -87,6 +88,8 @@ class VirtualPort(base.BaseV21):
             params['vport']['source_nat_auto'] = int(autosnat)
         if ipinip:
             params['vport']['ip_in_ip'] = int(ipinip)
+        if source_nat_pool and len(source_nat_pool) > 0:
+            params['vport']['source_nat'] = source_nat_pool
 
         self._post(action, params, **kwargs)
 
@@ -105,22 +108,26 @@ class VirtualPort(base.BaseV21):
                s_pers_name=None, c_pers_name=None, status=1,
                autosnat=False,
                ipinip=False,
+               source_nat_pool=None,
                **kwargs):
         self._set('slb.virtual_server.vport.create', virtual_server_name,
                   name, protocol, port, service_group_name,
                   s_pers_name, c_pers_name, status,
-                  autosnat=autosnat, ipinip=ipinip, **kwargs)
+                  autosnat=autosnat, ipinip=ipinip, source_nat_pool=source_nat_pool,
+                  **kwargs)
 
     def update(self, virtual_server_name, name, protocol, port,
                service_group_name,
                s_pers_name=None, c_pers_name=None, status=1,
                autosnat=False,
                ipinip=False,
+               source_nat_pool=None,
                **kwargs):
             self._set('slb.virtual_server.vport.update', virtual_server_name,
                       name, protocol, port, service_group_name,
                       s_pers_name, c_pers_name, status,
-                      autosnat=autosnat, ipinip=ipinip, **kwargs)
+                      autosnat=autosnat, ipinip=ipinip, source_nat_pool=source_nat_pool,
+                      **kwargs)
 
     def delete(self, virtual_server_name, name, protocol, port, **kwargs):
         params = {
