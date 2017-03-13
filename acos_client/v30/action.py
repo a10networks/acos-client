@@ -22,7 +22,8 @@ class Action(base.BaseV30):
     def write_memory(self, **kwargs):
         payload = {
             "memory": {
-                "primary": True
+                "destination": "primary",
+                "partition": "all"
             }
         }
         try:
