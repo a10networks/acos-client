@@ -93,6 +93,11 @@ class VirtualPort(base.BaseV30):
 
         server_ssl_tmpl = kwargs.get("template_server_ssl", None)
         client_ssl_tmpl = kwargs.get("template_client_ssl")
+        vport_defaults = kwargs.get("vport_defaults")
+
+        if vport_defaults:
+            for k, v in vport_defaults.iteritems():
+                params['port'][k] = v
 
         if server_ssl_tmpl:
             params['port']['template-server-ssl'] = server_ssl_tmpl
@@ -122,6 +127,7 @@ class VirtualPort(base.BaseV30):
                no_dest_nat=None,
                source_nat_pool=None,
                **kwargs):
+        import pdb; pdb.set_trace()
         return self._set(virtual_server_name,
                          name, protocol, port, service_group_name,
                          s_pers_name, c_pers_name, status,
