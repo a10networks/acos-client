@@ -127,7 +127,6 @@ class VirtualPort(base.BaseV30):
                no_dest_nat=None,
                source_nat_pool=None,
                **kwargs):
-        import pdb; pdb.set_trace()
         return self._set(virtual_server_name,
                          name, protocol, port, service_group_name,
                          s_pers_name, c_pers_name, status,
