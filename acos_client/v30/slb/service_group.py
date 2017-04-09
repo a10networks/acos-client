@@ -82,7 +82,7 @@ class ServiceGroup(base.BaseV30):
         if lb_method is None:
             pass
         elif lb_method[-16:] == 'least-connection':
-            params['service-group']['lc-method'] = lb_method
+            params['service-group']['lb-method'] = lb_method
         elif lb_method[:9] == 'stateless':
             params['service-group']['stateless-lb-method'] = lb_method
         else:
