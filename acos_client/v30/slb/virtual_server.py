@@ -43,6 +43,13 @@ class VirtualServer(base.BaseV30):
         if vrid:
             params['virtual-server']['vrid'] = vrid
 
+
+        config_defaults = kwargs.get("config_defaults")
+        if config_defaults:
+            for k, v in config_defaults.iteritems():
+                params['virtual-server'][k] = v
+
+
         if not update:
             name = ''
 
