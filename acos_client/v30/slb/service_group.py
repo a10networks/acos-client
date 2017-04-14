@@ -90,6 +90,12 @@ class ServiceGroup(base.BaseV30):
             params['service-group']['lb-method'] = lb_method
             params['service-group']['stateless-auto-switch'] = 0
 
+        config_defaults = kwargs.get("config_defaults")
+
+        if config_defaults:
+            for k, v in config_defaults.iteritems():
+                params['port'][k] = v
+
         if not update:
             name = ''
             self._post(self.url_prefix + name, params, **kwargs)
