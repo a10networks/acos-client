@@ -94,7 +94,7 @@ class ServiceGroup(base.BaseV30):
 
         if config_defaults:
             for k, v in config_defaults.iteritems():
-                params['port'][k] = v
+                params['service-group'][k] = v
 
         if not update:
             name = ''

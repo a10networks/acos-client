@@ -66,6 +66,13 @@ class Member(base.BaseV30):
             })
         }
 
+        config_defaults = kwargs.get("config_defaults")
+
+        if config_defaults:
+            for k, v in config_defaults.iteritems():
+                params['member'][k] = v
+
+
         self._post(url, params, **kwargs)
 
     def create(self,
