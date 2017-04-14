@@ -88,6 +88,12 @@ class ServiceGroup(base.BaseV30):
         else:
             params['service-group']['lb-method'] = lb_method
 
+        config_defaults = kwargs.get("config_defaults")
+
+        if config_defaults:
+            for k, v in config_defaults.iteritems():
+                params['port'][k] = v
+
         if not update:
             name = ''
 
