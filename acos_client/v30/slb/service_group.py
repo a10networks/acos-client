@@ -83,15 +83,18 @@ class ServiceGroup(base.BaseV30):
             pass
         elif lb_method[-16:] == 'least-connection':
             params['service-group']['lc-method'] = lb_method
+            params['service-group']['stateless-auto-switch'] = 0
         elif lb_method[:9] == 'stateless':
             params['service-group']['stateless-lb-method'] = lb_method
         else:
             params['service-group']['lb-method'] = lb_method
+            params['service-group']['stateless-auto-switch'] = 0
 
         if not update:
             name = ''
-
-        self._post(self.url_prefix + name, params, **kwargs)
+            self._post(self.url_prefix + name, params, **kwargs)
+        else:
+            self._put(self.url_prefix + name, params, **kwargs)
 
     def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, **kwargs):
         try:
