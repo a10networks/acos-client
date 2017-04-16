@@ -106,6 +106,10 @@ class VirtualPort(base.BaseV30):
         if no_dest_nat is not None:
             params["port"]["no-dest-nat"] = 1 if no_dest_nat else 0
 
+        formatted_kwargs = {k.replace('_', '-'): v for k, v in kwargs.iteritems()}
+
+        params["port"].update(formatted_kwargs)  # account for any extra arguments for people who know what they're doing
+
         url = self.url_server_tmpl.format(name=virtual_server_name)
         if update:
             url += self.url_port_tmpl.format(
