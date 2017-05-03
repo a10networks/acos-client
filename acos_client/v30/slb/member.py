@@ -46,6 +46,7 @@ class Member(base.BaseV30):
                server_name,
                server_port,
                status=STATUS_ENABLE,
+               member_state=True,
                update=False, **kwargs):
 
         url = self.url_base_tmpl.format(gname=service_group_name)
@@ -61,6 +62,7 @@ class Member(base.BaseV30):
                 "port": int(server_port),
                 # flip status code, becuase it's a disable flag in v30
                 "member-stats-data-disable": status,
+                "member-state": member_state and 'enable' or 'disable',
             })
         }
 
@@ -70,7 +72,8 @@ class Member(base.BaseV30):
                service_group_name,
                server_name,
                server_port,
-               status=STATUS_ENABLE, **kwargs):
+               status=STATUS_ENABLE,
+               member_state=True, **kwargs):
         try:
             self.get(service_group_name, server_name, server_port)
         except acos_errors.NotFound:
@@ -79,15 +82,16 @@ class Member(base.BaseV30):
             raise acos_errors.Exists()
 
         self._write(service_group_name,
-                    server_name, server_port, status, **kwargs)
+                    server_name, server_port, status, member_state, **kwargs)
 
     def update(self,
                service_group_name,
                server_name,
                server_port,
-               status=STATUS_ENABLE, **kwargs):
+               status=STATUS_ENABLE,
+               member_state=True, **kwargs):
         self._write(service_group_name,
-                    server_name, server_port, status, update=True, **kwargs)
+                    server_name, server_port, status, member_state, update=True, **kwargs)
 
     def delete(self, service_group_name, server_name, server_port):
         url = self.url_base_tmpl.format(gname=service_group_name)
