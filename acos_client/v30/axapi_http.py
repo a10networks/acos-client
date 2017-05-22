@@ -29,7 +29,6 @@ if sys.version_info >= (3, 0):
 else:
     # Python 2
     import httplib as http_client
-http_client.HTTPConnection.debuglevel = logging.INFO
 
 import responses as acos_responses
 
@@ -39,12 +38,6 @@ from acos_client import logutils
 LOG = logging.getLogger(__name__)
 
 import sys
-out_hdlr = logging.StreamHandler(sys.stdout)
-out_hdlr.setLevel(logging.DEBUG)
-LOG.addHandler(out_hdlr)
-
-LOG.setLevel(logging.DEBUG)
-
 
 broken_replies = {
     "": '{"response": {"status": "OK"}}'
