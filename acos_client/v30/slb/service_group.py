@@ -94,6 +94,8 @@ class ServiceGroup(base.BaseV30):
             name = ''
             self._post(self.url_prefix + name, params, **kwargs)
         else:
+            if 'protocol' in params['service-group']:
+                del params['service-group']['protocol']
             self._put(self.url_prefix + name, params, **kwargs)
 
     def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, **kwargs):
