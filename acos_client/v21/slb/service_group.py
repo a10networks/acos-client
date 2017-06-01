@@ -83,3 +83,6 @@ class ServiceGroup(base.BaseV21):
     def stats(self, name, **kwargs):
         return self._post("slb.service_group.fetchStatistics",
                           {"name": name}, **kwargs)
+
+    def all_stats(self, **kwargs):
+        return self._get("slb.service_group.fetchAllStatistics", **kwargs)
