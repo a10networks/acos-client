@@ -37,8 +37,6 @@ from acos_client import logutils
 
 LOG = logging.getLogger(__name__)
 
-import sys
-
 broken_replies = {
     "": '{"response": {"status": "OK"}}'
 }
