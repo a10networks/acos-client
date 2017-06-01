@@ -90,6 +90,11 @@ RESPONSE_CODES = {
             '*': ae.InvalidParameter
         }
     },
+    1023459332: {
+        '*': {
+            '/axapi/v3/file/aflex': ae.NotFound
+        }
+    },
     1023459335: {
         '*': {
             '*': ae.Exists

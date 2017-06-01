@@ -16,7 +16,7 @@ import acos_client.v30.base as base
 
 from ssl_cert import SSLCert
 from ssl_key import SSLKey
-
+from aflex import AFlex
 
 class File(base.BaseV30):
     @property
@@ -26,3 +26,7 @@ class File(base.BaseV30):
     @property
     def ssl_key(self):
         return SSLKey(self.client)
+
+    @property
+    def aflex(self):
+        return AFlex(self.client)
