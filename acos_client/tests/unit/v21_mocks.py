@@ -188,7 +188,7 @@ class ServerDeleteNotFound(ServerDelete):
 
 class ServerCreate(Server):
     action = 'slb.server.create'
-    params = {'server': {'host': '192.168.2.254', "status": 1, 'name': 's1'}}
+    params = {'server': {'conn-limit': 1337, 'host': '192.168.2.254', "status": 1, 'name': 's1'}}
 
 
 class ServerCreateExists(ServerCreate):
