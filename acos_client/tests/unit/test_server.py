@@ -31,12 +31,12 @@ class TestServer(unittest.TestCase):
 
     def test_server_create(self):
         with mocks.ServerCreate().client() as c:
-            c.slb.server.create('s1', '192.168.2.254')
+            c.slb.server.create('s1', '192.168.2.254', 1337)
 
     def test_server_create_exists(self):
         with mocks.ServerCreateExists().client() as c:
             with self.assertRaises(acos_errors.Exists):
-                c.slb.server.create('s1', '192.168.2.254')
+                c.slb.server.create('s1', '192.168.2.254', 1337)
 
     def test_server_search(self):
         with mocks.ServerSearch().client() as c:
