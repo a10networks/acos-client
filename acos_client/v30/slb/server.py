@@ -15,6 +15,8 @@
 import acos_client.errors as acos_errors
 import acos_client.v30.base as base
 
+from port import Port
+
 
 class Server(base.BaseV30):
 
@@ -57,3 +59,7 @@ class Server(base.BaseV30):
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)
+
+    @property
+    def port(self):
+        return Port(self.client)
