@@ -64,7 +64,9 @@ class BaseV30(object):
     def _post(self, action, params={}, **kwargs):
         return self._request('POST', action, params, **kwargs)
 
-    def _put(self, action, params={}, **kwargs):
+    def _put(self, action, params={}, old_obj={}, **kwargs):
+        kwargs = {k: v if not k in kwargs or v == kwargs.get(k)
+                     else kwargs.get(k) for k,v in old_obj.items()}
         return self._request('PUT', action, params, **kwargs)
 
     def _delete(self, action, params={}, **kwargs):

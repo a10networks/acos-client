@@ -53,19 +53,18 @@ class ServiceGroup(base.BaseV30):
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
 
-    def _set(self, name, protocol=None, lb_method=None, hm_name=None,
-             update=False, **kwargs):
+    def _build_params(self, name, protocol=None, lb_method=None,
+                      health_monitor=None, update=False, **kwargs):
 
         # Normalize "" -> None for json
-        hm_name = hm_name or None
+        health_monitor = health_monitor or None
 
         # v30 needs unit tests badly...
-
         params = {
-            "service-group": self.minimal_dict({
+            "service-group": {
                 "name": name,
                 "protocol": protocol,
-            })
+            }
         }
 
         # If we explicitly disable health checks, ensure it happens
@@ -74,10 +73,10 @@ class ServiceGroup(base.BaseV30):
 
         # When enabling/disabling a health monitor, you can't specify
         # health-check-disable and health-check at the same time.
-        if hm_name is None:
+        if health_monitor is None:
             params["service-group"]["health-check-disable"] = health_check_disable
         else:
-            params["service-group"]["health-check"] = hm_name
+            params["service-group"]["health-check"] = health_monitor
 
         if lb_method is None:
             pass
@@ -90,13 +89,7 @@ class ServiceGroup(base.BaseV30):
             params['service-group']['lb-method'] = lb_method
             params['service-group']['stateless-auto-switch'] = 0
 
-        if not update:
-            name = ''
-            self._post(self.url_prefix + name, params, **kwargs)
-        else:
-            if 'protocol' in params['service-group']:
-                del params['service-group']['protocol']
-            self._post(self.url_prefix + name, params, **kwargs)
+        return params
 
     def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, **kwargs):
         try:
@@ -106,12 +99,35 @@ class ServiceGroup(base.BaseV30):
         else:
             raise acos_errors.Exists
 
-        self._set(name, protocol, lb_method, **kwargs)
+        params = self._build_params(name, protocol, lb_method, **kwargs)
+        self._post(self.url_prefix + name, params, **kwargs)
 
     def update(self, name, protocol=None, lb_method=None, health_monitor=None,
                **kwargs):
-        self._set(name, protocol, lb_method,
-                  health_monitor, update=True, **kwargs)
+        old_sg = self.get(name)
+        if old_sg['service-group'].get('health-check'):
+            del old_sg['service-group']['health-check']
+        else:
+            del old_sg['service-group']['health-check-disable']
+
+        params = self._build_params(name, protocol, lb_method,
+                                    health_monitor, update=True,
+                                    **kwargs)
+
+        for k,v in params['service-group'].items():
+            if k == "protocol" and v == None:
+                params['service-group'][k] = old_sg['service-group'][k]
+            if k in ['lb-method', 'lc-method']:
+                if not old_sg['service-group'].get(k):
+                    if k == 'lb-method':
+                        k = 'lc-method'
+                    if k == 'lc-method':
+                        k = 'lb-method'
+            if old_sg['service-group'].get(k) != None:
+                del old_sg['service-group'][k]
+
+        self._put(self.url_prefix + name, params, old_sg, **kwargs)
+ 
 
     def delete(self, name):
         self._delete(self.url_prefix + name)
