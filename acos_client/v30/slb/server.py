@@ -42,18 +42,19 @@ class Server(base.BaseV30):
 
         return self._post(self.url_prefix, params, **kwargs)
 
-    def update(self, name, ip_address, status=1, **kwargs):
+    def update(self, name, ip_address, conn_limit=800000, status=1, **kwargs):
+        self.get(name, **kwargs)
         params = {
             "server": {
                 "name": name,
                 "host": ip_address,
+                "conn-limit": conn_limit,
                 "action": 'enable' if status else 'disable',
             }
         }
-
-        self.get(name, **kwargs)
-
-        return self._post(self.url_prefix + name, params, **kwargs)
+        
+        params['server'].update(kwargs)
+        return self._post(self.url_prefix + name, params)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)
