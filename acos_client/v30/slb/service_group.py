@@ -114,8 +114,8 @@ class ServiceGroup(base.BaseV30):
                                     health_monitor, update=True,
                                     **kwargs)
 
-        for k,v in params['service-group'].items():
-            if k == "protocol" and v == None:
+        for k, v in params['service-group'].items():
+            if k == "protocol" and v is None:
                 params['service-group'][k] = old_sg['service-group'][k]
             if k in ['lb-method', 'lc-method']:
                 if not old_sg['service-group'].get(k):
@@ -123,11 +123,10 @@ class ServiceGroup(base.BaseV30):
                         k = 'lc-method'
                     if k == 'lc-method':
                         k = 'lb-method'
-            if old_sg['service-group'].get(k) != None:
+            if old_sg['service-group'].get(k) is not None:
                 del old_sg['service-group'][k]
 
         self._put(self.url_prefix + name, params, old_sg, **kwargs)
- 
 
     def delete(self, name):
         self._delete(self.url_prefix + name)

@@ -29,7 +29,8 @@ class TestServiceGroup(unittest.TestCase):
         expected = {
             'service-group': {
                 'name': 'fake-pool-name',
-                'health-check-disable': 1
+                'health-check-disable': 1,
+                'protocol': mock.ANY
             }
         }
 
@@ -46,7 +47,8 @@ class TestServiceGroup(unittest.TestCase):
         expected = {
             'service-group': {
                 'name': 'fake-pool-name',
-                'health-check': 'fake-hm'
+                'health-check': 'fake-hm',
+                'protocol': mock.ANY
             }
         }
 

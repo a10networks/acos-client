@@ -18,17 +18,9 @@ import errno
 import json
 import logging
 import socket
-import sys
 import time
 
 import requests
-
-
-if sys.version_info >= (3, 0):
-    import http.client as http_client
-else:
-    # Python 2
-    import httplib as http_client
 
 import responses as acos_responses
 

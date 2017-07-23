@@ -52,7 +52,6 @@ class Server(base.BaseV30):
                 "action": 'enable' if status else 'disable',
             }
         }
-        
         params['server'].update(kwargs)
         return self._post(self.url_prefix + name, params)
 
