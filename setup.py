@@ -5,11 +5,11 @@ from setuptools import setup, find_packages
 
 setup(
     name = "acos-client",
-    version = "1.4.1",
+    version = "1.4.2",
     packages = find_packages(),
 
     author = "A10 Networks",
-    author_email = "dougw@a10networks.com",
+    author_email = "mdurrant@a10networks.com",
     description = "A10 Networks ACOS API Client",
     license = "Apache",
     keywords = "a10 axapi acos adc slb load balancer",
