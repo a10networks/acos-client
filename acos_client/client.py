@@ -42,6 +42,8 @@ from v30.session import Session as v30_Session
 from v30.sflow import SFlow as v30_SFlow
 from v30.slb import SLB as v30_SLB
 from v30.system import System as v30_System
+from v30.partition import Partition as v30_Partition
+from v30.devicecontext import DeviceContext as v30_DeviceContext
 
 VERSION_IMPORTS = {
     '21': {
@@ -69,7 +71,9 @@ VERSION_IMPORTS = {
         'SFlow': v30_SFlow,
         'SLB': v30_SLB,
         'System': v30_System,
-        'File': v30_File
+        'File': v30_File,
+        'Partition': v30_Partition,
+        'DeviceContext': v30_DeviceContext
     },
 }
 
