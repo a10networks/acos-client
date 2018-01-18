@@ -49,3 +49,10 @@ class Member(base.BaseV21):
         members_stats = sg_stats["service_group_stat"]["member_stat_list"]
         member_stats = filter(lambda x: x.get("server") == server_name, members_stats)
         return member_stats
+
+    def get_member_config(self, service_group_name, server_name, server_port, **kwargs):
+        sg_member = self._post("slb.service_group.search",
+                {"name": service_group_name}, **kwargs)
+        members_stats = sg_member["service_group"]["member_list"]
+        member_stats = filter(lambda x: x.get("server") == server_name, members_stats)
+        return member_stats

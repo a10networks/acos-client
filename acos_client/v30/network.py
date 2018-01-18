@@ -16,4 +16,34 @@ import base
 
 
 class Network(base.BaseV30):
-    pass
+    #implement by wenjie
+    def __init__(self, client):
+        super(Network, self).__init__(client)
+        self.iftype = "vlan"#default value
+        self.url_prefix = "/network/"
+
+    @property
+    def vlan(self):
+        return NetworkVLAN(self.client)
+
+
+class NetworkVLAN(Network):
+    def __init__(self, client):
+        super(NetworkVLAN, self).__init__(client)
+        self.iftype = "vlan"
+        self.url_prefix = "{0}{1}/".format(self.url_prefix, self.iftype)
+
+    def _build_payload(self, **kwargs):
+        rv = {
+            "vlan": {
+                "vlan-num": kwargs["vlannum"]
+            }
+        }
+        return rv
+
+    def create(self, vlannum, sharedvlan):
+        payload = self._build_payload(vlannum=vlannum)
+        return self._post(self.url_prefix, payload)
+
+    def get_all(self):
+        return self._get(self.url_prefix)
