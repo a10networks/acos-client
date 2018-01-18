@@ -150,3 +150,15 @@ class Network(base.BaseV21):
         def ipv4_delete(self, address, mask, gateway, distance, **kwargs):
             return self._set('network.route.ipv4static.delete', address, mask,
                              gateway, distance, **kwargs)  # FIXME NOT WORKING
+
+    @property
+    def arp(self):
+        return self.Arp(self.client)
+    class Arp(base.BaseV21):
+        def _set(self, action, ip_version, **kwargs):
+            params = {
+                    'ip_version': ip_version
+                    }
+            return self._post(action, params, **kwargs)
+        def arp_all(self, ip_version, **kwargs):
+            return self._set('network.arp.fetchAllStatistics', ip_version, **kwargs)
