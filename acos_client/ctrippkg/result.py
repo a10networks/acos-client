@@ -5,14 +5,6 @@ class Result(object):
     code_message_map = {
         0: 'ok',
         # --------------COM Error-------------------------
-        100: 'Not a post request',
-        101: 'Format error in post data [%s]',
-        102: 'Filed  missing from payload[%s]',
-        103: 'Device not exists[%s]',
-        104: 'Invalid vip[%s]',
-        105: 'Vip not in range[%s]',
-        106: 'Invalid device [%s]',
-        107: 'Invalid deviceType [ %s ], only allow (ax, ns, slb)',
         150: 'get url [%s] redis config error!',
         151: 'redis does not contain Servers key',
         152: 'canread should be boolean',
@@ -21,11 +13,7 @@ class Result(object):
         155: 'key is none while write data to redis',
         156: 'data is none while write data to redis, ignore write action!',
         160: 'clusterid [ %s ] not found in db!',
-        197: '[%s]',  # 移除lb专用
-        198: '[%s]',  # slb新建专用
-        199: '[%s]',
-
-        500: 'Domains in vs are not consistent',  # vs add domains
+        199: '[%s]'
     }
 
     def __init__(self, code, msg=None):

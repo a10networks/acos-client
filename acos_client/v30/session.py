@@ -13,7 +13,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from acos_client.ctrippkg.result import Result
 from acos_client.ctrippkg.redisconfig import RedisConfig
 import platform
 import json
