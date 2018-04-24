@@ -11,10 +11,11 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import, unicode_literals
 
-from action import Action
-import base
-from partition import Partition
+from acos_client.v30 import base
+from acos_client.v30.action import Action
+from acos_client.v30.partition import Partition
 
 
 class System(base.BaseV30):

@@ -11,10 +11,11 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import, unicode_literals
 
 import re
 
-import acos_client.errors as ae
+from acos_client import errors as ae
 
 RESPONSE_CODES = {
     33619969: {
