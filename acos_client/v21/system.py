@@ -11,15 +11,16 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import, unicode_literals
 
 from acos_client import multipart
-from action import Action
-from admin import Admin
-import base
-from config_file import ConfigFile
-from device_info import DeviceInfo
-from log import Log
-from partition import Partition
+from acos_client.v21 import base
+from acos_client.v21.action import Action
+from acos_client.v21.admin import Admin
+from acos_client.v21.config_file import ConfigFile
+from acos_client.v21.device_info import DeviceInfo
+from acos_client.v21.log import Log
+from acos_client.v21.partition import Partition
 
 
 class System(base.BaseV21):

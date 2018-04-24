@@ -11,10 +11,10 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import, unicode_literals
 
-import acos_client.v21.base as base
-
-from virtual_port import VirtualPort
+from acos_client.v21 import base
+from acos_client.v21.slb.virtual_port import VirtualPort
 
 
 class VirtualServer(base.BaseV21):
