@@ -11,7 +11,8 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import errno
 import json
@@ -19,12 +20,10 @@ import logging
 import socket
 import time
 
-import requests
-
 import acos_client
 from acos_client import logutils
 from acos_client.v30 import responses as acos_responses
-
+import requests
 
 LOG = logging.getLogger(__name__)
 
