@@ -13,6 +13,8 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import errno
 import httplib
@@ -24,10 +26,9 @@ import sys
 import time
 import urlparse
 
-import responses as acos_responses
-
 import acos_client
 from acos_client import logutils
+from acos_client.v21 import responses as acos_responses
 
 LOG = logging.getLogger(__name__)
 
@@ -205,7 +206,7 @@ class HttpClient(object):
                 break
 
         if last_e is not None:
-            raise e
+            raise last_e
 
         LOG.debug("axapi_http: data = %s", logutils.clean(data))
 
