@@ -14,6 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client
 
 import argparse
 import os.path
@@ -22,8 +23,6 @@ import sys
 import traceback
 
 sys.path.append(".")
-
-import acos_client
 
 
 parser = argparse.ArgumentParser(description='acos-client smoke test')
@@ -857,6 +856,7 @@ def main():
             traceback.print_exc()
             print(e)
             sys.exit(1)
+
 
 if __name__ == '__main__':
     main()

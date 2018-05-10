@@ -17,6 +17,7 @@ from __future__ import unicode_literals
 import errno
 import json
 import logging
+import six
 import socket
 import time
 
@@ -62,8 +63,9 @@ class HttpClient(object):
 
         # Update params with axapi_args for currently unsupported configuration of objects
         if axapi_args is not None:
-            formatted_axapi_args = dict([(k.replace('_', '-'), v) for k, v in
-                                        axapi_args.iteritems()])
+            formatted_axapi_args = dict(
+                [(k.replace('_', '-'), v) for k, v in six.iteritems(axapi_args)]
+            )
             params = acos_client.v21.axapi_http.merge_dicts(params, formatted_axapi_args)
 
         if (file_name is None and file_content is not None) or \
@@ -80,7 +82,7 @@ class HttpClient(object):
             # params_copy.update(extra_params)
             LOG.debug("axapi_http: params_all = %s", logutils.clean(params_copy))
 
-            payload = json.dumps(params_copy, encoding='utf-8')
+            payload = json.dumps(params_copy)
         else:
             payload = None
 
@@ -97,7 +99,7 @@ class HttpClient(object):
 
         last_e = None
 
-        for i in xrange(0, 1500):
+        for i in six.moves.range(0, 1500):
             try:
                 last_e = None
                 if file_name is not None:
@@ -122,7 +124,7 @@ class HttpClient(object):
         if last_e is not None:
             LOG.error("acos_client failing with error %s after %s retries ignoring %s",
                       last_e, i, self.retry_err_strings)
-            raise e
+            raise last_e
 
         if z.status_code == 204:
             return None

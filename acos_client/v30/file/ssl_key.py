@@ -13,6 +13,8 @@
 #    under the License.
 from __future__ import absolute_import
 from __future__ import unicode_literals
+import six
+
 
 from acos_client import errors as acos_errors
 from acos_client.v30 import base
@@ -43,7 +45,7 @@ class SSLKey(base.BaseV30):
 
         kwargs['params'] = {'ssl-key': {}}
 
-        for key, val in obj_params.iteritems():
+        for key, val in six.iteritems(obj_params):
             # Filter out invalid, or unset keys
             if val != "":
                 kwargs['params']['ssl-key'][key] = val

@@ -17,14 +17,13 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import errno
-import httplib
 import json
 import logging
+import six
 import socket
 import ssl
 import sys
 import time
-import urlparse
 
 import acos_client
 from acos_client import logutils
@@ -50,8 +49,8 @@ def force_tlsv1_connect(self):
 
 
 def extract_method(api_url):
-    q = urlparse.urlparse(api_url).query
-    return urlparse.parse_qs(q).get('method', [u''])[0]
+    q = six.moves.urllib_parse.urlparse(api_url).query
+    return six.moves.urllib_parse.parse_qs(q).get('method', [''])[0]
 
 
 def merge_dicts(d1, d2):
@@ -131,10 +130,10 @@ class HttpClient(object):
 
     def _http(self, method, api_url, payload):
         if self.protocol == 'https':
-            http = httplib.HTTPSConnection(self.host, self.port, timeout=self.timeout)
+            http = six.moves.http_client.HTTPSConnection(self.host, self.port, timeout=self.timeout)
             http.connect = lambda: force_tlsv1_connect(http)
         else:
-            http = httplib.HTTPConnection(self.host, self.port, timeout=self.timeout)
+            http = six.moves.http_client.HTTPConnection(self.host, self.port, timeout=self.timeout)
 
         LOG.debug("axapi_http: url:     %s", api_url)
         LOG.debug("axapi_http: method:  %s", method)
@@ -168,7 +167,7 @@ class HttpClient(object):
             params_copy = merge_dicts(params, extra_params)
             LOG.debug("axapi_http: params_all = %s", logutils.clean(params_copy))
 
-            payload = json.dumps(params_copy, encoding='utf-8')
+            payload = json.dumps(params_copy)
         else:
             try:
                 payload = kwargs.pop('payload', None)
@@ -179,7 +178,7 @@ class HttpClient(object):
 
         last_e = None
 
-        for i in xrange(0, 600):
+        for i in six.moves.range(0, 600):
             try:
                 last_e = None
                 data = self._http(method, api_url, payload)
@@ -191,12 +190,12 @@ class HttpClient(object):
                     last_e = e
                     continue
                 raise e
-            except httplib.BadStatusLine as e:
+            except six.moves.http_client.BadStatusLine as e:
                 time.sleep(0.1)
                 last_e = e
                 continue
             except EmptyHttpResponse as e:
-                if e.response.status != httplib.OK:
+                if e.response.status != six.moves.http_client.OK:
                     msg = dict(e.response.msg.items())
                     data = json.dumps({"response": {'status': 'fail', 'err':
                                       {'code': e.response.status,
@@ -222,7 +221,7 @@ class HttpClient(object):
                       logutils.clean(data))
 
         try:
-            r = json.loads(data, encoding='utf-8')
+            r = json.loads(data)
         except ValueError as e:
             # Handle non json response
             LOG.debug("axapi_http: json = %s", e)

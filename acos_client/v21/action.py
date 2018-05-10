@@ -14,6 +14,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import six
 import time
 
 from acos_client import errors as acos_errors
@@ -46,7 +47,7 @@ class Action(base.BaseV21):
             write_cmd = "active-partition {0}\r\n{1}".format(partition, write_cmd)
 
         last_e = None
-        for i in range(0, 5):
+        for i in six.moves.range(0, 5):
             # Request raises an exception when the "maybe error" is returned.
             try:
                 return self._request("POST", "cli.deploy", params=None, payload=write_cmd, **kwargs)

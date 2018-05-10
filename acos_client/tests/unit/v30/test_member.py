@@ -9,9 +9,15 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
-import mock
-import unittest2 as unittest
+try:
+    import unittest
+    from unittest import mock
+except ImportError:
+    import mock
+    import unittest2 as unittest
 
 from acos_client import errors as acos_errors
 from acos_client.v30.slb import member
@@ -70,7 +76,7 @@ class TestMember(unittest.TestCase):
 
         ((method, url, params, header), kwargs) = self.client.http.request.call_args
 
-        self.assertEqual(url, '/axapi/v3/slb/service-group/%s/member/%s+%s/' % 
+        self.assertEqual(url, '/axapi/v3/slb/service-group/%s/member/%s+%s/' %
                               (self._sg_name,
                                expected['member']['name'],
                                expected['member']['port']))
@@ -89,7 +95,7 @@ class TestMember(unittest.TestCase):
 
         ((method, url, params, header), kwargs) = self.client.http.request.call_args
 
-        self.assertEqual(url, '/axapi/v3/slb/service-group/%s/member/%s+%s/' % 
+        self.assertEqual(url, '/axapi/v3/slb/service-group/%s/member/%s+%s/' %
                               (self._sg_name,
                                expected['member']['name'],
                                expected['member']['port']))

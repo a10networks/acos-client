@@ -15,6 +15,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import logging
+import six
 import socket
 
 import acos_client
@@ -138,7 +139,7 @@ class Client(object):
         return VERSION_IMPORTS[self._version]["LicenseManager"](self)
 
     def wait_for_connect(self, max_timeout=60):
-        for i in range(0, max_timeout):
+        for i in six.moves.range(0, max_timeout):
             try:
                 LOG.debug("wait_for_connect: attempting %s", self.host)
                 s = socket.create_connection((self.host, self.port), 1.0)

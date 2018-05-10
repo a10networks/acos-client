@@ -13,6 +13,8 @@
 #    under the License.
 from __future__ import absolute_import
 from __future__ import unicode_literals
+import six
+
 
 from acos_client import errors as ae
 from acos_client.v30 import base
@@ -98,7 +100,7 @@ class VirtualPort(base.BaseV30):
         vport_defaults = kwargs.get("vport_defaults")
 
         if vport_defaults:
-            for k, v in vport_defaults.iteritems():
+            for k, v in six.iteritems(vport_defaults):
                 params['port'][k] = v
 
         if server_ssl_tmpl:

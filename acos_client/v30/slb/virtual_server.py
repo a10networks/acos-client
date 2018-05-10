@@ -13,6 +13,8 @@
 #    under the License.
 from __future__ import absolute_import
 from __future__ import unicode_literals
+import six
+
 
 from acos_client import errors as acos_errors
 from acos_client.v30 import base
@@ -44,12 +46,10 @@ class VirtualServer(base.BaseV30):
         if vrid:
             params['virtual-server']['vrid'] = vrid
 
-
         config_defaults = kwargs.get("config_defaults")
         if config_defaults:
-            for k, v in config_defaults.iteritems():
+            for k, v in six.iteritems(config_defaults):
                 params['virtual-server'][k] = v
-
 
         if not update:
             name = ''
