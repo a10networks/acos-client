@@ -11,11 +11,17 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import json
 
-import mock
-import unittest
+try:
+    import unittest
+    from unittest import mock
+except ImportError:
+    import mock
+    import unittest2 as unittest
 
 import acos_client
 

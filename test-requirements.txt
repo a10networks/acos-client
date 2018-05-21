@@ -1,4 +1,4 @@
 hacking>=0.10,<0.11
-mock>=1.0.1
-unittest2
+mock>=1.0.1; python_version < '3.0'
+unittest2; python_version < '3.0'
 nose

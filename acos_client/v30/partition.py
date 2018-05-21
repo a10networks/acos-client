@@ -15,6 +15,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import random
+import six
 import time
 
 from acos_client import errors as acos_errors
@@ -81,7 +82,7 @@ class Partition(base.BaseV30):
 
         # For concurrency's sake, since we have to lookup the id and then
         # set it, loop if we get an exists error.
-        for i in xrange(1, 1000):
+        for i in six.moves.range(1, 1000):
             try:
                 self._create(name, self._next_available_id())
                 break

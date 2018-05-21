@@ -11,14 +11,22 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
-import mock
-import unittest2
+import six
+
+try:
+    import unittest
+    from unittest import mock
+except ImportError:
+    import mock
+    import unittest2 as unittest
 
 from acos_client import logutils as target
 
 
-class TestLogutils(unittest2.TestCase):
+class TestLogutils(unittest.TestCase):
     def setUp(self):
         self.clean_fields = ["username", "password"]
 
@@ -123,8 +131,8 @@ class TestLogutils(unittest2.TestCase):
         self.assertEqual('sometext', actual)
 
     def test_ustring(self):
-        actual = target.clean(u'sometext')
-        self.assertEqual(u'sometext', actual)
+        actual = target.clean('sometext')
+        self.assertEqual('sometext', actual)
 
     def test_mock(self):
         # It's likely that clean will be called with a mock during testing.
@@ -137,5 +145,5 @@ class TestLogutils(unittest2.TestCase):
 
 class FakeObject(object):
     def __init__(self, *args, **kwargs):
-        for k, v in kwargs.iteritems():
+        for k, v in six.iteritems(kwargs):
             setattr(self, k, v)

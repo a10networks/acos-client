@@ -13,6 +13,8 @@
 #    under the License.
 from __future__ import absolute_import
 from __future__ import unicode_literals
+import six
+
 
 from acos_client import errors as acos_errors
 from acos_client.v30 import base
@@ -71,9 +73,8 @@ class Member(base.BaseV30):
         config_defaults = kwargs.get("config_defaults")
 
         if config_defaults:
-            for k, v in config_defaults.iteritems():
+            for k, v in six.iteritems(config_defaults):
                 params['member'][k] = v
-
 
         self._post(url, params, **kwargs)
 

@@ -14,14 +14,14 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import hash_ring
+import uhashring
 
 
 class Hash(object):
 
     def __init__(self, server_list):
         self.server_list = server_list
-        self.ring = hash_ring.HashRing(self.server_list)
+        self.ring = uhashring.HashRing(self.server_list)
 
     def get_server(self, unique_token):
         return self.ring.get_node(unique_token)

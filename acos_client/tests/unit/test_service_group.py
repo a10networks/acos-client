@@ -11,12 +11,16 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
-import unittest2 as unittest
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 import acos_client.errors as acos_errors
-
-import v21_mocks as mocks
+import acos_client.tests.unit.v21_mocks as mocks
 
 
 class TestServiceGroup(unittest.TestCase):

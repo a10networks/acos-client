@@ -13,6 +13,8 @@
 #    under the License.
 from __future__ import absolute_import
 from __future__ import unicode_literals
+import six
+
 
 from acos_client import errors as acos_errors
 from acos_client.v30 import base
@@ -58,7 +60,7 @@ class BaseSSL(base.BaseV30):
         }
 
         params = {'%s-ssl' % self.prefix: {}}
-        for key, val in obj_params.iteritems():
+        for key, val in six.iteritems(obj_params):
             # Filter out invalid, or unset keys
             if val != "":
                 params['%s-ssl' % self.prefix][key] = val

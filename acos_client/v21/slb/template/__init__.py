@@ -14,10 +14,10 @@
 
 import acos_client.v21.base as base
 
-from persistence import CookiePersistence
-from persistence import SourceIpPersistence
-from template_ssl import ClientSSL
-from template_ssl import ServerSSL
+from acos_client.v21.slb.template.persistence import CookiePersistence
+from acos_client.v21.slb.template.persistence import SourceIpPersistence
+from acos_client.v21.slb.template.template_ssl import ClientSSL
+from acos_client.v21.slb.template.template_ssl import ServerSSL
 
 
 class Template(base.BaseV21):

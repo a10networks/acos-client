@@ -23,6 +23,8 @@ from acos_client.v21.device_info import DeviceInfo
 from acos_client.v21.log import Log
 from acos_client.v21.partition import Partition
 
+import six
+
 
 class System(base.BaseV21):
     def backup(self, **kwargs):
@@ -32,6 +34,8 @@ class System(base.BaseV21):
         m = multipart.Multipart()
         m.file(name="restore", filename=name, value=data)
         ct, payload = m.get()
+        if six.PY3:
+            buffer = memoryview
         kwargs.update(payload=buffer(payload), headers={'Content-type': ct})
         return self._post("system.restore", **kwargs)
 
