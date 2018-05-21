@@ -29,5 +29,5 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
 
-    install_requires = ['hash_ring>=1.3.1', 'requests>=2.3.0']
+    install_requires = ['requests>=2.3.0', 'six', 'uhashring']
 )

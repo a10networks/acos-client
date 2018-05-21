@@ -1,2 +1,3 @@
 requests>=2.3.0
-uhashring>=1.0
+six
+uhashring
