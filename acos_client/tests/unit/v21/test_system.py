@@ -20,8 +20,9 @@ try:
 except ImportError:
     import unittest
 
-import responses
 from acos_client import client
+import responses
+
 
 HOSTNAME = 'fake_a10'
 BASE_URL = "https://{}:443/services/rest/v2.1/?format=json&method=".format(HOSTNAME)

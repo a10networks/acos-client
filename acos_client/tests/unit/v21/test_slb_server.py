@@ -12,8 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-# TODO: Add tests for slb.service_group.member.get_oper() method
-
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
@@ -22,15 +20,14 @@ try:
 except ImportError:
     import unittest
 
-import responses
 from acos_client import client
 import acos_client.errors as acos_errors
+import responses
+
 
 HOSTNAME = 'fake_a10'
-
 BASE_URL = "https://{}:443/services/rest/v2.1/?format=json&method=".format(HOSTNAME)
 AUTH_URL = "{}authenticate".format(BASE_URL)
-
 CREATE_URL = '{}slb.server.create&session_id={}'.format(BASE_URL, 'foobar')
 DELETE_URL = '{}slb.server.delete&session_id={}'.format(BASE_URL, 'foobar')
 SEARCH_URL = '{}slb.server.search&session_id={}'.format(BASE_URL, 'foobar')

@@ -11,15 +11,15 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import json
 import logging
-import six
 from requests.adapters import HTTPAdapter
 from requests import Session
-
+import six
 
 import acos_client
 from acos_client import logutils
@@ -93,9 +93,9 @@ class HttpClient(object):
         # Create session to set HTTPAdapter or SSLAdapter and set max_retries
         session = Session()
         if self.port == 443:
-            session.mount('https://', HTTPAdapter(max_retries=2))
+            session.mount('https://', HTTPAdapter(max_retries=60))
         else:
-            session.mount('http://', HTTPAdapter(max_retries=2))
+            session.mount('http://', HTTPAdapter(max_retries=60))
         session_request = getattr(session, method.lower())
 
         # Make actual request and handle any errors

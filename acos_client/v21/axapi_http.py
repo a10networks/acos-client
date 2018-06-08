@@ -1,5 +1,3 @@
-# vim: tabstop=4 shiftwidth=4 softtabstop=4
-
 # Copyright 2014,  Doug Wiegley,  A10 Networks.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -13,15 +11,16 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import json
 import logging
-import six
-import sys
 from requests.adapters import HTTPAdapter
 from requests import Session
+import six
+import sys
 
 import acos_client
 from acos_client import logutils
@@ -127,9 +126,9 @@ class HttpClient(object):
         session = Session()
         if self.port == 443:
             # Add adapter for any https session to force TLS1_0 connection for v21 of AXAPI
-            session.mount('https://', SSLAdapter(max_retries=2))
+            session.mount('https://', SSLAdapter(max_retries=60))
         else:
-            session.mount('http://', HTTPAdapter(max_retries=2))
+            session.mount('http://', HTTPAdapter(max_retries=60))
         session_request = getattr(session, method.lower())
 
         # Make actual request and handle any errors

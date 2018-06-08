@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-# TODO: Add tests for slb.service_group.member.get_oper() method
+# TODO(bosatsu): Add tests for slb.service_group.member.get_oper() method
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
@@ -22,18 +22,17 @@ try:
 except ImportError:
     import unittest
 
-import responses
 from acos_client import client
 import acos_client.errors as acos_errors
+import responses
+
 
 HOSTNAME = 'fake_a10'
-
 BASE_URL = "https://{}:443/services/rest/v2.1/?format=json&method=".format(HOSTNAME)
 AUTH_URL = "{}authenticate".format(BASE_URL)
-
-MEMBER_CREATE_URL = '{}slb.service_group.member.create&session_id={}'.format(BASE_URL, 'foobar')
-MEMBER_DELETE_URL = '{}slb.service_group.member.delete&session_id={}'.format(BASE_URL, 'foobar')
-MEMBER_UPDATE_URL = '{}slb.service_group.member.update&session_id={}'.format(BASE_URL, 'foobar')
+CREATE_URL = '{}slb.service_group.member.create&session_id={}'.format(BASE_URL, 'foobar')
+DELETE_URL = '{}slb.service_group.member.delete&session_id={}'.format(BASE_URL, 'foobar')
+UPDATE_URL = '{}slb.service_group.member.update&session_id={}'.format(BASE_URL, 'foobar')
 
 
 class TestServiceGroupMember(unittest.TestCase):
@@ -47,14 +46,14 @@ class TestServiceGroupMember(unittest.TestCase):
         json_response = {
             'response': {'status': 'OK'}
         }
-        responses.add(responses.POST, MEMBER_CREATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
 
         resp = self.client.slb.service_group.member.create('pool1', 'test1', 80)
 
         self.assertIsNone(resp)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, MEMBER_CREATE_URL)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
 
     @responses.activate
     def test_service_group_member_create_already_exists(self):
@@ -62,14 +61,14 @@ class TestServiceGroupMember(unittest.TestCase):
         json_response = {
             "response": {"status": "fail", "err": {"code": 1405, "msg": "The service group member already exists."}}
         }
-        responses.add(responses.POST, MEMBER_CREATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
 
         with self.assertRaises(acos_errors.Exists):
             self.client.slb.service_group.member.create('pool1', 'test1', 80)
 
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, MEMBER_CREATE_URL)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
 
     @responses.activate
     def test_service_group_member_delete(self):
@@ -77,14 +76,14 @@ class TestServiceGroupMember(unittest.TestCase):
         json_response = {
             'response': {'status': 'OK'}
         }
-        responses.add(responses.POST, MEMBER_DELETE_URL, json=json_response, status=200)
+        responses.add(responses.POST, DELETE_URL, json=json_response, status=200)
 
         resp = self.client.slb.service_group.member.delete('pool1', 'test1', 80)
 
         self.assertIsNone(resp)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, MEMBER_DELETE_URL)
+        self.assertEqual(responses.calls[1].request.url, DELETE_URL)
 
     @responses.activate
     def test_service_group_member_delete_not_found(self):
@@ -92,14 +91,14 @@ class TestServiceGroupMember(unittest.TestCase):
         json_response = {
             "response": {"status": "fail", "err": {"code": 1023, "msg": "Can not find the service group member"}}
         }
-        responses.add(responses.POST, MEMBER_DELETE_URL, json=json_response, status=200)
+        responses.add(responses.POST, DELETE_URL, json=json_response, status=200)
 
         resp = self.client.slb.service_group.member.delete('pool1', 'test1', 80)
 
         self.assertIsNone(resp)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, MEMBER_DELETE_URL)
+        self.assertEqual(responses.calls[1].request.url, DELETE_URL)
 
     @responses.activate
     def test_service_group_member_update(self):
@@ -107,14 +106,14 @@ class TestServiceGroupMember(unittest.TestCase):
         json_response = {
             'response': {'status': 'OK'}
         }
-        responses.add(responses.POST, MEMBER_UPDATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, UPDATE_URL, json=json_response, status=200)
 
         resp = self.client.slb.service_group.member.update('pool1', 'test1', 80, self.client.slb.DOWN)
 
         self.assertIsNone(resp)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, MEMBER_UPDATE_URL)
+        self.assertEqual(responses.calls[1].request.url, UPDATE_URL)
 
     @responses.activate
     def test_service_group_member_update_not_found(self):
@@ -122,14 +121,14 @@ class TestServiceGroupMember(unittest.TestCase):
         json_response = {
             "response": {"status": "fail", "err": {"code": 1023, "msg": "Can not find the service group member"}}
         }
-        responses.add(responses.POST, MEMBER_UPDATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, UPDATE_URL, json=json_response, status=200)
 
         with self.assertRaises(acos_errors.NotFound):
             self.client.slb.service_group.member.update('pool1', 'test1', 80, self.client.slb.DOWN)
 
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, MEMBER_UPDATE_URL)
+        self.assertEqual(responses.calls[1].request.url, UPDATE_URL)
 
     @responses.activate
     def test_service_group_member_update_no_such_service_group(self):
@@ -137,11 +136,11 @@ class TestServiceGroupMember(unittest.TestCase):
         json_response = {
             "response": {"status": "fail", "err": {"code": 67305473, "msg": " No such service group"}}
         }
-        responses.add(responses.POST, MEMBER_UPDATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, UPDATE_URL, json=json_response, status=200)
 
         with self.assertRaises(acos_errors.NotFound):
             self.client.slb.service_group.member.update('pool1', 'test1', 80, self.client.slb.DOWN)
 
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, MEMBER_UPDATE_URL)
+        self.assertEqual(responses.calls[1].request.url, UPDATE_URL)

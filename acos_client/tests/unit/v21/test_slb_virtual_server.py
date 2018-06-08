@@ -20,15 +20,14 @@ try:
 except ImportError:
     import unittest
 
-import responses
 from acos_client import client
 import acos_client.errors as acos_errors
+import responses
+
 
 HOSTNAME = 'fake_a10'
-
 BASE_URL = "https://{}:443/services/rest/v2.1/?format=json&method=".format(HOSTNAME)
 AUTH_URL = "{}authenticate".format(BASE_URL)
-
 CREATE_URL = '{}slb.virtual_server.create&session_id={}'.format(BASE_URL, 'foobar')
 DELETE_URL = '{}slb.virtual_server.delete&session_id={}'.format(BASE_URL, 'foobar')
 SEARCH_URL = '{}slb.virtual_server.search&session_id={}'.format(BASE_URL, 'foobar')

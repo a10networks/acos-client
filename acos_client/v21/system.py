@@ -14,6 +14,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import six
+
 from acos_client import multipart
 from acos_client.v21.action import Action
 from acos_client.v21.admin import Admin
@@ -22,8 +24,6 @@ from acos_client.v21.config_file import ConfigFile
 from acos_client.v21.device_info import DeviceInfo
 from acos_client.v21.log import Log
 from acos_client.v21.partition import Partition
-
-import six
 
 
 class System(base.BaseV21):
