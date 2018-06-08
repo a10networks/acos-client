@@ -20,14 +20,13 @@ try:
 except ImportError:
     import unittest
 
-import responses
 from acos_client import client
+import responses
+
 
 HOSTNAME = 'fake_a10'
-
 BASE_URL = "https://{}:443/services/rest/v2.1/?format=json&method=".format(HOSTNAME)
 AUTH_URL = "{}authenticate".format(BASE_URL)
-
 INTERFACE_GET_URL = '{}network.interface.get&session_id={}'.format(BASE_URL, 'foobar')
 INTERFACE_GET_LIST_URL = '{}network.interface.getAll&session_id={}'.format(BASE_URL, 'foobar')
 

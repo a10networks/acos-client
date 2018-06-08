@@ -13,8 +13,8 @@
 #    under the License.
 
 import logging
-import ssl
 from requests.adapters import HTTPAdapter
+import ssl
 
 FORCED_CIPHERS = (
     'ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+HIGH:'
@@ -23,14 +23,19 @@ FORCED_CIPHERS = (
 
 
 class SSLAdapter(HTTPAdapter):
+    """A TransportAdapter that re-enables 3DES support in Requests.
+
     """
-    A TransportAdapter that re-enables 3DES support in Requests.
-    """
+
     def create_ssl_context(self):
         ctx = ssl.create_default_context()
         # Disable all encryption protcols except TLS1_0
         ctx.options |= ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3
-        ctx.options |= ssl.OP_NO_TLSv1_3 | ssl.OP_NO_TLSv1_2 | ssl.OP_NO_TLSv1_1
+        # Try-Except here because OP_NO_TLSv1_3 not available in Python3 before 3.6
+        try:
+            ctx.options |= ssl.OP_NO_TLSv1_3 | ssl.OP_NO_TLSv1_2 | ssl.OP_NO_TLSv1_1
+        except(AttributeError):
+            ctx.options |= ssl.OP_NO_TLSv1_2 | ssl.OP_NO_TLSv1_1
         ctx.set_ciphers(FORCED_CIPHERS)
         ctx.check_hostname = False
         return ctx

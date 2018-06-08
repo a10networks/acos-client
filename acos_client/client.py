@@ -11,6 +11,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
@@ -19,7 +20,6 @@ import six
 import socket
 
 import acos_client
-
 from acos_client import errors as acos_errors
 from acos_client.v21 import axapi_http as v21_http
 from acos_client.v21.dns import DNS as v21_DNS
@@ -32,7 +32,6 @@ from acos_client.v21.session import Session as v21_Session
 from acos_client.v21.sflow import SFlow as v21_SFlow
 from acos_client.v21.slb import SLB as v21_SLB
 from acos_client.v21.system import System as v21_System
-
 from acos_client.v30 import axapi_http as v30_http
 from acos_client.v30.dns import DNS as v30_DNS
 from acos_client.v30.file import File as v30_File
@@ -45,7 +44,6 @@ from acos_client.v30.session import Session as v30_Session
 from acos_client.v30.sflow import SFlow as v30_SFlow
 from acos_client.v30.slb import SLB as v30_SLB
 from acos_client.v30.system import System as v30_System
-
 
 VERSION_IMPORTS = {
     '21': {

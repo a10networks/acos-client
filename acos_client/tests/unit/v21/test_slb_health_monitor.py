@@ -20,19 +20,18 @@ try:
 except ImportError:
     import unittest
 
-import responses
 from acos_client import client
 import acos_client.errors as acos_errors
+import responses
+
 
 HOSTNAME = 'fake_a10'
-
 BASE_URL = "https://{}:443/services/rest/v2.1/?format=json&method=".format(HOSTNAME)
 AUTH_URL = "{}authenticate".format(BASE_URL)
-
-HM_CREATE_URL = '{}slb.hm.create&session_id={}'.format(BASE_URL, 'foobar')
-HM_DELETE_URL = '{}slb.hm.delete&session_id={}'.format(BASE_URL, 'foobar')
-HM_SEARCH_URL = '{}slb.hm.search&session_id={}'.format(BASE_URL, 'foobar')
-HM_UPDATE_URL = '{}slb.hm.update&session_id={}'.format(BASE_URL, 'foobar')
+CREATE_URL = '{}slb.hm.create&session_id={}'.format(BASE_URL, 'foobar')
+DELETE_URL = '{}slb.hm.delete&session_id={}'.format(BASE_URL, 'foobar')
+SEARCH_URL = '{}slb.hm.search&session_id={}'.format(BASE_URL, 'foobar')
+UPDATE_URL = '{}slb.hm.update&session_id={}'.format(BASE_URL, 'foobar')
 
 
 class TestHealthMonitor(unittest.TestCase):
@@ -46,14 +45,14 @@ class TestHealthMonitor(unittest.TestCase):
         json_response = {
             'response': {'status': 'OK'}
         }
-        responses.add(responses.POST, HM_CREATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
 
         resp = self.client.slb.hm.create('test1', 'HTTP', 5, 5, 5, 'GET', '/', '200', 80)
 
         self.assertIsNone(resp)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, HM_CREATE_URL)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
 
     @responses.activate
     def test_health_monitor_create_already_exists(self):
@@ -62,14 +61,14 @@ class TestHealthMonitor(unittest.TestCase):
             "response": {"status": "fail", "err": {
                 "code": 2941, "msg": "The same health monitor name already exist."}}
         }
-        responses.add(responses.POST, HM_CREATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
 
         with self.assertRaises(acos_errors.Exists):
             self.client.slb.hm.create('test1', 'HTTP', 5, 5, 5, 'GET', '/', '200', 80)
 
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, HM_CREATE_URL)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
 
     @responses.activate
     def test_health_monitor_delete(self):
@@ -77,14 +76,14 @@ class TestHealthMonitor(unittest.TestCase):
         json_response = {
             'response': {'status': 'OK'}
         }
-        responses.add(responses.POST, HM_DELETE_URL, json=json_response, status=200)
+        responses.add(responses.POST, DELETE_URL, json=json_response, status=200)
 
         resp = self.client.slb.hm.delete('test1')
 
         self.assertIsNone(resp)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, HM_DELETE_URL)
+        self.assertEqual(responses.calls[1].request.url, DELETE_URL)
 
     @responses.activate
     def test_health_monitor_delete_not_found(self):
@@ -92,14 +91,14 @@ class TestHealthMonitor(unittest.TestCase):
         json_response = {
             "response": {"status": "fail", "err": {"code": 33619968, "msg": " The monitor does not exist."}}
         }
-        responses.add(responses.POST, HM_DELETE_URL, json=json_response, status=200)
+        responses.add(responses.POST, DELETE_URL, json=json_response, status=200)
 
         resp = self.client.slb.hm.delete('test1')
 
         self.assertIsNone(resp)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, HM_DELETE_URL)
+        self.assertEqual(responses.calls[1].request.url, DELETE_URL)
 
     @responses.activate
     def test_health_monitor_search(self):
@@ -110,29 +109,29 @@ class TestHealthMonitor(unittest.TestCase):
                                "override_ipv6": "::", "override_port": 0, "type": 3, "http":
                                {"port": 80, "host": "", "url": "GET /", "user": "", "password": "",
                                 "expect_code": "200", "maintenance_code": ""}}}
-        responses.add(responses.POST, HM_SEARCH_URL, json=json_response, status=200)
+        responses.add(responses.POST, SEARCH_URL, json=json_response, status=200)
 
         resp = self.client.slb.hm.get('test1')
 
         self.assertEqual(resp, json_response)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, HM_SEARCH_URL)
+        self.assertEqual(responses.calls[1].request.url, SEARCH_URL)
 
     @responses.activate
     def test_health_monitor_search_not_found(self):
-        responses.add(responses.POST, HM_SEARCH_URL, json={'session_id': 'foobar'})
+        responses.add(responses.POST, SEARCH_URL, json={'session_id': 'foobar'})
         json_response = {
             "response": {"status": "fail", "err": {"code": 33619968, "msg": " The monitor does not exist."}}
         }
-        responses.add(responses.POST, HM_SEARCH_URL, json=json_response, status=200)
+        responses.add(responses.POST, SEARCH_URL, json=json_response, status=200)
 
         with self.assertRaises(acos_errors.NotFound):
             self.client.slb.hm.get('test1')
 
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, HM_SEARCH_URL)
+        self.assertEqual(responses.calls[1].request.url, SEARCH_URL)
 
     @responses.activate
     def test_health_monitor_update(self):
@@ -140,14 +139,14 @@ class TestHealthMonitor(unittest.TestCase):
         json_response = {
             'response': {'status': 'OK'}
         }
-        responses.add(responses.POST, HM_UPDATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, UPDATE_URL, json=json_response, status=200)
 
         resp = self.client.slb.hm.update('test1', 'HTTP', 5, 5, 5, 'GET', '/', '200', 80)
 
         self.assertIsNone(resp)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, HM_UPDATE_URL)
+        self.assertEqual(responses.calls[1].request.url, UPDATE_URL)
 
     @responses.activate
     def test_health_monitor_update_not_found(self):
@@ -155,11 +154,11 @@ class TestHealthMonitor(unittest.TestCase):
         json_response = {
             "response": {"status": "fail", "err": {"code": 33619968, "msg": " The monitor does not exist."}}
         }
-        responses.add(responses.POST, HM_UPDATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, UPDATE_URL, json=json_response, status=200)
 
         with self.assertRaises(acos_errors.NotFound):
             self.client.slb.hm.update('test1', 'HTTP', 5, 5, 5, 'GET', '/', '200', 80)
 
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
-        self.assertEqual(responses.calls[1].request.url, HM_UPDATE_URL)
+        self.assertEqual(responses.calls[1].request.url, UPDATE_URL)

@@ -20,9 +20,9 @@ try:
 except ImportError:
     import unittest
 
-import responses
 from acos_client import client
 import acos_client.errors as acos_errors
+import responses
 
 
 HOSTNAME = 'fake_a10'
