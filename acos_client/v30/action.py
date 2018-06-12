@@ -39,3 +39,9 @@ class Action(base.BaseV30):
 
     def activate_and_write(self, partition, **kwargs):
         self.write_memory()
+
+    def cli_deploy(self, commandlist, **kwargs):
+        payload = {
+            "commandlist": commandlist
+        }
+        return self._post("/clideploy/", payload, **kwargs)

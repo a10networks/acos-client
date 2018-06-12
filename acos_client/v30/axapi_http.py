@@ -134,7 +134,7 @@ class HttpClient(object):
         except ValueError as e:
             # The response is not JSON but it still succeeded.
             if z.status_code == 200:
-                return {}
+                return z.text
             else:
                 raise e
 
