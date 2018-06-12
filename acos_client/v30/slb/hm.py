@@ -88,6 +88,7 @@ class HealthMonitor(base.BaseV30):
             else:
                 k = '%s-port' % mon_method
             params['monitor']['method'][mon_method][k] = int(port)
+	    params['monitor']['override-port'] = int(port)
 
         # TODO(mdurrant) : Might have to get tricky with JSON structures
         # ... due to 'mon_method' stuff.

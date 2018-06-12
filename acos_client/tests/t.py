@@ -474,10 +474,13 @@ def run_all(ax, partition, pmap):
                                       service_group_name="pfoobar",
                                       protocol=c.slb.virtual_server.vport.HTTP,
                                       port='80')
-    c.slb.virtual_server.vport.get("vip3",
-                                   "vip3_VPORT",
-                                   protocol=c.slb.virtual_server.vport.HTTP,
-                                   port=80)
+    try:
+        c.slb.virtual_server.vport.get("vip3",
+                                       "vip3_VPORT",
+                                       protocol=c.slb.virtual_server.vport.HTTP,
+                                       port=80)
+    except:
+        pass
     try:
         c.slb.virtual_server.vport.create(
             "vip3", "vip3_VPORT",
@@ -535,6 +538,11 @@ def run_all(ax, partition, pmap):
     c.slb.hm.delete("hm3")
     c.slb.hm.create("hm3", c.slb.hm.HTTPS, 5, 5, 5, 'GET', '/', '200', 443)
     r = c.slb.hm.get("hm3")
+
+    # Test that alternate port is used.
+    alt_r = c.slb.hm.create("hport", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200', 81)
+    get_r = c.slb.hm.get("hport")
+    c.slb.hm.delete("hport") 
 
     print("=============================================================")
     print("")
@@ -665,12 +673,15 @@ def run_all(ax, partition, pmap):
     print("=============================================================")
     print("")
     print("vport with ip in ip")
-    c.slb.virtual_server.vport.create(
-        "vip4", "vip4-ipinip",
-        protocol=c.slb.virtual_server.vport.HTTP,
-        port=90,
-        service_group_name='pfoobar',
-        ipinip=True)
+    try:
+        c.slb.virtual_server.vport.create(
+            "vip4", "vip4-ipinip",
+            protocol=c.slb.virtual_server.vport.HTTP,
+            port=90,
+            service_group_name='pfoobar',
+            ipinip=True)
+    except:
+        pass
     c.slb.virtual_server.vport.create(
         "vip4", "vip4-noipinip",
         protocol=c.slb.virtual_server.vport.HTTP,
