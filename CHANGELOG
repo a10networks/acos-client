@@ -4,5 +4,7 @@ acos-client CHANGELOG
 
 a10-neutron-lbaas. Changes tracked from 1.4.2 > onward
 
+* 1.4.3
+- Ensure passing of port and correct param name for HM port override
 * 1.4.2
 - Checks for name-based configuration elements to ensure other business rules do not override configured defaults
