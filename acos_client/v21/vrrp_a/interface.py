@@ -14,13 +14,33 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from acos_client import multipart
-from acos_client.v21.action import Action
-from acos_client.v21.admin import Admin
 from acos_client.v21 import base
 
 import six
 
 class VRRPAInterface(base.BaseV21):
-    pass
+    def get_all(self, **kwargs):
+        return self._get("vrrp_a.interface.getAll", **kwargs)
 
+    def search(self, interface_num):
+        params = {"interface_number": interface_num}
+
+        return self._post("vrrp_a.interface.search", params)
+
+    def update(self, interface_number, interface_type, status, vrrp_a_status, link_type, heartbeat, vlan=None):
+        env_val = "vrrp_a_interface"
+        params = {
+            env_val: {
+                "interface_number": interface_number,
+                "interface_type": interface_type,
+                "status": status,
+                "vrrp_a_status": vrrp_a_status,
+                "link_type": link_type,
+                "heartbeat": heartbeat
+            }
+        }
+
+        if vlan:
+            params[env_val]["vlan"] = vlan
+
+        return self._post("vrrp_a.interface.update", params)

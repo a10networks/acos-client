@@ -21,7 +21,7 @@ from acos_client.v21.vrrp_a.failover import VRRPAFailoverPolicy
 class VRRPA(base.BaseV21):
     # For status args
     @property
-    def vrrp_global(self):
+    def vrrpa_global(self):
         return VRRPAGlobal(self.client)
 
     @property

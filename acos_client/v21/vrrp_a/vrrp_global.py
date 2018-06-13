@@ -14,9 +14,6 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from acos_client import multipart
-from acos_client.v21.action import Action
-from acos_client.v21.admin import Admin
 from acos_client.v21 import base
 
 import six
