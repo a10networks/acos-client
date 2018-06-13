@@ -32,6 +32,7 @@ from acos_client.v21.session import Session as v21_Session
 from acos_client.v21.sflow import SFlow as v21_SFlow
 from acos_client.v21.slb import SLB as v21_SLB
 from acos_client.v21.system import System as v21_System
+from acos_client.v21.vrrpa import VrrpA as v21_VRRPA
 
 from acos_client.v30 import axapi_http as v30_http
 from acos_client.v30.dns import DNS as v30_DNS
@@ -64,6 +65,7 @@ VERSION_IMPORTS = {
         'SLB': v21_SLB,
         'System': v21_System,
         'Vlan': None,
+        'VRRPA': v21_VRRPA
     },
     '30': {
         'DNS': v30_DNS,
@@ -157,6 +159,10 @@ class Client(object):
     @property
     def route(self):
         return VERSION_IMPORTS[self._version]["RIB"](self)
+    
+    @property
+    def vrrpa(self):
+        return VERSION_IMPORTS[self._version]["VRRPA"](self)
 
     def wait_for_connect(self, max_timeout=60):
         for i in six.moves.range(0, max_timeout):
