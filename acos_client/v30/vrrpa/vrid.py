@@ -15,6 +15,7 @@
 from acos_client.v30 import base
 from acos_client.v30.vrrpa.blade_params import BladeParameters
 
+
 class VRID(base.BaseV30):
 
     def __init__(self, client):
