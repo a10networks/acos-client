@@ -32,7 +32,7 @@ from acos_client.v21.session import Session as v21_Session
 from acos_client.v21.sflow import SFlow as v21_SFlow
 from acos_client.v21.slb import SLB as v21_SLB
 from acos_client.v21.system import System as v21_System
-from acos_client.v21.vrrpa import VrrpA as v21_VRRPA
+from acos_client.v21.vrrp_a import VRRPA as v21_VRRPA
 
 from acos_client.v30 import axapi_http as v30_http
 from acos_client.v30.dns import DNS as v30_DNS
