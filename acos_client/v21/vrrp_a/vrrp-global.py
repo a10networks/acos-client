@@ -23,8 +23,42 @@ import six
 
 
 class VrrpA(base.BaseV21):
-    def status(self, **kwargs):
-        return self._get("vrrp_a.status", **kwargs)
+    def get(self, **kwargs):
+        return self._get("vrrp_a.get", **kwargs)
+
+    def set(self, status, device_id, set_id, default_vrid, hello_interval, dead_timer, 
+            track_event_delay, preemption_delay, arp_retry, 
+            vrid_list={}, 
+            preferred_session_sync_port_list={}):
+        params = {
+            "vrrp_a": {
+                "status": status,
+                "device_id": device_id,
+                "set_id": set_id,
+                "default_vrid": default_vrid,
+                "hello_interval": hello_interval,
+                "dead_timer": dead_timer,
+                "track_event_delay": track_event_delay,
+                "preemption_delay": preemption_delay,
+                "arp_retry": arp_retry,
+            }
+        }
+        vrids = self._convert_vrid_list(vrid_list)
+        sync_ports = self._convert_sync_port_list(preferred_session_sync_port_list)
+
+        if vrids:
+            params["vrrp_a"]["vrid_list"] = vrids
+        
+        if sync_ports:
+            params["vrrp_a"]["preferred_session_sync_port_list"] = sync_ports
+
+        return self._post("vrrp_a.set", params)
+
+    def _convert_vrid_list(self, vrids):
+        return vrids
+
+    def _convert_sync_port_list(self, sync_ports):
+        return sync_ports
 #    def backup(self, **kwargs):
 #        return self._get("system.backup", **kwargs)
 #
