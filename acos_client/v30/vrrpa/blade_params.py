@@ -37,11 +37,19 @@ class BladeParameters(base.BaseV30):
             rv['blade-parameters']['tracking-options'] = self.interfaces
 
         if self.gateways['gateway']['ipv4-gateway-list']:
-            rv['blade-parameters']['tracking-options'] = self.gateways
+            if rv['blade-parameters'].get('tracking-options'):
+                   rv['blade-parameters']['tracking-options'].update(self.gateways)
+            else:
+                rv['blade-parameters']['tracking-options'] = self.gateways
 
         if self.gateways['gateway']['ipv6-gateway-list']:
-            if rv['blade-parameters']['tracking-options']['gateway']:
-                rv['blade-parameters']['tracking-options']['gateway'].update(self.gateways)
+            if rv['blade-parameters'].get('tracking-options'):
+                if rv['blade-parameters']['tracking-options'].get('gateway'):
+                    rv['blade-parameters']['tracking-options']['gateway'].update(self.gateways)
+                else:
+                   rv['blade-parameters']['tracking-options'] = self.gateways
+            else:
+                rv['blade-parameters']['tracking-options'] = self.gateways
         return rv 
 
     def add_interface(self, ethernet=1, priority_cost=1):
@@ -66,7 +74,7 @@ class BladeParameters(base.BaseV30):
         self.gateways['gateway']['ipv6-gateway-list'].append(gateway)
 
     def get(self, vrid_val):
-        return self._get(base_url.format(vrid_val))
+        return self._get(self.base_url.format(vrid_val))
 
     def create(self, vrid_val, priority=None, **kwargs):
         payload = self._build_params(priority, **kwargs)
@@ -74,7 +82,7 @@ class BladeParameters(base.BaseV30):
 
     def update(self, vrid_val, priority=None, **kwargs):
         payload = self._build_params(priority, **kwargs)
-        self._post(self.base_url.format(vrid_val), payload)
+        self._put(self.base_url.format(vrid_val), payload)
 
     def delete(self, vrid_val):
         return self._delete(self.base_url.format(vrid_val))
