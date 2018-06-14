@@ -29,12 +29,12 @@ class VRID(base.BaseV30):
     def get(self, vrid_val):
         return self._get(self.base_url  + str(vrid_val))
 
-    def create(self, vrid_val, threshold=None, disable=None):
+    def _build_params(self, vrid_val, threshold=None, disable=None):
         vrid = {'vrid-val': vrid_val}
 
         if threshold or disable:
-            threshold = threshold if threshold else 1
-            disable = disable if disable else 0
+            threshold = threshold if threshold in range(0, 256) else 1
+            disable = disable if disable in [0,1] else 0
             preempt = {
                     'threshold': threshold,
                     'disable': disable
@@ -43,23 +43,14 @@ class VRID(base.BaseV30):
             vrid['preempt-mode'] = preempt
 
         payload = {'vrid': vrid}
-        self._post(self.base_url, payload)
+
+        return payload
+
+    def create(self, vrid_val, threshold=None, disable=None):
+        return self._post(self.base_url, self._build_params(vrid_val, threshold, disable))
 
     def update(self, vrid_val, threshold=None, disable=None):
-        vrid = {'vrid-val': vrid_val}
-
-        if threshold or disable:
-            threshold = threshold if threshold else 1
-            disable = disable if disable else 0
-            preempt = {
-                    'threshold': threshold,
-                    'disable': disable
-                }
-
-            vrid['preempt-mode'] = preempt
-
-        payload = {'vrid': vrid}
-        self._put(self.base_url+str(vrid_val), payload)
+        return self._put(self.base_url+str(vrid_val), self._build_params(vrid_val, threshold, disable))
 
     def delete(self, vrid_val):
         return self._delete(self.base_url + str(vrid_val))
