@@ -30,6 +30,7 @@ class BladeParameters(base.BaseV30):
     def _build_params(self, priority=None, **kwargs):
         rv = {'blade-parameters': {}}
         if priority:
+            priority = priority if priority in range(1, 256) else 150
             rv['blade-parameters']['priority'] = priority
 
         if self.interfaces['interface']:
@@ -37,6 +38,7 @@ class BladeParameters(base.BaseV30):
 
         if self.gateways['gateway']['ipv4-gateway-list']:
             rv['blade-parameters']['tracking-options'] = self.gateways
+
         if self.gateways['gateway']['ipv6-gateway-list']:
             if rv['blade-parameters']['tracking-options']['gateway']:
                 rv['blade-parameters']['tracking-options']['gateway'].update(self.gateways)
@@ -66,12 +68,12 @@ class BladeParameters(base.BaseV30):
     def get(self, vrid_val):
         return self._get(base_url.format(vrid_val))
 
-    def create(self, vrid_val, **kwargs):
-        payload = self._build_params(**kwargs)
+    def create(self, vrid_val, priority=None, **kwargs):
+        payload = self._build_params(priority, **kwargs)
         self._post(self.base_url.format(vrid_val), payload)
 
-    def update(self, vrid_val, **kwargs):
-        payload = self._build_params(**kwargs)
+    def update(self, vrid_val, priority=None, **kwargs):
+        payload = self._build_params(priority, **kwargs)
         self._post(self.base_url.format(vrid_val), payload)
 
     def delete(self, vrid_val):
