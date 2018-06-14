@@ -75,4 +75,4 @@ class BladeParameters(base.BaseV30):
         self._post(self.base_url.format(vrid_val), payload)
 
     def delete(self, vrid_val):
-        return self._delete(self.base_url + str(vrid_val))
+        return self._delete(self.base_url.format(vrid_val))
