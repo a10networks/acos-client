@@ -18,7 +18,7 @@ from acos_client.v30 import base
 class BladeParameters(base.BaseV30):
     def __init__(self, client):
         super(BladeParameters, self).__init__(client)
-        self.base_url="/axapi/v3/vrrp-a/vrid/{0}/blade-parameters"
+        self.base_url="/vrrp-a/vrid/{0}/blade-parameters"
         self.interfaces = {'interface': []}
         self.gateways = {
             'gateway': {
@@ -27,7 +27,7 @@ class BladeParameters(base.BaseV30):
             }
         }
 
-    def _build_params(self, priority=None):
+    def _build_params(self, priority=None, **kwargs):
         rv = {'blade-parameters': {}}
         if priority:
             rv['blade-parameters']['priority'] = priority
@@ -40,14 +40,14 @@ class BladeParameters(base.BaseV30):
         if self.gateways['gateway']['ipv6-gateway-list']:
             if rv['blade-parameters']['tracking-options']['gateway']:
                 rv['blade-parameters']['tracking-options']['gateway'].update(self.gateways)
-
+        return rv 
 
     def add_interface(self, ethernet=1, priority_cost=1):
         interface = {
             'ethernet': ethernet,
-            'priority-cost': priority-cost
+            'priority-cost': priority_cost
         }
-        self.interfaces['inteface'].append(interface)
+        self.interfaces['interface'].append(interface)
 
     def add_ipv4gateway(self, ip_address, priority_cost=1):
         gateway = {
@@ -67,11 +67,11 @@ class BladeParameters(base.BaseV30):
         return self._get(base_url.format(vrid_val))
 
     def create(self, vrid_val, **kwargs):
-        payload = _build_params(**kwargs)
+        payload = self._build_params(**kwargs)
         self._post(self.base_url.format(vrid_val), payload)
 
     def update(self, vrid_val, **kwargs):
-        payload = _build_params(**kwargs)
+        payload = self._build_params(**kwargs)
         self._post(self.base_url.format(vrid_val), payload)
 
     def delete(self, vrid_val):

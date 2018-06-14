@@ -13,13 +13,18 @@
 #    under the License.
 
 from acos_client.v30 import base
-
+from acos_client.v30.vrrpa.blade_params import BladeParameters
 
 class VRID(base.BaseV30):
 
     def __init__(self, client):
         super(VRID, self).__init__(client)
+        self.client = client
         self.base_url="/vrrp-a/vrid/"
+
+    @property
+    def blade(self):
+        return BladeParameters(self.client) 
 
     def get(self, vrid_val):
         return self._get(self.base_url  + str(vrid_val))
