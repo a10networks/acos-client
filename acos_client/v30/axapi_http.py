@@ -119,8 +119,18 @@ class HttpClient(object):
             )
         except ValueError as e:
             # The response is not JSON but it still succeeded.
+<<<<<<< HEAD
+<<<<<<< HEAD
             if device_response.status_code == 200:
                 return {}
+=======
+            if z.status_code == 200:
+                return z.text
+>>>>>>> add a method for cli_deploy and adjust axapi_http.py to handle non-JSON responses
+=======
+            if z.status_code == 200:
+                return z.text
+>>>>>>> 420d250ea411b1e29e7f02227efcfefcba5d3ea5
             else:
                 raise e
 
