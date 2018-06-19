@@ -479,7 +479,7 @@ def run_all(ax, partition, pmap):
                                        "vip3_VPORT",
                                        protocol=c.slb.virtual_server.vport.HTTP,
                                        port=80)
-    except:
+    except Exception:
         pass
     try:
         c.slb.virtual_server.vport.create(
@@ -540,9 +540,9 @@ def run_all(ax, partition, pmap):
     r = c.slb.hm.get("hm3")
 
     # Test that alternate port is used.
-    alt_r = c.slb.hm.create("hport", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200', 81)
-    get_r = c.slb.hm.get("hport")
-    c.slb.hm.delete("hport") 
+    c.slb.hm.create("hport", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200', 81)
+    c.slb.hm.get("hport")
+    c.slb.hm.delete("hport")
 
     print("=============================================================")
     print("")
@@ -680,7 +680,7 @@ def run_all(ax, partition, pmap):
             port=90,
             service_group_name='pfoobar',
             ipinip=True)
-    except:
+    except Exception:
         pass
     c.slb.virtual_server.vport.create(
         "vip4", "vip4-noipinip",
