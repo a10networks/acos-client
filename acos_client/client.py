@@ -32,6 +32,8 @@ from acos_client.v21.session import Session as v21_Session
 from acos_client.v21.sflow import SFlow as v21_SFlow
 from acos_client.v21.slb import SLB as v21_SLB
 from acos_client.v21.system import System as v21_System
+from acos_client.v21.vrrpa import VrrpA as v21_VRRPA
+
 from acos_client.v30 import axapi_http as v30_http
 from acos_client.v30.dns import DNS as v30_DNS
 from acos_client.v30.file import File as v30_File
@@ -44,6 +46,8 @@ from acos_client.v30.session import Session as v30_Session
 from acos_client.v30.sflow import SFlow as v30_SFlow
 from acos_client.v30.slb import SLB as v30_SLB
 from acos_client.v30.system import System as v30_System
+from acos_client.v30.vrrpa.vrid import VRID as v30_VRRPA
+
 
 VERSION_IMPORTS = {
     '21': {
@@ -58,6 +62,7 @@ VERSION_IMPORTS = {
         'SFlow': v21_SFlow,
         'SLB': v21_SLB,
         'System': v21_System,
+        'VRRPA': v21_VRRPA
     },
     '30': {
         'DNS': v30_DNS,
@@ -71,7 +76,8 @@ VERSION_IMPORTS = {
         'SFlow': v30_SFlow,
         'SLB': v30_SLB,
         'System': v30_System,
-        'File': v30_File
+        'File': v30_File,
+        'VRRPA': v30_VRRPA
     },
 }
 
