@@ -110,6 +110,8 @@ class HttpClient(object):
             LOG.error("acos_client failing with error %s after 60 retries",
                       e.__class__.__name__)
             raise e
+        finally:
+            session.close()
 
         # Validate json response
         try:
