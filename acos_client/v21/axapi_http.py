@@ -139,6 +139,8 @@ class HttpClient(object):
             LOG.error("acos_client failing with error %s after 60 retries",
                       e.__class__.__name__)
             raise e
+        finally:
+            session.close()
 
         # Log if the reponse is one of the known broken response
         if device_response in broken_replies:
