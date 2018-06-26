@@ -15,9 +15,13 @@
 import acos_client.v30.base as base
 
 from acos_client.v30.overlay.options import OverlayOptions 
-
+from acos_client.v30.overlay.vtep import OverlayVtep
 
 class Overlay(base.BaseV30):
     @property
     def options(self):
         return OverlayOptions(self.client)
+
+    @property
+    def vtep(self):
+        return OverlayVtep(self.client)
