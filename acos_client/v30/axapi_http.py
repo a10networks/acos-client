@@ -45,6 +45,9 @@ class HttpClient(object):
                 self.port = 80
             else:
                 self.port = 443
+        else:
+            self.port = port
+
         self.url_base = "%s://%s:%s" % (protocol, host, self.port)
 
     def request(self, method, api_url, params={}, headers=None,

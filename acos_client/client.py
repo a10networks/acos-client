@@ -41,6 +41,7 @@ from acos_client.v30.interface import Interface as v30_Interface
 from acos_client.v30.license_manager import LicenseManager as v30_LicenseManager
 from acos_client.v30.nat import Nat as v30_Nat
 from acos_client.v30.network import Network as v30_Network
+from acos_client.v30.overlay import Overlay as v30_Overlay
 from acos_client.v30.session import Session as v30_Session
 from acos_client.v30.sflow import SFlow as v30_SFlow
 from acos_client.v30.slb import SLB as v30_SLB
@@ -70,6 +71,7 @@ VERSION_IMPORTS = {
         'LicenseManager': v30_LicenseManager,
         'Nat': v30_Nat,
         'Network': v30_Network,
+        'Overlay': v30_Overlay,
         'Session': v30_Session,
         'SFlow': v30_SFlow,
         'SLB': v30_SLB,
@@ -139,6 +141,10 @@ class Client(object):
     @property
     def license_manager(self):
         return VERSION_IMPORTS[self._version]["LicenseManager"](self)
+
+    @property
+    def overlay(self):
+        return VERSION_IMPORTS[self._version]["Overlay"](self)
 
     def wait_for_connect(self, max_timeout=60):
         for i in six.moves.range(0, max_timeout):

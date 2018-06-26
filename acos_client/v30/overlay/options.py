@@ -31,7 +31,8 @@ class OverlayOptions(base.BaseV30):
                 nvgre_key_mode_lower24,
                 tcp_mss_adjust_disable,
                 uuid,
-                vxlan_dest_port):
+                vxlan_dest_port,
+                **kwargs):
 
         options = {}
 
@@ -61,4 +62,4 @@ class OverlayOptions(base.BaseV30):
             "options": options
         }
 
-        return self._post(url_prefix + "/options"
+        return self._post(url_prefix + "/options", payload, **kwargs)
