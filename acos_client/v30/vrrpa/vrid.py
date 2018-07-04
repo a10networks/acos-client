@@ -21,25 +21,25 @@ class VRID(base.BaseV30):
     def __init__(self, client):
         super(VRID, self).__init__(client)
         self.client = client
-        self.base_url="/vrrp-a/vrid/"
+        self.base_url = "/vrrp-a/vrid/"
 
     @property
     def blade(self):
-        return BladeParameters(self.client) 
+        return BladeParameters(self.client)
 
     def get(self, vrid_val):
-        return self._get(self.base_url  + str(vrid_val))
+        return self._get(self.base_url + str(vrid_val))
 
     def _build_params(self, vrid_val, threshold=None, disable=None):
         vrid = {'vrid-val': vrid_val}
 
         if threshold or disable:
             threshold = threshold if threshold in range(0, 256) else 1
-            disable = disable if disable in [0,1] else 0
+            disable = disable if disable in [0, 1] else 0
             preempt = {
-                    'threshold': threshold,
-                    'disable': disable
-                }
+                'threshold': threshold,
+                'disable': disable
+            }
 
             vrid['preempt-mode'] = preempt
 

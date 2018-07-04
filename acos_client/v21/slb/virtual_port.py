@@ -102,7 +102,7 @@ class VirtualPort(base.BaseV21):
 
         vports = results.get("virtual_server").get("vport_list", [])
         port_filter = lambda x: x.get("name") == name
-        filtered_vports = [port for port in vports if port_filter(port)]
+        filtered_vports = [vport for vport in vports if port_filter(vport)]
         if len(filtered_vports) > 0:
             return filtered_vports[0]
 

@@ -11,6 +11,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
@@ -32,14 +33,14 @@ class TestVRID(unittest.TestCase):
 
     def expected_payload(self, vrid_val, threshold=1, disable=0):
         rv = {
-           'vrid':{
-               'vrid-val': vrid_val,
-               'preempt-mode': {
-                   'threshold': threshold,
-                   'disable': disable
-               }
-           }
-        }
+            'vrid': {
+                'vrid-val': vrid_val,
+                'preempt-mode': {
+                    'threshold': threshold,
+                    'disable': disable
+                    }
+                }
+            }
 
         return rv
 
@@ -49,20 +50,24 @@ class TestVRID(unittest.TestCase):
 
     def test_vrid_create_threshold(self):
         self.target.create(4, threshold=2)
-        self.client.http.request.assert_called_with("POST", self.url_prefix,
-            self.expected_payload(4, threshold=2), mock.ANY)
+        self.client.http.request.assert_called_with(
+            "POST", self.url_prefix, self.expected_payload(4, threshold=2), mock.ANY
+        )
 
     def test_vrid_create_disable(self):
         self.target.create(4, disable=1)
-        self.client.http.request.assert_called_with("POST", self.url_prefix,
-            self.expected_payload(4, disable=1), mock.ANY)
+        self.client.http.request.assert_called_with(
+            "POST", self.url_prefix, self.expected_payload(4, disable=1), mock.ANY
+        )
 
     def test_vrid_update_threshold(self):
         self.target.update(4, threshold=2)
-        self.client.http.request.assert_called_with("PUT", self.url_prefix+'4',
-            self.expected_payload(4, threshold=2), mock.ANY)
+        self.client.http.request.assert_called_with(
+            "PUT", self.url_prefix+'4', self.expected_payload(4, threshold=2), mock.ANY
+        )
 
     def test_vrid_update_disable(self):
         self.target.update(4, disable=1)
-        self.client.http.request.assert_called_with("PUT", self.url_prefix+'4',
-            self.expected_payload(4, disable=1), mock.ANY)
+        self.client.http.request.assert_called_with(
+            "PUT", self.url_prefix+'4', self.expected_payload(4, disable=1), mock.ANY
+        )
