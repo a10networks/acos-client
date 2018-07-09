@@ -131,3 +131,24 @@ class ManagementInterface(Interface):
                                       default_gateway=default_gateway)
         return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
                           payload)
+
+
+class LogicalInterface(Interface):
+    def __init__(self, client):
+        super(LogicalInterface, self).__init__(client)
+        self.iftype = "lif"
+    
+    def _build_payload(self, **kwargs):
+        rv = super(LogicalInterface, self)._build_payload(**kwargs)
+        return rv
+
+
+class VirtualEthernet(Interface):
+    def __init__(self, client):
+        super(VirtualEthernet, self).__init__(client)
+        self.iftype = "ve"
+
+    def _build_payload(self, **kwargs):
+        # we need to deal with VLAN stuff here
+        rv = super(VirtualEthernet, self)._build_payload(**kwargs)
+        return rv
