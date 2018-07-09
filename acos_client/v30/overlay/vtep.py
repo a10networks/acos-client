@@ -22,36 +22,91 @@ from acos_client.v30 import base
 
 class OverlayVtep(base.BaseV30):
     url_prefix = "/overlay-tunnel/vtep"
+    ip_url_format = "{baseurl}/{addrtype}"
 
     def get(self, vtep_id, *args, **kwargs):
-        return self._get(self.url_prefix, **kwargs)
+        url = "{0}/{1}".format(self.url_prefix, vtep_id)
+        return self._get(url, **kwargs)
 
     def get_list(self, *args, **kwargs):
         return self._get(self.url_prefix) 
 
-    def create(self, vtep_id, ip_address, encap_type="vxlan"):
-        payload = {
-            "destination-ip-address": {
-                "ip-address": ip_address,
-                "encap": encap_type
-            }
-        }
+    def create(self, vtep_id, source_ip=None, source_vnis=[],
+                dest_ips=[], encap_type="vxlan", **kwargs):
+        # vtep_id = ID 
+        # source_ip = source-ip-address
+        # source_vnis = vni-list for source-ip-address
+        # dest_ips = list of (ip, [vni_info]) tuples 
+        # vtep creation can be as simple or complicated as we like
+        # we can create a vtep with a minimum of an ID
+        # or we can create it with fully populated src/dst info
 
-        post_url = "{0}/{vtepid}/destination-ip-address".format(self.url_prefix, vtepid=vtep_id)
-        
-        return self._post(post_url, payload, **kwargs)
+        is_found = False
+
+        try:
+            existing = self.get(vtep_id)
+            is_found = existing is not None
+        except:
+            pass
+
+        if not is_found:
+            # Create it.
+            payload = {
+                "vtep": {
+                    "id": vtep_id,
+                    "encap": encap_type,
+                }
+            }
+            existing = self._post(self.url_prefix, payload, **kwargs)
+
+        if source_ip:
+            payload, url = self._build_ip_payload_and_url(vtep_id, "source", source_ip, encap_type)
+            src_res = self._post(url, payload)
+
+        if dest_ip:
+            payload, url = self._build_ip_payload_and_url(vtep_id, "destination", dest_ip, encap_type)
+            dst_res = self._post(url, payload) 
+
+        return self.get(vtep_id)
 
     def update(self, vtep_id, ip_address, encap_type="vxlan", **kwargs):
         post_url = "{0}/{vtepid}/destination-ip-address/".format(self.url_prefix, vtepid=vtep_id)
         payload = {
             "destination-ip-address": {
                 "ip-address": ip_address,
-                "encap": encap_type
             }
         }
         return self._post(post_url, payload, **kwargs)
 
-    def delete(self, vtep_id, ip_address, **kwargs):
-        post_url = "{0}/{vtepid}/destination-ip-address/{ip}".format(self.url_prefix, vtepid=vtep_id, ip=ip_address)
+    def delete(self, vtep_id, **kwargs):
+        post_url = "{0}/{vtepid}".format(self.url_prefix, vtepid=vtep_id)
 
         return self._delete(post_url)
+
+    def _add_source_address(self, vtep_id, ip_address, vnis=[]):
+        pass
+
+    def _add_destination_address(self, vtep_id, ip_address, vnis=[]):
+        pass
+
+    def _add_source_vni(self, vtep_id, ip_address, segment, partition=None, gateway=None, lif=None):
+        pass
+
+    def _add_destination_vni(self, vtep_id, ip_address, segment):
+        pass
+
+    def _build_ip_payload_and_url(self, vtep_id, target, ip_address, encap_type):
+        addr_type = "{0}-ip-address".format(target)
+
+        payload = {
+            addr_type: {
+                "ip-address": ip_address,
+            }
+        }
+
+        if target == "destination":
+            payload[addr_type]["encap"] = encap_type
+
+        url = self.ip_url_format.format(baseurl=self.url_prefix + "/{0}".format(vtep_id), addrtype=addr_type)
+
+        return payload,url

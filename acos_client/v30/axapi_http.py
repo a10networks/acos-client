@@ -56,6 +56,8 @@ class HttpClient(object):
         LOG.debug("axapi_http: %s url = %s", method, api_url)
         LOG.debug("axapi_http: params = %s", json.dumps(logutils.clean(params), indent=4))
 
+        valid_http_codes = [200, 204]
+
         # Update params with axapi_args for currently unsupported configuration of objects
         if axapi_args is not None:
             formatted_axapi_args = dict(
@@ -124,7 +126,7 @@ class HttpClient(object):
             )
         except ValueError as e:
             # The response is not JSON but it still succeeded.
-            if device_response.status_code == 200:
+            if device_response.status_code in valid_http_codes:
                 return {}
             else:
                 raise e
