@@ -50,3 +50,6 @@ class SLB(base.BaseV30):
     @property
     def common(self):
         return SLBCommon(self.client)
+
+    def all(self):
+        return self._get('/slb/')
