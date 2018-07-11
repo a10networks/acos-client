@@ -18,7 +18,8 @@ from acos_client.v30 import base
 
 
 class Vlan(base.BaseV30):
-    def __init__(self):
+    def __init__(self, client):
+        super(Vlan, self).__init__(client)
         self.url_prefix = "/network/vlan"
 
     def _build_id_url(self, vlan_id):

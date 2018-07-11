@@ -148,6 +148,10 @@ class Client(object):
     def overlay(self):
         return VERSION_IMPORTS[self._version]["Overlay"](self)
 
+    @property
+    def vlan(self):
+        return VERSION_IMPORTS[self._version]["Vlan"](self)
+
     def wait_for_connect(self, max_timeout=60):
         for i in six.moves.range(0, max_timeout):
             try:
