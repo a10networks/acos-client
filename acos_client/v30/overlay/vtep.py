@@ -22,7 +22,7 @@ from acos_client.v30 import base
 
 class OverlayVtep(base.BaseV30):
     url_prefix = "/overlay-tunnel/vtep"
-    ip_url_format = "{baseurl}/{addrtype}"
+    ip_url_format = "{baseurl}/{vtep}/{addrtype}"
 
     def get(self, vtep_id, *args, **kwargs):
         url = "{0}/{1}".format(self.url_prefix, vtep_id)
@@ -32,7 +32,7 @@ class OverlayVtep(base.BaseV30):
         return self._get(self.url_prefix) 
 
     def create(self, vtep_id, source_ip=None, source_vnis=[],
-                dest_ips=[], encap_type="vxlan", **kwargs):
+                dest_ips=[], lif_id=None, encap_type="vxlan", **kwargs):
         # vtep_id = ID 
         # source_ip = source-ip-address
         # source_vnis = vni-list for source-ip-address
@@ -54,17 +54,18 @@ class OverlayVtep(base.BaseV30):
             payload = {
                 "vtep": {
                     "id": vtep_id,
-                    "encap": encap_type,
                 }
             }
             existing = self._post(self.url_prefix, payload, **kwargs)
-
+        # iterate later.
+        dest_ip = dest_ips[0]
+        vni = source_vnis=[0]
         if source_ip:
-            payload, url = self._build_ip_payload_and_url(vtep_id, "source", source_ip, encap_type)
+            payload, url = self._build_ip_payload_and_url(vtep_id, "source", source_ip, encap_type, vni)
             src_res = self._post(url, payload)
 
         if dest_ip:
-            payload, url = self._build_ip_payload_and_url(vtep_id, "destination", dest_ip, encap_type)
+            payload, url = self._build_ip_payload_and_url(vtep_id, "destination", dest_ip, encap_type, vni)
             dst_res = self._post(url, payload) 
 
         return self.get(vtep_id)
@@ -95,7 +96,7 @@ class OverlayVtep(base.BaseV30):
     def _add_destination_vni(self, vtep_id, ip_address, segment):
         pass
 
-    def _build_ip_payload_and_url(self, vtep_id, target, ip_address, encap_type):
+    def _build_ip_payload_and_url(self, vtep_id, target, ip_address, encap_type, vni, lif_id=None):
         addr_type = "{0}-ip-address".format(target)
 
         payload = {
@@ -103,10 +104,13 @@ class OverlayVtep(base.BaseV30):
                 "ip-address": ip_address,
             }
         }
+        import pdb; pdb.set_trace()
+        if lif_id and target == "source":
+            payload[addr_type]["vni-list"] = [{"segment": vni, "partition": "shared", "lif": lif_id}]
 
         if target == "destination":
             payload[addr_type]["encap"] = encap_type
 
-        url = self.ip_url_format.format(baseurl=self.url_prefix + "/{0}".format(vtep_id), addrtype=addr_type)
+        url = self.ip_url_format.format(baseurl=self.url_prefix, vtep=vtep_id, addrtype=addr_type)
 
         return payload,url
