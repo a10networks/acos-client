@@ -86,6 +86,9 @@ class Interface(base.BaseV30):
     def management(self):
         return ManagementInterface(self.client)
 
+    @property
+    def lif(self):
+        return LogicalInterface(self.client)
 
 class EthernetInterface(Interface):
     def __init__(self, client):
@@ -137,11 +140,38 @@ class LogicalInterface(Interface):
     def __init__(self, client):
         super(LogicalInterface, self).__init__(client)
         self.iftype = "lif"
-    
-    def _build_payload(self, **kwargs):
-        rv = super(LogicalInterface, self)._build_payload(**kwargs)
-        return rv
+        self.url_prefix = "{0}{1}/".format(self.url_prefix, self.iftype)
 
+        def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
+                   speed="auto", default_gateway=None):
+            payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
+                                          dhcp=dhcp, enabled=enable, speed=speed,
+                                          default_gateway=default_gateway)
+            return self._post(self.url_prefix,
+                              payload)
+    
+    def _build_payload(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None, enabled=None, speed="auto", default_gateway=None):
+        # TODO(mdurrant) - Check ip/netmask for validity.
+        rv = {
+            self.iftype: {
+                "ip": {
+                }
+            }
+        }
+
+        if ifnum:
+            rv[self.iftype]["ifnum"] = ifnum
+        if ip_address and not dhcp:
+            rv[self.iftype]["ip"]["address-list"] = [
+                {"ipv4-address": ip_address, "ipv4-netmask": ip_netmask}
+            ]
+        else:
+            rv[self.iftype]["ip"]["dhcp"] = 1 if dhcp is True else 0
+
+        if enable is not None:
+            rv[self.iftype]["action"] = "enable" if enabled else "disable"
+
+        return rv
 
 class VirtualEthernet(Interface):
     def __init__(self, client):
