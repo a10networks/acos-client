@@ -60,8 +60,6 @@ class BaseV30(object):
                 return self._request(method, action, params, retry_count+1,
                                      **kwargs)
             raise e
-#        except json.JSONDecodeError as jsonex:
-#            return {}
 
     def _get(self, action, params={}, **kwargs):
         return self._request('GET', action, params, **kwargs)
