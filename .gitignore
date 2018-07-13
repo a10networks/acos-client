@@ -63,3 +63,6 @@ docs/_build/
 Vagrantfile
 .vagrant/
 tags
+
+# vi tmp files
+*.swp

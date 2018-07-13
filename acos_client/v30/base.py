@@ -14,6 +14,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import json
 import time
 
 from acos_client import errors as ae
@@ -59,6 +60,8 @@ class BaseV30(object):
                 return self._request(method, action, params, retry_count+1,
                                      **kwargs)
             raise e
+#        except json.JSONDecodeError as jsonex:
+#            return {}
 
     def _get(self, action, params={}, **kwargs):
         return self._request('GET', action, params, **kwargs)
