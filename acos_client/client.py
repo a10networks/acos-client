@@ -78,7 +78,7 @@ VERSION_IMPORTS = {
         'SLB': v30_SLB,
         'System': v30_System,
         'File': v30_File,
-        'VRRPA': v30_VRRPA
+        'VRRPA': v30_VRRPA,
         'Vlan': v30_Vlan
     },
 }

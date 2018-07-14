@@ -78,6 +78,11 @@ class Interface(base.BaseV30):
         return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
                           payload)
 
+    def get_oper(self, ifnum):
+        url = "{0}{1}/oper".format(self.url_prefix, ifnum)
+        print("GET OPER {0}".format(url))
+        return self._get(url)
+
     @property
     def ethernet(self):
         return EthernetInterface(self.client)
