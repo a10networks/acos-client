@@ -30,12 +30,15 @@ class Vlan(base.BaseV30):
 
     def create(self, vlan_id, shared_vlan=False, 
                untagged_eths=[], untagged_trunks=[], 
-               tagged_eths=[], tagged_trunks=[], veth_interface=None,
-               logical_interface=None):
-        payload = self._build_payload(vlan_id, shared_vlan, untagged_eths, 
+               tagged_eths=[], tagged_trunks=[], veth=False,
+               lif=None):
+
+
+        payload = {"vlan": self._build_payload(vlan_id, shared_vlan, untagged_eths, 
                                       untagged_trunks,
                                       tagged_eths, tagged_trunks, 
-                                      veth_interface, logical_interface)
+                                      veth, lif)}
+        return self._post(self.url_prefix, payload)
 
     def get(self, vlan_id):
         return self._get(self._build_id_url(vlan_id))
@@ -46,41 +49,47 @@ class Vlan(base.BaseV30):
     def _build_payload(self, vlan_id, shared_vlan, 
                        untagged_eths, untagged_trunks,
                        tagged_eths, tagged_trunks,
-                       veth_interface, logical_interface):
+                       veth, lif):
         rv = {
-                "vlan_num": vlan_id,
+            "vlan-num": vlan_id,
         }
        
-        if shared_vlan:
+        if shared_vlan is True:
             rv["shared-vlan"] = shared_vlan 
 
         if untagged_eths:
-            rv.update(self._build_range_list("untagged-ethernet", untagged_eths))
+            rv.update(self._build_range_list("untagged-eth", untagged_eths, "untagged-ethernet"))
 
         if tagged_eths:
-            rv.update(self._build_range_list("tagged-ethernet", tagged_eths))
+            rv.update(self._build_range_list("tagged-eth", tagged_eths, "tagged-ethernet"))
 
         if untagged_trunks:
             rv.update(self._build_range_list("untagged-trunk", untagged_trunks))
 
         if tagged_trunks:
-            rv.update(self._build_range_list("tagged-trunk", untagged_trunks))
+            rv.update(self._build_range_list("tagged-trunk", tagged_trunks))
 
-        if veth_interface:
-            rv["ve"] = veth_interface
+        if veth:
+            rv["ve"] = vlan_id 
 
-        if logical_interface:
-            rv["untagged-lif"] = logical_interface
+        if lif: 
+            rv["untagged-lif"] = lif 
 
         return rv
 
-    def _build_range_list_dict(self, prefix="", xlist=[]):
+    def _build_range_list(self, prefix="", xlist=[], inconsistent_prefix=""):
         # Naive way of building this poorly-conceived API call
         rv = []
+        ekey_f = "{0}-list"
         rkey_f = "{0}-{1}"
+
+        # Justification for snarky prefix 
+        fix_prefix = lambda: inconsistent_prefix if inconsistent_prefix else prefix 
+
         for x in xlist:
             lm = {}
-            lm[rvkey_f.format(prefix, "start")] = x
-            lm[rvkey_f.format(prefix, "end")] = x
+            lm[rkey_f.format(fix_prefix(), "start")] = x
+            lm[rkey_f.format(fix_prefix(), "end")] = x
             rv.append(lm)
-        return {prefix: rv}
+
+        return {ekey_f.format(prefix): rv}
