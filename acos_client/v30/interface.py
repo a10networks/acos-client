@@ -18,10 +18,11 @@ from acos_client.v30 import base
 
 
 class Interface(base.BaseV30):
+    iftype = "interface"
+    url_prefix = "/interface/"
+
     def __init__(self, client):
         super(Interface, self).__init__(client)
-        self.iftype = "interface"
-        self.url_prefix = "/interface/"
 
     def _url_from_ifnum(self, ifnum=None):
         return self.url_prefix + self._ifnum_to_str(ifnum)
@@ -80,7 +81,6 @@ class Interface(base.BaseV30):
 
     def get_oper(self, ifnum):
         url = "{0}{1}/oper".format(self.url_prefix, ifnum)
-        print("GET OPER {0}".format(url))
         return self._get(url)
 
     @property
@@ -94,6 +94,11 @@ class Interface(base.BaseV30):
     @property
     def lif(self):
         return LogicalInterface(self.client)
+
+    @property
+    def ve(self):
+        return VirtualEthernet(self.client)
+
 
 class EthernetInterface(Interface):
     def __init__(self, client):
@@ -182,8 +187,11 @@ class VirtualEthernet(Interface):
     def __init__(self, client):
         super(VirtualEthernet, self).__init__(client)
         self.iftype = "ve"
+        self.url_prefix = "{0}{1}/".format(self.url_prefix, self.iftype)
 
     def _build_payload(self, **kwargs):
         # we need to deal with VLAN stuff here
         rv = super(VirtualEthernet, self)._build_payload(**kwargs)
+        rv[self.iftype] = rv.pop("interface")
+
         return rv
