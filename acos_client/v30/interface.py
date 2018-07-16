@@ -68,7 +68,7 @@ class Interface(base.BaseV30):
                speed="auto"):
 
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
-                                      dhcp=dhcp, enabled=enable, speed=speed)
+                                      dhcp=dhcp, enable=enable, speed=speed)
         return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
                           payload)
 
@@ -132,7 +132,7 @@ class ManagementInterface(Interface):
     def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                speed="auto", default_gateway=None):
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
-                                      dhcp=dhcp, enabled=enable, speed=speed,
+                                      dhcp=dhcp, enable=enable, speed=speed,
                                       default_gateway=default_gateway)
         return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
                           payload)
@@ -155,12 +155,12 @@ class LogicalInterface(Interface):
         def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                    speed="auto", default_gateway=None):
             payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
-                                          dhcp=dhcp, enabled=enable, speed=speed,
+                                          dhcp=dhcp, enable=enable, speed=speed,
                                           default_gateway=default_gateway)
             return self._post(self.url_prefix,
                               payload)
     
-    def _build_payload(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None, enabled=None, speed="auto", default_gateway=None):
+    def _build_payload(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None, speed="auto", default_gateway=None):
         # TODO(mdurrant) - Check ip/netmask for validity.
         rv = {
             self.iftype: {
@@ -179,7 +179,7 @@ class LogicalInterface(Interface):
             rv[self.iftype]["ip"]["dhcp"] = 1 if dhcp is True else 0
 
         if enable is not None:
-            rv[self.iftype]["action"] = "enable" if enabled else "disable"
+            rv[self.iftype]["action"] = "enable" if enable else "disable"
 
         return rv
 
