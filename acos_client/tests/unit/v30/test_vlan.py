@@ -115,6 +115,6 @@ class TestVlan(unittest.TestCase):
 
     def test_vlan_delete(self):
         self.target.delete(self.vlan_id)
-        self.client.http.request.assert_called_with("DELETE", '{0}/{1}'.format(self.url_prefix,self.vlan_id),
-                                                    mock.ANY, mock.ANY)
+        self.client.http.request.assert_called_with("DELETE",
+            '{0}/{1}'.format(self.url_prefix,self.vlan_id), mock.ANY, mock.ANY)
 
