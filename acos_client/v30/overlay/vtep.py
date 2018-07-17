@@ -104,7 +104,6 @@ class OverlayVtep(base.BaseV30):
                 "ip-address": ip_address,
             }
         }
-        import pdb; pdb.set_trace()
         if lif_id and target == "source":
             payload[addr_type]["vni-list"] = [{"segment": vni, "partition": "shared", "lif": lif_id}]
 
