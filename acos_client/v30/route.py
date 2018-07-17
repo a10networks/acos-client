@@ -15,8 +15,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 
-import netaddr 
-
 from acos_client.v30 import base
 
 
