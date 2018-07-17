@@ -48,7 +48,7 @@ from acos_client.v30.sflow import SFlow as v30_SFlow
 from acos_client.v30.slb import SLB as v30_SLB
 from acos_client.v30.system import System as v30_System
 from acos_client.v30.vrrpa.vrid import VRID as v30_VRRPA
-
+from acos_client.v30.vlan import Vlan as v30_Vlan
 
 VERSION_IMPORTS = {
     '21': {
@@ -63,6 +63,7 @@ VERSION_IMPORTS = {
         'SFlow': v21_SFlow,
         'SLB': v21_SLB,
         'System': v21_System,
+        'Vlan': None,
     },
     '30': {
         'DNS': v30_DNS,
@@ -79,7 +80,8 @@ VERSION_IMPORTS = {
         'SLB': v30_SLB,
         'System': v30_System,
         'File': v30_File,
-        'VRRPA': v30_VRRPA
+        'VRRPA': v30_VRRPA,
+        'Vlan': v30_Vlan
     },
 }
 
@@ -149,8 +151,13 @@ class Client(object):
         return VERSION_IMPORTS[self._version]["Overlay"](self)
 
     @property
+    def vlan(self):
+        return VERSION_IMPORTS[self._version]["Vlan"](self)
+
+    @property
     def route(self):
         return VERSION_IMPORTS[self._version]["RIB"](self)
+
 
     def wait_for_connect(self, max_timeout=60):
         for i in six.moves.range(0, max_timeout):
