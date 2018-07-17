@@ -45,6 +45,11 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    654311505: {
+        '*': {
+            '*': ae.DhcpAcquireFailed,
+        }
+    },
     67240011: {
         '*': {
             '*': ae.Exists
