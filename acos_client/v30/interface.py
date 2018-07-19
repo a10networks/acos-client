@@ -159,8 +159,9 @@ class LogicalInterface(Interface):
                                           default_gateway=default_gateway)
             return self._post(self.url_prefix,
                               payload)
-    
-    def _build_payload(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None, speed="auto", default_gateway=None):
+
+    def _build_payload(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False,
+                       enable=None, speed="auto", default_gateway=None):
         # TODO(mdurrant) - Check ip/netmask for validity.
         rv = {
             self.iftype: {
@@ -182,6 +183,7 @@ class LogicalInterface(Interface):
             rv[self.iftype]["action"] = "enable" if enable else "disable"
 
         return rv
+
 
 class VirtualEthernet(Interface):
     def __init__(self, client):

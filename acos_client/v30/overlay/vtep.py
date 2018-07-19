@@ -13,10 +13,7 @@
 #    under the License.
 from __future__ import absolute_import
 from __future__ import unicode_literals
-import six
 
-
-from acos_client import errors as acos_errors
 from acos_client.v30 import base
 
 
@@ -29,14 +26,14 @@ class OverlayVtep(base.BaseV30):
         return self._get(url, **kwargs)
 
     def get_list(self, *args, **kwargs):
-        return self._get(self.url_prefix) 
+        return self._get(self.url_prefix)
 
     def create(self, vtep_id, source_ip=None, source_vnis=[],
-                dest_ips=[], lif_id=None, encap_type="vxlan", **kwargs):
-        # vtep_id = ID 
+               dest_ips=[], lif_id=None, encap_type="vxlan", **kwargs):
+        # vtep_id = ID
         # source_ip = source-ip-address
         # source_vnis = vni-list for source-ip-address
-        # dest_ips = list of (ip, [vni_info]) tuples 
+        # dest_ips = list of (ip, [vni_info]) tuples
         # vtep creation can be as simple or complicated as we like
         # we can create a vtep with a minimum of an ID
         # or we can create it with fully populated src/dst info
@@ -46,7 +43,7 @@ class OverlayVtep(base.BaseV30):
         try:
             existing = self.get(vtep_id)
             is_found = existing is not None
-        except:
+        except Exception:
             pass
 
         if not is_found:
@@ -59,14 +56,14 @@ class OverlayVtep(base.BaseV30):
             existing = self._post(self.url_prefix, payload, **kwargs)
         # iterate later.
         dest_ip = dest_ips[0]
-        vni = source_vnis=[0]
+        vni = source_vnis[0]
         if source_ip:
             payload, url = self._build_ip_payload_and_url(vtep_id, "source", source_ip, encap_type, vni)
-            src_res = self._post(url, payload)
+            self._post(url, payload)
 
         if dest_ip:
             payload, url = self._build_ip_payload_and_url(vtep_id, "destination", dest_ip, encap_type, vni)
-            dst_res = self._post(url, payload) 
+            self._post(url, payload)
 
         return self.get(vtep_id)
 
@@ -112,4 +109,4 @@ class OverlayVtep(base.BaseV30):
 
         url = self.ip_url_format.format(baseurl=self.url_prefix, vtep=vtep_id, addrtype=addr_type)
 
-        return payload,url
+        return payload, url

@@ -14,8 +14,9 @@
 
 import acos_client.v30.base as base
 
-from acos_client.v30.overlay.options import OverlayOptions 
+from acos_client.v30.overlay.options import OverlayOptions
 from acos_client.v30.overlay.vtep import OverlayVtep
+
 
 class Overlay(base.BaseV30):
     @property
