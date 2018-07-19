@@ -13,10 +13,7 @@
 #    under the License.
 from __future__ import absolute_import
 from __future__ import unicode_literals
-import six
 
-
-from acos_client import errors as acos_errors
 from acos_client.v30 import base
 
 
@@ -27,12 +24,12 @@ class OverlayOptions(base.BaseV30):
         return self._get(self.url_prefix, **kwargs)
 
     def update(self, gateway_mac, ip_dscp_preserve,
-                nvgre_disable_flow_id,
-                nvgre_key_mode_lower24,
-                tcp_mss_adjust_disable,
-                uuid,
-                vxlan_dest_port,
-                **kwargs):
+               nvgre_disable_flow_id,
+               nvgre_key_mode_lower24,
+               tcp_mss_adjust_disable,
+               uuid,
+               vxlan_dest_port,
+               **kwargs):
 
         options = {}
 
@@ -45,7 +42,6 @@ class OverlayOptions(base.BaseV30):
         if nvgre_disable_flow_id:
             options["nvgre-disable-flow-id"] = nvgre_disable_flow_id
 
-        
         if nvgre_key_mode_lower24:
             options["nvgre-key-mode-lower24"] = nvgre_key_mode_lower24
 
@@ -62,4 +58,4 @@ class OverlayOptions(base.BaseV30):
             "options": options
         }
 
-        return self._post(url_prefix + "/options", payload, **kwargs)
+        return self._post(self.url_prefix + "/options", payload, **kwargs)

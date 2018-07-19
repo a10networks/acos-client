@@ -18,12 +18,12 @@ from acos_client.v30 import base
 class BladeParameters(base.BaseV30):
     def __init__(self, client):
         super(BladeParameters, self).__init__(client)
-        self.base_url="/vrrp-a/vrid/{0}/blade-parameters"
+        self.base_url = "/vrrp-a/vrid/{0}/blade-parameters"
         self.interfaces = {'interface': []}
         self.gateways = {
             'gateway': {
                 'ipv4-gateway-list': [],
-                'ipv6-gateway-list': [] 
+                'ipv6-gateway-list': []
             }
         }
 
@@ -38,7 +38,7 @@ class BladeParameters(base.BaseV30):
 
         if self.gateways['gateway']['ipv4-gateway-list']:
             if rv['blade-parameters'].get('tracking-options'):
-                   rv['blade-parameters']['tracking-options'].update(self.gateways)
+                rv['blade-parameters']['tracking-options'].update(self.gateways)
             else:
                 rv['blade-parameters']['tracking-options'] = self.gateways
 
@@ -47,10 +47,10 @@ class BladeParameters(base.BaseV30):
                 if rv['blade-parameters']['tracking-options'].get('gateway'):
                     rv['blade-parameters']['tracking-options']['gateway'].update(self.gateways)
                 else:
-                   rv['blade-parameters']['tracking-options'] = self.gateways
+                    rv['blade-parameters']['tracking-options'] = self.gateways
             else:
                 rv['blade-parameters']['tracking-options'] = self.gateways
-        return rv 
+        return rv
 
     def add_interface(self, ethernet=1, priority_cost=1):
         interface = {

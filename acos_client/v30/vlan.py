@@ -28,16 +28,18 @@ class Vlan(base.BaseV30):
     def get_list(self):
         return self._get(self.url_prefix)
 
-    def create(self, vlan_id, shared_vlan=False, 
-               untagged_eths=[], untagged_trunks=[], 
+    def create(self, vlan_id, shared_vlan=False,
+               untagged_eths=[], untagged_trunks=[],
                tagged_eths=[], tagged_trunks=[], veth=False,
                lif=None):
 
-
-        payload = {"vlan": self._build_payload(vlan_id, shared_vlan, untagged_eths, 
-                                      untagged_trunks,
-                                      tagged_eths, tagged_trunks, 
-                                      veth, lif)}
+        payload = {
+            "vlan": self._build_payload(
+                vlan_id, shared_vlan, untagged_eths,
+                untagged_trunks,
+                tagged_eths, tagged_trunks,
+                veth, lif)
+        }
         return self._post(self.url_prefix, payload)
 
     def get(self, vlan_id):
@@ -46,16 +48,16 @@ class Vlan(base.BaseV30):
     def delete(self, vlan_id):
         return self._delete(self._build_id_url(vlan_id))
 
-    def _build_payload(self, vlan_id, shared_vlan, 
+    def _build_payload(self, vlan_id, shared_vlan,
                        untagged_eths, untagged_trunks,
                        tagged_eths, tagged_trunks,
                        veth, lif):
         rv = {
             "vlan-num": vlan_id,
         }
-       
+
         if shared_vlan is True:
-            rv["shared-vlan"] = shared_vlan 
+            rv["shared-vlan"] = shared_vlan
 
         if untagged_eths:
             rv.update(self._build_range_list("untagged-eth", untagged_eths, "untagged-ethernet"))
@@ -70,10 +72,10 @@ class Vlan(base.BaseV30):
             rv.update(self._build_range_list("tagged-trunk", tagged_trunks))
 
         if veth:
-            rv["ve"] = vlan_id 
+            rv["ve"] = vlan_id
 
-        if lif: 
-            rv["untagged-lif"] = lif 
+        if lif:
+            rv["untagged-lif"] = lif
 
         return rv
 
@@ -83,8 +85,8 @@ class Vlan(base.BaseV30):
         ekey_f = "{0}-list"
         rkey_f = "{0}-{1}"
 
-        # Justification for snarky prefix 
-        fix_prefix = lambda: inconsistent_prefix if inconsistent_prefix else prefix 
+        # Justification for snarky prefix
+        fix_prefix = lambda: inconsistent_prefix if inconsistent_prefix else prefix
 
         for x in xlist:
             lm = {}

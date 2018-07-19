@@ -85,12 +85,14 @@ class TestBlade(unittest.TestCase):
 
     def test_blade_create(self):
         self.target.create(4)
-        self.client.http.request.assert_called_with("POST", self.url_prefix.format(4),
+        self.client.http.request.assert_called_with(
+            "POST", self.url_prefix.format(4),
             self._expected_payload(), mock.ANY)
 
     def test_blade_create_priority(self):
         self.target.create(4, 122)
-        self.client.http.request.assert_called_with("POST", self.url_prefix.format(4),
+        self.client.http.request.assert_called_with(
+            "POST", self.url_prefix.format(4),
             self._expected_payload(122), mock.ANY)
 
     def test_blade_create_interface(self):
@@ -98,7 +100,8 @@ class TestBlade(unittest.TestCase):
 
         self.target.add_interface()
         self.target.create(4)
-        self.client.http.request.assert_called_with("POST", self.url_prefix.format(4),
+        self.client.http.request.assert_called_with(
+            "POST", self.url_prefix.format(4),
             self._expected_payload(interface=interface), mock.ANY)
 
     def test_blade_create_gateway(self):
@@ -106,7 +109,8 @@ class TestBlade(unittest.TestCase):
 
         self.target.add_ipv4gateway('1.1.1.1')
         self.target.create(4)
-        self.client.http.request.assert_called_with("POST", self.url_prefix.format(4),
+        self.client.http.request.assert_called_with(
+            "POST", self.url_prefix.format(4),
             self._expected_payload(gateway=gateway), mock.ANY)
 
     def test_blade_create_gateway_ipv6(self):
@@ -114,7 +118,8 @@ class TestBlade(unittest.TestCase):
 
         self.target.add_ipv6gateway('1.1.1.1')
         self.target.create(4)
-        self.client.http.request.assert_called_with("POST", self.url_prefix.format(4),
+        self.client.http.request.assert_called_with(
+            "POST", self.url_prefix.format(4),
             self._expected_payload(gateway=gateway), mock.ANY)
 
     def test_blade_create_interface_gateway(self):
@@ -124,17 +129,20 @@ class TestBlade(unittest.TestCase):
         self.target.add_interface()
         self.target.add_ipv4gateway('1.1.1.1')
         self.target.create(4)
-        self.client.http.request.assert_called_with("POST", self.url_prefix.format(4),
+        self.client.http.request.assert_called_with(
+            "POST", self.url_prefix.format(4),
             self._expected_payload(interface=interface, gateway=gateway), mock.ANY)
 
     def test_blade_update(self):
         self.target.update(4)
-        self.client.http.request.assert_called_with("PUT", self.url_prefix.format(4),
+        self.client.http.request.assert_called_with(
+            "PUT", self.url_prefix.format(4),
             self._expected_payload(), mock.ANY)
 
     def test_blade_update_priority(self):
         self.target.update(4, 122)
-        self.client.http.request.assert_called_with("PUT", self.url_prefix.format(4),
+        self.client.http.request.assert_called_with(
+            "PUT", self.url_prefix.format(4),
             self._expected_payload(122), mock.ANY)
 
     def test_blade_update_interface(self):
@@ -142,7 +150,8 @@ class TestBlade(unittest.TestCase):
 
         self.target.add_interface()
         self.target.update(4)
-        self.client.http.request.assert_called_with("PUT", self.url_prefix.format(4),
+        self.client.http.request.assert_called_with(
+            "PUT", self.url_prefix.format(4),
             self._expected_payload(interface=interface), mock.ANY)
 
     def test_blade_update_gateway(self):
@@ -150,7 +159,8 @@ class TestBlade(unittest.TestCase):
 
         self.target.add_ipv4gateway('1.1.1.1')
         self.target.update(4)
-        self.client.http.request.assert_called_with("PUT", self.url_prefix.format(4),
+        self.client.http.request.assert_called_with(
+            "PUT", self.url_prefix.format(4),
             self._expected_payload(gateway=gateway), mock.ANY)
 
     def test_blade_update_gateway_ipv6(self):
@@ -158,7 +168,8 @@ class TestBlade(unittest.TestCase):
 
         self.target.add_ipv6gateway('1.1.1.1')
         self.target.update(4)
-        self.client.http.request.assert_called_with("PUT", self.url_prefix.format(4),
+        self.client.http.request.assert_called_with(
+            "PUT", self.url_prefix.format(4),
             self._expected_payload(gateway=gateway), mock.ANY)
 
     def test_blade_update_interface_gateway(self):
@@ -168,5 +179,6 @@ class TestBlade(unittest.TestCase):
         self.target.add_interface()
         self.target.add_ipv4gateway('1.1.1.1')
         self.target.update(4)
-        self.client.http.request.assert_called_with("PUT", self.url_prefix.format(4),
+        self.client.http.request.assert_called_with(
+            "PUT", self.url_prefix.format(4),
             self._expected_payload(interface=interface, gateway=gateway), mock.ANY)

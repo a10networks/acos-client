@@ -14,7 +14,6 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import json
 import time
 
 from acos_client import errors as ae

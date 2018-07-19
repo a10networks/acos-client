@@ -29,9 +29,9 @@ class RIB(base.BaseV30):
         }
 
         return self._post(self.url_prefix, payload)
-    
+
     def get(self, destination, mask):
-        return self._get(self._build_url(destination, mask)) 
+        return self._get(self._build_url(destination, mask))
 
     def delete(self, destination, mask):
         return self._delete(self._build_url(destination, mask))
@@ -47,7 +47,7 @@ class RIB(base.BaseV30):
 
     def _build_nexthops(self, nexthops):
         hops = []
-        for ip,dist in nexthops:
+        for ip, dist in nexthops:
             hops.append({"ip-next-hop": ip, "distance-nexthop-ip": dist})
         return hops
 
@@ -67,4 +67,5 @@ class RIB(base.BaseV30):
     def _build_url(self, destination, mask):
         # Self explanatory except the mask. We're trimming the leading / for CIDRs expressed in bits
         # We'd use a URL encoder but it's an edge case.
-        return "{urlbase}/{destination}+{mask}".format(urlbase=self.url_prefix, destination=destination, mask=mask.replace("/", "%2f"))
+        return "{urlbase}/{destination}+{mask}".format(
+            urlbase=self.url_prefix, destination=destination, mask=mask.replace("/", "%2f"))

@@ -97,4 +97,3 @@ class ConfigManagerNotReady(ACOSException):
 
 class DhcpAcquireFailed(ACOSException):
     pass
-
