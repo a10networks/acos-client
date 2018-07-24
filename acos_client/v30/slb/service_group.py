@@ -53,6 +53,9 @@ class ServiceGroup(base.BaseV30):
     TCP = 'tcp'
     UDP = 'udp'
 
+    def all(self):
+        return self._get(self.url_prefix)
+
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
 

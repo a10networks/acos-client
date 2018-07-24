@@ -34,6 +34,8 @@ class Server(base.BaseV30):
                 "name": name,
                 "host": ip_address,
                 "action": 'enable' if status else 'disable',
+                "conn-resume": kwargs.get("conn_resume", None),
+                "conn-limit": kwargs.get("conn_limit", 8000000),
             }
         }
 
@@ -59,6 +61,8 @@ class Server(base.BaseV30):
                 "name": name,
                 "host": ip_address,
                 "action": 'enable' if status else 'disable',
+                "conn-resume": kwargs.get("conn_resume", None),
+                "conn-limit": kwargs.get("conn_limit", 8000000),
             }
         }
 
