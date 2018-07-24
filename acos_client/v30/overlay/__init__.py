@@ -1,4 +1,4 @@
-# Copyright 2014,  Doug Wiegley,  A10 Networks.
+# Copyright 2014-2016 A10 Networks.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -12,20 +12,17 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import unittest2 as unittest
-import v21_mocks as mocks
+import acos_client.v30.base as base
+
+from acos_client.v30.overlay.options import OverlayOptions
+from acos_client.v30.overlay.vtep import OverlayVtep
 
 
-class TestInterfaces(unittest.TestCase):
+class Overlay(base.BaseV30):
+    @property
+    def options(self):
+        return OverlayOptions(self.client)
 
-    def test_get(self):
-        m = mocks.InterfaceGet()
-        with m.client() as c:
-            r = c.interface.ethernet.get(1)
-            self.assertIn("interface", r)
-
-    def test_get_list(self):
-        m = mocks.InterfaceGet()
-        with m.client() as c:
-            r = c.interface.get_list()
-            self.assertIn("interface", r)
+    @property
+    def vtep(self):
+        return OverlayVtep(self.client)

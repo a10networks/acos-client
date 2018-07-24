@@ -11,10 +11,12 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import time
 
-import acos_client.errors as ae
+from acos_client import errors as ae
 
 
 class BaseV30(object):
@@ -63,6 +65,9 @@ class BaseV30(object):
 
     def _post(self, action, params={}, **kwargs):
         return self._request('POST', action, params, **kwargs)
+
+    def _put(self, action, params={}, **kwargs):
+        return self._request('PUT', action, params, **kwargs)
 
     def _delete(self, action, params={}, **kwargs):
         return self._request('DELETE', action, params, **kwargs)

@@ -11,8 +11,12 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
-import acos_client.v30.base as base
+import six
+
+from acos_client.v30 import base
 
 
 class SLBCommon(base.BaseV30):
@@ -25,8 +29,8 @@ class SLBCommon(base.BaseV30):
 
     def create(self, **kwargs):
         params = {"common": {}}
-        for k, v in kwargs.items():
+        for k, v in six.iteritems(kwargs):
             params["common"][self._underscore_to_dash(k)] = v
-            del kwargs[k]
+        kwargs = {}
 
         return self._post(self.url_prefix, params, **kwargs)

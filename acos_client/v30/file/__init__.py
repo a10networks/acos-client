@@ -14,8 +14,8 @@
 
 import acos_client.v30.base as base
 
-from ssl_cert import SSLCert
-from ssl_key import SSLKey
+from acos_client.v30.file.ssl_cert import SSLCert
+from acos_client.v30.file.ssl_key import SSLKey
 
 
 class File(base.BaseV30):

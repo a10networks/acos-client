@@ -11,9 +11,13 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
+import six
 
-import acos_client.errors as acos_errors
-import acos_client.v30.base as base
+
+from acos_client import errors as acos_errors
+from acos_client.v30 import base
 
 
 class Member(base.BaseV30):
@@ -46,6 +50,7 @@ class Member(base.BaseV30):
                server_name,
                server_port,
                status=STATUS_ENABLE,
+               member_state=True,
                update=False, **kwargs):
 
         url = self.url_base_tmpl.format(gname=service_group_name)
@@ -61,23 +66,23 @@ class Member(base.BaseV30):
                 "port": int(server_port),
                 # flip status code, becuase it's a disable flag in v30
                 "member-stats-data-disable": status,
+                "member-state": member_state and 'enable' or 'disable',
             })
         }
 
         config_defaults = kwargs.get("config_defaults")
 
         if config_defaults:
-            for k, v in config_defaults.iteritems():
+            for k, v in six.iteritems(config_defaults):
                 params['member'][k] = v
-
-
         self._post(url, params, **kwargs)
 
     def create(self,
                service_group_name,
                server_name,
                server_port,
-               status=STATUS_ENABLE, **kwargs):
+               status=STATUS_ENABLE,
+               member_state=True, **kwargs):
         try:
             self.get(service_group_name, server_name, server_port)
         except acos_errors.NotFound:
@@ -86,15 +91,16 @@ class Member(base.BaseV30):
             raise acos_errors.Exists()
 
         self._write(service_group_name,
-                    server_name, server_port, status, **kwargs)
+                    server_name, server_port, status, member_state, **kwargs)
 
     def update(self,
                service_group_name,
                server_name,
                server_port,
-               status=STATUS_ENABLE, **kwargs):
+               status=STATUS_ENABLE,
+               member_state=True, **kwargs):
         self._write(service_group_name,
-                    server_name, server_port, status, update=True, **kwargs)
+                    server_name, server_port, status, member_state, update=True, **kwargs)
 
     def delete(self, service_group_name, server_name, server_port):
         url = self.url_base_tmpl.format(gname=service_group_name)

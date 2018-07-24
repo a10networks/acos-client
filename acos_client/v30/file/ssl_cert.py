@@ -11,9 +11,13 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
-import acos_client.errors as acos_errors
-import acos_client.v30.base as base
+import six
+
+from acos_client import errors as acos_errors
+from acos_client.v30 import base
 
 
 class SSLCert(base.BaseV30):
@@ -42,7 +46,7 @@ class SSLCert(base.BaseV30):
 
         kwargs['params'] = {'ssl-cert': {}}
 
-        for key, val in obj_params.iteritems():
+        for key, val in six.iteritems(obj_params):
             # Filter out invalid, or unset keys
             if val != "":
                 kwargs['params']['ssl-cert'][key] = val

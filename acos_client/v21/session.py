@@ -12,7 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import acos_client.errors as acos_errors
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
+from acos_client import errors as acos_errors
 
 
 class Session(object):

@@ -11,9 +11,13 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
+import six
 
-import acos_client.errors as acos_errors
-import acos_client.v30.base as base
+
+from acos_client import errors as acos_errors
+from acos_client.v30 import base
 
 
 class HealthMonitor(base.BaseV30):
@@ -84,6 +88,15 @@ class HealthMonitor(base.BaseV30):
             else:
                 k = '%s-port' % mon_method
             params['monitor']['method'][mon_method][k] = int(port)
+            params['monitor']['override-port'] = int(port)
+
+        # TODO(mdurrant) : Might have to get tricky with JSON structures
+        # ... due to 'mon_method' stuff.
+        config_defaults = kwargs.get("config_defaults")
+
+        if config_defaults:
+            for k, v in six.iteritems(config_defaults):
+                params['monitor'][k] = v
 
         # TODO(mdurrant) : Might have to get tricky with JSON structures
         # ... due to 'mon_method' stuff.

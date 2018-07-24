@@ -12,41 +12,48 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import logging
+import six
 import socket
 
 import acos_client
+from acos_client import errors as acos_errors
+from acos_client.v21 import axapi_http as v21_http
+from acos_client.v21.dns import DNS as v21_DNS
+from acos_client.v21.ha import HA as v21_HA
+from acos_client.v21.interface import Interface as v21_Interface
+from acos_client.v21.license_manager import LicenseManager as v21_LicenseManager
+from acos_client.v21.nat import Nat as v21_Nat
+from acos_client.v21.network import Network as v21_Network
+from acos_client.v21.session import Session as v21_Session
+from acos_client.v21.sflow import SFlow as v21_SFlow
+from acos_client.v21.slb import SLB as v21_SLB
+from acos_client.v21.system import System as v21_System
 
-import errors as acos_errors
-import v21.axapi_http
-from v21.dns import DNS as v21_DNS
-from v21.ha import HA as v21_HA
-from v21.interface import Interface as v21_Interface
-from v21.license_manager import LicenseManager as v21_LicenseManager
-from v21.nat import Nat as v21_Nat
-from v21.network import Network as v21_Network
-from v21.session import Session as v21_Session
-from v21.sflow import SFlow as v21_SFlow
-from v21.slb import SLB as v21_SLB
-from v21.system import System as v21_System
-
-import v30.axapi_http
-from v30.dns import DNS as v30_DNS
-from v30.file import File as v30_File
-from v30.ha import HA as v30_HA
-from v30.interface import Interface as v30_Interface
-from v30.license_manager import LicenseManager as v30_LicenseManager
-from v30.nat import Nat as v30_Nat
-from v30.network import Network as v30_Network
-from v30.session import Session as v30_Session
-from v30.sflow import SFlow as v30_SFlow
-from v30.slb import SLB as v30_SLB
-from v30.system import System as v30_System
+from acos_client.v30 import axapi_http as v30_http
+from acos_client.v30.dns import DNS as v30_DNS
+from acos_client.v30.file import File as v30_File
+from acos_client.v30.ha import HA as v30_HA
+from acos_client.v30.interface import Interface as v30_Interface
+from acos_client.v30.license_manager import LicenseManager as v30_LicenseManager
+from acos_client.v30.nat import Nat as v30_Nat
+from acos_client.v30.network import Network as v30_Network
+from acos_client.v30.overlay import Overlay as v30_Overlay
+from acos_client.v30.route import RIB as v30_RIB
+from acos_client.v30.session import Session as v30_Session
+from acos_client.v30.sflow import SFlow as v30_SFlow
+from acos_client.v30.slb import SLB as v30_SLB
+from acos_client.v30.system import System as v30_System
+from acos_client.v30.vlan import Vlan as v30_Vlan
+from acos_client.v30.vrrpa.vrid import VRID as v30_VRRPA
 
 VERSION_IMPORTS = {
     '21': {
         'DNS': v21_DNS,
-        'http': v21.axapi_http,
+        'http': v21_http,
         'HA': v21_HA,
         'Interface': v21_Interface,
         'LicenseManager': v21_LicenseManager,
@@ -56,20 +63,25 @@ VERSION_IMPORTS = {
         'SFlow': v21_SFlow,
         'SLB': v21_SLB,
         'System': v21_System,
+        'Vlan': None,
     },
     '30': {
         'DNS': v30_DNS,
-        'http': v30.axapi_http,
+        'http': v30_http,
         'Interface': v30_Interface,
         'HA': v30_HA,
         'LicenseManager': v30_LicenseManager,
         'Nat': v30_Nat,
         'Network': v30_Network,
+        'Overlay': v30_Overlay,
+        'RIB': v30_RIB,
         'Session': v30_Session,
         'SFlow': v30_SFlow,
         'SLB': v30_SLB,
         'System': v30_System,
-        'File': v30_File
+        'File': v30_File,
+        'Vlan': v30_Vlan,
+        'VRRPA': v30_VRRPA
     },
 }
 
@@ -134,8 +146,20 @@ class Client(object):
     def license_manager(self):
         return VERSION_IMPORTS[self._version]["LicenseManager"](self)
 
+    @property
+    def overlay(self):
+        return VERSION_IMPORTS[self._version]["Overlay"](self)
+
+    @property
+    def vlan(self):
+        return VERSION_IMPORTS[self._version]["Vlan"](self)
+
+    @property
+    def route(self):
+        return VERSION_IMPORTS[self._version]["RIB"](self)
+
     def wait_for_connect(self, max_timeout=60):
-        for i in range(0, max_timeout):
+        for i in six.moves.range(0, max_timeout):
             try:
                 LOG.debug("wait_for_connect: attempting %s", self.host)
                 s = socket.create_connection((self.host, self.port), 1.0)

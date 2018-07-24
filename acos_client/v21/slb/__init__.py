@@ -14,14 +14,14 @@
 
 import acos_client.v21.base as base
 
-from aflex import Aflex
-from class_list import ClassList
-from hm import HealthMonitor
-from server import Server
-from service_group import ServiceGroup
-from template import Template
-from virtual_server import VirtualServer
-from virtual_service import VirtualService
+from acos_client.v21.slb.aflex import Aflex
+from acos_client.v21.slb.class_list import ClassList
+from acos_client.v21.slb.hm import HealthMonitor
+from acos_client.v21.slb.server import Server
+from acos_client.v21.slb.service_group import ServiceGroup
+from acos_client.v21.slb.template import Template
+from acos_client.v21.slb.virtual_server import VirtualServer
+from acos_client.v21.slb.virtual_service import VirtualService
 
 
 class SLB(base.BaseV21):

@@ -21,6 +21,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+.python-version
 
 # Installer logs
 pip-log.txt
@@ -62,3 +63,6 @@ docs/_build/
 Vagrantfile
 .vagrant/
 tags
+
+# vi tmp files
+*.swp

@@ -11,11 +11,14 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
+import six
 
-import acos_client.errors as acos_errors
-import acos_client.v30.base as base
 
-from virtual_port import VirtualPort
+from acos_client import errors as acos_errors
+from acos_client.v30 import base
+from acos_client.v30.slb.virtual_port import VirtualPort
 
 
 class VirtualServer(base.BaseV30):
@@ -43,12 +46,10 @@ class VirtualServer(base.BaseV30):
         if vrid:
             params['virtual-server']['vrid'] = vrid
 
-
         config_defaults = kwargs.get("config_defaults")
         if config_defaults:
-            for k, v in config_defaults.iteritems():
+            for k, v in six.iteritems(config_defaults):
                 params['virtual-server'][k] = v
-
 
         if not update:
             name = ''

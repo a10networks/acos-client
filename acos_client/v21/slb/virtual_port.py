@@ -11,8 +11,10 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
-import acos_client.v21.base as base
+from acos_client.v21 import base
 
 
 class VirtualPort(base.BaseV21):
@@ -99,7 +101,8 @@ class VirtualPort(base.BaseV21):
         results = self._post('slb.virtual_server.search', {'name': virtual_server_name}, **kwargs)
 
         vports = results.get("virtual_server").get("vport_list", [])
-        filtered_vports = filter(lambda x: x.get("name") == name, vports)
+        port_filter = lambda x: x.get("name") == name
+        filtered_vports = [vport for vport in vports if port_filter(vport)]
         if len(filtered_vports) > 0:
             return filtered_vports[0]
 

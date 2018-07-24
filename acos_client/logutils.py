@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-# import copy
+import six
 
 CLEAN_FIELDS = ["username", "password"]
 
@@ -31,9 +31,9 @@ def clean(data, field=None):
     if type(data) is dict:
         return type(data)(
             (x, clean(y, field=x))
-            for x, y in data.iteritems()
+            for x, y in six.iteritems(data)
             )
-    elif isinstance(data, basestring):
+    elif isinstance(data, six.string_types):
         return data
     elif isinstance(data, (list, tuple)):
         return type(data)(clean(x) for x in data)

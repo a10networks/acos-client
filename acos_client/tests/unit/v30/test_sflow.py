@@ -11,9 +11,15 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
-import mock
-import unittest2 as unittest
+try:
+    import unittest
+    from unittest import mock
+except ImportError:
+    import mock
+    import unittest2 as unittest
 
 from acos_client.v30 import sflow
 

@@ -93,3 +93,7 @@ class AxapiJsonFormatError(ACOSException):
 
 class ConfigManagerNotReady(ACOSException):
     pass
+
+
+class DhcpAcquireFailed(ACOSException):
+    pass

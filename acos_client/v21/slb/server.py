@@ -11,10 +11,11 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
-import acos_client.v21.base as base
-
-from port import Port
+from acos_client.v21 import base
+from acos_client.v21.slb.port import Port
 
 
 class Server(base.BaseV21):
@@ -22,22 +23,26 @@ class Server(base.BaseV21):
     def get(self, name, **kwargs):
         return self._post("slb.server.search", {'name': name}, **kwargs)
 
-    def create(self, name, ip_address, **kwargs):
+    def create(self, name, ip_address, status=1, **kwargs):
         params = {
             "server": {
                 "name": name,
                 "host": ip_address,
-                "status": kwargs.get('status', 1)
+                "status": status,
+                "conn_resume": kwargs.get("conn_resume", None),
+                "conn_limit": kwargs.get("conn_limit", 8000000),
             }
         }
         self._post("slb.server.create", params, **kwargs)
 
-    def update(self, name, ip_address, **kwargs):
+    def update(self, name, ip_address, status=1, **kwargs):
         params = {
             "server": {
                 "name": name,
                 "host": ip_address,
-                "status": kwargs.get('status', 1)
+                "status": status,
+                "conn_resume": kwargs.get("conn_resume", None),
+                "conn_limit": kwargs.get("conn_limit", 8000000),
             }
         }
         self._post("slb.server.update", params, **kwargs)

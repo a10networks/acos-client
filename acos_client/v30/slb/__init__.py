@@ -14,12 +14,12 @@
 
 import acos_client.v30.base as base
 
-from common import SLBCommon
-from hm import HealthMonitor
-from server import Server
-from service_group import ServiceGroup
-from template import Template
-from virtual_server import VirtualServer
+from acos_client.v30.slb.common import SLBCommon
+from acos_client.v30.slb.hm import HealthMonitor
+from acos_client.v30.slb.server import Server
+from acos_client.v30.slb.service_group import ServiceGroup
+from acos_client.v30.slb.template import Template
+from acos_client.v30.slb.virtual_server import VirtualServer
 
 
 class SLB(base.BaseV30):
@@ -50,3 +50,6 @@ class SLB(base.BaseV30):
     @property
     def common(self):
         return SLBCommon(self.client)
+
+    def all(self):
+        return self._get('/slb/')

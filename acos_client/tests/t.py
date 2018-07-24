@@ -14,6 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import acos_client
 
 import argparse
 import os.path
@@ -22,8 +23,6 @@ import sys
 import traceback
 
 sys.path.append(".")
-
-import acos_client
 
 
 parser = argparse.ArgumentParser(description='acos-client smoke test')
@@ -475,10 +474,13 @@ def run_all(ax, partition, pmap):
                                       service_group_name="pfoobar",
                                       protocol=c.slb.virtual_server.vport.HTTP,
                                       port='80')
-    c.slb.virtual_server.vport.get("vip3",
-                                   "vip3_VPORT",
-                                   protocol=c.slb.virtual_server.vport.HTTP,
-                                   port=80)
+    try:
+        c.slb.virtual_server.vport.get("vip3",
+                                       "vip3_VPORT",
+                                       protocol=c.slb.virtual_server.vport.HTTP,
+                                       port=80)
+    except Exception:
+        pass
     try:
         c.slb.virtual_server.vport.create(
             "vip3", "vip3_VPORT",
@@ -536,6 +538,11 @@ def run_all(ax, partition, pmap):
     c.slb.hm.delete("hm3")
     c.slb.hm.create("hm3", c.slb.hm.HTTPS, 5, 5, 5, 'GET', '/', '200', 443)
     r = c.slb.hm.get("hm3")
+
+    # Test that alternate port is used.
+    c.slb.hm.create("hport", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200', 81)
+    c.slb.hm.get("hport")
+    c.slb.hm.delete("hport")
 
     print("=============================================================")
     print("")
@@ -666,12 +673,15 @@ def run_all(ax, partition, pmap):
     print("=============================================================")
     print("")
     print("vport with ip in ip")
-    c.slb.virtual_server.vport.create(
-        "vip4", "vip4-ipinip",
-        protocol=c.slb.virtual_server.vport.HTTP,
-        port=90,
-        service_group_name='pfoobar',
-        ipinip=True)
+    try:
+        c.slb.virtual_server.vport.create(
+            "vip4", "vip4-ipinip",
+            protocol=c.slb.virtual_server.vport.HTTP,
+            port=90,
+            service_group_name='pfoobar',
+            ipinip=True)
+    except Exception:
+        pass
     c.slb.virtual_server.vport.create(
         "vip4", "vip4-noipinip",
         protocol=c.slb.virtual_server.vport.HTTP,
@@ -857,6 +867,7 @@ def main():
             traceback.print_exc()
             print(e)
             sys.exit(1)
+
 
 if __name__ == '__main__':
     main()

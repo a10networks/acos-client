@@ -11,13 +11,15 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import random
+import six
 import time
 
-import acos_client.errors as acos_errors
-
-import base
+from acos_client import errors as acos_errors
+from acos_client.v30 import base
 
 
 class Partition(base.BaseV30):
@@ -32,7 +34,8 @@ class Partition(base.BaseV30):
         z = self.all()
         if not z:
             raise acos_errors.NotFound()
-        for p in z['partition-all']['oper']['partition-list']:
+        # There is no partition-list member if there are no partitions
+        for p in z['partition-all']['oper'].get('partition-list', {}):
             if p['partition-name'] == name:
                 return p
         raise acos_errors.NotFound()
@@ -80,7 +83,7 @@ class Partition(base.BaseV30):
 
         # For concurrency's sake, since we have to lookup the id and then
         # set it, loop if we get an exists error.
-        for i in xrange(1, 1000):
+        for i in six.moves.range(1, 1000):
             try:
                 self._create(name, self._next_available_id())
                 break

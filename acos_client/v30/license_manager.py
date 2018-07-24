@@ -11,12 +11,14 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
+import six
 import time
 
-import acos_client.errors as acos_errors
-
-import base
+from acos_client import errors as acos_errors
+from acos_client.v30 import base
 
 INTERVAL_MONTHLY = 1
 INTERVAL_DAILY = 2
@@ -145,7 +147,7 @@ class LicenseManager(base.BaseV30):
         # There is some lag between the setup call above and being able
         # to successfully retrieve a license.
 
-        for i in range(0, 60):
+        for i in six.moves.range(0, 60):
             try:
                 return self._post(url, payload)
             except acos_errors.ACOSException as e:
@@ -157,7 +159,7 @@ class LicenseManager(base.BaseV30):
     def paygo(self, llp_hosts=[], sn=None, instance_name=None,
               use_mgmt_port=False, interval=None, bandwidth_base=None):
 
-        for i in range(0, 4):
+        for i in six.moves.range(0, 4):
             self._paygo_setup(llp_hosts, sn, instance_name, use_mgmt_port,
                               interval, bandwidth_base)
             try:

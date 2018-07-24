@@ -11,11 +11,14 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
+import six
 
-import acos_client.errors as acos_errors
-import acos_client.v30.base as base
 
-from member import Member
+from acos_client import errors as acos_errors
+from acos_client.v30 import base
+from acos_client.v30.slb.member import Member
 
 
 class ServiceGroup(base.BaseV30):
@@ -50,6 +53,9 @@ class ServiceGroup(base.BaseV30):
     TCP = 'tcp'
     UDP = 'udp'
 
+    def all(self):
+        return self._get(self.url_prefix)
+
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
 
@@ -83,10 +89,18 @@ class ServiceGroup(base.BaseV30):
             pass
         elif lb_method[-16:] == 'least-connection':
             params['service-group']['lc-method'] = lb_method
+            params['service-group']['stateless-auto-switch'] = 0
         elif lb_method[:9] == 'stateless':
             params['service-group']['stateless-lb-method'] = lb_method
         else:
             params['service-group']['lb-method'] = lb_method
+            params['service-group']['stateless-auto-switch'] = 0
+
+        config_defaults = kwargs.get("config_defaults")
+
+        if config_defaults:
+            for k, v in six.iteritems(config_defaults):
+                params['service-group'][k] = v
 
         config_defaults = kwargs.get("config_defaults")
 
@@ -96,8 +110,11 @@ class ServiceGroup(base.BaseV30):
 
         if not update:
             name = ''
-
-        self._post(self.url_prefix + name, params, **kwargs)
+            self._post(self.url_prefix + name, params, **kwargs)
+        else:
+            if 'protocol' in params['service-group']:
+                del params['service-group']['protocol']
+            self._post(self.url_prefix + name, params, **kwargs)
 
     def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, **kwargs):
         try:

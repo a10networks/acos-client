@@ -12,39 +12,20 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
-# TODO(mdurrant) - Organize these imports
-import errno
 import json
 import logging
-import socket
-import sys
-import time
-
-import requests
-
-
-if sys.version_info >= (3, 0):
-    import http.client as http_client
-else:
-    # Python 2
-    import httplib as http_client
-http_client.HTTPConnection.debuglevel = logging.INFO
-
-import responses as acos_responses
+from requests.adapters import HTTPAdapter
+from requests import Session
+import six
 
 import acos_client
 from acos_client import logutils
+from acos_client.v30 import responses as acos_responses
 
 LOG = logging.getLogger(__name__)
-
-import sys
-out_hdlr = logging.StreamHandler(sys.stdout)
-out_hdlr.setLevel(logging.DEBUG)
-LOG.addHandler(out_hdlr)
-
-LOG.setLevel(logging.DEBUG)
-
 
 broken_replies = {
     "": '{"response": {"status": "OK"}}'
@@ -61,17 +42,13 @@ class HttpClient(object):
                  retry_errno_list=None):
         if port is None:
             if protocol is 'http':
-                port = 80
+                self.port = 80
             else:
-                port = 443
-        self.url_base = "%s://%s:%s" % (protocol, host, port)
-        self.retry_errnos = []
-        if retry_errno_list is not None:
-            self.retry_errnos += retry_errno_list
-        self.retry_err_strings = (['BadStatusLine'] +
-                                  ['[Errno %s]' % n for n in self.retry_errnos] +
-                                  [errno.errorcode[n] for n in self.retry_errnos
-                                   if n in errno.errorcode])
+                self.port = 443
+        else:
+            self.port = port
+
+        self.url_base = "%s://%s:%s" % (protocol, host, self.port)
 
     def request(self, method, api_url, params={}, headers=None,
                 file_name=None, file_content=None, axapi_args=None, **kwargs):
@@ -79,93 +56,91 @@ class HttpClient(object):
         LOG.debug("axapi_http: %s url = %s", method, api_url)
         LOG.debug("axapi_http: params = %s", json.dumps(logutils.clean(params), indent=4))
 
+        valid_http_codes = [200, 204]
+
         # Update params with axapi_args for currently unsupported configuration of objects
         if axapi_args is not None:
-            formatted_axapi_args = dict([(k.replace('_', '-'), v) for k, v in
-                                        axapi_args.iteritems()])
+            formatted_axapi_args = dict(
+                [(k.replace('_', '-'), v) for k, v in six.iteritems(axapi_args)]
+            )
             params = acos_client.v21.axapi_http.merge_dicts(params, formatted_axapi_args)
+
+        # Set data" variable for the request
+        if params:
+            params_copy = params.copy()
+            LOG.debug("axapi_http: params_all = %s", logutils.clean(params_copy))
+            payload = json.dumps(params_copy)
+        else:
+            payload = None
 
         if (file_name is None and file_content is not None) or \
            (file_name is not None and file_content is None):
             raise ValueError("file_name and file_content must both be "
                              "populated if one is")
 
-        hdrs = self.HEADERS.copy()
+        # Set "headers" variable for the request
+        request_headers = self.HEADERS.copy()
         if headers:
-            hdrs.update(headers)
+            request_headers.update(headers)
+        LOG.debug("axapi_http: headers = %s", json.dumps(
+            logutils.clean(request_headers), indent=4)
+            )
 
-        if params:
-            params_copy = params.copy()
-            # params_copy.update(extra_params)
-            LOG.debug("axapi_http: params_all = %s", logutils.clean(params_copy))
-
-            payload = json.dumps(params_copy, encoding='utf-8')
-        else:
-            payload = None
-
-        LOG.debug("axapi_http: headers = %s", json.dumps(logutils.clean(hdrs), indent=4))
-
+        # Process files if passed as a parameter
         if file_name is not None:
             files = {
                 'file': (file_name, file_content, "application/octet-stream"),
                 'json': ('blob', payload, "application/json")
             }
+            request_headers.pop("Content-type", None)
+            request_headers.pop("Content-Type", None)
 
-            hdrs.pop("Content-type", None)
-            hdrs.pop("Content-Type", None)
+        # Create session to set HTTPAdapter or SSLAdapter and set max_retries
+        session = Session()
+        if self.port == 443:
+            session.mount('https://', HTTPAdapter(max_retries=60))
+        else:
+            session.mount('http://', HTTPAdapter(max_retries=60))
+        session_request = getattr(session, method.lower())
 
-        last_e = None
-
-        for i in xrange(0, 1500):
-            try:
-                last_e = None
-                if file_name is not None:
-                    z = requests.request(method, self.url_base + api_url, verify=False,
-                                         files=files, headers=hdrs)
-                else:
-                    z = requests.request(method, self.url_base + api_url, verify=False,
-                                         data=payload, headers=hdrs)
-
-                break
-            except (socket.error, requests.exceptions.ConnectionError) as e:
-                # Workaround some bogosity in the API
-                if e.errno in self.retry_errnos or \
-                   any(s in str(e) for s in self.retry_err_strings):
-                    time.sleep(0.1)
-                    last_e = e
-                    continue
-                raise e
-
-        LOG.debug("acos_client retried %s %s times", self.url_base + api_url, i)
-
-        if last_e is not None:
-            LOG.error("acos_client failing with error %s after %s retries ignoring %s",
-                      last_e, i, self.retry_err_strings)
-            raise e
-
-        if z.status_code == 204:
-            return None
-
+        # Make actual request and handle any errors
         try:
-            r = z.json()
+            if file_name is not None:
+                device_response = session_request(
+                    self.url_base + api_url, verify=False, files=files, headers=request_headers)
+            else:
+                device_response = session_request(
+                    self.url_base + api_url, verify=False, data=payload, headers=request_headers)
+        except (Exception) as e:
+            LOG.error("acos_client failing with error %s after 60 retries",
+                      e.__class__.__name__)
+            raise e
+        finally:
+            session.close()
+
+        # Validate json response
+        try:
+            json_response = device_response.json()
+            LOG.debug(
+                "axapi_http: data = %s", json.dumps(logutils.clean(json_response), indent=4)
+            )
         except ValueError as e:
             # The response is not JSON but it still succeeded.
-            if z.status_code == 200:
+            if device_response.status_code in valid_http_codes:
                 return {}
             else:
                 raise e
 
-        LOG.debug("axapi_http: data = %s", json.dumps(logutils.clean(r), indent=4))
+        # Handle "fail" responses returned by AXAPI
+        if 'response' in json_response and 'status' in json_response['response']:
+            if json_response['response']['status'] == 'fail':
+                    acos_responses.raise_axapi_ex(json_response, method, api_url)
 
-        if 'response' in r and 'status' in r['response']:
-            if r['response']['status'] == 'fail':
-                    acos_responses.raise_axapi_ex(r, method, api_url)
+        # Handle "authorizationschema" responses returned by AXAPI
+        if 'authorizationschema' in json_response:
+            acos_responses.raise_axapi_auth_error(json_response, method, api_url, headers)
 
-        if 'authorizationschema' in r:
-            acos_responses.raise_axapi_auth_error(
-                r, method, api_url, headers)
-
-        return r
+        return json_response
 
     def get(self, api_url, params={}, headers=None, **kwargs):
         return self.request("GET", api_url, params, headers, **kwargs)

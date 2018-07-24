@@ -11,10 +11,12 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import re
 
-import acos_client.errors as ae
+from acos_client import errors as ae
 
 RESPONSE_CODES = {
     33619969: {
@@ -41,6 +43,11 @@ RESPONSE_CODES = {
     654311495: {
         '*': {
             '*': ae.Exists
+        }
+    },
+    654311505: {
+        '*': {
+            '*': ae.DhcpAcquireFailed,
         }
     },
     67240011: {
@@ -169,6 +176,11 @@ RESPONSE_CODES = {
         }
     },
     1023451144: {
+        '*': {
+            '*': ae.Exists
+        }
+    },
+    1023459337: {
         '*': {
             '*': ae.Exists
         }
