@@ -3,8 +3,14 @@ acos-client CHANGELOG
 ---------------------------
 
 a10-neutron-lbaas. Changes tracked from 1.4.2 > onward
+* 1.4.4
+- Adds VLAN, VE/LIF interfaces, VTEP support for AXAPI v3.0
+- VRRP-A support for AXAPI v3.0
+- Enhanced error handling for DHCP offer failures
+- Added linebreaks to this file between versions to make it more readable.
 
 * 1.4.3
 - Ensure passing of port and correct param name for HM port override
+
 * 1.4.2
 - Checks for name-based configuration elements to ensure other business rules do not override configured defaults
