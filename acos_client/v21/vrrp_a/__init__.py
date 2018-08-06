@@ -12,6 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import acos_client.v21.base as base
 
 from acos_client.v21.vrrp_a.vrrp_global import VRRPAGlobal 
