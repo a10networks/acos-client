@@ -127,7 +127,7 @@ class HttpClient(object):
         except ValueError as e:
             # The response is not JSON but it still succeeded.
             if device_response.status_code in valid_http_codes:
-                return {}
+                return device_response.text 
             else:
                 raise e
 
