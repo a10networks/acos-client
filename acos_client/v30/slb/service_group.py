@@ -102,12 +102,6 @@ class ServiceGroup(base.BaseV30):
             for k, v in six.iteritems(config_defaults):
                 params['service-group'][k] = v
 
-        config_defaults = kwargs.get("config_defaults")
-
-        if config_defaults:
-            for k, v in config_defaults.iteritems():
-                params['service-group'][k] = v
-
         if not update:
             name = ''
             self._post(self.url_prefix + name, params, **kwargs)

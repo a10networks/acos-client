@@ -98,14 +98,6 @@ class HealthMonitor(base.BaseV30):
             for k, v in six.iteritems(config_defaults):
                 params['monitor'][k] = v
 
-        # TODO(mdurrant) : Might have to get tricky with JSON structures
-        # ... due to 'mon_method' stuff.
-        config_defaults = kwargs.get("config_defaults")
-
-        if config_defaults:
-            for k, v in config_defaults.iteritems():
-                params['monitor'][k] = v
-
         if update:
             action += name
         self._post(action, params, **kwargs)
