@@ -26,8 +26,8 @@ from acos_client import client
 class TestClient(unittest.TestCase):
 
     def setUp(self):
-        self.client_21 = client.Client('fake-host', '2.1', 'fake-username', 'fake-password')
-        self.client_30 = client.Client('fake-host', '3.0', 'fake-username', 'fake-password')
+        self.client_21 = client.Client('fake-host', '2.1', 'fake-username', 'fake-password', max_retries=5)
+        self.client_30 = client.Client('fake-host', '3.0', 'fake-username', 'fake-password', max_retries=6)
 
     def test_dns_v21(self):
         from acos_client.v21.dns import DNS
@@ -38,3 +38,13 @@ class TestClient(unittest.TestCase):
         from acos_client.v30.dns import DNS
 
         self.assertIsInstance(self.client_30.dns, DNS)
+
+    def test_max_retries_v21(self):
+
+        self.assertEqual(self.client_21.max_retries, 5)
+        self.assertEqual(self.client_21.http.max_retries, 5)
+
+    def test_max_retries_v30(self):
+
+        self.assertEqual(self.client_30.max_retries, 6)
+        self.assertEqual(self.client_30.http.max_retries, 6)

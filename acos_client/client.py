@@ -93,16 +93,19 @@ LOG = logging.getLogger(__name__)
 class Client(object):
 
     def __init__(self, host, version, username, password, port=None,
-                 protocol="https", timeout=None, retry_errno_list=None):
+                 protocol="https", max_retries=3, timeout=None, retry_errno_list=None):
         self._version = self._just_digits(version)
         if self._version not in acos_client.AXAPI_VERSIONS:
             raise acos_errors.ACOSUnsupportedVersion()
+        self.max_retries = max_retries  # number of attempts to connect before giving up.
         self.host = host
         self.port = port
         self.http = VERSION_IMPORTS[self._version]['http'].HttpClient(
-            host, port, protocol, timeout=timeout, retry_errno_list=retry_errno_list)
+            host, port, protocol, timeout=timeout, max_retries=self.max_retries, retry_errno_list=retry_errno_list
+        )
         self.session = VERSION_IMPORTS[self._version]['Session'](
-            self, username, password)
+            self, username, password
+        )
         self.current_partition = 'shared'
 
     def _just_digits(self, s):
