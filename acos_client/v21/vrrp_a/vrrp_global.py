@@ -16,16 +16,14 @@ from __future__ import unicode_literals
 
 from acos_client.v21 import base
 
-import six
-
 
 class VRRPAGlobal(base.BaseV21):
     def get(self, **kwargs):
         return self._get("vrrp_a.get", **kwargs)
 
-    def set(self, status, device_id, set_id, default_vrid, hello_interval, dead_timer, 
-            track_event_delay, preemption_delay, arp_retry, 
-            vrid_list={}, 
+    def set(self, status, device_id, set_id, default_vrid, hello_interval, dead_timer,
+            track_event_delay, preemption_delay, arp_retry,
+            vrid_list={},
             preferred_session_sync_port_list={}):
         params = {
             "vrrp_a": {
@@ -45,7 +43,7 @@ class VRRPAGlobal(base.BaseV21):
 
         if vrids:
             params["vrrp_a"]["vrid_list"] = vrids
-        
+
         if sync_ports:
             params["vrrp_a"]["preferred_session_sync_port_list"] = sync_ports
 
@@ -56,4 +54,3 @@ class VRRPAGlobal(base.BaseV21):
 
     def _convert_sync_port_list(self, sync_ports):
         return sync_ports
-

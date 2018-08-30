@@ -159,7 +159,7 @@ class Client(object):
     @property
     def route(self):
         return VERSION_IMPORTS[self._version]["RIB"](self)
-    
+
     @property
     def vrrpa(self):
         return VERSION_IMPORTS[self._version]["VRRPA"](self)
