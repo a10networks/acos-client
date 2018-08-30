@@ -93,16 +93,18 @@ class HttpClient(object):
         "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
-    def __init__(self, host, port=None, protocol="https", timeout=None,
-                 retry_errno_list=None):
+    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=None, retry_errno_list=None):
         if port is None:
             if protocol is 'http':
                 self.port = 80
             else:
                 self.port = 443
         self.url_base = "%s://%s:%s" % (protocol, host, self.port)
+        self.max_retries = max_retries  # number of attempts to connect before giving up.
 
     def request(self, method, api_url, params={}, **kwargs):
+        """Generate the API call to the device."""
+
         LOG.debug("axapi_http: full url = %s", self.url_base + api_url)
         LOG.debug("axapi_http: %s url = %s", method, api_url)
         LOG.debug("axapi_http: params = %s", json.dumps(logutils.clean(params), indent=4))
@@ -122,13 +124,18 @@ class HttpClient(object):
             except KeyError:
                 payload = None
 
-        # Create session to set HTTPAdapter or SSLAdapter and set max_retries
+        if "max_retries" in kwargs:
+            max_retries = kwargs['max_retries']
+        else:
+            max_retries = self.max_retries
+
+        # Create session to set HTTPAdapter or SSLAdapter
         session = Session()
         if self.port == 443:
             # Add adapter for any https session to force TLS1_0 connection for v21 of AXAPI
-            session.mount('https://', SSLAdapter(max_retries=60))
+            session.mount('https://', SSLAdapter(max_retries=max_retries))
         else:
-            session.mount('http://', HTTPAdapter(max_retries=60))
+            session.mount('http://', HTTPAdapter(max_retries=max_retries))
         session_request = getattr(session, method.lower())
 
         # Make actual request and handle any errors
