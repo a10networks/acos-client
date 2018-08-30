@@ -38,8 +38,7 @@ class HttpClient(object):
         "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
-    def __init__(self, host, port=None, protocol="https", timeout=None,
-                 retry_errno_list=None):
+    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=None, retry_errno_list=None):
         if port is None:
             if protocol is 'http':
                 self.port = 80
@@ -49,6 +48,7 @@ class HttpClient(object):
             self.port = port
 
         self.url_base = "%s://%s:%s" % (protocol, host, self.port)
+        self.max_retries = max_retries  # number of attempts to connect before giving up.
 
     def request(self, method, api_url, params={}, headers=None,
                 file_name=None, file_content=None, axapi_args=None, **kwargs):
@@ -75,16 +75,18 @@ class HttpClient(object):
 
         if (file_name is None and file_content is not None) or \
            (file_name is not None and file_content is None):
-            raise ValueError("file_name and file_content must both be "
-                             "populated if one is")
+            raise ValueError("file_name and file_content must both be populated if one is")
+
+        if "max_retries" in kwargs:
+            max_retries = kwargs['max_retries']
+        else:
+            max_retries = self.max_retries
 
         # Set "headers" variable for the request
         request_headers = self.HEADERS.copy()
         if headers:
             request_headers.update(headers)
-        LOG.debug("axapi_http: headers = %s", json.dumps(
-            logutils.clean(request_headers), indent=4)
-            )
+        LOG.debug("axapi_http: headers = %s", json.dumps(logutils.clean(request_headers), indent=4))
 
         # Process files if passed as a parameter
         if file_name is not None:
@@ -98,9 +100,9 @@ class HttpClient(object):
         # Create session to set HTTPAdapter or SSLAdapter and set max_retries
         session = Session()
         if self.port == 443:
-            session.mount('https://', HTTPAdapter(max_retries=60))
+            session.mount('https://', HTTPAdapter(max_retries=max_retries))
         else:
-            session.mount('http://', HTTPAdapter(max_retries=60))
+            session.mount('http://', HTTPAdapter(max_retries=max_retries))
         session_request = getattr(session, method.lower())
 
         # Make actual request and handle any errors
@@ -112,8 +114,8 @@ class HttpClient(object):
                 device_response = session_request(
                     self.url_base + api_url, verify=False, data=payload, headers=request_headers)
         except (Exception) as e:
-            LOG.error("acos_client failing with error %s after 60 retries",
-                      e.__class__.__name__)
+            LOG.error("acos_client failing with error %s after %s retries",
+                      e.__class__.__name__, max_retries)
             raise e
         finally:
             session.close()

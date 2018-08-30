@@ -143,8 +143,8 @@ class HttpClient(object):
             device_response = session_request(
                 self.url_base + api_url, verify=False, data=payload, headers=self.HEADERS)
         except (Exception) as e:
-            LOG.error("acos_client failing with error %s after 60 retries",
-                      e.__class__.__name__)
+            LOG.error("acos_client failing with error %s after %s retries",
+                      e.__class__.__name__, max_retries)
             raise e
         finally:
             session.close()
