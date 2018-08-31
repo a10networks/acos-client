@@ -67,15 +67,11 @@ class VirtualPort(base.BaseV30):
         )
         return self._get(url)
 
-    def _set(self, virtual_server_name, name, protocol, port,
-             service_group_name,
-             s_pers_name=None, c_pers_name=None, stats=0, update=False,
-             no_dest_nat=None,
-             exclude_minimize=[],
-             autosnat=False,
-             ipinip=False,
-             pool=None,
-             **kwargs):
+    def _set(self, virtual_server_name, name, protocol, port, service_group_name, s_pers_name=None, c_pers_name=None,
+             status=True, update=False, no_dest_nat=None, exclude_minimize=None, autosnat=False, ipinip=False,
+             source_nat_pool=None, ha_conn_mirror=False, **kwargs):
+        if exclude_minimize is None:
+            exclude_minimize = []
 
         params = {
             "port": self.minimal_dict({
@@ -85,35 +81,34 @@ class VirtualPort(base.BaseV30):
                 "port-number": int(port),
                 "template-persist-source-ip": s_pers_name,
                 "template-persist-cookie": c_pers_name,
-                "extended-stats": stats
+                "extended-stats": int(status)
             }, exclude=exclude_minimize)
         }
+
+        server_ssl_tmpl = kwargs.get("template_server_ssl", None)
+        client_ssl_tmpl = kwargs.get("template_client_ssl", None)
+        vport_defaults = kwargs.get("vport_defaults", None)
+        sampling_enable = kwargs.get('sampling_enable', None)
+
         if autosnat:
             params['port']['auto'] = int(autosnat)
         if ipinip:
             params['port']['ipinip'] = int(ipinip)
-        if pool and len(pool) > 0:
-            params['port']['pool'] = pool
-
-        server_ssl_tmpl = kwargs.get("template_server_ssl", None)
-        client_ssl_tmpl = kwargs.get("template_client_ssl")
-        vport_defaults = kwargs.get("vport_defaults")
-
-        if vport_defaults:
+        if source_nat_pool is not None and len(source_nat_pool) > 0:
+            params['port']['pool'] = source_nat_pool
+        if vport_defaults is not None:
             for k, v in six.iteritems(vport_defaults):
                 params['port'][k] = v
-
         if server_ssl_tmpl:
             params['port']['template-server-ssl'] = server_ssl_tmpl
         if client_ssl_tmpl:
             params['port']['template-client-ssl'] = client_ssl_tmpl
-
-        sampling_enable = kwargs.get('sampling_enable')
         if sampling_enable is not None:
             self._set_sampling_enable(sampling_enable, params)
-
         if no_dest_nat is not None:
-            params["port"]["no-dest-nat"] = 1 if no_dest_nat else 0
+            params['port']['no-dest-nat'] = 1 if no_dest_nat else 0
+        if ha_conn_mirror:
+            params['port']['ha-conn-mirror'] = ha_conn_mirror
 
         url = self.url_server_tmpl.format(name=virtual_server_name)
         if update:
@@ -123,50 +118,36 @@ class VirtualPort(base.BaseV30):
 
         return self._post(url, params, **kwargs)
 
-    def create(self, virtual_server_name, name, protocol, port,
-               service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1,
-               autosnat=False,
-               ipinip=False,
-               no_dest_nat=None,
-               source_nat_pool=None,
-               **kwargs):
-        return self._set(virtual_server_name,
-                         name, protocol, port, service_group_name,
-                         s_pers_name, c_pers_name, status,
-                         autosnat=autosnat, ipinip=ipinip,
-                         no_dest_nat=no_dest_nat, pool=source_nat_pool,
-                         **kwargs)
+    def create(self, virtual_server_name, name, protocol, port, service_group_name, s_pers_name=None,
+               c_pers_name=None, status=True, autosnat=False, ipinip=False, no_dest_nat=None, source_nat_pool=None,
+               ha_conn_mirror=False, **kwargs):
 
-    def update(self, virtual_server_name, name, protocol, port,
-               service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1,
-               autosnat=False,
-               ipinip=False,
-               no_dest_nat=None,
-               source_nat_pool=None,
-               **kwargs):
+        return self._set(virtual_server_name=virtual_server_name, name=name, protocol=protocol, port=port,
+                         service_group_name=service_group_name, s_pers_name=s_pers_name, c_pers_name=c_pers_name,
+                         status=status, autosnat=autosnat, ipinip=ipinip, no_dest_nat=no_dest_nat,
+                         source_nat_pool=source_nat_pool, ha_conn_mirror=ha_conn_mirror, **kwargs)
+
+    def update(self, virtual_server_name, name, protocol, port, service_group_name, s_pers_name=None,
+               c_pers_name=None, status=True, autosnat=False, ipinip=False, no_dest_nat=None, source_nat_pool=None,
+               ha_conn_mirror=False, **kwargs):
+
         vp = self.get(virtual_server_name, name, protocol, port)
         if vp is None:
             raise ae.NotFound()
-
-        exclu = ['template-persist-source-ip', 'template-persist-cookie']
+        exclude_minimize = ['template-persist-source-ip', 'template-persist-cookie']
 
         try:
-            return self._set(virtual_server_name,
-                             name, protocol, port, service_group_name,
-                             s_pers_name, c_pers_name, status, True,
-                             autosnat=autosnat, ipinip=ipinip,
-                             exclude_minimize=exclu, no_dest_nat=no_dest_nat,
-                             pool=source_nat_pool,
+            return self._set(virtual_server_name=virtual_server_name, name=name, protocol=protocol, port=port,
+                             service_group_name=service_group_name, s_pers_name=s_pers_name, c_pers_name=c_pers_name,
+                             status=status, autosnat=autosnat, ipinip=ipinip, exclude_minimize=exclude_minimize,
+                             no_dest_nat=no_dest_nat, source_nat_pool=source_nat_pool, ha_conn_mirror=ha_conn_mirror,
                              **kwargs)
+
         except ae.AxapiJsonFormatError:
-            return self._set(virtual_server_name,
-                             name, protocol, port, service_group_name,
-                             s_pers_name, c_pers_name, status, True,
-                             autosnat=autosnat, ipinip=ipinip,
-                             exclude_minimize=[], no_dest_nat=no_dest_nat,
-                             pool=source_nat_pool,
+            return self._set(virtual_server_name=virtual_server_name, name=name, protocol=protocol, port=port,
+                             service_group_name=service_group_name, s_pers_name=s_pers_name, c_pers_name=c_pers_name,
+                             status=status, autosnat=autosnat, ipinip=ipinip, exclude_minimize=None,
+                             no_dest_nat=no_dest_nat, source_nat_pool=source_nat_pool, ha_conn_mirror=ha_conn_mirror,
                              **kwargs)
 
     def delete(self, virtual_server_name, name, protocol, port):

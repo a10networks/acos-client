@@ -57,13 +57,10 @@ class VirtualPort(base.BaseV21):
     CLIENT_SSL_ANL_KEY = "template_client_ssl"
     SERVER_SSL_ANL_KEY = "template_server_ssl"
 
-    def _set(self, action, virtual_server_name, name, protocol, port,
-             service_group_name,
-             s_pers_name=None, c_pers_name=None, status=1,
-             autosnat=False,
-             ipinip=False,
-             source_nat=None,
+    def _set(self, action, virtual_server_name, name, protocol, port, service_group_name, s_pers_name=None,
+             c_pers_name=None, status=True, autosnat=False, ipinip=False, source_nat_pool=None, ha_conn_mirror=False,
              **kwargs):
+
         params = {
             "name": virtual_server_name,
             "vport": self.minimal_dict({
@@ -73,25 +70,25 @@ class VirtualPort(base.BaseV21):
                 "port": int(port),
                 "source_ip_persistence_template": s_pers_name,
                 "cookie_persistence_template": c_pers_name,
-                "status": status
+                "status": int(status),
             })
         }
 
-        client_ssl_template = kwargs.get(self.CLIENT_SSL_TMPL_KEY)
-        server_ssl_template = kwargs.get(self.SERVER_SSL_TMPL_KEY)
+        client_ssl_template = kwargs.get(self.CLIENT_SSL_TMPL_KEY, None)
+        server_ssl_template = kwargs.get(self.SERVER_SSL_TMPL_KEY, None)
 
         if client_ssl_template:
             params['vport'][self.CLIENT_SSL_ANL_KEY] = client_ssl_template
-
         if server_ssl_template:
             params['vport'][self.SERVER_SSL_ANL_KEY] = server_ssl_template
-
         if autosnat:
             params['vport']['source_nat_auto'] = int(autosnat)
         if ipinip:
             params['vport']['ip_in_ip'] = int(ipinip)
-        if source_nat and len(source_nat) > 0:
-            params['vport']['source_nat'] = source_nat
+        if source_nat_pool is not None and len(source_nat_pool) > 0:
+            params['vport']['source_nat'] = source_nat_pool
+        if ha_conn_mirror:
+            params['vport']['ha_connection_mirror'] = int(ha_conn_mirror)
 
         self._post(action, params, **kwargs)
 
@@ -106,31 +103,23 @@ class VirtualPort(base.BaseV21):
         if len(filtered_vports) > 0:
             return filtered_vports[0]
 
-    def create(self, virtual_server_name, name, protocol, port,
-               service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1,
-               autosnat=False,
-               ipinip=False,
-               source_nat_pool=None,
-               **kwargs):
-        self._set('slb.virtual_server.vport.create', virtual_server_name,
-                  name, protocol, port, service_group_name,
-                  s_pers_name, c_pers_name, status,
-                  autosnat=autosnat, ipinip=ipinip, source_nat=source_nat_pool,
-                  **kwargs)
+    def create(self, virtual_server_name, name, protocol, port, service_group_name, s_pers_name=None,
+               c_pers_name=None, status=True, autosnat=False, ipinip=False, source_nat_pool=None,
+               ha_conn_mirror=False, **kwargs):
 
-    def update(self, virtual_server_name, name, protocol, port,
-               service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1,
-               autosnat=False,
-               ipinip=False,
-               source_nat_pool=None,
-               **kwargs):
-            self._set('slb.virtual_server.vport.update', virtual_server_name,
-                      name, protocol, port, service_group_name,
-                      s_pers_name, c_pers_name, status,
-                      autosnat=autosnat, ipinip=ipinip, source_nat=source_nat_pool,
-                      **kwargs)
+        self._set('slb.virtual_server.vport.create', virtual_server_name=virtual_server_name, name=name,
+                  protocol=protocol, port=port, service_group_name=service_group_name, s_pers_name=s_pers_name,
+                  c_pers_name=c_pers_name, status=status, autosnat=autosnat, ipinip=ipinip,
+                  source_nat_pool=source_nat_pool, ha_conn_mirror=ha_conn_mirror, **kwargs)
+
+    def update(self, virtual_server_name, name, protocol, port, service_group_name, s_pers_name=None,
+               c_pers_name=None, status=True, autosnat=False, ipinip=False, source_nat_pool=None,
+               ha_conn_mirror=False, **kwargs):
+
+            self._set('slb.virtual_server.vport.update', virtual_server_name=virtual_server_name, name=name,
+                      protocol=protocol, port=port, service_group_name=service_group_name, s_pers_name=s_pers_name,
+                      c_pers_name=c_pers_name, status=status, autosnat=autosnat, ipinip=ipinip,
+                      source_nat_pool=source_nat_pool, ha_conn_mirror=ha_conn_mirror, **kwargs)
 
     def delete(self, virtual_server_name, name, protocol, port, **kwargs):
         params = {
