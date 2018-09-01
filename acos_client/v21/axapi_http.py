@@ -93,7 +93,7 @@ class HttpClient(object):
         "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
-    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=None, retry_errno_list=None):
+    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=5, retry_errno_list=None):
         if port is None:
             if protocol is 'http':
                 self.port = 80
@@ -101,6 +101,7 @@ class HttpClient(object):
                 self.port = 443
         self.url_base = "%s://%s:%s" % (protocol, host, self.port)
         self.max_retries = max_retries  # number of attempts to connect before giving up.
+        self.timeout = timeout  # give up after waiting this long for any data from remote device.
 
     def request(self, method, api_url, params={}, **kwargs):
         """Generate the API call to the device."""
@@ -129,6 +130,11 @@ class HttpClient(object):
         else:
             max_retries = self.max_retries
 
+        if "timeout" in kwargs:
+            timeout = kwargs['timeout']
+        else:
+            timeout = self.timeout
+
         # Create session to set HTTPAdapter or SSLAdapter
         session = Session()
         if self.port == 443:
@@ -141,10 +147,10 @@ class HttpClient(object):
         # Make actual request and handle any errors
         try:
             device_response = session_request(
-                self.url_base + api_url, verify=False, data=payload, headers=self.HEADERS)
+                self.url_base + api_url, verify=False, data=payload, headers=self.HEADERS, timeout=timeout
+            )
         except (Exception) as e:
-            LOG.error("acos_client failing with error %s after %s retries",
-                      e.__class__.__name__, max_retries)
+            LOG.error("acos_client failing with error %s after %s retries", e.__class__.__name__, max_retries)
             raise e
         finally:
             session.close()

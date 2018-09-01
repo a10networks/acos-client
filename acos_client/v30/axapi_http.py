@@ -38,7 +38,7 @@ class HttpClient(object):
         "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
-    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=None, retry_errno_list=None):
+    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=5, retry_errno_list=None):
         if port is None:
             if protocol is 'http':
                 self.port = 80
@@ -49,6 +49,7 @@ class HttpClient(object):
 
         self.url_base = "%s://%s:%s" % (protocol, host, self.port)
         self.max_retries = max_retries  # number of attempts to connect before giving up.
+        self.timeout = timeout  # give up after waiting this long for any data from remote device.
 
     def request(self, method, api_url, params={}, headers=None,
                 file_name=None, file_content=None, axapi_args=None, **kwargs):
@@ -82,6 +83,11 @@ class HttpClient(object):
         else:
             max_retries = self.max_retries
 
+        if "timeout" in kwargs:
+            timeout = kwargs['timeout']
+        else:
+            timeout = self.timeout
+
         # Set "headers" variable for the request
         request_headers = self.HEADERS.copy()
         if headers:
@@ -109,13 +115,14 @@ class HttpClient(object):
         try:
             if file_name is not None:
                 device_response = session_request(
-                    self.url_base + api_url, verify=False, files=files, headers=request_headers)
+                    self.url_base + api_url, verify=False, files=files, headers=request_headers, timeout=timeout
+                )
             else:
                 device_response = session_request(
-                    self.url_base + api_url, verify=False, data=payload, headers=request_headers)
+                    self.url_base + api_url, verify=False, data=payload, headers=request_headers, timeout=timeout
+                )
         except (Exception) as e:
-            LOG.error("acos_client failing with error %s after %s retries",
-                      e.__class__.__name__, max_retries)
+            LOG.error("acos_client failing with error %s after %s retries", e.__class__.__name__, max_retries)
             raise e
         finally:
             session.close()

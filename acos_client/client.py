@@ -93,11 +93,12 @@ LOG = logging.getLogger(__name__)
 class Client(object):
 
     def __init__(self, host, version, username, password, port=None,
-                 protocol="https", max_retries=3, timeout=None, retry_errno_list=None):
+                 protocol="https", max_retries=3, timeout=5, retry_errno_list=None):
         self._version = self._just_digits(version)
         if self._version not in acos_client.AXAPI_VERSIONS:
             raise acos_errors.ACOSUnsupportedVersion()
         self.max_retries = max_retries  # number of attempts to connect before giving up.
+        self.timeout = timeout  # give up after waiting this long for any data from remote device.
         self.host = host
         self.port = port
         self.http = VERSION_IMPORTS[self._version]['http'].HttpClient(
