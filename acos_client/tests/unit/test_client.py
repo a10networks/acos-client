@@ -41,11 +41,13 @@ class TestClient(unittest.TestCase):
     def test_max_retries_v21(self):
 
         self.assertEqual(self.client_21.max_retries, 5)
+        self.assertEqual(self.client_21.timeout, 3)
         self.assertEqual(self.client_21.http.max_retries, 5)
         self.assertEqual(self.client_21.http.timeout, 3)
 
     def test_max_retries_v30(self):
 
         self.assertEqual(self.client_30.max_retries, 6)
+        self.assertEqual(self.client_30.timeout, 4)
         self.assertEqual(self.client_30.http.max_retries, 6)
         self.assertEqual(self.client_30.http.timeout, 4)
