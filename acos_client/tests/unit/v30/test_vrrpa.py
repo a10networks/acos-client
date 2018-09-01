@@ -46,7 +46,7 @@ class TestVRID(unittest.TestCase):
 
     def test_vrid_get(self):
         self.target.get(0)
-        self.client.http.request.assert_called_with("GET", self.url_prefix+'0', {}, mock.ANY)
+        self.client.http.request.assert_called_with("GET", self.url_prefix + '0', {}, mock.ANY)
 
     def test_vrid_create_threshold(self):
         self.target.create(4, threshold=2)
@@ -61,9 +61,9 @@ class TestVRID(unittest.TestCase):
     def test_vrid_update_threshold(self):
         self.target.update(4, threshold=2)
         self.client.http.request.assert_called_with(
-            "PUT", self.url_prefix+'4', self.expected_payload(4, threshold=2), mock.ANY)
+            "PUT", self.url_prefix + '4', self.expected_payload(4, threshold=2), mock.ANY)
 
     def test_vrid_update_disable(self):
         self.target.update(4, disable=1)
         self.client.http.request.assert_called_with(
-            "PUT", self.url_prefix+'4', self.expected_payload(4, disable=1), mock.ANY)
+            "PUT", self.url_prefix + '4', self.expected_payload(4, disable=1), mock.ANY)

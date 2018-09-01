@@ -28,12 +28,14 @@ class Nat(base.BaseV30):
 
         def _set(self, name, start_ip, end_ip, mask, **kwargs):
             params = {
-                "pool": self.minimal_dict({
-                    'pool-name': name,
-                    'start-address': start_ip,
-                    'end-address': end_ip,
-                    'netmask': mask,
-                    }),
+                "pool": self.minimal_dict(
+                    {
+                        'pool-name': name,
+                        'start-address': start_ip,
+                        'end-address': end_ip,
+                        'netmask': mask,
+                    }
+                ),
             }
             self._post(self.url_prefix + name, params, **kwargs)
 

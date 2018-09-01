@@ -30,9 +30,8 @@ def clean(data, field=None):
 
     if type(data) is dict:
         return type(data)(
-            (x, clean(y, field=x))
-            for x, y in six.iteritems(data)
-            )
+            (x, clean(y, field=x)) for x, y in six.iteritems(data)
+        )
     elif isinstance(data, six.string_types):
         return data
     elif isinstance(data, (list, tuple)):
