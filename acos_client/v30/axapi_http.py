@@ -38,7 +38,7 @@ class HttpClient(object):
         "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
-    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=5, retry_errno_list=None):
+    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=5):
         if port is None:
             if protocol is 'http':
                 self.port = 80
@@ -48,8 +48,8 @@ class HttpClient(object):
             self.port = port
 
         self.url_base = "%s://%s:%s" % (protocol, host, self.port)
-        self.max_retries = max_retries  # number of attempts to connect before giving up.
-        self.timeout = timeout  # give up after waiting this long for any data from remote device.
+        self.max_retries = max_retries
+        self.timeout = timeout
 
     def request(self, method, api_url, params={}, headers=None,
                 file_name=None, file_content=None, axapi_args=None, **kwargs):
@@ -78,15 +78,8 @@ class HttpClient(object):
            (file_name is not None and file_content is None):
             raise ValueError("file_name and file_content must both be populated if one is")
 
-        if "max_retries" in kwargs:
-            max_retries = kwargs['max_retries']
-        else:
-            max_retries = self.max_retries
-
-        if "timeout" in kwargs:
-            timeout = kwargs['timeout']
-        else:
-            timeout = self.timeout
+        max_retries = kwargs.get('max_retries', self.max_retries)
+        timeout = kwargs.get('timeout', self.timeout)
 
         # Set "headers" variable for the request
         request_headers = self.HEADERS.copy()
@@ -130,9 +123,7 @@ class HttpClient(object):
         # Validate json response
         try:
             json_response = device_response.json()
-            LOG.debug(
-                "axapi_http: data = %s", json.dumps(logutils.clean(json_response), indent=4)
-            )
+            LOG.debug("axapi_http: data = %s", json.dumps(logutils.clean(json_response), indent=4))
         except ValueError as e:
             # The response is not JSON but it still succeeded.
             if device_response.status_code in valid_http_codes:

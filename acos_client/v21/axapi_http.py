@@ -93,15 +93,15 @@ class HttpClient(object):
         "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
-    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=5, retry_errno_list=None):
+    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=5):
         if port is None:
             if protocol is 'http':
                 self.port = 80
             else:
                 self.port = 443
         self.url_base = "%s://%s:%s" % (protocol, host, self.port)
-        self.max_retries = max_retries  # number of attempts to connect before giving up.
-        self.timeout = timeout  # give up after waiting this long for any data from remote device.
+        self.max_retries = max_retries
+        self.timeout = timeout
 
     def request(self, method, api_url, params={}, **kwargs):
         """Generate the API call to the device."""
@@ -125,15 +125,8 @@ class HttpClient(object):
             except KeyError:
                 payload = None
 
-        if "max_retries" in kwargs:
-            max_retries = kwargs['max_retries']
-        else:
-            max_retries = self.max_retries
-
-        if "timeout" in kwargs:
-            timeout = kwargs['timeout']
-        else:
-            timeout = self.timeout
+        max_retries = kwargs.get('max_retries', self.max_retries)
+        timeout = kwargs.get('timeout', self.timeout)
 
         # Create session to set HTTPAdapter or SSLAdapter
         session = Session()
@@ -158,15 +151,12 @@ class HttpClient(object):
         # Log if the reponse is one of the known broken response
         if device_response in broken_replies:
             device_response = broken_replies[device_response]
-            LOG.debug("axapi_http: broken reply, new response: %s",
-                      logutils.clean(device_response))
+            LOG.debug("axapi_http: broken reply, new response: %s", logutils.clean(device_response))
 
         # Validate json response
         try:
             json_response = device_response.json()
-            LOG.debug(
-                "axapi_http: data = %s", json.dumps(logutils.clean(json_response), indent=4)
-            )
+            LOG.debug("axapi_http: data = %s", json.dumps(logutils.clean(json_response), indent=4))
         except ValueError as e:
             # The response is not JSON but it still succeeded.
             LOG.debug("axapi_http: json = %s", e)

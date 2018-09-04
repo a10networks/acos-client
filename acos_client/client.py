@@ -98,25 +98,22 @@ class Client(object):
             version,           # either 21 or 30
             username,          # username to use for authenticating to the A10 device
             password,          # password to use for authenticating to the A10 device
+            max_retries=3,     # number of times to retry a connection before giving up
             port=None,         # TCP port to use for connecting to the A10 device
             protocol="https",  # transport protocol - http or https, encryption recommended
-            max_retries=3,     # number of times to retry a connection before giving up
-            timeout=5,         # seconds to wait for return data before giving up
-            retry_errno_list=None
+            timeout=5          # seconds to wait for return data before giving up
     ):
         self._version = self._just_digits(version)
         if self._version not in acos_client.AXAPI_VERSIONS:
             raise acos_errors.ACOSUnsupportedVersion()
-        self.max_retries = max_retries  # number of attempts to connect before giving up.
-        self.timeout = timeout  # give up after waiting this long for any data from remote device.
+        self.max_retries = max_retries
+        self.timeout = timeout
         self.host = host
         self.port = port
         self.http = VERSION_IMPORTS[self._version]['http'].HttpClient(
-            host, port, protocol, timeout=timeout, max_retries=self.max_retries, retry_errno_list=retry_errno_list
+            host, port, protocol, max_retries=self.max_retries, timeout=timeout
         )
-        self.session = VERSION_IMPORTS[self._version]['Session'](
-            self, username, password
-        )
+        self.session = VERSION_IMPORTS[self._version]['Session'](self, username, password)
         self.current_partition = 'shared'
 
     def _just_digits(self, s):
