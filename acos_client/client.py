@@ -92,8 +92,18 @@ LOG = logging.getLogger(__name__)
 
 class Client(object):
 
-    def __init__(self, host, version, username, password, port=None,
-                 protocol="https", max_retries=3, timeout=5, retry_errno_list=None):
+    def __init__(
+            self,
+            host,              # ip address or name of the A10 device
+            version,           # either 21 or 30
+            username,          # username to use for authenticating to the A10 device
+            password,          # password to use for authenticating to the A10 device
+            port=None,         # TCP port to use for connecting to the A10 device
+            protocol="https",  # transport protocol - http or https, encryption recommended
+            max_retries=3,     # number of times to retry a connection before giving up
+            timeout=5,         # seconds to wait for return data before giving up
+            retry_errno_list=None
+    ):
         self._version = self._just_digits(version)
         if self._version not in acos_client.AXAPI_VERSIONS:
             raise acos_errors.ACOSUnsupportedVersion()
