@@ -41,8 +41,7 @@ class BaseV21(object):
         except acos_errors.MemoryFault as e:
             if retry_count < 5:
                 time.sleep(0.1)
-                return self._request(method, action, params, retry_count+1,
-                                     **kwargs)
+                return self._request(method, action, params, retry_count + 1, **kwargs)
             raise e
         except acos_errors.InvalidSessionID as e:
             if retry_count < 5:
@@ -53,8 +52,7 @@ class BaseV21(object):
                     self.client.partition.active(p)
                 except Exception:
                     pass
-                return self._request(method, action, params, retry_count+1,
-                                     **kwargs)
+                return self._request(method, action, params, retry_count + 1, **kwargs)
             raise e
 
     def _get(self, action, params={}, **kwargs):

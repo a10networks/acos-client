@@ -31,7 +31,7 @@ class LicenseManager(base.BaseV30):
 
     url_base = "/license-manager"
 
-    def create(self, host_list=[], serial=None, instance_name=None,  use_mgmt_port=False,
+    def create(self, host_list=[], serial=None, instance_name=None, use_mgmt_port=False,
                interval=None, bandwidth_base=None, bandwidth_unrestricted=None):
         """Creates a license manager entry
 

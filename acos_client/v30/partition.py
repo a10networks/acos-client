@@ -88,7 +88,7 @@ class Partition(base.BaseV30):
                 self._create(name, self._next_available_id())
                 break
             except acos_errors.PartitionIdExists:
-                time.sleep(0.05 + random.random()/100)
+                time.sleep(0.05 + random.random() / 100)
 
     def delete(self, name):
         if name == 'shared':

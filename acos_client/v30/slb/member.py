@@ -43,7 +43,7 @@ class Member(base.BaseV30):
             name=server_name,
             port=server_port
         )
-        return self._get(url+'oper', **kwargs)
+        return self._get(url + 'oper', **kwargs)
 
     def _write(self,
                service_group_name,

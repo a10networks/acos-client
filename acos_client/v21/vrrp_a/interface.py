@@ -16,7 +16,6 @@ from __future__ import unicode_literals
 
 from acos_client.v21 import base
 
-import six
 
 class VRRPAInterface(base.BaseV21):
     def get_all(self, **kwargs):

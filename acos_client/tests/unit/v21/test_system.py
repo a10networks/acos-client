@@ -54,7 +54,7 @@ class TestHighAvailability(unittest.TestCase):
                 'software_version': '2.7.1-P3-AWS(build: 4)',
                 'startup_mode': 'hard disk primary',
                 'technical_support': 'www.a10networks.com/support '
-                }
+            }
         }
         responses.add(responses.GET, SYS_INFO_URL, json=json_response, status=200)
 
