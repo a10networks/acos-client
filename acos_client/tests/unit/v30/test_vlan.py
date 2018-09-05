@@ -38,8 +38,9 @@ class TestVlan(unittest.TestCase):
 
     def test_interface_get(self):
         self.target.get(self.vlan_id)
-        self.client.http.request.assert_called_with("GET", '{0}/{1}'.format(self.url_prefix,
-            self.vlan_id), {}, mock.ANY)
+        self.client.http.request.assert_called_with(
+            "GET", '{0}/{1}'.format(self.url_prefix, self.vlan_id), {}, mock.ANY
+        )
 
     def test_vlan_create_shared(self):
         self.target.create(self.vlan_id, shared_vlan=True, untagged_eths=[], untagged_trunks=[],
@@ -57,7 +58,7 @@ class TestVlan(unittest.TestCase):
                            tagged_eths=[], tagged_trunks=[], veth=False, lif=None)
 
         ep = self.expected_payload
-        ep['vlan']['untagged-eth-list'] = untagged_eths 
+        ep['vlan']['untagged-eth-list'] = untagged_eths
         self.client.http.request.assert_called_with("POST", self.url_prefix,
                                                     ep, mock.ANY)
 
@@ -69,18 +70,18 @@ class TestVlan(unittest.TestCase):
                            tagged_trunks=[], veth=None, lif=None)
 
         ep = self.expected_payload
-        ep['vlan']['untagged-trunk-list'] = untagged_trunks 
+        ep['vlan']['untagged-trunk-list'] = untagged_trunks
         self.client.http.request.assert_called_with("POST", self.url_prefix,
                                                     ep, mock.ANY)
 
     def test_vlan_create_tagged_eths(self):
         tagged_eths = [{'tagged-ethernet-start': 2, 'tagged-ethernet-end': 2}]
-        vlan._build_range_list = mock.Mock(return_value={'tagged-eth-list': tagged_eths}) 
+        vlan._build_range_list = mock.Mock(return_value={'tagged-eth-list': tagged_eths})
         self.target.create(self.vlan_id, shared_vlan=False, untagged_eths=[], untagged_trunks=[],
                            tagged_eths=[2], tagged_trunks=[], veth=False, lif=None)
 
         ep = self.expected_payload
-        ep['vlan']['tagged-eth-list'] = tagged_eths 
+        ep['vlan']['tagged-eth-list'] = tagged_eths
         self.client.http.request.assert_called_with("POST", self.url_prefix,
                                                     ep, mock.ANY)
 
@@ -91,7 +92,7 @@ class TestVlan(unittest.TestCase):
                            tagged_eths=[], tagged_trunks=[2], veth=False, lif=None)
 
         ep = self.expected_payload
-        ep['vlan']['tagged-trunk-list'] = tagged_trunks 
+        ep['vlan']['tagged-trunk-list'] = tagged_trunks
         self.client.http.request.assert_called_with("POST", self.url_prefix,
                                                     ep, mock.ANY)
 
@@ -115,6 +116,6 @@ class TestVlan(unittest.TestCase):
 
     def test_vlan_delete(self):
         self.target.delete(self.vlan_id)
-        self.client.http.request.assert_called_with("DELETE",
-            '{0}/{1}'.format(self.url_prefix,self.vlan_id), mock.ANY, mock.ANY)
-
+        self.client.http.request.assert_called_with(
+            "DELETE", '{0}/{1}'.format(self.url_prefix, self.vlan_id), mock.ANY, mock.ANY
+        )

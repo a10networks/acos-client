@@ -92,17 +92,28 @@ LOG = logging.getLogger(__name__)
 
 class Client(object):
 
-    def __init__(self, host, version, username, password, port=None,
-                 protocol="https", timeout=None, retry_errno_list=None):
+    def __init__(
+            self,
+            host,              # ip address or name of the A10 device
+            version,           # either 21 or 30
+            username,          # username to use for authenticating to the A10 device
+            password,          # password to use for authenticating to the A10 device
+            max_retries=3,     # number of times to retry a connection before giving up
+            port=None,         # TCP port to use for connecting to the A10 device
+            protocol="https",  # transport protocol - http or https, encryption recommended
+            timeout=5          # seconds to wait for return data before giving up
+    ):
         self._version = self._just_digits(version)
         if self._version not in acos_client.AXAPI_VERSIONS:
             raise acos_errors.ACOSUnsupportedVersion()
+        self.max_retries = max_retries
+        self.timeout = timeout
         self.host = host
         self.port = port
         self.http = VERSION_IMPORTS[self._version]['http'].HttpClient(
-            host, port, protocol, timeout=timeout, retry_errno_list=retry_errno_list)
-        self.session = VERSION_IMPORTS[self._version]['Session'](
-            self, username, password)
+            host, port, protocol, max_retries=self.max_retries, timeout=timeout
+        )
+        self.session = VERSION_IMPORTS[self._version]['Session'](self, username, password)
         self.current_partition = 'shared'
 
     def _just_digits(self, s):
@@ -159,7 +170,7 @@ class Client(object):
     @property
     def route(self):
         return VERSION_IMPORTS[self._version]["RIB"](self)
-    
+
     @property
     def vrrpa(self):
         return VERSION_IMPORTS[self._version]["VRRPA"](self)

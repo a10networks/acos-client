@@ -51,7 +51,7 @@ class VRID(base.BaseV30):
         return self._post(self.base_url, self._build_params(vrid_val, threshold, disable))
 
     def update(self, vrid_val, threshold=None, disable=None):
-        return self._put(self.base_url+str(vrid_val), self._build_params(vrid_val, threshold, disable))
+        return self._put(self.base_url + str(vrid_val), self._build_params(vrid_val, threshold, disable))
 
     def delete(self, vrid_val):
         return self._delete(self.base_url + str(vrid_val))

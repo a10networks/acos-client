@@ -56,8 +56,7 @@ class BaseV30(object):
                     self.client.partition.active(p)
                 except Exception:
                     pass
-                return self._request(method, action, params, retry_count+1,
-                                     **kwargs)
+                return self._request(method, action, params, retry_count + 1, **kwargs)
             raise e
 
     def _get(self, action, params={}, **kwargs):

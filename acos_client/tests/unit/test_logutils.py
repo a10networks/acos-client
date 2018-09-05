@@ -93,25 +93,46 @@ class TestLogutils(unittest.TestCase):
 
     def test_tuple_dict(self):
         actual = target.clean(
-            (1, {'credentials': {
-                'username': 'admin',
-                'password': 'secret'}
-            }))
-        expected = (1, {'credentials': {
-            'username': target.REPLACEMENT,
-            'password': target.REPLACEMENT}
-            })
+            (
+                1,
+                {
+                    'credentials': {
+                        'username': 'admin',
+                        'password': 'secret'
+                    }
+                }
+            )
+        )
+        expected = (
+            1,
+            {
+                'credentials': {
+                    'username': target.REPLACEMENT,
+                    'password': target.REPLACEMENT
+                }
+            }
+        )
         self.assertEqual(expected, actual)
 
     def test_list_dict(self):
         actual = target.clean(
-            [{'credentials': {
-                'username': 'admin',
-                'password': 'secret'}}])
-        expected = [{'credentials': {
-            'username': target.REPLACEMENT,
-            'password': target.REPLACEMENT}
-            }]
+            [
+                {
+                    'credentials': {
+                        'username': 'admin',
+                        'password': 'secret'
+                    }
+                }
+            ]
+        )
+        expected = [
+            {
+                'credentials': {
+                    'username': target.REPLACEMENT,
+                    'password': target.REPLACEMENT
+                }
+            }
+        ]
         self.assertEqual(expected, actual)
 
     def test_int(self):

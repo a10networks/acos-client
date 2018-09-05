@@ -17,9 +17,10 @@ from __future__ import unicode_literals
 
 import acos_client.v21.base as base
 
-from acos_client.v21.vrrp_a.vrrp_global import VRRPAGlobal 
-from acos_client.v21.vrrp_a.interface import VRRPAInterface
 from acos_client.v21.vrrp_a.failover import VRRPAFailoverPolicy
+from acos_client.v21.vrrp_a.interface import VRRPAInterface
+from acos_client.v21.vrrp_a.vrrp_global import VRRPAGlobal
+
 
 class VRRPA(base.BaseV21):
     # For status args
@@ -34,4 +35,3 @@ class VRRPA(base.BaseV21):
     @property
     def failover_policy(self):
         return VRRPAFailoverPolicy(self.client)
-
