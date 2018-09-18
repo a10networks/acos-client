@@ -34,17 +34,20 @@ class VirtualServer(base.BaseV30):
     def get(self, name):
         return self._get(self.url_prefix + name)
 
-    def _set(self, name, ip_address=None, status='stats-data-enable',
-             update=False, arp_disable=None, vrid=None, **kwargs):
+    def _set(
+        self, name, ip_address=None, arp_disable=False, vrid=None, template_virtual_server=None, update=False, **kwargs
+    ):
         params = {
             "virtual-server": self.minimal_dict({
                 "name": name,
                 "ip-address": ip_address,
-                "arp-disable": None if arp_disable is None else int(arp_disable)
+                "arp-disable": int(arp_disable)
             }),
         }
         if vrid:
-            params['virtual-server']['vrid'] = vrid
+            params['virtual-server']['vrid'] = int(vrid)
+        if template_virtual_server:
+            params['virtual-server']['template_virtual_server'] = str(template_virtual_server)
 
         config_defaults = kwargs.get("config_defaults")
         if config_defaults:
@@ -56,8 +59,7 @@ class VirtualServer(base.BaseV30):
 
         return self._post(self.url_prefix + name, params, **kwargs)
 
-    def create(self, name, ip_address, status='stats-data-enable', arp_disable=None, vrid=None,
-               **kwargs):
+    def create(self, name, ip_address, arp_disable=False, vrid=None, template_virtual_server=None, **kwargs):
         try:
             self.get(name)
         except acos_errors.NotFound:
@@ -65,12 +67,10 @@ class VirtualServer(base.BaseV30):
         else:
             raise acos_errors.Exists
 
-        return self._set(name, ip_address, status, arp_disable=arp_disable, vrid=vrid, **kwargs)
+        return self._set(name, ip_address, arp_disable, vrid, template_virtual_server, **kwargs)
 
-    def update(self, name, ip_address=None, status='stats-data-enable',
-               arp_disable=None, vrid=None, **kwargs):
-        return self._set(name, ip_address, status, update=True, arp_disable=arp_disable, vrid=vrid,
-                         **kwargs)
+    def update(self, name, ip_address=None, arp_disable=False, vrid=None, template_virtual_server=None, **kwargs):
+        return self._set(name, ip_address, arp_disable, vrid, template_virtual_server, update=True, **kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)

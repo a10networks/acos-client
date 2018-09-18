@@ -77,16 +77,17 @@ class VirtualPort(base.BaseV30):
         s_pers_name=None,
         c_pers_name=None,
         status=0,
-        update=False,
         no_dest_nat=None,
-        exclude_minimize=None,
         autosnat=False,
         ipinip=False,
         source_nat_pool=None,
         tcp_template=None,
         udp_template=None,
+        exclude_minimize=None,
+        update=False,
         **kwargs
     ):
+        exclude_minimize = [] if exclude_minimize is None else exclude_minimize
 
         params = {
             "port": self.minimal_dict({
@@ -210,13 +211,14 @@ class VirtualPort(base.BaseV30):
                 s_pers_name,
                 c_pers_name,
                 status,
-                autosnat=autosnat,
-                ipinip=ipinip,
+                autosnat,
+                ipinip,
+                no_dest_nat,
+                source_nat_pool,
+                tcp_template,
+                udp_template,
                 exclude_minimize=exclude,
-                no_dest_nat=no_dest_nat,
-                source_nat_pool=source_nat_pool,
-                tcp_template=tcp_template,
-                udp_template=udp_template,
+                update=True,
                 **kwargs
             )
         except ae.AxapiJsonFormatError:
@@ -229,13 +231,14 @@ class VirtualPort(base.BaseV30):
                 s_pers_name,
                 c_pers_name,
                 status,
-                autosnat=autosnat,
-                ipinip=ipinip,
+                autosnat,
+                ipinip,
+                no_dest_nat,
+                source_nat_pool,
+                tcp_template,
+                udp_template,
                 exclude_minimize=None,
-                no_dest_nat=no_dest_nat,
-                source_nat_pool=source_nat_pool,
-                tcp_template=tcp_template,
-                udp_template=udp_template,
+                update=True,
                 **kwargs
             )
 
