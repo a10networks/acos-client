@@ -1,10 +1,27 @@
 language: python
-python: 2.7
-env:
-  - TOX_ENV=py26
-  - TOX_ENV=py27
-  - TOX_ENV=pypy
-  - TOX_ENV=pep8
+matrix:
+  include:
+  - name: "2.7 Unit Tests"
+    python: "2.7"
+    env: TOX_ENV=py27
+  - name: "PyPy Unit Tests"
+    python: "pypy"
+    env: TOX_ENV=pypy
+  - name: "3.4 Unit Tests"
+    python: "3.4"
+    env: TOX_ENV=py34
+  - name: "3.5 Unit Tests"
+    python: "3.5"
+    env: TOX_ENV=py35
+  - name: "3.6 Unit Tests"
+    python: "3.6"
+    env: TOX_ENV=py36
+  - name: "PyPy3 Unit Tests"
+    python: "pypy3.5"
+    env: TOX_ENV=pypy3
+  - name: "Pep8 tests using Flake8"
+    python: "3.6"
+    env: TOX_ENV=pep8
 install:
   - pip install tox
 script:
