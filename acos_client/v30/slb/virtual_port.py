@@ -67,15 +67,27 @@ class VirtualPort(base.BaseV30):
         )
         return self._get(url)
 
-    def _set(self, virtual_server_name, name, protocol, port,
-             service_group_name,
-             s_pers_name=None, c_pers_name=None, stats=0, update=False,
-             no_dest_nat=None,
-             exclude_minimize=[],
-             autosnat=False,
-             ipinip=False,
-             pool=None,
-             **kwargs):
+    def _set(
+        self,
+        virtual_server_name,
+        name,
+        protocol,
+        port,
+        service_group_name,
+        s_pers_name=None,
+        c_pers_name=None,
+        status=0,
+        no_dest_nat=None,
+        autosnat=False,
+        ipinip=False,
+        source_nat_pool=None,
+        tcp_template=None,
+        udp_template=None,
+        exclude_minimize=None,
+        update=False,
+        **kwargs
+    ):
+        exclude_minimize = [] if exclude_minimize is None else exclude_minimize
 
         params = {
             "port": self.minimal_dict({
@@ -85,15 +97,20 @@ class VirtualPort(base.BaseV30):
                 "port-number": int(port),
                 "template-persist-source-ip": s_pers_name,
                 "template-persist-cookie": c_pers_name,
-                "extended-stats": stats
-            }, exclude=exclude_minimize)
+                "extended-stats": status
+            }, exclude=exclude_minimize
+            )
         }
         if autosnat:
             params['port']['auto'] = int(autosnat)
         if ipinip:
             params['port']['ipinip'] = int(ipinip)
-        if pool and len(pool) > 0:
-            params['port']['pool'] = pool
+        if source_nat_pool and len(source_nat_pool) > 0:
+            params['port']['pool'] = source_nat_pool
+        if tcp_template:
+            params['port']['tcp_template'] = tcp_template
+        if udp_template:
+            params['port']['udp_template'] = udp_template
 
         server_ssl_tmpl = kwargs.get("template_server_ssl", None)
         client_ssl_tmpl = kwargs.get("template_client_ssl")
@@ -123,51 +140,107 @@ class VirtualPort(base.BaseV30):
 
         return self._post(url, params, **kwargs)
 
-    def create(self, virtual_server_name, name, protocol, port,
-               service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1,
-               autosnat=False,
-               ipinip=False,
-               no_dest_nat=None,
-               source_nat_pool=None,
-               **kwargs):
-        return self._set(virtual_server_name,
-                         name, protocol, port, service_group_name,
-                         s_pers_name, c_pers_name, status,
-                         autosnat=autosnat, ipinip=ipinip,
-                         no_dest_nat=no_dest_nat, pool=source_nat_pool,
-                         **kwargs)
+    def create(
+        self,
+        virtual_server_name,
+        name,
+        protocol,
+        port,
+        service_group_name,
+        s_pers_name=None,
+        c_pers_name=None,
+        status=1,
+        autosnat=False,
+        ipinip=False,
+        no_dest_nat=None,
+        source_nat_pool=None,
+        tcp_template=None,
+        udp_template=None,
+        **kwargs
+    ):
 
-    def update(self, virtual_server_name, name, protocol, port,
-               service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1,
-               autosnat=False,
-               ipinip=False,
-               no_dest_nat=None,
-               source_nat_pool=None,
-               **kwargs):
+        return self._set(
+            virtual_server_name,
+            name,
+            protocol,
+            port,
+            service_group_name,
+            s_pers_name,
+            c_pers_name,
+            status,
+            autosnat=autosnat,
+            ipinip=ipinip,
+            no_dest_nat=no_dest_nat,
+            source_nat_pool=source_nat_pool,
+            tcp_template=tcp_template,
+            udp_template=udp_template,
+            **kwargs
+        )
+
+    def update(
+        self,
+        virtual_server_name,
+        name,
+        protocol,
+        port,
+        service_group_name,
+        s_pers_name=None,
+        c_pers_name=None,
+        status=1,
+        autosnat=False,
+        ipinip=False,
+        no_dest_nat=None,
+        source_nat_pool=None,
+        tcp_template=None,
+        udp_template=None,
+        **kwargs
+    ):
         vp = self.get(virtual_server_name, name, protocol, port)
         if vp is None:
             raise ae.NotFound()
 
-        exclu = ['template-persist-source-ip', 'template-persist-cookie']
+        exclude = ['template-persist-source-ip', 'template-persist-cookie']
 
         try:
-            return self._set(virtual_server_name,
-                             name, protocol, port, service_group_name,
-                             s_pers_name, c_pers_name, status, True,
-                             autosnat=autosnat, ipinip=ipinip,
-                             exclude_minimize=exclu, no_dest_nat=no_dest_nat,
-                             pool=source_nat_pool,
-                             **kwargs)
+            return self._set(
+                virtual_server_name,
+                name,
+                protocol,
+                port,
+                service_group_name,
+                s_pers_name,
+                c_pers_name,
+                status,
+                autosnat,
+                ipinip,
+                no_dest_nat,
+                source_nat_pool,
+                tcp_template,
+                udp_template,
+                exclude_minimize=exclude,
+                update=True,
+                **kwargs
+            )
         except ae.AxapiJsonFormatError:
-            return self._set(virtual_server_name,
-                             name, protocol, port, service_group_name,
-                             s_pers_name, c_pers_name, status, True,
-                             autosnat=autosnat, ipinip=ipinip,
-                             exclude_minimize=[], no_dest_nat=no_dest_nat,
-                             pool=source_nat_pool,
-                             **kwargs)
+            return self._set(
+                virtual_server_name,
+                name,
+                protocol,
+                port,
+                service_group_name,
+                s_pers_name,
+                c_pers_name,
+                status,
+                autosnat,
+                ipinip,
+                no_dest_nat,
+                source_nat_pool,
+                tcp_template,
+                udp_template,
+                exclude_minimize=None,
+                update=True,
+                **kwargs
+            )
 
     def delete(self, virtual_server_name, name, protocol, port):
         url = self.url_server_tmpl.format(name=virtual_server_name)

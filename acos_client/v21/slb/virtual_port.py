@@ -14,6 +14,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+from acos_client import errors as acos_errors
 from acos_client.v21 import base
 
 
@@ -57,19 +58,30 @@ class VirtualPort(base.BaseV21):
     CLIENT_SSL_ANL_KEY = "template_client_ssl"
     SERVER_SSL_ANL_KEY = "template_server_ssl"
 
-    def _set(self, action, virtual_server_name, name, protocol, port,
-             service_group_name,
-             s_pers_name=None, c_pers_name=None, status=1,
-             autosnat=False,
-             ipinip=False,
-             source_nat=None,
-             **kwargs):
+    def _set(
+        self,
+        action,
+        virtual_server_name,
+        name,
+        protocol,
+        port,
+        service_group_name,
+        s_pers_name=None,
+        c_pers_name=None,
+        status=1,
+        autosnat=False,
+        ipinip=False,
+        source_nat=None,
+        tcp_template=None,
+        udp_template=None,
+        **kwargs
+    ):
         params = {
             "name": virtual_server_name,
             "vport": self.minimal_dict({
                 "name": name,
                 "service_group": service_group_name,
-                "protocol": protocol,
+                "protocol": int(protocol),
                 "port": int(port),
                 "source_ip_persistence_template": s_pers_name,
                 "cookie_persistence_template": c_pers_name,
@@ -92,45 +104,101 @@ class VirtualPort(base.BaseV21):
             params['vport']['ip_in_ip'] = int(ipinip)
         if source_nat and len(source_nat) > 0:
             params['vport']['source_nat'] = source_nat
+        if tcp_template:
+            params['vport']['tcp_template'] = tcp_template
+        if udp_template:
+            params['vport']['udp_template'] = udp_template
 
-        self._post(action, params, **kwargs)
+        return self._post(action, params, **kwargs)
 
     def get(self, virtual_server_name, name, protocol, port, **kwargs):
         # There is no slb.virtual_server.vport.search.
         # Instead, we get the virtual server and get the desired vport.
         results = self._post('slb.virtual_server.search', {'name': virtual_server_name}, **kwargs)
 
-        vports = results.get("virtual_server").get("vport_list", [])
-        port_filter = lambda x: x.get("name") == name
-        filtered_vports = [vport for vport in vports if port_filter(vport)]
-        if len(filtered_vports) > 0:
-            return filtered_vports[0]
+        vport_list = results.get("virtual_server", []).get("vport_list", [])
+        vport = None
+        for vport_dict in vport_list:
+            if (
+                vport_dict.get("name", None) == name and
+                vport_dict.get("protocol", None) == int(protocol) and
+                vport_dict.get("port", None) == int(port)
+            ):
+                vport = vport_dict
+        if vport is not None:
+            return vport
+        else:
+            raise acos_errors.NotFound()
 
-    def create(self, virtual_server_name, name, protocol, port,
-               service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1,
-               autosnat=False,
-               ipinip=False,
-               source_nat_pool=None,
-               **kwargs):
-        self._set('slb.virtual_server.vport.create', virtual_server_name,
-                  name, protocol, port, service_group_name,
-                  s_pers_name, c_pers_name, status,
-                  autosnat=autosnat, ipinip=ipinip, source_nat=source_nat_pool,
-                  **kwargs)
+    def create(
+        self,
+        virtual_server_name,
+        name,
+        protocol,
+        port,
+        service_group_name,
+        s_pers_name=None,
+        c_pers_name=None,
+        status=1,
+        autosnat=False,
+        ipinip=False,
+        source_nat_pool=None,
+        tcp_template=None,
+        udp_template=None,
+        **kwargs
+    ):
+        return self._set(
+            'slb.virtual_server.vport.create',
+            virtual_server_name,
+            name,
+            protocol,
+            port,
+            service_group_name,
+            s_pers_name,
+            c_pers_name,
+            status,
+            autosnat=autosnat,
+            ipinip=ipinip,
+            source_nat=source_nat_pool,
+            tcp_template=tcp_template,
+            udp_template=udp_template,
+            **kwargs
+        )
 
-    def update(self, virtual_server_name, name, protocol, port,
-               service_group_name,
-               s_pers_name=None, c_pers_name=None, status=1,
-               autosnat=False,
-               ipinip=False,
-               source_nat_pool=None,
-               **kwargs):
-            self._set('slb.virtual_server.vport.update', virtual_server_name,
-                      name, protocol, port, service_group_name,
-                      s_pers_name, c_pers_name, status,
-                      autosnat=autosnat, ipinip=ipinip, source_nat=source_nat_pool,
-                      **kwargs)
+    def update(
+        self,
+        virtual_server_name,
+        name,
+        protocol,
+        port,
+        service_group_name,
+        s_pers_name=None,
+        c_pers_name=None,
+        status=1,
+        autosnat=False,
+        ipinip=False,
+        source_nat_pool=None,
+        tcp_template=None,
+        udp_template=None,
+        **kwargs
+    ):
+            return self._set(
+                'slb.virtual_server.vport.update',
+                virtual_server_name,
+                name,
+                protocol,
+                port,
+                service_group_name,
+                s_pers_name,
+                c_pers_name,
+                status,
+                autosnat=autosnat,
+                ipinip=ipinip,
+                source_nat=source_nat_pool,
+                tcp_template=tcp_template,
+                udp_template=udp_template,
+                **kwargs
+            )
 
     def delete(self, virtual_server_name, name, protocol, port, **kwargs):
         params = {
@@ -141,4 +209,4 @@ class VirtualPort(base.BaseV21):
                 "port": int(port)
             }
         }
-        self._post("slb.virtual_server.vport.delete", params, **kwargs)
+        return self._post("slb.virtual_server.vport.delete", params, **kwargs)

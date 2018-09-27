@@ -31,7 +31,7 @@ class VirtualServer(base.BaseV21):
         return self._post("slb.virtual_server.search", {'name': name},
                           **kwargs)
 
-    def _set(self, action, name, ip_address=None, status=1, vrid=None, **kwargs):
+    def _set(self, action, name, ip_address=None, status=1, vrid=None, template_virtual_server=None, **kwargs):
         params = {
             "virtual_server": self.minimal_dict({
                 "name": name,
@@ -40,20 +40,23 @@ class VirtualServer(base.BaseV21):
             }),
         }
         if vrid:
-            params['virtual_server']['vrid'] = vrid
+            params['virtual_server']['vrid'] = int(vrid)
+        if template_virtual_server:
+            params['virtual_server']['vip_template'] = str(template_virtual_server)
 
         return self._post(action, params, **kwargs)
 
-    def create(self, name, ip_address, status=1, vrid=None, **kwargs):
-        return self._set("slb.virtual_server.create", name, ip_address, status,
-                         vrid=vrid, **kwargs)
+    def create(self, name, ip_address, status=1, vrid=None, template_virtual_server=None, **kwargs):
+        return self._set(
+            "slb.virtual_server.create", name, ip_address, status, vrid, template_virtual_server, **kwargs
+        )
 
-    def update(self, name, ip_address=None, status=1, vrid=None, **kwargs):
-        return self._set("slb.virtual_server.update", name, ip_address, status,
-                         vrid=vrid, **kwargs)
+    def update(self, name, ip_address=None, status=1, vrid=None, template_virtual_server=None, **kwargs):
+        return self._set(
+            "slb.virtual_server.update", name, ip_address, status, vrid, template_virtual_server, **kwargs)
 
     def delete(self, name, **kwargs):
-        self._post("slb.virtual_server.delete", {"name": name}, **kwargs)
+        return self._post("slb.virtual_server.delete", {"name": name}, **kwargs)
 
     def stats(self, name, **kwargs):
         return self._post("slb.virtual_server.fetchStatistics", {"name": name},
