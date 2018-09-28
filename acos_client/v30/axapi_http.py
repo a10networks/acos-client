@@ -116,9 +116,6 @@ class HttpClient(object):
                 device_response = session_request(
                     self.url_base + api_url, verify=False, data=payload, headers=request_headers, timeout=timeout
                 )
-        except (ConnectionError) as conn_ex:
-            LOG.info("Connection error")
-            raise conn_ex
         except (Exception) as e:
             LOG.error("acos_client failing with error %s after %s retries", e.__class__.__name__, max_retries)
             raise e
