@@ -14,9 +14,12 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import logging
 import time
 
 from acos_client import errors as ae
+
+LOG = logging.getLogger(__name__)
 
 
 class BaseV30(object):
@@ -25,6 +28,9 @@ class BaseV30(object):
         self.client = client
         self.http = client.http
         self.auth_header = {}
+        self.allow_retry = client.allow_retry
+        self.max_retries = client.max_retries
+        self.timeout = client.timeout
 
     def minimal_dict(self, my_dict, exclude=[]):
         return dict((k, v) for k, v in my_dict.items() if v is not None or k in exclude)

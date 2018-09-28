@@ -18,6 +18,8 @@ from __future__ import unicode_literals
 import json
 import logging
 from requests.adapters import HTTPAdapter
+from requests import ConnectionError
+from requests.packages.urllib3.util.retry import Retry
 from requests import Session
 import six
 
@@ -38,7 +40,7 @@ class HttpClient(object):
         "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
-    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=5):
+    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=5, retry_wait=5, allow_retry=False):
         if port is None:
             if protocol is 'http':
                 self.port = 80
@@ -50,6 +52,8 @@ class HttpClient(object):
         self.url_base = "%s://%s:%s" % (protocol, host, self.port)
         self.max_retries = max_retries
         self.timeout = timeout
+        self.retry_wait = retry_wait
+        self.allow_retry = allow_retry
 
     def request(self, method, api_url, params={}, headers=None,
                 file_name=None, file_content=None, axapi_args=None, **kwargs):
@@ -98,10 +102,8 @@ class HttpClient(object):
 
         # Create session to set HTTPAdapter or SSLAdapter and set max_retries
         session = Session()
-        if self.port == 443:
-            session.mount('https://', HTTPAdapter(max_retries=max_retries))
-        else:
-            session.mount('http://', HTTPAdapter(max_retries=max_retries))
+        session_protocol = "https" if self.port == 443 else "http"
+        session = self.requests_retry_session(session, protocol=session_protocol)
         session_request = getattr(session, method.lower())
 
         # Make actual request and handle any errors
@@ -114,6 +116,9 @@ class HttpClient(object):
                 device_response = session_request(
                     self.url_base + api_url, verify=False, data=payload, headers=request_headers, timeout=timeout
                 )
+        except (ConnectionError) as conn_ex:
+            LOG.info("Connection error")
+            raise conn_ex
         except (Exception) as e:
             LOG.error("acos_client failing with error %s after %s retries", e.__class__.__name__, max_retries)
             raise e
@@ -153,3 +158,20 @@ class HttpClient(object):
 
     def delete(self, api_url, params={}, headers=None, **kwargs):
         return self.request("DELETE", api_url, params, headers, **kwargs)
+
+    # Shamelessly cribbed from https://www.peterbe.com/plog/best-practice-with-retries-with-requests
+    def requests_retry_session(self, session=None, retries=3, backoff_factor=0.3, status_forcelist=(500, 502, 504),
+                               protocol="https"):
+        session = session or Session()
+        retry = Retry(
+            total=retries,
+            read=retries,
+            connect=retries,
+            backoff_factor=backoff_factor,
+            status_forcelist=status_forcelist
+        )
+        adapter = HTTPAdapter(max_retries=retry)
+        session_prot = "{0}://".format(protocol)
+        session.mount(session_prot, adapter)
+
+        return session

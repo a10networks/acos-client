@@ -101,7 +101,8 @@ class Client(object):
             max_retries=3,     # number of times to retry a connection before giving up
             port=None,         # TCP port to use for connecting to the A10 device
             protocol="https",  # transport protocol - http or https, encryption recommended
-            timeout=5          # seconds to wait for return data before giving up
+            timeout=5,         # seconds to wait for return data before giving up,
+            allow_retry=False  # Flag to set whether we allow retry for general requests
     ):
         self._version = self._just_digits(version)
         if self._version not in acos_client.AXAPI_VERSIONS:
@@ -115,6 +116,7 @@ class Client(object):
         )
         self.session = VERSION_IMPORTS[self._version]['Session'](self, username, password)
         self.current_partition = 'shared'
+        self.allow_retry = allow_retry
 
     def _just_digits(self, s):
         return ''.join(i for i in str(s) if i.isdigit())
