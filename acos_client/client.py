@@ -50,6 +50,7 @@ from acos_client.v30.slb import SLB as v30_SLB
 from acos_client.v30.system import System as v30_System
 from acos_client.v30.vlan import Vlan as v30_Vlan
 from acos_client.v30.vrrpa.vrid import VRID as v30_VRRPA
+from acos_client.v30.device_context import DeviceContext as v30_DeviceContext
 
 VERSION_IMPORTS = {
     '21': {
@@ -83,7 +84,8 @@ VERSION_IMPORTS = {
         'System': v30_System,
         'File': v30_File,
         'Vlan': v30_Vlan,
-        'VRRPA': v30_VRRPA
+        'VRRPA': v30_VRRPA,
+        'DeviceContext': v30_DeviceContext
     },
 }
 
@@ -174,6 +176,10 @@ class Client(object):
     @property
     def vrrpa(self):
         return VERSION_IMPORTS[self._version]["VRRPA"](self)
+
+    @property
+    def device_context(self):
+        return VERSION_IMPORTS[self._version]["DeviceContext"](self)
 
     def wait_for_connect(self, max_timeout=60):
         for i in six.moves.range(0, max_timeout):

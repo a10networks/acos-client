@@ -23,7 +23,7 @@ class RIB(base.BaseV30):
     url_prefix = "/ip/route/rib"
 
     def create(self, destination, mask, next_hops=[]):
-        """Create route to {destination} {mask} using {next_hops} expressed as (gateway, distance)"""
+        """Creat route to {destination} {mask} using {next_hops} expressed as (gateway, distance)"""
         payload = {
             "rib": self._build_payload(destination, mask, next_hops)
         }
