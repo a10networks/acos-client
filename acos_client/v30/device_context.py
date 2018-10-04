@@ -35,6 +35,5 @@ class DeviceContext(base.BaseV30):
         payload = {
             "device-id": device_id
         }
-        
+
         return payload
-    
