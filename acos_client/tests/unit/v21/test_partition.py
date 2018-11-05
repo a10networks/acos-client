@@ -116,7 +116,7 @@ class TestPartition(unittest.TestCase):
 
     @responses.activate
     def test_system_partition_search_not_found(self):
-        responses.add(responses.POST, SEARCH_URL, json={'session_id': 'foobar'})
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {
             "response": {"status": "fail", "err": {"code": 520749062, "msg": " Partition does not exist."}}
         }

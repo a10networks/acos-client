@@ -119,7 +119,7 @@ class TestSLBServerGroup(unittest.TestCase):
 
     @responses.activate
     def test_server_group_search_not_found(self):
-        responses.add(responses.POST, SEARCH_URL, json={'session_id': 'foobar'})
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {
             "response": {"status": "fail", "err": {"code": 67305473, "msg": " No such service group"}}
         }

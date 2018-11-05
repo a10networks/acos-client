@@ -117,7 +117,7 @@ class TestSLBTemplateCookiePersistence(unittest.TestCase):
 
     @responses.activate
     def test_slb_template_persistence_search_not_found(self):
-        responses.add(responses.POST, SEARCH_URL, json={'session_id': 'foobar'})
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {
             'response': {'status': 'fail', 'err': {'code': 67371009, 'msg': ' No such Template'}}
         }
