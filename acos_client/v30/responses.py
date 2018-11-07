@@ -190,6 +190,11 @@ RESPONSE_CODES = {
             '*': ae.NotFound
         }
     },
+    1208008960: {
+        "*": {
+            "/axapi/v3/logon": ae.AuthenticationFailure
+        }
+    },
     4294967295: {
         '*': {
             '*': ae.ConfigManagerNotReady
