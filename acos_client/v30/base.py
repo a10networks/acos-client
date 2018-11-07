@@ -15,6 +15,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import time
+import six
 import ipaddress
 
 from acos_client import errors as ae
@@ -73,5 +74,5 @@ class BaseV30(object):
         return self._request('DELETE', action, params, **kwargs)
 
     def _is_ipv6(self, ip_address):
-        validated_ip_address = ipaddress.ip_address(unicode(ip_address))
+        validated_ip_address = ipaddress.ip_address(six.text_type(ip_address))
         return isinstance(validated_ip_address, ipaddress.IPv6Address)
