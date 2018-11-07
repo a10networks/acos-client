@@ -40,10 +40,14 @@ class VirtualServer(base.BaseV30):
         params = {
             "virtual-server": self.minimal_dict({
                 "name": name,
-                "ip-address": ip_address,
                 "arp-disable": int(arp_disable)
             }),
         }
+        if self._is_ipv6(ip_address):
+            params['virtual-server']['ipv6-address'] = ip_address
+        else:
+            params['virtual-server']['ip-address'] = ip_address
+
         if vrid:
             params['virtual-server']['vrid'] = int(vrid)
         if template_virtual_server:

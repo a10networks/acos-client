@@ -32,12 +32,16 @@ class Server(base.BaseV30):
         params = {
             "server": {
                 "name": name,
-                "host": ip_address,
                 "action": 'enable' if status else 'disable',
                 "conn-resume": kwargs.get("conn_resume", None),
                 "conn-limit": kwargs.get("conn_limit", 8000000),
             }
         }
+
+        if self._is_ipv6(ip_address):
+            params['server']['server-ipv6-addr'] = ip_address
+        else:
+            params['server']['host'] = ip_address
 
         config_defaults = kwargs.get("config_defaults")
 
@@ -59,12 +63,16 @@ class Server(base.BaseV30):
         params = {
             "server": {
                 "name": name,
-                "host": ip_address,
                 "action": 'enable' if status else 'disable',
                 "conn-resume": kwargs.get("conn_resume", None),
                 "conn-limit": kwargs.get("conn_limit", 8000000),
             }
         }
+
+        if self._is_ipv6(ip_address):
+            params['server']['server-ipv6-addr'] = ip_address
+        else:
+            params['server']['host'] = ip_address
 
         self.get(name, **kwargs)
 
