@@ -133,8 +133,8 @@ class TestVirtualPort(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
 
-    @responses.activate
     @mock.patch('acos_client.v30.slb.virtual_port.VirtualPort.get')
+    @responses.activate
     def test_virtual_port_update_no_params(self, mocked_get):
         mocked_get.return_value = {"foo": "bar"}
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
@@ -165,8 +165,8 @@ class TestVirtualPort(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-    @responses.activate
     @mock.patch('acos_client.v30.slb.virtual_port.VirtualPort.get')
+    @responses.activate
     def test_virtual_port_update_with_params(self, mocked_get):
         mocked_get.return_value = {"foo": "bar"}
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
