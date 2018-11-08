@@ -36,7 +36,7 @@ parser.add_argument('--partition', default='shared', choices=['shared', 'p1', 'p
 ARGS = parser.parse_args()
 
 
-partitions = ['shared', 'p1', 'p2']
+partitions = ['shared', 'p1', 'p2', 'ipv6']
 partition_map = {
     'shared': {
         'name': 'shared',
@@ -60,7 +60,15 @@ partition_map = {
         'vip1': '192.168.2.230',
         'vip2': '192.168.2.229',
         'vip3': '192.168.2.228',
-        'vip4': '192.168.2.228'
+        'vip4': '192.168.2.227'
+    },
+    'ipv6': {
+        'name': 'ipv6',
+        's1': '2001:db8::1001',
+        'vip1': '2001:db8:feed::5001',
+        'vip2': '2001:db8:feed::5002',
+        'vip3': '2001:db8:feed::5003',
+        'vip4': '2001:db8:feed::5004',
     },
 }
 
