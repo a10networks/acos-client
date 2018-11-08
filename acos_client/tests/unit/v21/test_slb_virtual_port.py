@@ -267,8 +267,8 @@ class TestVirtualPort(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, DELETE_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-    @responses.activate
     @mock.patch('acos_client.v21.slb.virtual_port.VirtualPort._post')
+    @responses.activate
     def test_virtual_port_search(self, mocked__post):
         mocked__post.return_value = {
             'virtual_server': {
