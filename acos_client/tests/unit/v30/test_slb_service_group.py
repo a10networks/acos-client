@@ -1,0 +1,173 @@
+# Copyright 2014-2016, A10 Networks.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
+try:
+    import unittest
+    from unittest import mock
+except ImportError:
+    import mock
+    import unittest2 as unittest
+
+from acos_client import client
+import acos_client.errors as acos_errors
+import responses
+
+
+HOSTNAME = 'fake_a10'
+BASE_URL = 'https://{}:443/axapi/v3'.format(HOSTNAME)
+AUTH_URL = '{}/auth'.format(BASE_URL)
+SERVICE_GROUP_NAME = 'test1'
+CREATE_URL = '{}/slb/service-group/'.format(BASE_URL)
+OBJECT_URL = '{}/slb/service-group/{}'.format(BASE_URL, SERVICE_GROUP_NAME)
+
+
+class TestVirtualServer(unittest.TestCase):
+
+    def setUp(self):
+        self.client = client.Client(HOSTNAME, '30', 'fake_username', 'fake_password')
+
+    @mock.patch('acos_client.v30.slb.service_group.ServiceGroup.get')
+    @responses.activate
+    def test_server_group_create(self, mocked_get):
+        mocked_get.side_effect = acos_errors.NotFound
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+
+        resp = self.client.slb.service_group.create('test1')
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 4)
+        self.assertEqual(responses.calls[3].request.method, responses.POST)
+        self.assertEqual(responses.calls[3].request.url, CREATE_URL)
+
+    @mock.patch('acos_client.v30.slb.service_group.ServiceGroup.get')
+    @responses.activate
+    def test_server_group_create_already_exists(self, mocked_get):
+        mocked_get.return_value = {"foo": "bar"}
+
+        with self.assertRaises(acos_errors.Exists):
+            self.client.slb.service_group.create('test1')
+
+    @responses.activate
+    def test_server_group_update(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.POST, OBJECT_URL, json=json_response, status=200)
+
+        resp = self.client.slb.service_group.update('test1')
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
+
+    @responses.activate
+    def test_server_group_delete(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.DELETE, OBJECT_URL, json=json_response, status=200)
+
+        resp = self.client.slb.service_group.delete('test1')
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.DELETE)
+        self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
+
+    @responses.activate
+    def test_server_group_delete_not_found(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {
+            "response": {"status": "fail", "err": {"code": 67239937, "msg": " No such Virtual Server"}}
+        }
+        responses.add(responses.DELETE, OBJECT_URL, json=json_response, status=200)
+
+        with self.assertRaises(acos_errors.ACOSException):
+            self.client.slb.service_group.delete('test1')
+
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.DELETE)
+        self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
+
+    @responses.activate
+    def test_server_group_stats(self):
+        STATS_URL = '{}/slb/service-group/{}/stats'.format(BASE_URL, SERVICE_GROUP_NAME)
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.GET, STATS_URL, json=json_response, status=200)
+
+        resp = self.client.slb.service_group.stats('test1')
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.GET)
+        self.assertEqual(responses.calls[1].request.url, STATS_URL)
+
+    @responses.activate
+    def test_server_group_oper(self):
+        OPER_URL = '{}/slb/service-group/{}/oper'.format(BASE_URL, SERVICE_GROUP_NAME)
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.GET, OPER_URL, json=json_response, status=200)
+
+        resp = self.client.slb.service_group.oper('test1')
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.GET)
+        self.assertEqual(responses.calls[1].request.url, OPER_URL)
+
+    @responses.activate
+    def test_server_group_all(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.GET, CREATE_URL, json=json_response, status=200)
+
+        resp = self.client.slb.service_group.all('test1')
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.GET)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+
+    @responses.activate
+    def test_server_group_all_stats(self):
+        ALL_STATS_URL = '{}/slb/service-group/stats'.format(BASE_URL)
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.GET, ALL_STATS_URL, json=json_response, status=200)
+
+        resp = self.client.slb.service_group.all_stats('test1')
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.GET)
+        self.assertEqual(responses.calls[1].request.url, ALL_STATS_URL)
+
+    @responses.activate
+    def test_server_group_all_oper(self):
+        ALL_OPER_URL = '{}/slb/service-group/oper'.format(BASE_URL)
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.GET, ALL_OPER_URL, json=json_response, status=200)
+
+        resp = self.client.slb.service_group.all_oper('test1')
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.GET)
+        self.assertEqual(responses.calls[1].request.url, ALL_OPER_URL)
