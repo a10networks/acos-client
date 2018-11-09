@@ -14,9 +14,9 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import time
-import six
 import ipaddress
+import six
+import time
 
 from acos_client import errors as ae
 

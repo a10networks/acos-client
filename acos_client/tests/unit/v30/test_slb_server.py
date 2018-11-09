@@ -66,7 +66,6 @@ class TestServer(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-
     @mock.patch('acos_client.v30.slb.server.Server.get')
     @responses.activate
     def test_server_create_already_exists(self, mocked_get):
@@ -74,7 +73,6 @@ class TestServer(unittest.TestCase):
 
         with self.assertRaises(acos_errors.Exists):
             self.client.slb.server.create('test', '192.168.2.254')
-
 
     @responses.activate
     def test_server_delete(self):
@@ -168,7 +166,6 @@ class TestIPv6Server(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-
     @mock.patch('acos_client.v30.slb.server.Server.get')
     @responses.activate
     def test_server_create_already_exists(self, mocked_get):
@@ -176,7 +173,6 @@ class TestIPv6Server(unittest.TestCase):
 
         with self.assertRaises(acos_errors.Exists):
             self.client.slb.server.create('test', '2001:baad:deed:bead:daab:daad:cead:100e')
-
 
     @responses.activate
     def test_server_delete(self):
@@ -211,7 +207,8 @@ class TestIPv6Server(unittest.TestCase):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {
             'server': {
-                'status': 1, 'conn_resume': 0, 'weight': 1, 'conn_limit': 8000000, 'server-ipv6-addr': '2001:baad:deed:bead:daab:aad:cead:100e',
+                'status': 1, 'conn_resume': 0, 'weight': 1, 'conn_limit': 8000000,
+                'server-ipv6-addr': '2001:baad:deed:bead:daab:aad:cead:100e',
                 'spoofing_cache': 0, 'port_list': [], 'gslb_external_address': '0.0.0.0', 'slow_start': 0,
                 'name': 's1', 'health_monitor': '(default)', 'extended_stats': 0, 'template': 'default',
                 'stats_data': 1, 'conn_limit_log': 0
