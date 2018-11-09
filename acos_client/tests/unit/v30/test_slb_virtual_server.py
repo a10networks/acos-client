@@ -242,8 +242,8 @@ class TestIPv6VirtualServer(unittest.TestCase):
     def setUp(self):
         self.client = client.Client(HOSTNAME, '30', 'fake_username', 'fake_password')
 
-    @responses.activate
     @mock.patch('acos_client.v30.slb.virtual_server.VirtualServer.get')
+    @responses.activate
     def test_virtual_server_create_no_params(self, mocked_get):
         mocked_get.side_effect = acos_errors.NotFound
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
@@ -265,8 +265,8 @@ class TestIPv6VirtualServer(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-    @responses.activate
     @mock.patch('acos_client.v30.slb.virtual_server.VirtualServer.get')
+    @responses.activate
     def test_virtual_server_create_with_params(self, mocked_get):
         mocked_get.side_effect = acos_errors.NotFound
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
@@ -296,8 +296,8 @@ class TestIPv6VirtualServer(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-    @responses.activate
     @mock.patch('acos_client.v30.slb.virtual_server.VirtualServer.get')
+    @responses.activate
     def test_virtual_server_create_already_exists(self, mocked_get):
         mocked_get.return_value = {"foo": "bar"}
 

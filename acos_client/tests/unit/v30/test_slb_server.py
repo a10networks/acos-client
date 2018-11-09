@@ -41,8 +41,8 @@ class TestServer(unittest.TestCase):
     def setUp(self):
         self.client = client.Client(HOSTNAME, '30', 'fake_username', 'fake_password')
 
-    @responses.activate
     @mock.patch('acos_client.v30.slb.server.Server.get')
+    @responses.activate
     def test_server_create(self, mocked_get):
         mocked_get.side_effect = acos_errors.NotFound
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
@@ -67,8 +67,8 @@ class TestServer(unittest.TestCase):
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
 
-    @responses.activate
     @mock.patch('acos_client.v30.slb.server.Server.get')
+    @responses.activate
     def test_server_create_already_exists(self, mocked_get):
         mocked_get.return_value = {"foo": "bar"}
 
@@ -143,8 +143,8 @@ class TestIPv6Server(unittest.TestCase):
     def setUp(self):
         self.client = client.Client(HOSTNAME, '30', 'fake_username', 'fake_password')
 
-    @responses.activate
     @mock.patch('acos_client.v30.slb.server.Server.get')
+    @responses.activate
     def test_server_create(self, mocked_get):
         mocked_get.side_effect = acos_errors.NotFound
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
@@ -169,8 +169,8 @@ class TestIPv6Server(unittest.TestCase):
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
 
-    @responses.activate
     @mock.patch('acos_client.v30.slb.server.Server.get')
+    @responses.activate
     def test_server_create_already_exists(self, mocked_get):
         mocked_get.return_value = {"foo": "bar"}
 
