@@ -97,3 +97,15 @@ class ConfigManagerNotReady(ACOSException):
 
 class DhcpAcquireFailed(ACOSException):
     pass
+
+
+class InvalidInteger(ACOSException):
+    pass
+
+
+class CertificateParsingFailed(ACOSException):
+    pass
+
+
+class KeyParsingFailed(ACOSException):
+    pass

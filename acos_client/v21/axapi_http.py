@@ -99,6 +99,8 @@ class HttpClient(object):
                 self.port = 80
             else:
                 self.port = 443
+        else:
+            self.port = port
         self.url_base = "%s://%s:%s" % (protocol, host, self.port)
         self.max_retries = max_retries
         self.timeout = timeout
