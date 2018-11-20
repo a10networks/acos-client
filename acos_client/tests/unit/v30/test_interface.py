@@ -27,7 +27,7 @@ from acos_client.v30 import interface
 class TestInterface(unittest.TestCase):
     def setUp(self):
         self.client = mock.MagicMock()
-        self.target = interface.Interface(self.client)
+        self.target = interface.GenericInterface(self.client)
         self.url_prefix = "/axapi/v3/interface/"
 
     def test_interface_get_list(self):
@@ -58,12 +58,6 @@ class TestInterface(unittest.TestCase):
         ip_netmask = "255.255.255.0"
         self.target.create(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask)
         self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
-                                                    mock.ANY, mock.ANY)
-
-    def test_interface_delete(self):
-        ifnum = 1
-        self.target.delete(1)
-        self.client.http.request.assert_called_with("DELETE", self.url_prefix + str(ifnum),
                                                     mock.ANY, mock.ANY)
 
     def test_interface_update(self):

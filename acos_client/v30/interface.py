@@ -17,12 +17,33 @@ from __future__ import unicode_literals
 from acos_client.v30 import base
 
 
-class Interface(base.BaseV30):
+class Interface(object):
+    def __init__(self, client):
+        self.client = client
+
+    @property
+    def ethernet(self):
+        return EthernetInterface(self.client)
+
+    @property
+    def management(self):
+        return ManagementInterface(self.client)
+
+    @property
+    def lif(self):
+        return LogicalInterface(self.client)
+
+    @property
+    def ve(self):
+        return VirtualEthernet(self.client)
+
+
+class GenericInterface(base.BaseV30):
     iftype = "interface"
     url_prefix = "/interface/"
 
     def __init__(self, client):
-        super(Interface, self).__init__(client)
+        super(GenericInterface, self).__init__(client)
 
     def _url_from_ifnum(self, ifnum=None):
         return self.url_prefix + self._ifnum_to_str(ifnum)
@@ -60,10 +81,6 @@ class Interface(base.BaseV30):
     def get(self, ifnum=None):
         return self._get(self._url_from_ifnum(ifnum))
 
-    def delete(self, ifnum):
-        url = self.url_prefix + self._ifnum_to_str(ifnum)
-        return self._delete(url)
-
     def create(self, ifnum, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                speed="auto"):
 
@@ -83,24 +100,8 @@ class Interface(base.BaseV30):
         url = "{0}{1}/oper".format(self.url_prefix, ifnum)
         return self._get(url)
 
-    @property
-    def ethernet(self):
-        return EthernetInterface(self.client)
 
-    @property
-    def management(self):
-        return ManagementInterface(self.client)
-
-    @property
-    def lif(self):
-        return LogicalInterface(self.client)
-
-    @property
-    def ve(self):
-        return VirtualEthernet(self.client)
-
-
-class EthernetInterface(Interface):
+class EthernetInterface(GenericInterface):
     def __init__(self, client):
         super(EthernetInterface, self).__init__(client)
         self.iftype = "ethernet"
@@ -113,7 +114,7 @@ class EthernetInterface(Interface):
         return rv
 
 
-class ManagementInterface(Interface):
+class ManagementInterface(GenericInterface):
     def __init__(self, client):
         super(ManagementInterface, self).__init__(client)
         self.iftype = "management"
@@ -129,36 +130,32 @@ class ManagementInterface(Interface):
 
         return rv
 
-    def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
-               speed="auto", default_gateway=None):
+    def _modify(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
+                speed="auto", default_gateway=None):
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
                                       dhcp=dhcp, enable=enable, speed=speed,
                                       default_gateway=default_gateway)
         return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
                           payload)
+    
+    def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
+               speed="auto", default_gateway=None):
+        self._modify(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
+                     dhcp=dhcp, enable=enable, speed=speed,
+                     default_gateway=default_gateway)
 
     def update(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                speed="auto", default_gateway=None):
-        payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
-                                      dhcp=dhcp, enable=enable, speed=speed,
-                                      default_gateway=default_gateway)
-        return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
-                          payload)
+        self._modify(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
+                     dhcp=dhcp, enable=enable, speed=speed,
+                     default_gateway=default_gateway)
 
 
-class LogicalInterface(Interface):
+class LogicalInterface(GenericInterface):
     def __init__(self, client):
         super(LogicalInterface, self).__init__(client)
         self.iftype = "lif"
         self.url_prefix = "{0}{1}/".format(self.url_prefix, self.iftype)
-
-        def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
-                   speed="auto", default_gateway=None):
-            payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
-                                          dhcp=dhcp, enable=enable, speed=speed,
-                                          default_gateway=default_gateway)
-            return self._post(self.url_prefix,
-                              payload)
 
     def _build_payload(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False,
                        enable=None, speed="auto", default_gateway=None):
@@ -184,8 +181,28 @@ class LogicalInterface(Interface):
 
         return rv
 
+    def _modify(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
+                speed="auto", default_gateway=None):
+        payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
+                                      dhcp=dhcp, enable=enable, speed=speed,
+                                      default_gateway=default_gateway)
+        return self._post(self.url_prefix,
+                          payload)
 
-class VirtualEthernet(Interface):
+    def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
+               speed="auto", default_gateway=None):
+        self._modify(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
+                     dhcp=dhcp, enable=enable, speed=speed,
+                     default_gateway=default_gateway)
+
+    def update(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
+               speed="auto", default_gateway=None):
+        self._modify(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
+                     dhcp=dhcp, enable=enable, speed=speed,
+                     default_gateway=default_gateway)
+
+
+class VirtualEthernet(GenericInterface):
     def __init__(self, client):
         super(VirtualEthernet, self).__init__(client)
         self.iftype = "ve"
