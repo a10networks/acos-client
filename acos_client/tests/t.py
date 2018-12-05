@@ -27,6 +27,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 sys.path.append(".")
 
 
+partitions = ['shared', 'p1', 'p2', 'ipv6', 'ipv4-ipv6', 'ipv6-ipv4']
+
 parser = argparse.ArgumentParser(description='acos-client smoke test')
 parser.add_argument('host')
 parser.add_argument('--port', type=int, default=443)
@@ -34,11 +36,10 @@ parser.add_argument('--protocol', default='https')
 parser.add_argument('--user', default='admin')
 parser.add_argument('--password', default='a10')
 parser.add_argument('--axapi-version', required=True, choices=['2.1', '3.0'])
-parser.add_argument('--partition', default='shared', choices=['shared', 'p1', 'p2', 'ipv6', 'all'])
+parser.add_argument('--partition', default='shared', choices=partitions + ['all'])
 ARGS = parser.parse_args()
 
 
-partitions = ['shared', 'p1', 'p2', 'ipv6']
 partition_map = {
     'shared': {
         'name': 'shared',
@@ -71,6 +72,22 @@ partition_map = {
         'vip2': '2001:db8:feed::5002',
         'vip3': '2001:db8:feed::5003',
         'vip4': '2001:db8:feed::5004',
+    },
+    'ipv4-ipv6': {
+        'name': 'ipv4-ipv6',
+        's1': '192.168.46.254',
+        'vip1': '2001:db8:ee::4601',
+        'vip2': '2001:db8:ee::4602',
+        'vip3': '2001:db8:ee::4603',
+        'vip4': '2001:db8:ee::4604',
+    },
+    'ipv6-ipv4': {
+        'name': 'ipv6-ipv4',
+        's1': '2001:db8:ee:6401',
+        'vip1': '192.168.64.1',
+        'vip2': '192.168.64.2',
+        'vip3': '192.168.64.3',
+        'vip4': '192.168.64.4'
     },
 }
 
@@ -195,6 +212,8 @@ def run_all(ax, partition, pmap):
     try:
         c = get_client(ax, password='badpass')
         c.system.information()
+    except acos_client.errors.InvalidSessionID:
+        print("got Invalid Session ID, good")
     except acos_client.errors.AuthenticationFailure:
         print("got bad auth exception, good")
     else:
@@ -409,7 +428,7 @@ def run_all(ax, partition, pmap):
     # temp -- odd that we have to delete this vport
     try:
         c.slb.service_group.delete("pfoobar")
-    except acos_client.errors.NotExist:
+    except acos_client.errors.NotFound:
         print("sg pfoobar doesn't exist, that's OK")
 
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
@@ -426,7 +445,7 @@ def run_all(ax, partition, pmap):
     c.slb.service_group.update("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.LEAST_CONNECTION)
     try:
-        c.slb.service_group.update("pnfoobar", c.slb.service_group.TCP,
+        c.slb.service_group.update("pfoobar", c.slb.service_group.TCP,
                                    c.slb.service_group.LEAST_CONNECTION)
     except acos_client.errors.NotFound:
         print("got not found, good")
@@ -588,7 +607,7 @@ def run_all(ax, partition, pmap):
     else:
         raise Nope()
     try:
-        c.slb.service_group.member.update("pnfoobar", "foobar", 80)
+        c.slb.service_group.member.update("pfoobar", "foobar", 80)
     except acos_client.errors.NotFound:
         print("got not found, good")
     else:
