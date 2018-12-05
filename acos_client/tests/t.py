@@ -316,57 +316,60 @@ def run_all(ax, partition, pmap):
     print("=============================================================")
     print("")
     print("Client SSL Create")
+    if ARGS.axapi_version == "3.0":
+        try:
+            c.slb.template.client_ssl.delete(c_tmpl)
+        except acos_client.errors.NotFound:
+            print("got not found, OK")
 
-    try:
-        c.slb.template.client_ssl.delete(c_tmpl)
-    except acos_client.errors.NotFound:
-        print("got not found, OK")
-
-    c.slb.template.client_ssl.create(c_tmpl, c_cert, c_key)
-    c.slb.template.client_ssl.get(c_tmpl)
-    try:
         c.slb.template.client_ssl.create(c_tmpl, c_cert, c_key)
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    c.slb.template.client_ssl.update(c_tmpl, c_cert, c_key)
-
-    try:
-        c.slb.template.client_ssl.update("sns1", "cert1", "cert1")
-
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    c.slb.template.client_ssl.delete(c_tmpl)
-    c.slb.template.client_ssl.delete(c_tmpl)
-    try:
         c.slb.template.client_ssl.get(c_tmpl)
-    except acos_client.errors.NotFound:
-        print("got not found, good")
+        try:
+            c.slb.template.client_ssl.create(c_tmpl, c_cert, c_key)
+        except acos_client.errors.Exists:
+            print("got already exists error, good")
+        c.slb.template.client_ssl.update(c_tmpl, c_cert, c_key)
 
-    print("=============================================================")
-    print("")
-    print("Server SSL Create")
-    try:
-        c.slb.template.server_ssl.delete(s_tmpl)
-    except acos_client.errors.NotFound:
-        print("got not found, OK")
+        try:
+            c.slb.template.client_ssl.update("sns1", "cert1", "cert1")
 
-    c.slb.template.server_ssl.create(s_tmpl, s_cert, s_key)
-    c.slb.template.server_ssl.get(s_tmpl)
-    try:
+        except acos_client.errors.NotFound:
+            print("got not found, good")
+        c.slb.template.client_ssl.delete(c_tmpl)
+        c.slb.template.client_ssl.delete(c_tmpl)
+
+        try:
+            c.slb.template.client_ssl.get(c_tmpl)
+        except acos_client.errors.NotFound:
+            print("got not found, good")
+
+        print("=============================================================")
+        print("")
+        print("Server SSL Create")
+        try:
+            c.slb.template.server_ssl.delete(s_tmpl)
+        except acos_client.errors.NotFound:
+            print("got not found, OK")
+
         c.slb.template.server_ssl.create(s_tmpl, s_cert, s_key)
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    c.slb.template.server_ssl.update(s_tmpl, s_cert, s_key)
-    try:
-        c.slb.template.server_ssl.update("sns1", "cert1", "cert1")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-
-    c.slb.template.server_ssl.delete(s_tmpl)
-    try:
         c.slb.template.server_ssl.get(s_tmpl)
-    except acos_client.errors.NotFound:
-        print("got not found, good")
+    
+        try:
+            c.slb.template.server_ssl.create(s_tmpl, s_cert, s_key)
+        except acos_client.errors.Exists:
+            print("got already exists error, good")
+        c.slb.template.server_ssl.update(s_tmpl, s_cert, s_key)
+
+        try:
+            c.slb.template.server_ssl.update("sns1", "cert1", "cert1")
+        except acos_client.errors.NotFound:
+            print("got not found, good")
+
+        c.slb.template.server_ssl.delete(s_tmpl)
+        try:
+            c.slb.template.server_ssl.get(s_tmpl)
+        except acos_client.errors.NotFound:
+            print("got not found, good")
 
     print("=============================================================")
     print("")
