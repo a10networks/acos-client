@@ -256,6 +256,4 @@ class TestVirtualServer(unittest.TestCase):
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
-        self.assertEqual(json.loads(responses.calls[1].request.body), params)
-
-        self.assertTrue("arp-disable" not in params)
+        self.assertTrue("arp-disable" not in params["virtual-server"])
