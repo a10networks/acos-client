@@ -104,7 +104,7 @@ RESPONSE_CODES = {
     },
     1023459335: {
         '*': {
-            '*': ae.Exists
+            '*': ae.FeatureNotSupported
         }
     },
     1023460352: {

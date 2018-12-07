@@ -14,6 +14,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from __future__ import print_function
+
 import acos_client
 
 import argparse
@@ -83,7 +85,7 @@ partition_map = {
     },
     'ipv6-ipv4': {
         'name': 'ipv6-ipv4',
-        's1': '2001:db8:ee:6401',
+        's1': '2001:db8:ee::6401',
         'vip1': '192.168.64.1',
         'vip2': '192.168.64.2',
         'vip3': '192.168.64.3',
@@ -204,7 +206,7 @@ def run_all(ax, partition, pmap):
     print("WAIT FOR CONNECT END")
 
     r = c.system.information()
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
 
     print("=============================================================")
     print("")
@@ -242,8 +244,14 @@ def run_all(ax, partition, pmap):
     print("=============================================================")
     print("")
     print("About to do a close with bad session id")
-    c.session.session_id = 'bad_session_id'
-    c.session.close()
+    try:
+        c.session.session_id = 'bad_session_id'
+        c.session.close()
+    except acos_client.errors.InvalidSessionID:
+        print("got Invalid Session ID, good")
+    else:
+        if ARGS.axapi_version == "3.0":
+            raise Nope()
 
     # print("=============================================================")
     # print("")
@@ -269,14 +277,14 @@ def run_all(ax, partition, pmap):
 
     print("=============================================================")
     print("")
-    print("About to search for partition")
+    print("About to search for partition ", partition)
 
     p_exists = c.system.partition.exists(partition)
-    print("LIBRARY RESPONSE = %s", p_exists)
+    print("LIBRARY RESPONSE = %s" % p_exists)
 
     print("=============================================================")
     print("")
-    print("About to make partition active (not exist, if not shared)")
+    print("About to make partition %s active (not exist, if not shared)" % partition)
 
     try:
         c.system.partition.active(partition)
@@ -285,7 +293,7 @@ def run_all(ax, partition, pmap):
 
     print("=============================================================")
     print("")
-    print("About to create partition")
+    print("About to create partition", partition)
 
     if not p_exists:
         c.system.partition.create(partition)
@@ -297,7 +305,7 @@ def run_all(ax, partition, pmap):
 
     print("=============================================================")
     print("")
-    print("About to make partition active")
+    print("About to make partition %s active" % partition)
 
     c.system.partition.active(partition)
 
@@ -398,7 +406,7 @@ def run_all(ax, partition, pmap):
     c.slb.server.delete("foobar")
     c.slb.server.create("foobar", pmap['s1'])
     r = c.slb.server.get("foobar")
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
     try:
         c.slb.server.create("foobar", pmap['s1'])
     except acos_client.errors.Exists:
@@ -434,7 +442,7 @@ def run_all(ax, partition, pmap):
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.ROUND_ROBIN)
     r = c.slb.service_group.get("pfoobar")
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
     try:
         c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                    c.slb.service_group.ROUND_ROBIN)
@@ -445,7 +453,7 @@ def run_all(ax, partition, pmap):
     c.slb.service_group.update("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.LEAST_CONNECTION)
     try:
-        c.slb.service_group.update("pfoobar", c.slb.service_group.TCP,
+        c.slb.service_group.update("pnfoobar", c.slb.service_group.TCP,
                                    c.slb.service_group.LEAST_CONNECTION)
     except acos_client.errors.NotFound:
         print("got not found, good")
@@ -472,9 +480,9 @@ def run_all(ax, partition, pmap):
     c.slb.virtual_server.delete("vfoobar")
     c.slb.virtual_server.create("vfoobar", pmap['vip1'])
     r = c.slb.virtual_server.get("vfoobar")
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
     r = c.slb.virtual_server.all()
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
     try:
         c.slb.virtual_server.create("vfoobar", pmap['vip1'])
     except acos_client.errors.Exists:
@@ -535,7 +543,7 @@ def run_all(ax, partition, pmap):
     c.slb.hm.delete("hfoobar")
     c.slb.hm.create("hfoobar", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200', 80)
     r = c.slb.hm.get("hfoobar")
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
     try:
         c.slb.hm.create("hfoobar", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200',
                         80)
@@ -607,7 +615,7 @@ def run_all(ax, partition, pmap):
     else:
         raise Nope()
     try:
-        c.slb.service_group.member.update("pfoobar", "foobar", 80)
+        c.slb.service_group.member.update("pnfoobar", "foobar", 80)
     except acos_client.errors.NotFound:
         print("got not found, good")
     else:
@@ -627,7 +635,7 @@ def run_all(ax, partition, pmap):
     else:
         raise Nope()
     r = c.slb.template.src_ip_persistence.get("sip1")
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
     c.slb.template.src_ip_persistence.exists("sip1")
     c.slb.template.src_ip_persistence.delete("sip1")
     c.slb.template.src_ip_persistence.delete("sip1")
@@ -754,21 +762,26 @@ def run_all(ax, partition, pmap):
         print("... Create")
         c.license_manager.create([lm_host])
     except NotImplementedError:
-
-        print("License Manager not implemented in %s " % ARGS.axapi_version)
+        print("License Manager not implemented in %s" % ARGS.axapi_version)
+    except acos_client.errors.FeatureNotSupported:
+        print("License Manager is not supported on this platform")
 
     try:
         print("... Get")
         c.license_manager.get()
     except NotImplementedError:
-        print("License Manager not implemented in %s " % ARGS.axapi_version)
+        print("License Manager not implemented in %s" % ARGS.axapi_version)
+    except acos_client.errors.FeatureNotSupported:
+        print("License Manager is not supported on this platform")
 
     lm_host["ip"] = "10.200.0.2"
     try:
         print("... Update")
         c.license_manager.update([lm_host])
     except NotImplementedError:
-        print("License Manager not implemented in %s " % ARGS.axapi_version)
+        print("License Manager not implemented in %s" % ARGS.axapi_version)
+    except acos_client.errors.FeatureNotSupported:
+        print("License Manager is not supported on this platform")
 
     if float(ARGS.axapi_version) >= 3.0:
         print("=============================================================")
@@ -859,9 +872,21 @@ def run_all(ax, partition, pmap):
     print("About half the time, delete the partition!")
 
     if int(random.random() * 2):
-        c.system.partition.delete(partition)
         try:
             c.system.partition.delete(partition)
+        except acos_client.errors.InUse:
+            if ARGS.axapi_version == "2.1":
+                print("AXAPI 2.1 can't delete partitions until admin session is cleared.")
+            else:
+                raise
+
+        try:
+            c.system.partition.delete(partition)
+        except acos_client.errors.InUse:
+            if ARGS.axapi_version == "2.1":
+                print("AXAPI 2.1 can't delete partitions until admin session is cleared.")
+            else:
+                raise
         except acos_client.errors.NotFound:
             pass
 

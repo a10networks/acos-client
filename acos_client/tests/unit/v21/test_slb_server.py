@@ -203,7 +203,8 @@ class TestIPv6Server(unittest.TestCase):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {
             'server': {
-                'status': 1, 'conn_resume': 0, 'weight': 1, 'conn_limit': 8000000, 'host': '2001:baad:deed:bead:daab:daad:cead:100e',
+                'status': 1, 'conn_resume': 0, 'weight': 1, 'conn_limit': 8000000,
+                'host': '2001:baad:deed:bead:daab:daad:cead:100e',
                 'spoofing_cache': 0, 'port_list': [], 'gslb_external_address': '0.0.0.0', 'slow_start': 0,
                 'name': 's1', 'health_monitor': '(default)', 'extended_stats': 0, 'template': 'default',
                 'stats_data': 1, 'conn_limit_log': 0

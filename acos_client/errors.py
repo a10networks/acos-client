@@ -109,3 +109,7 @@ class CertificateParsingFailed(ACOSException):
 
 class KeyParsingFailed(ACOSException):
     pass
+
+
+class FeatureNotSupported(ACOSException):
+    pass

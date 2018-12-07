@@ -50,7 +50,6 @@ class TestVirtualServer(unittest.TestCase):
         resp = self.client.slb.service_group.create('test1')
 
         self.assertEqual(resp, json_response)
-        # One for auth, one for post
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
