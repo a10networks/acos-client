@@ -235,3 +235,25 @@ class TestVirtualServer(unittest.TestCase):
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.GET)
         self.assertEqual(responses.calls[1].request.url, OPER_URL)
+
+    @mock.patch('acos_client.v30.slb.virtual_server.VirtualServer.get')
+    @responses.activate
+    def test_virtual_server_create_no_arp_disable(self, mocked_get):
+        mocked_get.side_effect = acos_errors.NotFound
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        params = {
+            'virtual-server': {
+                'ip-address': '192.168.2.254',
+                'name': VSERVER_NAME,
+            }
+        }
+
+        resp = self.client.slb.virtual_server.create('test', '192.168.2.254')
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertTrue("arp-disable" not in params["virtual-server"])

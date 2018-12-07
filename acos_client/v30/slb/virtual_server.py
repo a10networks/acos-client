@@ -41,7 +41,7 @@ class VirtualServer(base.BaseV30):
             "virtual-server": self.minimal_dict({
                 "name": name,
                 "ip-address": ip_address,
-                "arp-disable": int(arp_disable)
+                "arp-disable": None if arp_disable is None else int(arp_disable)
             }),
         }
         if vrid:
