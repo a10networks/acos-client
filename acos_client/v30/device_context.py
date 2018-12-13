@@ -11,10 +11,10 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-from acos_client.v30 import base
-
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
+from acos_client.v30 import base
 
 
 class DeviceContext(base.BaseV30):
