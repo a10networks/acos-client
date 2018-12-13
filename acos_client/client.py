@@ -35,6 +35,7 @@ from acos_client.v21.system import System as v21_System
 from acos_client.v21.vrrp_a import VRRPA as v21_VRRPA
 
 from acos_client.v30 import axapi_http as v30_http
+from acos_client.v30.device_context import DeviceContext as v30_DeviceContext
 from acos_client.v30.dns import DNS as v30_DNS
 from acos_client.v30.file import File as v30_File
 from acos_client.v30.ha import HA as v30_HA
@@ -50,7 +51,6 @@ from acos_client.v30.slb import SLB as v30_SLB
 from acos_client.v30.system import System as v30_System
 from acos_client.v30.vlan import Vlan as v30_Vlan
 from acos_client.v30.vrrpa.vrid import VRID as v30_VRRPA
-from acos_client.v30.device_context import DeviceContext as v30_DeviceContext
 
 VERSION_IMPORTS = {
     '21': {
