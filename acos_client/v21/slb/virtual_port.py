@@ -74,7 +74,7 @@ class VirtualPort(base.BaseV21):
         source_nat=None,
         ha_conn_mirror=None,
         no_dest_nat=None,
-        conn_limit=8000000,
+        conn_limit=None,
         tcp_template=None,
         udp_template=None,
         **kwargs
@@ -114,7 +114,7 @@ class VirtualPort(base.BaseV21):
             params['vport']['no-dest-nat'] = 1 if no_dest_nat else 0
         if ha_conn_mirror is not None:
             params['vport']['ha-conn-mirror'] = 1 if ha_conn_mirror else 0
-        if conn_limit:
+        if conn_limit is not None:
             if conn_limit > 0 and conn_limit <= 8000000:
                 params['vport']['conn-limit'] = conn_limit
 
@@ -154,7 +154,7 @@ class VirtualPort(base.BaseV21):
         source_nat_pool=None,
         ha_conn_mirror=None,
         no_dest_nat=None,
-        conn_limit=8000000,
+        conn_limit=None,
         tcp_template=None,
         udp_template=None,
         **kwargs
@@ -195,7 +195,7 @@ class VirtualPort(base.BaseV21):
         source_nat_pool=None,
         ha_conn_mirror=None,
         no_dest_nat=None,
-        conn_limit=8000000,
+        conn_limit=None,
         tcp_template=None,
         udp_template=None,
         **kwargs

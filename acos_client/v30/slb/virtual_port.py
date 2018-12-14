@@ -82,7 +82,7 @@ class VirtualPort(base.BaseV30):
         ipinip=False,
         source_nat_pool=None,
         ha_conn_mirror=None,
-        conn_limit=8000000,
+        conn_limit=None,
         tcp_template=None,
         udp_template=None,
         exclude_minimize=None,
@@ -90,7 +90,6 @@ class VirtualPort(base.BaseV30):
         **kwargs
     ):
         exclude_minimize = [] if exclude_minimize is None else exclude_minimize
-        
         params = {
             "port": self.minimal_dict({
                 "name": name,
@@ -135,7 +134,7 @@ class VirtualPort(base.BaseV30):
             params["port"]["no-dest-nat"] = 1 if no_dest_nat else 0
         if ha_conn_mirror is not None:
             params["port"]["ha-conn-mirror"] = 1 if ha_conn_mirror else 0
-        if conn_limit:
+        if conn_limit is not None:
             if conn_limit > 0 and conn_limit <= 8000000:
                 params["port"]["conn-limit"] = conn_limit
 
@@ -162,7 +161,7 @@ class VirtualPort(base.BaseV30):
         no_dest_nat=None,
         source_nat_pool=None,
         ha_conn_mirror=None,
-        conn_limit=8000000,
+        conn_limit=None,
         tcp_template=None,
         udp_template=None,
         **kwargs
@@ -203,7 +202,7 @@ class VirtualPort(base.BaseV30):
         no_dest_nat=None,
         source_nat_pool=None,
         ha_conn_mirror=None,
-        conn_limit=8000000,
+        conn_limit=None,
         tcp_template=None,
         udp_template=None,
         **kwargs
