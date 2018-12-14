@@ -112,12 +112,12 @@ class VirtualPort(base.BaseV21):
         if udp_template:
             params['vport']['udp_template'] = udp_template
         if no_dest_nat is not None:
-            params["port"]["no-dest-nat"] = 1 if no_dest_nat else 0
+            params['vport']['no-dest-nat'] = 1 if no_dest_nat else 0
         if ha_conn_mirror is not None:
-            params["port"]["ha-conn-mirror"] = 1 if ha_conn_mirror else 0
+            params['vport']['ha-conn-mirror'] = 1 if ha_conn_mirror else 0
         if conn_limit:
             if conn_limit > 0 and conn_limit <= 8000000:
-                params["port"]["conn-limit"] = conn_limit
+                params['vport']['conn-limit'] = conn_limit
 
         return self._post(action, params, **kwargs)
 
