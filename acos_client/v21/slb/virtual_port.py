@@ -91,7 +91,6 @@ class VirtualPort(base.BaseV21):
                 "status": status
             })
         }
-
         client_ssl_template = kwargs.get(self.CLIENT_SSL_TMPL_KEY)
         server_ssl_template = kwargs.get(self.SERVER_SSL_TMPL_KEY)
 
