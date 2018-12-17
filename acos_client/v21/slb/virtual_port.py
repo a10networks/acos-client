@@ -115,6 +115,7 @@ class VirtualPort(base.BaseV21):
         if ha_conn_mirror is not None:
             params['vport']['ha-conn-mirror'] = 1 if ha_conn_mirror else 0
         if conn_limit is not None:
+            conn_limit = int(conn_limit)
             if conn_limit > 0 and conn_limit <= 8000000:
                 params['vport']['conn-limit'] = conn_limit
 
