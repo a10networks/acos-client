@@ -50,9 +50,10 @@ class TestVirtualServer(unittest.TestCase):
         resp = self.client.slb.service_group.create('test1')
 
         self.assertEqual(resp, json_response)
-        self.assertEqual(len(responses.calls), 4)
-        self.assertEqual(responses.calls[3].request.method, responses.POST)
-        self.assertEqual(responses.calls[3].request.url, CREATE_URL)
+        # One for auth, one for post
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
 
     @mock.patch('acos_client.v30.slb.service_group.ServiceGroup.get')
     @responses.activate
