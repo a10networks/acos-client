@@ -47,7 +47,7 @@ class VirtualServer(base.BaseV30):
         if vrid:
             params['virtual-server']['vrid'] = int(vrid)
         if template_virtual_server:
-            params['virtual-server']['template_virtual_server'] = str(template_virtual_server)
+            params['virtual-server']['template-virtual-server'] = str(template_virtual_server)
 
         config_defaults = kwargs.get("config_defaults")
         if config_defaults:
