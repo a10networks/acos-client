@@ -3,6 +3,9 @@ acos-client CHANGELOG
 ---------------------------
 
 acos-client. Changes tracked from 1.4.2 > onward
+* 1.4.6
+* Fixed duplicate SG creation bug.
+
 * 1.4.5
 - Fixed arp-disable defaulting to true when present in payload
 - Improved unit test coverage for SLB modules
