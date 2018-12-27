@@ -14,6 +14,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+from acos_client import errors as acos_errors
 from acos_client.v30 import base
 
 
@@ -60,6 +61,13 @@ class Interface(base.BaseV30):
     def get(self, ifnum=None):
         return self._get(self._url_from_ifnum(ifnum))
 
+    def exists(self, ifnum=None):
+        try:
+            self.get(ifnum)
+            return True
+        except acos_errors.NotFound:
+            return False        
+
     def delete(self, ifnum):
         url = self.url_prefix + self._ifnum_to_str(ifnum)
         return self._delete(url)
@@ -69,8 +77,7 @@ class Interface(base.BaseV30):
 
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
                                       dhcp=dhcp, enable=enable, speed=speed)
-        return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
-                          payload)
+        return self._post(self.url_prefix, payload)
 
     def update(self, ifnum, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                speed="auto"):
@@ -152,13 +159,13 @@ class LogicalInterface(Interface):
         self.iftype = "lif"
         self.url_prefix = "{0}{1}/".format(self.url_prefix, self.iftype)
 
-        def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
+    def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                    speed="auto", default_gateway=None):
-            payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
-                                          dhcp=dhcp, enable=enable, speed=speed,
-                                          default_gateway=default_gateway)
-            return self._post(self.url_prefix,
-                              payload)
+        payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
+                                        dhcp=dhcp, enable=enable, speed=speed,
+                                        default_gateway=default_gateway)
+        return self._post(self.url_prefix,
+                            payload)
 
     def _build_payload(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False,
                        enable=None, speed="auto", default_gateway=None):
