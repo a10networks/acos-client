@@ -42,14 +42,12 @@ class TestSLBServerGroup(unittest.TestCase):
     @responses.activate
     def test_server_group_create(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
-        json_response = {
-            'response': {'status': 'OK'}
-        }
+        json_response = {"foo": "bar"}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
 
         resp = self.client.slb.service_group.create('test1')
 
-        self.assertIsNone(resp)
+        self.assertEqual(resp, json_response)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
@@ -72,14 +70,12 @@ class TestSLBServerGroup(unittest.TestCase):
     @responses.activate
     def test_server_group_delete(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
-        json_response = {
-            'response': {'status': 'OK'}
-        }
+        json_response = {"foo": "bar"}
         responses.add(responses.POST, DELETE_URL, json=json_response, status=200)
 
         resp = self.client.slb.service_group.delete('test1')
 
-        self.assertIsNone(resp)
+        self.assertEqual(resp, json_response)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, DELETE_URL)
@@ -94,7 +90,7 @@ class TestSLBServerGroup(unittest.TestCase):
 
         resp = self.client.slb.service_group.delete('test1')
 
-        self.assertIsNone(resp)
+        self.assertEqual(resp, json_response)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, DELETE_URL)
@@ -102,12 +98,7 @@ class TestSLBServerGroup(unittest.TestCase):
     @responses.activate
     def test_server_group_search(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
-        json_response = {
-            'service_group': {'lb_method': 0, 'protocol': 2, 'name': 'pool1', 'backup_server_event_log_enable': 0,
-                              'health_monitor': '', 'client_reset': 0, 'min_active_member':
-                              {'status': 0, 'number': 0, 'priority_set': 0}, 'extended_stats': 0, 'stats_data': 1,
-                              'member_list': []}
-        }
+        json_response = {"foo": "bar"}
         responses.add(responses.POST, SEARCH_URL, json=json_response, status=200)
 
         resp = self.client.slb.service_group.get('test1')
@@ -119,7 +110,7 @@ class TestSLBServerGroup(unittest.TestCase):
 
     @responses.activate
     def test_server_group_search_not_found(self):
-        responses.add(responses.POST, SEARCH_URL, json={'session_id': 'foobar'})
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {
             "response": {"status": "fail", "err": {"code": 67305473, "msg": " No such service group"}}
         }
@@ -135,14 +126,12 @@ class TestSLBServerGroup(unittest.TestCase):
     @responses.activate
     def test_server_group_update(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
-        json_response = {
-            'response': {'status': 'OK'}
-        }
+        json_response = {"foo": "bar"}
         responses.add(responses.POST, UPDATE_URL, json=json_response, status=200)
 
         resp = self.client.slb.service_group.update('test1', lb_method=self.client.slb.service_group.LEAST_CONNECTION)
 
-        self.assertIsNone(resp)
+        self.assertEqual(resp, json_response)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, UPDATE_URL)
@@ -161,3 +150,45 @@ class TestSLBServerGroup(unittest.TestCase):
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, UPDATE_URL)
+
+    @responses.activate
+    def test_server_group_all(self):
+        URL = '{}slb.service_group.getAll&session_id={}'.format(BASE_URL, 'foobar')
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.GET, URL, json=json_response, status=200)
+
+        resp = self.client.slb.service_group.all()
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.GET)
+        self.assertEqual(responses.calls[1].request.url, URL)
+
+    @responses.activate
+    def test_server_group_all_delete(self):
+        URL = '{}slb.service_group.deleteAll&session_id={}'.format(BASE_URL, 'foobar')
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.GET, URL, json=json_response, status=200)
+
+        resp = self.client.slb.service_group.all_delete()
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.GET)
+        self.assertEqual(responses.calls[1].request.url, URL)
+
+    @responses.activate
+    def test_server_group_all_stats(self):
+        URL = '{}slb.service_group.fetchAllStatistics&session_id={}'.format(BASE_URL, 'foobar')
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.GET, URL, json=json_response, status=200)
+
+        resp = self.client.slb.service_group.all_stats()
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.GET)
+        self.assertEqual(responses.calls[1].request.url, URL)

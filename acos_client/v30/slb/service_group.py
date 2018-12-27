@@ -53,14 +53,7 @@ class ServiceGroup(base.BaseV30):
     TCP = 'tcp'
     UDP = 'udp'
 
-    def all(self):
-        return self._get(self.url_prefix)
-
-    def get(self, name, **kwargs):
-        return self._get(self.url_prefix + name, **kwargs)
-
-    def _set(self, name, protocol=None, lb_method=None, hm_name=None,
-             update=False, **kwargs):
+    def _set(self, name, protocol=None, lb_method=None, hm_name=None, update=False, **kwargs):
 
         # Normalize "" -> None for json
         hm_name = hm_name or None
@@ -110,11 +103,19 @@ class ServiceGroup(base.BaseV30):
 
         if not update:
             name = ''
-            self._post(self.url_prefix + name, params, **kwargs)
         else:
             if 'protocol' in params['service-group']:
                 del params['service-group']['protocol']
-            self._post(self.url_prefix + name, params, **kwargs)
+        return self._post(self.url_prefix + name, params, **kwargs)
+
+    def all(self, *args, **kwargs):
+        return self._get(self.url_prefix, **kwargs)
+
+    def all_stats(self, *args, **kwargs):
+        return self._get(self.url_prefix + "stats", **kwargs)
+
+    def all_oper(self, *args, **kwargs):
+        return self._get(self.url_prefix + "oper", **kwargs)
 
     def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, **kwargs):
         try:
@@ -124,18 +125,19 @@ class ServiceGroup(base.BaseV30):
         else:
             raise acos_errors.Exists
 
-        self._set(name, protocol, lb_method, **kwargs)
-
-    def update(self, name, protocol=None, lb_method=None, health_monitor=None,
-               **kwargs):
-        self._set(name, protocol, lb_method,
-                  health_monitor, update=True, **kwargs)
+        return self._set(name, protocol, lb_method, **kwargs)
 
     def delete(self, name):
-        self._delete(self.url_prefix + name)
+        return self._delete(self.url_prefix + name)
+
+    def get(self, name, **kwargs):
+        return self._get(self.url_prefix + name, **kwargs)
+
+    def oper(self, name, *args, **kwargs):
+        return self._get(self.url_prefix + name + "/oper", **kwargs)
 
     def stats(self, name, *args, **kwargs):
         return self._get(self.url_prefix + name + "/stats", **kwargs)
 
-    def oper(self, name, *args, **kwargs):
-        return self._get(self.url_prefix + name + "/oper", **kwargs)
+    def update(self, name, protocol=None, lb_method=None, health_monitor=None, **kwargs):
+        return self._set(name, protocol, lb_method, health_monitor, update=True, **kwargs)

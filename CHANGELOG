@@ -2,7 +2,16 @@
 acos-client CHANGELOG
 ---------------------------
 
-a10-neutron-lbaas. Changes tracked from 1.4.2 > onward
+acos-client. Changes tracked from 1.4.2 > onward
+* 1.4.6
+* Fixed duplicate SG creation bug.
+
+* 1.4.5
+- Fixed arp-disable defaulting to true when present in payload
+- Improved unit test coverage for SLB modules
+- Usage of responses library for mocking client
+
+
 * 1.4.4
 - Adds VLAN, VE/LIF interfaces, VTEP support for AXAPI v3.0
 - VRRP-A support for AXAPI v3.0

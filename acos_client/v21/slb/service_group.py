@@ -48,9 +48,6 @@ class ServiceGroup(base.BaseV21):
     TCP = 2
     UDP = 3
 
-    def get(self, name, **kwargs):
-        return self._post("slb.service_group.search", {'name': name}, **kwargs)
-
     def _set(self, action, name, protocol=None, lb_method=None, hm_name=None,
              **kwargs):
         params = {
@@ -61,26 +58,30 @@ class ServiceGroup(base.BaseV21):
                 "health_monitor": hm_name
             })
         }
-        self._post(action, params, **kwargs)
-
-    def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, **kwargs):
-        self._set("slb.service_group.create", name, protocol, lb_method,
-                  **kwargs)
-
-    def update(self, name, protocol=None, lb_method=None, health_monitor=None,
-               **kwargs):
-        self._set("slb.service_group.update", name, protocol, lb_method,
-                  health_monitor, **kwargs)
-
-    def delete(self, name, **kwargs):
-        self._post("slb.service_group.delete", {'name': name}, **kwargs)
+        return self._post(action, params, **kwargs)
 
     def all(self, **kwargs):
         return self._get('slb.service_group.getAll', **kwargs)
 
     def all_delete(self, **kwargs):
-        self._get('slb.service_group.deleteAll', **kwargs)
+        return self._get('slb.service_group.deleteAll', **kwargs)
+
+    def all_stats(self, **kwargs):
+        return self._get("slb.service_group.fetchAllStatistics", **kwargs)
+
+    def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, **kwargs):
+        return self._set("slb.service_group.create", name, protocol, lb_method, **kwargs)
+
+    def delete(self, name, **kwargs):
+        return self._post("slb.service_group.delete", {'name': name}, **kwargs)
+
+    def get(self, name, **kwargs):
+        return self._post("slb.service_group.search", {'name': name}, **kwargs)
 
     def stats(self, name, **kwargs):
-        return self._post("slb.service_group.fetchStatistics",
-                          {"name": name}, **kwargs)
+        return self._post("slb.service_group.fetchStatistics", {"name": name}, **kwargs)
+
+    def update(self, name, protocol=None, lb_method=None, health_monitor=None, **kwargs):
+        return self._set(
+            "slb.service_group.update", name, protocol, lb_method, health_monitor, **kwargs
+        )

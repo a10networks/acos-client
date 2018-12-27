@@ -120,7 +120,7 @@ class TestHealthMonitor(unittest.TestCase):
 
     @responses.activate
     def test_health_monitor_search_not_found(self):
-        responses.add(responses.POST, SEARCH_URL, json={'session_id': 'foobar'})
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {
             "response": {"status": "fail", "err": {"code": 33619968, "msg": " The monitor does not exist."}}
         }
