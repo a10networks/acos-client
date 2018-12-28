@@ -32,49 +32,60 @@ class BaseSSL(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def _set(self, name, cert="", key="", passphrase="", update=False,
+    def _set(self, name, cipher_template, cert="", key="", passphrase="", update=False,  # Custom - cipher_template
              **kwargs):
         # Unimplemented options:
         # encrypted, session_ticket_enable, version, forward_proxy_enable,
         # close_notify, session_cache_size, session_cache_timeout,
-        # cipher_template, server_certificate_error, cipher_without_prio_list,
-        # ca_certs
+        # server_certificate_error, cipher_without_prio_list,
 
-        obj_params = {
-            "name": name,
-            "cert": cert,
-            "key": key,
-            self.passphrase: passphrase,
-            # Unimplemented options:
-            # "encrypted": encrypted,
-            # "session-ticket-enable": session_ticket_enable,
-            # "version": version,
-            # "forward-proxy-enable": forward_proxy_enable,
-            # "close-notify": close_notify,
-            # "session-cache-size": session_cache_size,
-            # "session-cache-timeout": session_cache_timeout,
-            # "cipher-template": cipher_template,
-            # "server-certificate-error": server_certificate_error,
-            # "cipher-without-prio-list": cipher_without_prio_list,
-            # "ca-certs": ca_certs,
-        }
+        if cipher_template:      #   Custom
+            params ={
+                "cipher":{
+                    "name": name,
+                    "cipher-cfg":[]
+                }
+            }
 
-        params = {'%s-ssl' % self.prefix: {}}
-        for key, val in six.iteritems(obj_params):
-            # Filter out invalid, or unset keys
-            if val != "":
-                params['%s-ssl' % self.prefix][key] = val
+            params['cipher']['cipher-cfg'] = cipher_template
 
-        if not update:
-            name = ''
+            self._post(self.url_prefix, params, **kwargs)
 
-        self._post(self.url_prefix + name, params, **kwargs)
+        else:
+            obj_params = {
+                "name": name,
+                "cert": cert,
+                "key": key,
+                self.passphrase: passphrase,
+                # Unimplemented options:
+                # "encrypted": encrypted,
+                # "session-ticket-enable": session_ticket_enable,
+                # "version": version,
+                # "forward-proxy-enable": forward_proxy_enable,
+                # "close-notify": close_notify,
+                # "session-cache-size": session_cache_size,
+                # "session-cache-timeout": session_cache_timeout,
+                # "server-certificate-error": server_certificate_error,
+                # "cipher-without-prio-list": cipher_without_prio_list,
+                # "ca-certs": ca_certs,
+            }
 
-    def create(self, name, cert="", key="", passphrase="", **kwargs):
+            params = {'%s-ssl' % self.prefix: {}}
+            for key, val in six.iteritems(obj_params):
+                # Filter out invalid, or unset keys
+                if val != "":
+                    params['%s-ssl' % self.prefix][key] = val
+
+            if not update:
+                name = ''
+
+            self._post(self.url_prefix + name, params, **kwargs)
+
+    def create(self, name, cipher_template, cert="", key="", passphrase="", **kwargs):  # Custom - cipher_template
         if self.exists(name):
             raise acos_errors.Exists
 
-        self._set(name, cert, key, passphrase, **kwargs)
+        self._set(name, cipher_template, cert, key, passphrase, **kwargs)  # Custom - cipher_template
 
     def update(self, name, cert="", key="", passphrase="", **kwargs):
         self._set(name, cert, key, passphrase, update=True, **kwargs)
@@ -95,3 +106,10 @@ class ServerSSL(BaseSSL):
     url_prefix = '/slb/template/server-ssl/'
     prefix = 'server'
     passphrase = 'passphrase'
+
+
+class SSLCipher(BaseSSL):  # Custom
+
+    url_prefix = '/slb/template/cipher/'
+    passphrase = None
+    prefix = None
