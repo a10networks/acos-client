@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from acos_client import errors as acos_errors
 from acos_client.v30 import base
 from acos_client.v30.vrrpa.blade_params import BladeParameters
 
@@ -29,6 +30,13 @@ class VRID(base.BaseV30):
 
     def get(self, vrid_val):
         return self._get(self.base_url + str(vrid_val))
+
+    def exists(self, vrid_val):
+        try:
+            self.get(vrid_val)
+            return True
+        except acos_errors.NotFound:
+            return False
 
     def _build_params(self, vrid_val, threshold=None, disable=None):
         vrid = {'vrid-val': vrid_val}
