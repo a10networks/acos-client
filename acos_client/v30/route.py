@@ -14,7 +14,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-
+from acos_client import errors as acos_errors
 from acos_client.v30 import base
 
 
@@ -32,6 +32,13 @@ class RIB(base.BaseV30):
 
     def get(self, destination, mask):
         return self._get(self._build_url(destination, mask))
+
+    def exists(self, destination, mask):
+        try:
+            self.get(destination, mask)
+            return True
+        except acos_errors.NotFound:
+            return False
 
     def delete(self, destination, mask):
         return self._delete(self._build_url(destination, mask))
