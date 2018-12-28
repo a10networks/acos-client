@@ -24,7 +24,7 @@ class BaseSSL(base.BaseV30):
 
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
-
+ 
     def exists(self, name):
         try:
             self.get(name)
@@ -32,14 +32,14 @@ class BaseSSL(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def _set(self, name, cipher_template, cert="", key="", passphrase="", update=False,  # Custom - cipher_template
+    def _set(self, name, cipher_template, cert="", key="", passphrase="", update=False,
              **kwargs):
         # Unimplemented options:
         # encrypted, session_ticket_enable, version, forward_proxy_enable,
         # close_notify, session_cache_size, session_cache_timeout,
         # server_certificate_error, cipher_without_prio_list,
 
-        if cipher_template:      #   Custom
+        if cipher_template:
             params ={
                 "cipher":{
                     "name": name,
@@ -81,11 +81,11 @@ class BaseSSL(base.BaseV30):
 
             self._post(self.url_prefix + name, params, **kwargs)
 
-    def create(self, name, cipher_template, cert="", key="", passphrase="", **kwargs):  # Custom - cipher_template
+    def create(self, name, cipher_template, cert="", key="", passphrase="", **kwargs):
         if self.exists(name):
             raise acos_errors.Exists
 
-        self._set(name, cipher_template, cert, key, passphrase, **kwargs)  # Custom - cipher_template
+        self._set(name, cipher_template, cert, key, passphrase, **kwargs)
 
     def update(self, name, cert="", key="", passphrase="", **kwargs):
         self._set(name, cert, key, passphrase, update=True, **kwargs)
@@ -108,7 +108,7 @@ class ServerSSL(BaseSSL):
     passphrase = 'passphrase'
 
 
-class SSLCipher(BaseSSL):  # Custom
+class SSLCipher(BaseSSL):
 
     url_prefix = '/slb/template/cipher/'
     passphrase = None
