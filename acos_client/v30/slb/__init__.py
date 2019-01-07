@@ -20,6 +20,7 @@ from acos_client.v30.slb.server import Server
 from acos_client.v30.slb.service_group import ServiceGroup
 from acos_client.v30.slb.template import Template
 from acos_client.v30.slb.virtual_server import VirtualServer
+from acos_client.v30.slb.aflex_policy import AFlexPolicy
 
 
 class SLB(base.BaseV30):
@@ -46,6 +47,10 @@ class SLB(base.BaseV30):
     @property
     def virtual_server(self):
         return VirtualServer(self.client)
+
+    @property
+    def aflex_policy(self):
+        return AFlexPolicy(self.client)
 
     @property
     def common(self):
