@@ -55,13 +55,25 @@ class AFlexPolicy(base.BaseV30):
         return response
 
     def create(self,l7policy, file="",script="", size="", action="", **kwargs):
-        if self.exists(file):
-            raise acos_errors.Exists
         self._set(file, script, size, action, **kwargs)
 
-    def update(self, file="", cert="", size="", certificate_type="", action="", **kwargs):
-        self._set(file, cert, size, certificate_type, action, update=True, **kwargs)
+    def update(self,l7policy, file="",script="", size="", action="", **kwargs):
+        self._set(file, script, size, action, **kwargs)
 
-    def delete(self, file):
-        """This is the very inconsistent way to delete a certificate."""
-        self._request("POST", "/pki/delete-oper", {"delete-oper": {"filename": file}})
+    def delete(self, l7policy, **kwargs):
+        #script = ""
+        file = l7policy.id
+        obj_params = {
+            "file": file,
+            "action": "delete",
+        }
+        kwargs['params'] = {'aflex': {}}
+
+        for key, val in six.iteritems(obj_params):
+            # Filter out invalid, or unset keys
+            if val != "":
+                kwargs['params']['aflex'][key] = val
+
+        response= self._post(self.url_prefix, file_name=file,
+                          file_content="", **kwargs)
+        return response 
