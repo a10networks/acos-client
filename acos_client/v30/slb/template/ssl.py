@@ -24,7 +24,7 @@ class BaseSSL(base.BaseV30):
 
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
- 
+
     def exists(self, name):
         try:
             self.get(name)
@@ -40,10 +40,10 @@ class BaseSSL(base.BaseV30):
         # server_certificate_error, cipher_without_prio_list,
 
         if cipher_template:
-            params ={
-                "cipher":{
+            params = {
+                "cipher": {
                     "name": name,
-                    "cipher-cfg":[]
+                    "cipher-cfg": []
                 }
             }
 
