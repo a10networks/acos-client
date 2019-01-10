@@ -65,7 +65,7 @@ class Partition(base.BaseV30):
         z = a['partition-available-id']['oper']['range-list'][0]['start']
         return int(z)
 
-    def _create(self, name, partition_id, application_type):
+    def _create(self, name, partition_id, application_type=None):
         params = {
             "partition": {
                 "partition-name": name,
@@ -78,7 +78,7 @@ class Partition(base.BaseV30):
 
         self._post("/partition", params)
 
-    def create(self, name, application_type):
+    def create(self, name, application_type=None):
         if name == 'shared':
             return
 
