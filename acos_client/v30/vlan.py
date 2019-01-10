@@ -29,7 +29,7 @@ class Vlan(base.BaseV30):
     def get_list(self):
         return self._get(self.url_prefix)
 
-    def create(self, name, vlan_id, shared_vlan=False,
+    def create(self, vlan_id, name=None, shared_vlan=False,
                untagged_eths=[], untagged_trunks=[],
                tagged_eths=[], tagged_trunks=[], veth=False,
                lif=None):
