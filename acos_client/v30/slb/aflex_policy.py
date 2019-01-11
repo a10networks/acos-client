@@ -42,7 +42,6 @@ class AFlexPolicy(base.BaseV30):
             "file-handle": file,
             "action": action,
         }
-        import pdb; pdb.set_trace()
         kwargs['params'] = {'aflex': {}}
 
         for key, val in six.iteritems(obj_params):
@@ -61,7 +60,6 @@ class AFlexPolicy(base.BaseV30):
         self._set(file, script, size, action, **kwargs)
 
     def delete(self, l7policy, **kwargs):
-        #script = ""
         file = l7policy.id
         obj_params = {
             "file": file,
