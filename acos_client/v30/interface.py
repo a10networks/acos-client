@@ -160,7 +160,7 @@ class LogicalInterface(Interface):
         self.url_prefix = "{0}{1}/".format(self.url_prefix, self.iftype)
 
     def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
-                   speed="auto", default_gateway=None):
+               speed="auto", default_gateway=None):
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
                                         dhcp=dhcp, enable=enable, speed=speed,
                                         default_gateway=default_gateway)
