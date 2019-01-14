@@ -26,7 +26,7 @@ class Nat(base.BaseV30):
     class Pool(base.BaseV30):
         url_prefix = "/ip/nat/pool/"
 
-        def _set(self, name, start_ip, end_ip, mask, ip_rr, vrid, **kwargs):
+        def _set(self, name, start_ip, end_ip, mask, ip_rr=None, vrid=None, **kwargs):
             params = {
                 "pool": self.minimal_dict(
                     {
@@ -34,11 +34,15 @@ class Nat(base.BaseV30):
                         'start-address': start_ip,
                         'end-address': end_ip,
                         'netmask': mask,
-                        'ip-rr': ip_rr,
-                        'vrid': vrid,
                     }
                 ),
             }
+
+            if ip_rr:
+                params["pool"]["ip-rr"] = ip_rr
+
+            if vrid:
+                params["pool"]["vrid"] = vrid
 
             if self.exists(name):
                 self._post(self.url_prefix + name, params, **kwargs)
