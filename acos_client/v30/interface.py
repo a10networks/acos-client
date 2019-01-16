@@ -66,7 +66,7 @@ class Interface(base.BaseV30):
             self.get(ifnum)
             return True
         except acos_errors.NotFound:
-            return False        
+            return False
 
     def delete(self, ifnum):
         url = self.url_prefix + self._ifnum_to_str(ifnum)
@@ -141,7 +141,7 @@ class ManagementInterface(Interface):
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
                                       dhcp=dhcp, enable=enable, speed=speed,
                                       default_gateway=default_gateway)
-        return self._post(self.url_prefix + self._ifnum_to_str(ifnum),
+        return self._post(self.url_prefix,
                           payload)
 
     def update(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
@@ -162,10 +162,9 @@ class LogicalInterface(Interface):
     def create(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False, enable=None,
                speed="auto", default_gateway=None):
         payload = self._build_payload(ifnum=ifnum, ip_address=ip_address, ip_netmask=ip_netmask,
-                                        dhcp=dhcp, enable=enable, speed=speed,
-                                        default_gateway=default_gateway)
-        return self._post(self.url_prefix,
-                            payload)
+                                      dhcp=dhcp, enable=enable, speed=speed,
+                                      default_gateway=default_gateway)
+        return self._post(self.url_prefix, payload)
 
     def _build_payload(self, ifnum=None, ip_address=None, ip_netmask=None, dhcp=False,
                        enable=None, speed="auto", default_gateway=None):
