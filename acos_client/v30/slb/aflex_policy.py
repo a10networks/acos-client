@@ -48,19 +48,19 @@ class AFlexPolicy(base.BaseV30):
             # Filter out invalid, or unset keys
             if val != "":
                 kwargs['params']['aflex'][key] = val
-
-        response= self._post(self.url_prefix, file_name=file,
-                          file_content=script, **kwargs)
+        print(script)
+        response = self._post(self.url_prefix, file_name=file,
+                              file_content=script, **kwargs)
         return response
 
-    def create(self,l7policy, file="",script="", size="", action="", **kwargs):
-        self._set(file, script, size, action, **kwargs)
+    def create(self, file="", script="", size="", action="", **kwargs):
+        return self._set(file, script, size, action, **kwargs)
 
-    def update(self,l7policy, file="",script="", size="", action="", **kwargs):
-        self._set(file, script, size, action, **kwargs)
+    def update(self, file="", script="", size="", action="", **kwargs):
+        return self._set(file, script, size, action, **kwargs)
 
-    def delete(self, l7policy, **kwargs):
-        file = l7policy.id
+    def delete(self, l7policyid, **kwargs):
+        file = l7policyid
         obj_params = {
             "file": file,
             "action": "delete",
@@ -72,6 +72,5 @@ class AFlexPolicy(base.BaseV30):
             if val != "":
                 kwargs['params']['aflex'][key] = val
 
-        response= self._post(self.url_prefix, file_name=file,
+        return self._post(self.url_prefix, file_name=file,
                           file_content="", **kwargs)
-        return response 
