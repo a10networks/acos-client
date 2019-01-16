@@ -192,7 +192,7 @@ RESPONSE_CODES = {
     },
     1208008960: {
         "*": {
-            "/axapi/v3/logon": ae.AuthenticationFailure
+            "*": ae.AuthenticationFailure
         }
     },
     4294967295: {
