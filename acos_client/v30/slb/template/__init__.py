@@ -14,6 +14,7 @@
 
 import acos_client.v30.base as base
 
+from acos_client.v30.slb.template.l7 import HTTPTemplate
 from acos_client.v30.slb.template.persistence import CookiePersistence
 from acos_client.v30.slb.template.persistence import SourceIpPersistence
 from acos_client.v30.slb.template.ssl import ClientSSL
@@ -42,3 +43,7 @@ class Template(base.BaseV30):
     @property
     def server_ssl(self):
         return ServerSSL(self.client)
+
+    @property
+    def http_template(self):
+        return HTTPTemplate(self.client)
