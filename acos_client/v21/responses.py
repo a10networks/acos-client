@@ -39,6 +39,9 @@ RESPONSE_CODES = {
         'session.close': None,
         '*': ae.InvalidPartitionParameter
     },
+    1162: {
+        '*': ae.InvalidInteger
+    },
     1163: {
         '*': ae.InvalidParameter
     },
@@ -53,6 +56,12 @@ RESPONSE_CODES = {
     },
     1982: {
         '*': ae.Exists
+    },
+    2004: {
+        '*': ae.InUse
+    },
+    2035: {
+        '*': ae.InUse
     },
     2941: {
         '*': ae.Exists
@@ -90,6 +99,15 @@ RESPONSE_CODES = {
     },
     67239947: {
         '*': ae.Exists
+    },
+    67239962: {
+        '*': ae.NotFound
+    },
+    67239963: {
+        '*': ae.CertificateParsingFailed
+    },
+    67239965: {
+        '*': ae.KeyParsingFailed
     },
     67305473: {
         'slb.service_group.delete': None,

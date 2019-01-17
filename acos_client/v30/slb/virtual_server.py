@@ -44,6 +44,11 @@ class VirtualServer(base.BaseV30):
                 "arp-disable": None if arp_disable is None else int(arp_disable)
             }),
         }
+        if self._is_ipv6(ip_address):
+            params['virtual-server']['ipv6-address'] = ip_address
+        else:
+            params['virtual-server']['ip-address'] = ip_address
+
         if vrid:
             params['virtual-server']['vrid'] = int(vrid)
         if template_virtual_server:
@@ -56,7 +61,6 @@ class VirtualServer(base.BaseV30):
 
         if not update:
             name = ''
-
         return self._post(self.url_prefix + name, params, **kwargs)
 
     def create(self, name, ip_address, arp_disable=False, vrid=None, template_virtual_server=None, **kwargs):

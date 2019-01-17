@@ -29,7 +29,7 @@ class Server(base.BaseV21):
                 "name": name,
                 "host": ip_address,
                 "status": status,
-                "conn_resume": kwargs.get("conn_resume", None),
+                "conn_resume": kwargs.get("conn_resume", 0),
                 "conn_limit": kwargs.get("conn_limit", 8000000),
             }
         }
@@ -41,7 +41,7 @@ class Server(base.BaseV21):
                 "name": name,
                 "host": ip_address,
                 "status": status,
-                "conn_resume": kwargs.get("conn_resume", None),
+                "conn_resume": kwargs.get("conn_resume", 0),
                 "conn_limit": kwargs.get("conn_limit", 8000000),
             }
         }

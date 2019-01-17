@@ -1,3 +1,4 @@
 requests>=2.3.0
 six
 uhashring
+ipaddress==1.0.22; python_version < '3.0'

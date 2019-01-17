@@ -3,8 +3,15 @@ acos-client CHANGELOG
 ---------------------------
 
 acos-client. Changes tracked from 1.4.2 > onward
+* 1.4.7
+- Added IPv6 support for aXAPI v21 and v30 as well as IPv6 test cases
+- Updated ACOS response messages
+- IPv6 enhancements to t.py
+- Improved t.py error handling and better support for aXAPI v2.1 
+
+
 * 1.4.6
-* Fixed duplicate SG creation bug.
+- Fixed duplicate SG creation bug.
 
 * 1.4.5
 - Fixed arp-disable defaulting to true when present in payload

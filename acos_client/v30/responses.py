@@ -92,6 +92,11 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    1023459340: {
+        '*': {
+            '*': ae.Exists
+        }
+    },
     1023459393: {
         '*': {
             '*': ae.InvalidParameter
@@ -99,7 +104,7 @@ RESPONSE_CODES = {
     },
     1023459335: {
         '*': {
-            '*': ae.Exists
+            '*': ae.FeatureNotSupported
         }
     },
     1023460352: {
@@ -167,6 +172,11 @@ RESPONSE_CODES = {
             '*': ae.ConfigManagerNotReady
         }
     },
+    1208078344: {
+        '*': {
+            '*': ae.NotFound
+        }
+    },
     1023443968: {
         'DELETE': {
             '*': None
@@ -181,6 +191,11 @@ RESPONSE_CODES = {
         }
     },
     1023459337: {
+        '*': {
+            '*': ae.Exists
+        }
+    },
+    1023459339: {
         '*': {
             '*': ae.Exists
         }
