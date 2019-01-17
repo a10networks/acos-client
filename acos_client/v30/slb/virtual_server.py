@@ -40,7 +40,8 @@ class VirtualServer(base.BaseV30):
         params = {
             "virtual-server": self.minimal_dict({
                 "name": name,
-                "arp-disable": int(arp_disable)
+                "ip-address": ip_address,
+                "arp-disable": None if arp_disable is None else int(arp_disable)
             }),
         }
         if self._is_ipv6(ip_address):

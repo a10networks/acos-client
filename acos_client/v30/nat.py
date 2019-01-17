@@ -26,7 +26,7 @@ class Nat(base.BaseV30):
     class Pool(base.BaseV30):
         url_prefix = "/ip/nat/pool/"
 
-        def _set(self, name, start_ip, end_ip, mask, **kwargs):
+        def _set(self, name, start_ip, end_ip, mask, ip_rr=None, vrid=None, **kwargs):
             params = {
                 "pool": self.minimal_dict(
                     {
@@ -37,22 +37,36 @@ class Nat(base.BaseV30):
                     }
                 ),
             }
-            self._post(self.url_prefix + name, params, **kwargs)
+
+            if ip_rr:
+                params["pool"]["ip-rr"] = ip_rr
+
+            if vrid:
+                params["pool"]["vrid"] = vrid
+
+            if self.exists(name):
+                self._post(self.url_prefix + name, params, **kwargs)
+            else:
+                self._post(self.url_prefix, params, **kwargs)
 
         def get(self, name):
             return self._get(self.url_prefix + name)
 
+        def exists(self, name):
+            try:
+                self.get(name)
+                return True
+            except acos_errors.NotFound:
+                return False
+
         def all(self):
             return self._get(self.url_prefix)
 
-        def create(self, name, start_ip, end_ip, mask, **kwargs):
-            try:
-                self.get(name)
-            except acos_errors.NotFound:
-                pass
-            else:
+        def create(self, name, start_ip, end_ip, mask, ip_rr, vrid, **kwargs):
+            if self.exists(name):
                 raise acos_errors.Exists
-            self._set(name, start_ip, end_ip, mask, **kwargs)
+
+            self._set(name, start_ip, end_ip, mask, ip_rr, vrid, **kwargs)
 
         def delete(self, name, **kwargs):
             self._delete(self.url_prefix + name)
