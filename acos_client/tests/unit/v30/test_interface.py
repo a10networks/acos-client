@@ -43,7 +43,7 @@ class TestInterface(unittest.TestCase):
         ifnum = 1
         expected_payload = {self.target.iftype: {'ip': {'dhcp': expected}, 'ifnum': ifnum}}
         self.target.create(ifnum, dhcp=dhcp)
-        self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
+        self.client.http.request.assert_called_with("POST", self.url_prefix,  # URL + ifnum expected
                                                     expected_payload, mock.ANY)
 
     def test_interface_create_dhcp_negative(self):
@@ -57,7 +57,7 @@ class TestInterface(unittest.TestCase):
         ip_address = "128.0.0.1"
         ip_netmask = "255.255.255.0"
         self.target.create(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask)
-        self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
+        self.client.http.request.assert_called_with("POST", self.url_prefix,
                                                     mock.ANY, mock.ANY)
 
     def test_interface_delete(self):
