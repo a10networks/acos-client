@@ -61,7 +61,6 @@ class VirtualServer(base.BaseV30):
 
         if not update:
             name = ''
-
         return self._post(self.url_prefix + name, params, **kwargs)
 
     def create(self, name, ip_address, arp_disable=False, vrid=None, template_virtual_server=None, **kwargs):

@@ -103,11 +103,10 @@ class ServiceGroup(base.BaseV30):
 
         if not update:
             name = ''
-            return self._post(self.url_prefix + name, params, **kwargs)
         else:
             if 'protocol' in params['service-group']:
                 del params['service-group']['protocol']
-            return self._post(self.url_prefix + name, params, **kwargs)
+        return self._post(self.url_prefix + name, params, **kwargs)
 
     def all(self, *args, **kwargs):
         return self._get(self.url_prefix, **kwargs)
