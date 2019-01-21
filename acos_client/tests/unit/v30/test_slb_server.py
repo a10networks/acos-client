@@ -74,6 +74,34 @@ class TestServer(unittest.TestCase):
         with self.assertRaises(acos_errors.Exists):
             self.client.slb.server.create('test', '192.168.2.254')
 
+    @mock.patch('acos_client.v30.slb.server.Server.get')
+    @responses.activate
+    def test_server_create_with_template(self, mocked_get):
+        mocked_get.side_effect = acos_errors.NotFound
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {'foo': 'bar'}
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        params = {
+            'server': {
+                'action': 'enable',
+                'conn-limit': 8000000,
+                'conn-resume': None,
+                'host': '192.168.2.254',
+                'name': VSERVER_NAME,
+                'template-server': 'test-template-server'
+            }
+        }
+        templates = {
+            "template-server": "test-template-server"
+            }
+        resp = self.client.slb.server.create('test', '192.168.2.254', server_templates=templates)
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
     @responses.activate
     def test_server_delete(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
@@ -173,6 +201,34 @@ class TestIPv6Server(unittest.TestCase):
 
         with self.assertRaises(acos_errors.Exists):
             self.client.slb.server.create('test', '2001:baad:deed:bead:daab:daad:cead:100e')
+
+    @mock.patch('acos_client.v30.slb.server.Server.get')
+    @responses.activate
+    def test_server_create_with_template(self, mocked_get):
+        mocked_get.side_effect = acos_errors.NotFound
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {'foo': 'bar'}
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        params = {
+            'server': {
+                'action': 'enable',
+                'conn-limit': 8000000,
+                'conn-resume': None,
+                'host': '192.168.2.254',
+                'name': VSERVER_NAME,
+                'template-server': 'test-template-server'
+            }
+        }
+        templates = {
+            "template-server": "test-template-server"
+            }
+        resp = self.client.slb.server.create('test', '192.168.2.254', server_templates=templates)
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
     @responses.activate
     def test_server_delete(self):

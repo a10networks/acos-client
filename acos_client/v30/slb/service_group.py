@@ -53,7 +53,7 @@ class ServiceGroup(base.BaseV30):
     TCP = 'tcp'
     UDP = 'udp'
 
-    def _set(self, name, protocol=None, lb_method=None, hm_name=None, update=False, **kwargs):
+    def _set(self, name, protocol=None, lb_method=None, service_group_templates=None, hm_name=None, update=False, **kwargs):
 
         # Normalize "" -> None for json
         hm_name = hm_name or None
@@ -89,6 +89,12 @@ class ServiceGroup(base.BaseV30):
             params['service-group']['lb-method'] = lb_method
             params['service-group']['stateless-auto-switch'] = 0
 
+        if service_group_templates:
+            service_group_templates = {k: v for k, v in service_group_templates.items() if v}
+            params['service-group']['template-server'] = service_group_templates.get('template-server', None)
+            params['service-group']['template-port'] = service_group_templates.get('template-port', None)
+            params['service-group']['template-policy'] = service_group_templates.get('template-policy', None)
+
         config_defaults = kwargs.get("config_defaults")
 
         if config_defaults:
@@ -117,7 +123,7 @@ class ServiceGroup(base.BaseV30):
     def all_oper(self, *args, **kwargs):
         return self._get(self.url_prefix + "oper", **kwargs)
 
-    def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, **kwargs):
+    def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, service_group_templates=None, **kwargs):
         try:
             self.get(name)
         except acos_errors.NotFound:
@@ -125,7 +131,7 @@ class ServiceGroup(base.BaseV30):
         else:
             raise acos_errors.Exists
 
-        return self._set(name, protocol, lb_method, **kwargs)
+        return self._set(name, protocol, lb_method, service_group_templates, **kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)
@@ -139,5 +145,5 @@ class ServiceGroup(base.BaseV30):
     def stats(self, name, *args, **kwargs):
         return self._get(self.url_prefix + name + "/stats", **kwargs)
 
-    def update(self, name, protocol=None, lb_method=None, health_monitor=None, **kwargs):
-        return self._set(name, protocol, lb_method, health_monitor, update=True, **kwargs)
+    def update(self, name, protocol=None, lb_method=None, service_group_templates=None, health_monitor=None, **kwargs):
+        return self._set(name, protocol, lb_method, health_monitor, service_group_templates, update=True, **kwargs)
