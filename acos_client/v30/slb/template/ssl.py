@@ -45,7 +45,7 @@ class BaseSSL(base.BaseV30):
             params = {
                 "cipher": {
                     "name": name,
-                    "cipher-cfg": cipher_template 
+                    "cipher-cfg": cipher_template
                 }
             }
 
