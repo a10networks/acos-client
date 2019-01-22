@@ -32,24 +32,22 @@ class BaseSSL(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def _set(self, name, cipher_template, cert="", key="", passphrase="", update=False,
-             **kwargs):
+    def _set(self, name, cert="", key="", passphrase="", update=False,
+             cipher_template=None, **kwargs):
         # Unimplemented options:
         # encrypted, session_ticket_enable, version, forward_proxy_enable,
         # close_notify, session_cache_size, session_cache_timeout,
         # server_certificate_error, cipher_without_prio_list,
 
+        params = {}
+
         if cipher_template:
             params = {
                 "cipher": {
                     "name": name,
-                    "cipher-cfg": []
+                    "cipher-cfg": cipher_template
                 }
             }
-
-            params['cipher']['cipher-cfg'] = cipher_template
-
-            self._post(self.url_prefix, params, **kwargs)
 
         else:
             obj_params = {
@@ -79,13 +77,13 @@ class BaseSSL(base.BaseV30):
             if not update:
                 name = ''
 
-            self._post(self.url_prefix + name, params, **kwargs)
+        self._post(self.url_prefix + name, params, **kwargs)
 
-    def create(self, name, cipher_template, cert="", key="", passphrase="", **kwargs):
+    def create(self, name, cert="", key="", passphrase="", cipher_template=None, **kwargs):
         if self.exists(name):
             raise acos_errors.Exists
 
-        self._set(name, cipher_template, cert, key, passphrase, **kwargs)
+        self._set(name, cert, key, passphrase, cipher_template=cipher_template, **kwargs)
 
     def update(self, name, cert="", key="", passphrase="", **kwargs):
         self._set(name, cert, key, passphrase, update=True, **kwargs)
