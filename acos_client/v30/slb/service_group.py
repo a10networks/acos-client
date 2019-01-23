@@ -145,5 +145,5 @@ class ServiceGroup(base.BaseV30):
     def stats(self, name, *args, **kwargs):
         return self._get(self.url_prefix + name + "/stats", **kwargs)
 
-    def update(self, name, protocol=None, lb_method=None, service_group_templates=None, health_monitor=None, **kwargs):
-        return self._set(name, protocol, lb_method, health_monitor, service_group_templates, update=True, **kwargs)
+    def update(self, name, protocol=None, lb_method=None, health_monitor=None, service_group_templates=None, **kwargs):
+        return self._set(name, protocol, lb_method, hm_name=health_monitor, service_group_templates=service_group_templates, update=True, **kwargs)
