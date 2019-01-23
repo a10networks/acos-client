@@ -52,8 +52,8 @@ class VirtualServer(base.BaseV30):
             params['virtual-server']['vrid'] = int(vrid)
         if virtual_server_templates:
             virtual_server_templates = {k: v for k, v in virtual_server_templates.items() if v}
-            params['virtual-server']['template-virtual-server'] =
-            virtual_server_templates.get('template-virtual-server', None)
+            params['virtual-server']['template-virtual-server'] = \
+                virtual_server_templates.get('template-virtual-server', None)
             params['virtual-server']['template-logging'] = virtual_server_templates.get('template-logging', None)
             params['virtual-server']['template-policy'] = virtual_server_templates.get('template-policy', None)
             params['virtual-server']['template-scaleout'] = virtual_server_templates.get('template-scaleout', None)
