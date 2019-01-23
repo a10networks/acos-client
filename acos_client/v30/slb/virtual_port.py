@@ -103,7 +103,6 @@ class VirtualPort(base.BaseV30):
             }, exclude=exclude_minimize
             )
         }
-        import pdb; pdb.set_trace()
         if virtual_port_templates:
             virtual_port_templates = {k: v for k, v in virtual_port_templates.items() if v}
             params['port']['template-virtual-port'] = virtual_port_templates.get('template-virtual-port', None)

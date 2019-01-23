@@ -177,26 +177,49 @@ class TestVirtualPort(unittest.TestCase):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {'response': {'status': 'OK'}}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
-        params = {
-            'port':
-            {
-                'auto': 1,
-                'extended-stats': 1,
-                'ipinip': 1,
-                'name': 'test1_VPORT',
-                'pool': 'test_nat_pool',
-                'port-number': 80,
-                'protocol': 'http',
-                'service-group': 'pool1',
-                'tcp_template': 'test_tcp_template',
-                'template-persist-cookie': 'test_c_pers_template',
-                'template-persist-source-ip': 'test_s_pers_template',
-                'udp_template': 'test_udp_template',
-                'template-virtual-port': 'template_vp',
-                'template-tcp': 'template_tcp',
-                'template-policy': 'template_pl',
+        protocol = self.client.slb.virtual_server.vport.HTTP
+        if protocol.lower() == 'http':
+            params = {
+                'port':
+                {
+                    'auto': 1,
+                    'extended-stats': 1,
+                    'ipinip': 1,
+                    'name': 'test1_VPORT',
+                    'pool': 'test_nat_pool',
+                    'port-number': 80,
+                    'protocol': 'http',
+                    'service-group': 'pool1',
+                    'tcp_template': 'test_tcp_template',
+                    'template-persist-cookie': 'test_c_pers_template',
+                    'template-persist-source-ip': 'test_s_pers_template',
+                    'udp_template': 'test_udp_template',
+                    'template-virtual-port': 'template_vp',
+                    'template-http': None,
+                    'template-policy': 'template_pl',
+                }
             }
-        }
+        else:
+            params = {
+                'port':
+                {
+                    'auto': 1,
+                    'extended-stats': 1,
+                    'ipinip': 1,
+                    'name': 'test1_VPORT',
+                    'pool': 'test_nat_pool',
+                    'port-number': 80,
+                    'protocol': 'http',
+                    'service-group': 'pool1',
+                    'tcp_template': 'test_tcp_template',
+                    'template-persist-cookie': 'test_c_pers_template',
+                    'template-persist-source-ip': 'test_s_pers_template',
+                    'udp_template': 'test_udp_template',
+                    'template-virtual-port': 'template_vp',
+                    'template-tcp': 'template_tcp',
+                    'template-policy': 'template_pl',
+                }
+            }
 
         resp = self.client.slb.virtual_server.vport.create(
             virtual_server_name=VSERVER_NAME,
@@ -213,9 +236,9 @@ class TestVirtualPort(unittest.TestCase):
             tcp_template="test_tcp_template",
             udp_template="test_udp_template",
             virtual_port_templates={
-            'template-virtual-port': 'template_vp',
-            'template-tcp': 'template_tcp',
-            'template-policy': 'template_pl',
+                'template-virtual-port': 'template_vp',
+                'template-tcp': 'template_tcp',
+                'template-policy': 'template_pl',
             },
         )
 
@@ -231,26 +254,49 @@ class TestVirtualPort(unittest.TestCase):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {'response': {'status': 'OK'}}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
-        params = {
-            'port':
-            {
-                'auto': 1,
-                'extended-stats': 1,
-                'ipinip': 1,
-                'name': 'test1_VPORT',
-                'pool': 'test_nat_pool',
-                'port-number': 80,
-                'protocol': 'http',
-                'service-group': 'pool1',
-                'tcp_template': 'test_tcp_template',
-                'template-persist-cookie': 'test_c_pers_template',
-                'template-persist-source-ip': 'test_s_pers_template',
-                'udp_template': 'test_udp_template',
-                'template-virtual-port': 'template_vp',
-                'template-tcp': None,
-                'template-policy': None,
+        protocol = self.client.slb.virtual_server.vport.HTTP
+        if protocol.lower() == 'http':
+            params = {
+                'port':
+                {
+                    'auto': 1,
+                    'extended-stats': 1,
+                    'ipinip': 1,
+                    'name': 'test1_VPORT',
+                    'pool': 'test_nat_pool',
+                    'port-number': 80,
+                    'protocol': 'http',
+                    'service-group': 'pool1',
+                    'tcp_template': 'test_tcp_template',
+                    'template-persist-cookie': 'test_c_pers_template',
+                    'template-persist-source-ip': 'test_s_pers_template',
+                    'udp_template': 'test_udp_template',
+                    'template-virtual-port': 'template_vp',
+                    'template-http': None,
+                    'template-policy': None,
+                }
             }
-        }
+        else:
+            params = {
+                'port':
+                {
+                    'auto': 1,
+                    'extended-stats': 1,
+                    'ipinip': 1,
+                    'name': 'test1_VPORT',
+                    'pool': 'test_nat_pool',
+                    'port-number': 80,
+                    'protocol': 'http',
+                    'service-group': 'pool1',
+                    'tcp_template': 'test_tcp_template',
+                    'template-persist-cookie': 'test_c_pers_template',
+                    'template-persist-source-ip': 'test_s_pers_template',
+                    'udp_template': 'test_udp_template',
+                    'template-virtual-port': 'template_vp',
+                    'template-tcp': None,
+                    'template-policy': None,
+                }
+            }
 
         resp = self.client.slb.virtual_server.vport.create(
             virtual_server_name=VSERVER_NAME,
@@ -335,29 +381,53 @@ class TestVirtualPort(unittest.TestCase):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {"foo": "bar"}
         responses.add(responses.POST, OBJECT_URL, json=json_response, status=200)
-        params = {
-            'port':
-            {
-                'auto': 1,
-                'extended-stats': 1,
-                'name': 'test1_VPORT',
-                'no-dest-nat': 1,
-                'pool': 'test_nat_pool',
-                'port-number': 80,
-                'protocol': 'http',
-                'service-group': 'pool1',
-                'ha-conn-mirror': 1,
-                'conn-limit': 50000,
-                'tcp_template': 'test_tcp_template',
-                'template-persist-cookie': 'test_c_pers_template',
-                'template-persist-source-ip': 'test_s_pers_template',
-                'udp_template': 'test_udp_template',
-                'template-virtual-port': 'template_vp',
-                'template-tcp': None,
-                'template-policy': None,
+        protocol = self.client.slb.virtual_server.vport.HTTP
+        if protocol.lower() == 'http':
+            params = {
+                'port':
+                {
+                    'auto': 1,
+                    'extended-stats': 1,
+                    'name': 'test1_VPORT',
+                    'no-dest-nat': 1,
+                    'pool': 'test_nat_pool',
+                    'port-number': 80,
+                    'protocol': 'http',
+                    'service-group': 'pool1',
+                    'ha-conn-mirror': 1,
+                    'conn-limit': 50000,
+                    'tcp_template': 'test_tcp_template',
+                    'template-persist-cookie': 'test_c_pers_template',
+                    'template-persist-source-ip': 'test_s_pers_template',
+                    'udp_template': 'test_udp_template',
+                    'template-virtual-port': 'template_vp',
+                    'template-http': None,
+                    'template-policy': None,
+                }
             }
-        }
-
+        else:
+            params = {
+                'port':
+                {
+                    'auto': 1,
+                    'extended-stats': 1,
+                    'name': 'test1_VPORT',
+                    'no-dest-nat': 1,
+                    'pool': 'test_nat_pool',
+                    'port-number': 80,
+                    'protocol': 'http',
+                    'service-group': 'pool1',
+                    'ha-conn-mirror': 1,
+                    'conn-limit': 50000,
+                    'tcp_template': 'test_tcp_template',
+                    'template-persist-cookie': 'test_c_pers_template',
+                    'template-persist-source-ip': 'test_s_pers_template',
+                    'udp_template': 'test_udp_template',
+                    'template-virtual-port': 'template_vp',
+                    'template-tcp': None,
+                    'template-policy': None,
+                }
+            }
         resp = self.client.slb.virtual_server.vport.update(
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
