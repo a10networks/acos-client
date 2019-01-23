@@ -184,7 +184,7 @@ class TestVirtualServer(unittest.TestCase):
                 'template-logging': 'template_lg',
                 'template-policy': 'template_pl',
                 'template-scaleout': 'template_sc',
-                }
+            }
         )
 
         self.assertEqual(resp, json_response)

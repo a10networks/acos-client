@@ -23,8 +23,8 @@ except ImportError:
 
 from acos_client import client
 import acos_client.errors as acos_errors
-import responses
 import json
+import responses
 
 
 HOSTNAME = 'fake_a10'
@@ -67,7 +67,7 @@ class TestVirtualServer(unittest.TestCase):
             'template-server': 'template_sv',
             'template-port': 'template_port',
             'template-policy': 'template-pl'
-            }
+        }
         resp = self.client.slb.service_group.create('test1', service_group_templates=templates)
         params = {
             'service-group':

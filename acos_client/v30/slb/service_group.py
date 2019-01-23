@@ -53,7 +53,8 @@ class ServiceGroup(base.BaseV30):
     TCP = 'tcp'
     UDP = 'udp'
 
-    def _set(self, name, protocol=None, lb_method=None, service_group_templates=None, hm_name=None, update=False, **kwargs):
+    def _set(self, name, protocol=None, lb_method=None, service_group_templates=None,
+             hm_name=None, update=False, **kwargs):
 
         # Normalize "" -> None for json
         hm_name = hm_name or None
@@ -145,5 +146,7 @@ class ServiceGroup(base.BaseV30):
     def stats(self, name, *args, **kwargs):
         return self._get(self.url_prefix + name + "/stats", **kwargs)
 
-    def update(self, name, protocol=None, lb_method=None, health_monitor=None, service_group_templates=None, **kwargs):
-        return self._set(name, protocol, lb_method, hm_name=health_monitor, service_group_templates=service_group_templates, update=True, **kwargs)
+    def update(self, name, protocol=None, lb_method=None, health_monitor=None,
+               service_group_templates=None, **kwargs):
+        return self._set(name, protocol, lb_method, hm_name=health_monitor,
+                         service_group_templates=service_group_templates, update=True, **kwargs)

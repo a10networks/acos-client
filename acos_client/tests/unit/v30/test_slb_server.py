@@ -93,7 +93,7 @@ class TestServer(unittest.TestCase):
         }
         templates = {
             "template-server": "test-template-server"
-            }
+        }
         resp = self.client.slb.server.create('test', '192.168.2.254', server_templates=templates)
 
         self.assertEqual(resp, json_response)
@@ -221,7 +221,7 @@ class TestIPv6Server(unittest.TestCase):
         }
         templates = {
             "template-server": "test-template-server"
-            }
+        }
         resp = self.client.slb.server.create('test', '192.168.2.254', server_templates=templates)
 
         self.assertEqual(resp, json_response)
