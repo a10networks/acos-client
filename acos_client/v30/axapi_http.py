@@ -89,7 +89,6 @@ class HttpClient(object):
 
         # Process files if passed as a parameter
         if file_name is not None:
-            file_content = file_content
             files = {
                 'file': (file_name, file_content, "application/octet-stream"),
                 'json': ('blob', payload, "application/json")

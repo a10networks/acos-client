@@ -21,11 +21,13 @@ except ImportError:
     import mock
     import unittest2 as unittest
 
-from acos_client import client
-import acos_client.errors as acos_errors
-import responses
 import json
 import re
+import responses
+
+from acos_client import client
+import acos_client.errors as acos_errors
+
 
 HOSTNAME = 'fake_a10'
 BASE_URL = 'https://{}:443/axapi/v3'.format(HOSTNAME)
