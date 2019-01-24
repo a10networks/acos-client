@@ -69,7 +69,7 @@ class TestAFlex(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         # POST call creates blob data, implemented json search using regex
         m = re.search(r"\{(.*?)\}", responses.calls[1].request.body.decode('utf-8'))
-        grepedJSON = json.loads("{" + m.group(1) + "}}")
+        grepedJSON = json.loads("{" + m.group(1).decode('utf-8') + "}}")
         self.assertEqual(grepedJSON, params)
 
     @mock.patch('acos_client.v30.slb.aflex_policy.AFlexPolicy.get')
@@ -100,7 +100,7 @@ class TestAFlex(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         # POST call creates blob data, implemented json search using regex
         m = re.search(r"\{(.*?)\}", responses.calls[1].request.body.decode('utf-8'))
-        grepedJSON = json.loads("{" + m.group(1) + "}}")
+        grepedJSON = json.loads("{" + m.group(1).decode('utf-8') + "}}")
         self.assertEqual(grepedJSON, params)
 
     @mock.patch('acos_client.v30.slb.aflex_policy.AFlexPolicy.get')
@@ -125,5 +125,5 @@ class TestAFlex(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         # POST call creates blob data, implemented json search using regex
         m = re.search(r"\{(.*?)\}", responses.calls[1].request.body.decode('utf-8'))
-        grepedJSON = json.loads("{" + m.group(1) + "}}")
+        grepedJSON = json.loads("{" + m.group(1).decode('utf-8') + "}}")
         self.assertEqual(grepedJSON, params)
