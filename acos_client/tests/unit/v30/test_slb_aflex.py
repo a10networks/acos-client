@@ -21,12 +21,11 @@ except ImportError:
     import mock
     import unittest2 as unittest
 
+from acos_client import client
+import acos_client.errors as acos_errors
 import json
 import re
 import responses
-
-from acos_client import client
-import acos_client.errors as acos_errors
 
 
 HOSTNAME = 'fake_a10'
@@ -61,7 +60,7 @@ class TestAFlex(unittest.TestCase):
                 'size': paramsize,
                 'file-handle': 'testaflexpolicy',
                 'action': 'import',
-                }
+            }
         }
         resp = self.client.slb.aflex_policy.create(filename, script, size, action)
         self.assertEqual(resp, json_response)
@@ -69,7 +68,7 @@ class TestAFlex(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         # POST call creates blob data, implemented json search using regex
-        m = re.search(r"\{(.*?)\}", responses.calls[1].request.body)
+        m = re.search(r"\{(.*?)\}", responses.calls[1].request.body.decode('utf-8'))
         grepedJSON = json.loads("{" + m.group(1) + "}}")
         self.assertEqual(grepedJSON, params)
 
@@ -92,7 +91,7 @@ class TestAFlex(unittest.TestCase):
                 'size': paramsize,
                 'file-handle': 'testaflexpolicy',
                 'action': 'import',
-                }
+            }
         }
         resp = self.client.slb.aflex_policy.update(filename, script, size, action)
         self.assertEqual(resp, json_response)
@@ -100,7 +99,7 @@ class TestAFlex(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         # POST call creates blob data, implemented json search using regex
-        m = re.search(r"\{(.*?)\}", responses.calls[1].request.body)
+        m = re.search(r"\{(.*?)\}", responses.calls[1].request.body.decode('utf-8'))
         grepedJSON = json.loads("{" + m.group(1) + "}}")
         self.assertEqual(grepedJSON, params)
 
@@ -117,7 +116,7 @@ class TestAFlex(unittest.TestCase):
             'aflex': {
                 'file': 'testaflexpolicy',
                 'action': 'delete',
-                }
+            }
         }
         resp = self.client.slb.aflex_policy.delete(filename)
         self.assertEqual(resp, json_response)
@@ -125,6 +124,6 @@ class TestAFlex(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         # POST call creates blob data, implemented json search using regex
-        m = re.search(r"\{(.*?)\}", responses.calls[1].request.body)
+        m = re.search(r"\{(.*?)\}", responses.calls[1].request.body.decode('utf-8'))
         grepedJSON = json.loads("{" + m.group(1) + "}}")
         self.assertEqual(grepedJSON, params)

@@ -156,7 +156,7 @@ class TestVirtualPort(unittest.TestCase):
                 "template-persist-source-ip": None,
                 "template-persist-cookie": None,
                 "extended-stats": 1,
-                "no-dest-nat": 0
+                "aflex-scripts": None
             }
         }
 
@@ -184,7 +184,6 @@ class TestVirtualPort(unittest.TestCase):
                 'auto': 1,
                 'extended-stats': 1,
                 'name': 'test1_VPORT',
-                'no-dest-nat': 1,
                 'pool': 'test_nat_pool',
                 'port-number': 80,
                 'protocol': 'http',
@@ -194,7 +193,8 @@ class TestVirtualPort(unittest.TestCase):
                 'tcp_template': 'test_tcp_template',
                 'template-persist-cookie': 'test_c_pers_template',
                 'template-persist-source-ip': 'test_s_pers_template',
-                'udp_template': 'test_udp_template'
+                'udp_template': 'test_udp_template',
+                'aflex-scripts': None,
             }
         }
 
