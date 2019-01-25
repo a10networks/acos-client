@@ -67,10 +67,8 @@ class TestAFlex(unittest.TestCase):
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
-        # POST call creates blob data, implemented json search using regex
-        m = re.search(r"\{(.*?)\}", responses.calls[1].request.body.decode('utf-8'))
-        grepedJSON = json.loads("{" + m.group(1).decode('utf-8') + "}}")
-        self.assertEqual(grepedJSON, params)
+        self.assertIn('testaflexpolicy', responses.calls[1].request.body)
+        self.assertIn('import', responses.calls[1].request.body)
 
     @mock.patch('acos_client.v30.slb.aflex_policy.AFlexPolicy.get')
     @responses.activate
@@ -98,10 +96,9 @@ class TestAFlex(unittest.TestCase):
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
-        # POST call creates blob data, implemented json search using regex
-        m = re.search(r"\{(.*?)\}", responses.calls[1].request.body.decode('utf-8'))
-        grepedJSON = json.loads("{" + m.group(1).decode('utf-8') + "}}")
-        self.assertEqual(grepedJSON, params)
+        self.assertIn('testaflexpolicy', responses.calls[1].request.body)
+        self.assertIn('import', responses.calls[1].request.body)
+
 
     @mock.patch('acos_client.v30.slb.aflex_policy.AFlexPolicy.get')
     @responses.activate
@@ -123,7 +120,6 @@ class TestAFlex(unittest.TestCase):
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
-        # POST call creates blob data, implemented json search using regex
-        m = re.search(r"\{(.*?)\}", responses.calls[1].request.body.decode('utf-8'))
-        grepedJSON = json.loads("{" + m.group(1).decode('utf-8') + "}}")
-        self.assertEqual(grepedJSON, params)
+        self.assertIn('testaflexpolicy', responses.calls[1].request.body)
+        self.assertIn('delete', responses.calls[1].request.body)
+
