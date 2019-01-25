@@ -23,8 +23,6 @@ except ImportError:
 
 from acos_client import client
 import acos_client.errors as acos_errors
-import json
-import re
 import responses
 
 
@@ -53,22 +51,13 @@ class TestAFlex(unittest.TestCase):
         size = len(script.encode('utf-8'))
         action = "import"
 
-        paramsize = len("when RULE_INIT{ change }".encode('utf-8'))
-        params = {
-            'aflex': {
-                'file': 'testaflexpolicy',
-                'size': paramsize,
-                'file-handle': 'testaflexpolicy',
-                'action': 'import',
-            }
-        }
         resp = self.client.slb.aflex_policy.create(filename, script, size, action)
         self.assertEqual(resp, json_response)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
-        self.assertIn('testaflexpolicy', responses.calls[1].request.body)
-        self.assertIn('import', responses.calls[1].request.body)
+        self.assertIn(filename, responses.calls[1].request.body.decode('UTF-8'))
+        self.assertIn(action, responses.calls[1].request.body.decode('UTF-8'))
 
     @mock.patch('acos_client.v30.slb.aflex_policy.AFlexPolicy.get')
     @responses.activate
@@ -82,23 +71,13 @@ class TestAFlex(unittest.TestCase):
         size = len(script.encode('utf-8'))
         action = "import"
 
-        paramsize = len("when RULE_INIT{}".encode('utf-8'))
-        params = {
-            'aflex': {
-                'file': 'testaflexpolicy',
-                'size': paramsize,
-                'file-handle': 'testaflexpolicy',
-                'action': 'import',
-            }
-        }
         resp = self.client.slb.aflex_policy.update(filename, script, size, action)
         self.assertEqual(resp, json_response)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
-        self.assertIn('testaflexpolicy', responses.calls[1].request.body)
-        self.assertIn('import', responses.calls[1].request.body)
-
+        self.assertIn(filename, responses.calls[1].request.body.decode('UTF-8'))
+        self.assertIn(action, responses.calls[1].request.body.decode('UTF-8'))
 
     @mock.patch('acos_client.v30.slb.aflex_policy.AFlexPolicy.get')
     @responses.activate
@@ -109,17 +88,10 @@ class TestAFlex(unittest.TestCase):
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
         filename = "testaflexpolicy"
 
-        params = {
-            'aflex': {
-                'file': 'testaflexpolicy',
-                'action': 'delete',
-            }
-        }
         resp = self.client.slb.aflex_policy.delete(filename)
         self.assertEqual(resp, json_response)
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
-        self.assertIn('testaflexpolicy', responses.calls[1].request.body)
-        self.assertIn('delete', responses.calls[1].request.body)
-
+        self.assertIn(filename, responses.calls[1].request.body.decode('UTF-8'))
+        self.assertIn('delete', responses.calls[1].request.body.decode('UTF-8'))
