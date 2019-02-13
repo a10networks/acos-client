@@ -155,8 +155,7 @@ class TestVirtualPort(unittest.TestCase):
                 "port-number": 80,
                 "template-persist-source-ip": None,
                 "template-persist-cookie": None,
-                "extended-stats": 1,
-                "no-dest-nat": 0
+                "extended-stats": 1
             }
         }
 
@@ -336,6 +335,7 @@ class TestVirtualPort(unittest.TestCase):
                 'auto': 1,
                 'extended-stats': 1,
                 'name': 'test1_VPORT',
+                'ipinip': 1,
                 'no-dest-nat': 1,
                 'pool': 'test_nat_pool',
                 'port-number': 80,
@@ -362,7 +362,7 @@ class TestVirtualPort(unittest.TestCase):
             autosnat=True,
             ipinip=True,
             ha_conn_mirror=1,
-            no_dest_nat=0,
+            no_dest_nat=1,
             conn_limit=50000,
             source_nat_pool="test_nat_pool",
             tcp_template="test_tcp_template",
@@ -389,7 +389,8 @@ class TestVirtualPort(unittest.TestCase):
                     'auto': 1,
                     'extended-stats': 1,
                     'name': 'test1_VPORT',
-                    'no-dest-nat': 1,
+                    'ipinip': 1,
+                    'no-dest-nat': 0,
                     'pool': 'test_nat_pool',
                     'port-number': 80,
                     'protocol': 'http',
@@ -412,7 +413,8 @@ class TestVirtualPort(unittest.TestCase):
                     'auto': 1,
                     'extended-stats': 1,
                     'name': 'test1_VPORT',
-                    'no-dest-nat': 1,
+                    'ipinip': 1,
+                    'no-dest-nat': 0,
                     'pool': 'test_nat_pool',
                     'port-number': 80,
                     'protocol': 'http',
