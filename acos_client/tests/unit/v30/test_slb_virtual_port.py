@@ -155,7 +155,7 @@ class TestVirtualPort(unittest.TestCase):
                 "port-number": 80,
                 "template-persist-source-ip": None,
                 "template-persist-cookie": None,
-                "extended-stats": 1
+                "extended-stats": 1,
             }
         }
 
@@ -346,7 +346,7 @@ class TestVirtualPort(unittest.TestCase):
                 'tcp_template': 'test_tcp_template',
                 'template-persist-cookie': 'test_c_pers_template',
                 'template-persist-source-ip': 'test_s_pers_template',
-                'udp_template': 'test_udp_template'
+                'udp_template': 'test_udp_template',
             }
         }
 
