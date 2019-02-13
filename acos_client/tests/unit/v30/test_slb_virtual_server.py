@@ -154,6 +154,114 @@ class TestVirtualServer(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
+    @mock.patch('acos_client.v30.slb.virtual_server.VirtualServer.get')
+    @responses.activate
+    def test_virtual_server_create_with_existing_template(self, mocked_get):
+        mocked_get.side_effect = acos_errors.NotFound
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        params = {
+            'virtual-server': {
+                'ip-address': '192.168.2.254',
+                'name': VSERVER_NAME,
+                'arp-disable': 1,
+                'vrid': 1,
+                'template-virtual-server': 'template_sv',
+                'template-logging': 'template_lg',
+                'template-policy': 'template_pl',
+                'template-scaleout': 'template_sc',
+            }
+        }
+
+        resp = self.client.slb.virtual_server.create(
+            name='test',
+            ip_address='192.168.2.254',
+            arp_disable=1,
+            vrid=1,
+            virtual_server_templates={
+                'template-virtual-server': 'template_sv',
+                'template-logging': 'template_lg',
+                'template-policy': 'template_pl',
+                'template-scaleout': 'template_sc',
+            }
+        )
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
+    @mock.patch('acos_client.v30.slb.virtual_server.VirtualServer.get')
+    @responses.activate
+    def test_virtual_server_create_with_non_existing_template(self, mocked_get):
+        mocked_get.side_effect = acos_errors.NotFound
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        params = {
+            'virtual-server': {
+                'ip-address': '192.168.2.254',
+                'name': VSERVER_NAME,
+                'arp-disable': 1,
+                'vrid': 1,
+                'template-virtual-server': 'template_sv2',
+                'template-logging': None,
+                'template-policy': None,
+                'template-scaleout': None,
+            }
+        }
+
+        resp = self.client.slb.virtual_server.create(
+            name='test',
+            ip_address='192.168.2.254',
+            arp_disable=1,
+            vrid=1,
+            virtual_server_templates={
+                'template-virtual-server': 'template_sv',
+            }
+        )
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertNotEqual(json.loads(responses.calls[1].request.body), params)
+
+    @mock.patch('acos_client.v30.slb.virtual_server.VirtualServer.get')
+    @responses.activate
+    def test_virtual_server_update_with_existing_template(self, mocked_get):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.POST, OBJECT_URL, json=json_response, status=200)
+        params = {
+            'virtual-server': {
+                'name': VSERVER_NAME,
+                'ip-address': '192.168.2.254',
+                'arp-disable': 1,
+                'vrid': 1,
+                'template-virtual-server': 'TEST_VIP_TEMPLATE',
+                'template-logging': 'template_lg',
+                'template-policy': None,
+                'template-scaleout': None,
+            }
+        }
+
+        resp = self.client.slb.virtual_server.update(
+            name='test',
+            ip_address='192.168.2.254',
+            arp_disable=1,
+            vrid=1,
+            virtual_server_templates={'template-logging': 'template_lg'}, template_virtual_server='TEST_VIP_TEMPLATE',
+        )
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
     @responses.activate
     def test_virtual_server_delete(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
