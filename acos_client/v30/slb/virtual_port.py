@@ -150,13 +150,15 @@ class VirtualPort(base.BaseV30):
                 params["port"]["conn-limit"] = conn_limit
 
         url = self.url_server_tmpl.format(name=virtual_server_name)
+
+        aflex_scripts = kwargs.get("aflex-scripts", None)
+        if aflex_scripts:
+            params['port']['aflex-scripts'] = aflex_scripts
+
         if update:
             url += self.url_port_tmpl.format(
                 port_number=port, protocol=protocol
             )
-            del params['port']["no-dest-nat"]
-            aflex_scripts = kwargs.get("aflex-scripts", None)
-            params['port']['aflex-scripts'] = aflex_scripts
 
         return self._post(url, params, **kwargs)
 

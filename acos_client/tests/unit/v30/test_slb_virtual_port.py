@@ -156,7 +156,6 @@ class TestVirtualPort(unittest.TestCase):
                 "template-persist-source-ip": None,
                 "template-persist-cookie": None,
                 "extended-stats": 1,
-                "aflex-scripts": None
             }
         }
 
@@ -348,7 +347,6 @@ class TestVirtualPort(unittest.TestCase):
                 'template-persist-cookie': 'test_c_pers_template',
                 'template-persist-source-ip': 'test_s_pers_template',
                 'udp_template': 'test_udp_template',
-                'aflex-scripts': None,
             }
         }
 
