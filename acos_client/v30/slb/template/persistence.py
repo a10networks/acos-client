@@ -37,7 +37,10 @@ class BasePersistence(base.BaseV30):
     def create(self, name, domain=None, **kwargs):
         if self.exists(name):
             raise acos_errors.Exists
-        self._post(self.prefix, self.get_params(name, domain), **kwargs)
+        params = self.get_params(name, domain)
+        params.update(kwargs)
+
+        self._post(self.prefix, **params)
 
     def delete(self, name, **kwargs):
         self._delete(self.prefix + name, **kwargs)
