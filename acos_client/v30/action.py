@@ -45,3 +45,12 @@ class Action(base.BaseV30):
             "commandlist": commandlist
         }
         return self._post("/clideploy/", payload, **kwargs)
+
+    def reload(self):
+        self._post("/reload", "")
+
+    def setInterface(self, interface):
+        data = {"ethernet":{"ifnum": str(interface), "name": "DataPort", "action":"enable", "ip": {"dhcp":1}}}
+        url = "/interface/ethernet/" + str(interface)
+        self._post (url, data)
+
