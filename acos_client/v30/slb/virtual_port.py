@@ -152,7 +152,7 @@ class VirtualPort(base.BaseV30):
         url = self.url_server_tmpl.format(name=virtual_server_name)
 
         aflex_scripts = kwargs.get("aflex-scripts", None)
-        if aflex_scripts:
+        if aflex_scripts is not None:
             params['port']['aflex-scripts'] = aflex_scripts
 
         if update:
