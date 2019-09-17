@@ -20,11 +20,11 @@ from acos_client.v30 import base
 
 class Action(base.BaseV30):
 
-    def write_memory(self, **kwargs):
+    def write_memory(self, partition="all", destination="primary", **kwargs):
         payload = {
             "memory": {
-                "destination": "primary",
-                "partition": "all"
+                "destination": destination,
+                "partition": partition
             }
         }
         try:
@@ -37,11 +37,38 @@ class Action(base.BaseV30):
             # If the retry loop missed this, catch it next time.
             pass
 
-    def activate_and_write(self, partition, **kwargs):
-        self.write_memory()
+    def activate_and_write(self, partition="all", destination="primary", **kwargs):
+        self.write_memory(partition, destination)
 
     def clideploy(self, commandlist, **kwargs):
         payload = {
             "commandlist": commandlist
         }
         return self._post("/clideploy/", payload, **kwargs)
+
+    def reload(self):
+        self._post("/reload", "")
+
+    def reboot(self):
+        self._post("/reboot", "")
+
+    def setInterface(self, interface):
+        data = {"ethernet":{"ifnum": str(interface), "name": "DataPort", "action":"enable", "ip": {"dhcp":1}}}
+        url = "/interface/ethernet/" + str(interface)
+        self._post(url, data)
+
+    def configureVRRP(self, device_id, set_id):
+        data = {"common": { "device-id": device_id, "set-id": set_id, "action":"enable"}}
+        url = "/vrrp-a/common"
+        self._post(url, data)
+
+    def configureVRID(self, vrid):
+        data = { "vrid": { "vrid-val": vrid, "blade-parameters": { "priority":150} } }
+        url = "/vrrp-a/vrid"
+        self._post(url, data)
+
+    def configSynch(self, ip_address, username, password):
+        data = {"sync" : { "address" : ip_address, "auto-authentication" : 1,
+                "type" : "all", "usr" : username, "pwd" : password}}
+        url = "/configure/sync"
+        self._post(url, data)
