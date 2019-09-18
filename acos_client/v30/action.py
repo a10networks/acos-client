@@ -53,22 +53,25 @@ class Action(base.BaseV30):
         self._post("/reboot", "")
 
     def setInterface(self, interface):
-        data = {"ethernet":{"ifnum": str(interface), "name": "DataPort", "action":"enable", "ip": {"dhcp":1}}}
+        data = {"ethernet": {"ifnum": str(interface), "name": "DataPort",
+                "action": "enable", "ip": {"dhcp": 1}}}
         url = "/interface/ethernet/" + str(interface)
         self._post(url, data)
 
     def configureVRRP(self, device_id, set_id):
-        data = {"common": { "device-id": device_id, "set-id": set_id, "action":"enable"}}
+        data = {"common": {"device-id": device_id, "set-id": set_id,
+                "action": "enable"}}
         url = "/vrrp-a/common"
         self._post(url, data)
 
     def configureVRID(self, vrid):
-        data = { "vrid": { "vrid-val": vrid, "blade-parameters": { "priority":150} } }
+        data = {"vrid": {"vrid-val": vrid,
+                "blade-parameters": {"priority": 150}}}
         url = "/vrrp-a/vrid"
         self._post(url, data)
 
     def configSynch(self, ip_address, username, password):
-        data = {"sync" : { "address" : ip_address, "auto-authentication" : 1,
-                "type" : "all", "usr" : username, "pwd" : password}}
+        data = {"sync": {"address": ip_address, "auto-authentication": 1,
+                "type": "all", "usr": username, "pwd": password}}
         url = "/configure/sync"
         self._post(url, data)
