@@ -75,3 +75,24 @@ class Action(base.BaseV30):
                 "type": "all", "usr": username, "pwd": password}}
         url = "/configure/sync"
         self._post(url, data)
+
+    def set_vcs_device(self, device_id, priority):
+        data = {"device": {"device": device_id, "priority": priority,
+                "management": 1, "enable": 1}}
+        url = "/vcs/device/"
+        self._post(url, data)
+
+    def set_vcs_para(self, floating_ip, floating_ip_mask):
+        data = {"vcs-para": {"floating-ip-cfg": [{"floating-ip": floating_ip,
+                "floating-ip-mask": floating_ip_mask}]}}
+        url = "/vcs/vcs-para"
+        self._post(url, data)
+
+    def vcs_enable(self):
+        data = {"action": {"action": "enable"}}
+        url = "/vcs/action"
+        self._post(url, data)
+
+    def vcs_reload(self):
+        url = "/vcs/reload"
+        self._post(url)
