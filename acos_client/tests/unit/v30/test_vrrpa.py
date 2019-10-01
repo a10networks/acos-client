@@ -31,7 +31,7 @@ class TestVRID(unittest.TestCase):
         self.target = vrid.VRID(self.client)
         self.url_prefix = "/axapi/v3/vrrp-a/vrid/"
 
-    def expected_payload(self, vrid_val, threshold=1, disable=0):
+    def expected_payload(self, vrid_val, threshold=1, disable=0, floating_ips=[]):
         rv = {
             'vrid': {
                 'vrid-val': vrid_val,
@@ -41,6 +41,9 @@ class TestVRID(unittest.TestCase):
                 }
             }
         }
+
+        if len(floating_ips) > 0:
+            rv["vrid"]["floating-ip"] = floating_ips
 
         return rv
 
@@ -67,3 +70,9 @@ class TestVRID(unittest.TestCase):
         self.target.update(4, disable=1)
         self.client.http.request.assert_called_with(
             "PUT", self.url_prefix + '4', self.expected_payload(4, disable=1), mock.ANY)
+
+    def test_vrid_create_floatingip(self):
+        expected = {'ip-address-cfg': [{'ip-address': u'1.2.3.4'}]}
+        self.target.create(4, disable=1, floating_ips=["1.2.3.4"])
+        self.client.http.request.assert_called_with(
+            "POST", self.url_prefix, self.expected_payload(4, disable=1, floating_ips=expected), mock.ANY)        

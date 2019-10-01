@@ -38,7 +38,7 @@ class VRID(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def _build_params(self, vrid_val, threshold=None, disable=None):
+    def _build_params(self, vrid_val, threshold=None, disable=None, floating_ips=[]):
         vrid = {'vrid-val': vrid_val}
 
         if threshold or disable:
@@ -50,15 +50,19 @@ class VRID(base.BaseV30):
             }
 
             vrid['preempt-mode'] = preempt
+        # If floating IPs are spec'd, add them to the dictionary.
+        if len(floating_ips) > 0:
+            vrid["floating-ip"] = {"ip-address-cfg": [{"ip-address": x} for x in floating_ips]} 
+
 
         payload = {'vrid': vrid}
 
         return payload
 
-    def create(self, vrid_val, threshold=None, disable=None):
-        return self._post(self.base_url, self._build_params(vrid_val, threshold, disable))
+    def create(self, vrid_val, threshold=None, disable=None, floating_ips=[]):
+        return self._post(self.base_url, self._build_params(vrid_val, threshold, disable, floating_ips))
 
-    def update(self, vrid_val, threshold=None, disable=None):
+    def update(self, vrid_val, threshold=None, disable=None, floating_ips=[]):
         return self._put(self.base_url + str(vrid_val), self._build_params(vrid_val, threshold, disable))
 
     def delete(self, vrid_val):
