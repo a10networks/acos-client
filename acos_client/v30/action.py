@@ -100,7 +100,9 @@ class Action(base.BaseV30):
     def check_vrrp_status(self):
         url = "/vrrp-a"
         data = self._get(url)
-        if "common" in data["vrrp-a"].keys() and "action" in data["vrrp-a"]["common"].keys() and data["vrrp-a"]["common"]["action"] == "enable":
+        if "common" in data["vrrp-a"].keys() and \
+            "action" in data["vrrp-a"]["common"].keys() and \
+                data["vrrp-a"]["common"]["action"] == "enable":
             return True
         else:
             return False
