@@ -28,16 +28,24 @@ class Server(base.BaseV30):
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
 
-    def create(self, name, ip_address, status=1, **kwargs):
+    def create(self, name, ip_address, status=1, server_templates=None, **kwargs):
         params = {
             "server": {
                 "name": name,
-                "host": ip_address,
                 "action": 'enable' if status else 'disable',
                 "conn-resume": kwargs.get("conn_resume", None),
                 "conn-limit": kwargs.get("conn_limit", 8000000),
             }
         }
+
+        if self._is_ipv6(ip_address):
+            params['server']['server-ipv6-addr'] = ip_address
+        else:
+            params['server']['host'] = ip_address
+
+        if server_templates:
+            server_templates = {k: v for k, v in server_templates.items() if v}
+            params['server']['template-server'] = server_templates.get('template-server', None)
 
         config_defaults = kwargs.get("config_defaults")
 
@@ -55,16 +63,24 @@ class Server(base.BaseV30):
 
         return self._post(self.url_prefix, params, **kwargs)
 
-    def update(self, name, ip_address, status=1, **kwargs):
+    def update(self, name, ip_address, status=1, server_templates=None, **kwargs):
         params = {
             "server": {
                 "name": name,
-                "host": ip_address,
                 "action": 'enable' if status else 'disable',
                 "conn-resume": kwargs.get("conn_resume", None),
                 "conn-limit": kwargs.get("conn_limit", 8000000),
             }
         }
+
+        if self._is_ipv6(ip_address):
+            params['server']['server-ipv6-addr'] = ip_address
+        else:
+            params['server']['host'] = ip_address
+
+        if server_templates:
+            server_templates = {k: v for k, v in server_templates.items() if v}
+            params['server']['template-server'] = server_templates.get('template-server', None)
 
         self.get(name, **kwargs)
 

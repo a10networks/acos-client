@@ -65,16 +65,20 @@ class Partition(base.BaseV30):
         z = a['partition-available-id']['oper']['range-list'][0]['start']
         return int(z)
 
-    def _create(self, name, partition_id):
+    def _create(self, name, partition_id, application_type=None):
         params = {
             "partition": {
                 "partition-name": name,
                 "id": partition_id,
             }
         }
+
+        if application_type:
+            params['partition']['application-type'] = application_type
+
         self._post("/partition", params)
 
-    def create(self, name):
+    def create(self, name, application_type=None):
         if name == 'shared':
             return
 
@@ -85,7 +89,7 @@ class Partition(base.BaseV30):
         # set it, loop if we get an exists error.
         for i in six.moves.range(1, 1000):
             try:
-                self._create(name, self._next_available_id())
+                self._create(name, self._next_available_id(), application_type)
                 break
             except acos_errors.PartitionIdExists:
                 time.sleep(0.05 + random.random() / 100)

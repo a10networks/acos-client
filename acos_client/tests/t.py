@@ -14,6 +14,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from __future__ import print_function
+
 import acos_client
 
 import argparse
@@ -21,9 +23,13 @@ import os.path
 import random
 import sys
 import traceback
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 sys.path.append(".")
 
+
+partitions = ['shared', 'p1', 'p2', 'ipv6', 'ipv4-ipv6', 'ipv6-ipv4']
 
 parser = argparse.ArgumentParser(description='acos-client smoke test')
 parser.add_argument('host')
@@ -32,11 +38,10 @@ parser.add_argument('--protocol', default='https')
 parser.add_argument('--user', default='admin')
 parser.add_argument('--password', default='a10')
 parser.add_argument('--axapi-version', required=True, choices=['2.1', '3.0'])
-parser.add_argument('--partition', default='shared', choices=['shared', 'p1', 'p2', 'all'])
+parser.add_argument('--partition', default='shared', choices=partitions + ['all'])
 ARGS = parser.parse_args()
 
 
-partitions = ['shared', 'p1', 'p2']
 partition_map = {
     'shared': {
         'name': 'shared',
@@ -60,7 +65,31 @@ partition_map = {
         'vip1': '192.168.2.230',
         'vip2': '192.168.2.229',
         'vip3': '192.168.2.228',
-        'vip4': '192.168.2.228'
+        'vip4': '192.168.2.227'
+    },
+    'ipv6': {
+        'name': 'ipv6',
+        's1': '2001:db8::1001',
+        'vip1': '2001:db8:feed::5001',
+        'vip2': '2001:db8:feed::5002',
+        'vip3': '2001:db8:feed::5003',
+        'vip4': '2001:db8:feed::5004',
+    },
+    'ipv4-ipv6': {
+        'name': 'ipv4-ipv6',
+        's1': '192.168.46.254',
+        'vip1': '2001:db8:ee::4601',
+        'vip2': '2001:db8:ee::4602',
+        'vip3': '2001:db8:ee::4603',
+        'vip4': '2001:db8:ee::4604',
+    },
+    'ipv6-ipv4': {
+        'name': 'ipv6-ipv4',
+        's1': '2001:db8:ee::6401',
+        'vip1': '192.168.64.1',
+        'vip2': '192.168.64.2',
+        'vip3': '192.168.64.3',
+        'vip4': '192.168.64.4'
     },
 }
 
@@ -177,7 +206,7 @@ def run_all(ax, partition, pmap):
     print("WAIT FOR CONNECT END")
 
     r = c.system.information()
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
 
     print("=============================================================")
     print("")
@@ -185,6 +214,8 @@ def run_all(ax, partition, pmap):
     try:
         c = get_client(ax, password='badpass')
         c.system.information()
+    except acos_client.errors.InvalidSessionID:
+        print("got Invalid Session ID, good")
     except acos_client.errors.AuthenticationFailure:
         print("got bad auth exception, good")
     else:
@@ -213,8 +244,14 @@ def run_all(ax, partition, pmap):
     print("=============================================================")
     print("")
     print("About to do a close with bad session id")
-    c.session.session_id = 'bad_session_id'
-    c.session.close()
+    try:
+        c.session.session_id = 'bad_session_id'
+        c.session.close()
+    except acos_client.errors.InvalidSessionID:
+        print("got Invalid Session ID, good")
+    else:
+        if ARGS.axapi_version == "3.0":
+            raise Nope()
 
     # print("=============================================================")
     # print("")
@@ -240,14 +277,14 @@ def run_all(ax, partition, pmap):
 
     print("=============================================================")
     print("")
-    print("About to search for partition")
+    print("About to search for partition ", partition)
 
     p_exists = c.system.partition.exists(partition)
-    print("LIBRARY RESPONSE = %s", p_exists)
+    print("LIBRARY RESPONSE = %s" % p_exists)
 
     print("=============================================================")
     print("")
-    print("About to make partition active (not exist, if not shared)")
+    print("About to make partition %s active (not exist, if not shared)" % partition)
 
     try:
         c.system.partition.active(partition)
@@ -256,7 +293,7 @@ def run_all(ax, partition, pmap):
 
     print("=============================================================")
     print("")
-    print("About to create partition")
+    print("About to create partition", partition)
 
     if not p_exists:
         c.system.partition.create(partition)
@@ -268,7 +305,7 @@ def run_all(ax, partition, pmap):
 
     print("=============================================================")
     print("")
-    print("About to make partition active")
+    print("About to make partition %s active" % partition)
 
     c.system.partition.active(partition)
 
@@ -299,66 +336,69 @@ def run_all(ax, partition, pmap):
         create_key(c_key, c)
         print("Create Server Key")
         create_key(s_key, c)
+
+        print("=============================================================")
+
+        print("=============================================================")
+        print("")
+        print("Client SSL Create")
+
+        try:
+            c.slb.template.client_ssl.delete(c_tmpl)
+        except acos_client.errors.NotFound:
+            print("got not found, OK")
+
+        c.slb.template.client_ssl.create(c_tmpl, c_cert, c_key)
+        c.slb.template.client_ssl.get(c_tmpl)
+        try:
+            c.slb.template.client_ssl.create(c_tmpl, c_cert, c_key)
+        except acos_client.errors.Exists:
+            print("got already exists error, good")
+        c.slb.template.client_ssl.update(c_tmpl, c_cert, c_key)
+
+        try:
+            c.slb.template.client_ssl.update("sns1", "cert1", "cert1")
+
+        except acos_client.errors.NotFound:
+            print("got not found, good")
+        c.slb.template.client_ssl.delete(c_tmpl)
+        c.slb.template.client_ssl.delete(c_tmpl)
+        try:
+            c.slb.template.client_ssl.get(c_tmpl)
+        except acos_client.errors.NotFound:
+            print("got not found, good")
+
+        print("=============================================================")
+        print("")
+        print("Server SSL Create")
+        try:
+            c.slb.template.server_ssl.delete(s_tmpl)
+        except acos_client.errors.NotFound:
+            print("got not found, OK")
+
+        c.slb.template.server_ssl.create(s_tmpl, s_cert, s_key)
+        c.slb.template.server_ssl.get(s_tmpl)
+        try:
+            c.slb.template.server_ssl.create(s_tmpl, s_cert, s_key)
+        except acos_client.errors.Exists:
+            print("got already exists error, good")
+        c.slb.template.server_ssl.update(s_tmpl, s_cert, s_key)
+        try:
+            c.slb.template.server_ssl.update("sns1", "cert1", "cert1")
+        except acos_client.errors.NotFound:
+            print("got not found, good")
+
+        c.slb.template.server_ssl.delete(s_tmpl)
+        try:
+            c.slb.template.server_ssl.get(s_tmpl)
+        except acos_client.errors.NotFound:
+            print("got not found, good")
+
     else:
         # This test is probably going to fail.  2.1 cert uploading support isn't there
         print("Certificate upload not supported in 2.1")
-
-    print("=============================================================")
-
-    print("=============================================================")
-    print("")
-    print("Client SSL Create")
-
-    try:
-        c.slb.template.client_ssl.delete(c_tmpl)
-    except acos_client.errors.NotFound:
-        print("got not found, OK")
-
-    c.slb.template.client_ssl.create(c_tmpl, c_cert, c_key)
-    c.slb.template.client_ssl.get(c_tmpl)
-    try:
-        c.slb.template.client_ssl.create(c_tmpl, c_cert, c_key)
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    c.slb.template.client_ssl.update(c_tmpl, c_cert, c_key)
-
-    try:
-        c.slb.template.client_ssl.update("sns1", "cert1", "cert1")
-
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-    c.slb.template.client_ssl.delete(c_tmpl)
-    c.slb.template.client_ssl.delete(c_tmpl)
-    try:
-        c.slb.template.client_ssl.get(c_tmpl)
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-
-    print("=============================================================")
-    print("")
-    print("Server SSL Create")
-    try:
-        c.slb.template.server_ssl.delete(s_tmpl)
-    except acos_client.errors.NotFound:
-        print("got not found, OK")
-
-    c.slb.template.server_ssl.create(s_tmpl, s_cert, s_key)
-    c.slb.template.server_ssl.get(s_tmpl)
-    try:
-        c.slb.template.server_ssl.create(s_tmpl, s_cert, s_key)
-    except acos_client.errors.Exists:
-        print("got already exists error, good")
-    c.slb.template.server_ssl.update(s_tmpl, s_cert, s_key)
-    try:
-        c.slb.template.server_ssl.update("sns1", "cert1", "cert1")
-    except acos_client.errors.NotFound:
-        print("got not found, good")
-
-    c.slb.template.server_ssl.delete(s_tmpl)
-    try:
-        c.slb.template.server_ssl.get(s_tmpl)
-    except acos_client.errors.NotFound:
-        print("got not found, good")
+        print("Skipping Client SSL Create Test")
+        print("Skipping Server SSL Create Test")
 
     print("=============================================================")
     print("")
@@ -366,7 +406,7 @@ def run_all(ax, partition, pmap):
     c.slb.server.delete("foobar")
     c.slb.server.create("foobar", pmap['s1'])
     r = c.slb.server.get("foobar")
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
     try:
         c.slb.server.create("foobar", pmap['s1'])
     except acos_client.errors.Exists:
@@ -396,13 +436,13 @@ def run_all(ax, partition, pmap):
     # temp -- odd that we have to delete this vport
     try:
         c.slb.service_group.delete("pfoobar")
-    except acos_client.errors.NotExist:
+    except acos_client.errors.NotFound:
         print("sg pfoobar doesn't exist, that's OK")
 
     c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                c.slb.service_group.ROUND_ROBIN)
     r = c.slb.service_group.get("pfoobar")
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
     try:
         c.slb.service_group.create("pfoobar", c.slb.service_group.TCP,
                                    c.slb.service_group.ROUND_ROBIN)
@@ -440,9 +480,9 @@ def run_all(ax, partition, pmap):
     c.slb.virtual_server.delete("vfoobar")
     c.slb.virtual_server.create("vfoobar", pmap['vip1'])
     r = c.slb.virtual_server.get("vfoobar")
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
     r = c.slb.virtual_server.all()
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
     try:
         c.slb.virtual_server.create("vfoobar", pmap['vip1'])
     except acos_client.errors.Exists:
@@ -503,7 +543,7 @@ def run_all(ax, partition, pmap):
     c.slb.hm.delete("hfoobar")
     c.slb.hm.create("hfoobar", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200', 80)
     r = c.slb.hm.get("hfoobar")
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
     try:
         c.slb.hm.create("hfoobar", c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200',
                         80)
@@ -595,7 +635,7 @@ def run_all(ax, partition, pmap):
     else:
         raise Nope()
     r = c.slb.template.src_ip_persistence.get("sip1")
-    print("LIBRARY RESPONSE = %s", r)
+    print("LIBRARY RESPONSE = %s" % r)
     c.slb.template.src_ip_persistence.exists("sip1")
     c.slb.template.src_ip_persistence.delete("sip1")
     c.slb.template.src_ip_persistence.delete("sip1")
@@ -722,21 +762,26 @@ def run_all(ax, partition, pmap):
         print("... Create")
         c.license_manager.create([lm_host])
     except NotImplementedError:
-
-        print("License Manager not implemented in %s " % ARGS.axapi_version)
+        print("License Manager not implemented in %s" % ARGS.axapi_version)
+    except acos_client.errors.FeatureNotSupported:
+        print("License Manager is not supported on this platform")
 
     try:
         print("... Get")
         c.license_manager.get()
     except NotImplementedError:
-        print("License Manager not implemented in %s " % ARGS.axapi_version)
+        print("License Manager not implemented in %s" % ARGS.axapi_version)
+    except acos_client.errors.FeatureNotSupported:
+        print("License Manager is not supported on this platform")
 
     lm_host["ip"] = "10.200.0.2"
     try:
         print("... Update")
         c.license_manager.update([lm_host])
     except NotImplementedError:
-        print("License Manager not implemented in %s " % ARGS.axapi_version)
+        print("License Manager not implemented in %s" % ARGS.axapi_version)
+    except acos_client.errors.FeatureNotSupported:
+        print("License Manager is not supported on this platform")
 
     if float(ARGS.axapi_version) >= 3.0:
         print("=============================================================")
@@ -827,9 +872,21 @@ def run_all(ax, partition, pmap):
     print("About half the time, delete the partition!")
 
     if int(random.random() * 2):
-        c.system.partition.delete(partition)
         try:
             c.system.partition.delete(partition)
+        except acos_client.errors.InUse:
+            if ARGS.axapi_version == "2.1":
+                print("AXAPI 2.1 can't delete partitions until admin session is cleared.")
+            else:
+                raise
+
+        try:
+            c.system.partition.delete(partition)
+        except acos_client.errors.InUse:
+            if ARGS.axapi_version == "2.1":
+                print("AXAPI 2.1 can't delete partitions until admin session is cleared.")
+            else:
+                raise
         except acos_client.errors.NotFound:
             pass
 

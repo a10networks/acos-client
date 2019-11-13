@@ -23,6 +23,7 @@ except ImportError:
 
 from acos_client import client
 import acos_client.errors as acos_errors
+import json
 import responses
 
 
@@ -50,9 +51,77 @@ class TestVirtualServer(unittest.TestCase):
         resp = self.client.slb.service_group.create('test1')
 
         self.assertEqual(resp, json_response)
-        self.assertEqual(len(responses.calls), 4)
-        self.assertEqual(responses.calls[3].request.method, responses.POST)
-        self.assertEqual(responses.calls[3].request.url, CREATE_URL)
+        # One responses call for auth and one responses call for post
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+
+    @mock.patch('acos_client.v30.slb.service_group.ServiceGroup.get')
+    @responses.activate
+    def test_server_group_create_with_templates(self, mocked_get):
+        mocked_get.side_effect = acos_errors.NotFound
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        templates = {
+            'template-server': 'template_sv',
+            'template-port': 'template_port',
+            'template-policy': 'template-pl'
+        }
+        resp = self.client.slb.service_group.create('test1', service_group_templates=templates)
+        params = {
+            'service-group':
+            {
+                'health-check-disable': 0,
+                'lb-method': 'round-robin',
+                'name': 'test1',
+                'protocol': 'tcp',
+                'stateless-auto-switch': 0,
+                'template-server': 'template_sv',
+                'template-port': 'template_port',
+                'template-policy': 'template-pl'
+            }
+        }
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
+    @mock.patch('acos_client.v30.slb.service_group.ServiceGroup.get')
+    @responses.activate
+    def test_server_group_create_with_partial_templates(self, mocked_get):
+        mocked_get.side_effect = acos_errors.NotFound
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+
+        templates = {
+            'template-server': 'template_sv',
+            'template-port': 'template_port',
+        }
+        resp = self.client.slb.service_group.create('test1', service_group_templates=templates)
+
+        params = {
+            'service-group':
+            {
+                'health-check-disable': 0,
+                'lb-method': 'round-robin',
+                'name': 'test1',
+                'protocol': 'tcp',
+                'stateless-auto-switch': 0,
+                'template-server': 'template_sv',
+                'template-port': 'template_port',
+                'template-policy': None
+            }
+        }
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
     @mock.patch('acos_client.v30.slb.service_group.ServiceGroup.get')
     @responses.activate

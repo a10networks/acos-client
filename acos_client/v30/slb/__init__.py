@@ -14,6 +14,7 @@
 
 import acos_client.v30.base as base
 
+from acos_client.v30.slb.aflex_policy import AFlexPolicy
 from acos_client.v30.slb.common import SLBCommon
 from acos_client.v30.slb.hm import HealthMonitor
 from acos_client.v30.slb.server import Server
@@ -46,6 +47,10 @@ class SLB(base.BaseV30):
     @property
     def virtual_server(self):
         return VirtualServer(self.client)
+
+    @property
+    def aflex_policy(self):
+        return AFlexPolicy(self.client)
 
     @property
     def common(self):

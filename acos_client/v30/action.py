@@ -20,11 +20,11 @@ from acos_client.v30 import base
 
 class Action(base.BaseV30):
 
-    def write_memory(self, **kwargs):
+    def write_memory(self, partition="all", destination="primary", **kwargs):
         payload = {
             "memory": {
-                "destination": "primary",
-                "partition": "all"
+                "destination": destination,
+                "partition": partition
             }
         }
         try:
@@ -37,8 +37,8 @@ class Action(base.BaseV30):
             # If the retry loop missed this, catch it next time.
             pass
 
-    def activate_and_write(self, partition, **kwargs):
-        self.write_memory()
+    def activate_and_write(self, partition="all", destination="primary", **kwargs):
+        self.write_memory(partition, destination)
 
     def clideploy(self, commandlist, **kwargs):
         payload = {

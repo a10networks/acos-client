@@ -35,6 +35,7 @@ from acos_client.v21.system import System as v21_System
 from acos_client.v21.vrrp_a import VRRPA as v21_VRRPA
 
 from acos_client.v30 import axapi_http as v30_http
+from acos_client.v30.device_context import DeviceContext as v30_DeviceContext
 from acos_client.v30.dns import DNS as v30_DNS
 from acos_client.v30.file import File as v30_File
 from acos_client.v30.ha import HA as v30_HA
@@ -83,7 +84,8 @@ VERSION_IMPORTS = {
         'System': v30_System,
         'File': v30_File,
         'Vlan': v30_Vlan,
-        'VRRPA': v30_VRRPA
+        'VRRPA': v30_VRRPA,
+        'DeviceContext': v30_DeviceContext
     },
 }
 
@@ -174,6 +176,10 @@ class Client(object):
     @property
     def vrrpa(self):
         return VERSION_IMPORTS[self._version]["VRRPA"](self)
+
+    @property
+    def device_context(self):
+        return VERSION_IMPORTS[self._version]["DeviceContext"](self)
 
     def wait_for_connect(self, max_timeout=60):
         for i in six.moves.range(0, max_timeout):

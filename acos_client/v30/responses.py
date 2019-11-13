@@ -92,6 +92,11 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    1023459340: {
+        '*': {
+            '*': ae.Exists
+        }
+    },
     1023459393: {
         '*': {
             '*': ae.InvalidParameter
@@ -99,7 +104,7 @@ RESPONSE_CODES = {
     },
     1023459335: {
         '*': {
-            '*': ae.Exists
+            '*': ae.FeatureNotSupported
         }
     },
     1023460352: {
@@ -167,6 +172,11 @@ RESPONSE_CODES = {
             '*': ae.ConfigManagerNotReady
         }
     },
+    1208078344: {
+        '*': {
+            '*': ae.NotFound
+        }
+    },
     1023443968: {
         'DELETE': {
             '*': None
@@ -185,6 +195,11 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    1023459339: {
+        '*': {
+            '*': ae.Exists
+        }
+    },
     1023475727: {
         '*': {
             '*': ae.NotFound
@@ -192,7 +207,7 @@ RESPONSE_CODES = {
     },
     1208008960: {
         "*": {
-            "/axapi/v3/logon": ae.AuthenticationFailure
+            "*": ae.AuthenticationFailure
         }
     },
     4294967295: {

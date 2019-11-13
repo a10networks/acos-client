@@ -81,6 +81,9 @@ class VirtualPort(base.BaseV30):
         autosnat=False,
         ipinip=False,
         source_nat_pool=None,
+        ha_conn_mirror=None,
+        conn_limit=None,
+        virtual_port_templates=None,
         tcp_template=None,
         udp_template=None,
         exclude_minimize=None,
@@ -88,7 +91,6 @@ class VirtualPort(base.BaseV30):
         **kwargs
     ):
         exclude_minimize = [] if exclude_minimize is None else exclude_minimize
-
         params = {
             "port": self.minimal_dict({
                 "name": name,
@@ -101,6 +103,15 @@ class VirtualPort(base.BaseV30):
             }, exclude=exclude_minimize
             )
         }
+        if virtual_port_templates:
+            virtual_port_templates = {k: v for k, v in virtual_port_templates.items() if v}
+            params['port']['template-virtual-port'] = virtual_port_templates.get('template-virtual-port', None)
+            if protocol == 'http':
+                params['port']['template-http'] = virtual_port_templates.get('template-http', None)
+            else:
+                params['port']['template-tcp'] = virtual_port_templates.get('template-tcp', None)
+            params['port']['template-policy'] = virtual_port_templates.get('template-policy', None)
+
         if autosnat:
             params['port']['auto'] = int(autosnat)
         if ipinip:
@@ -131,8 +142,19 @@ class VirtualPort(base.BaseV30):
 
         if no_dest_nat is not None:
             params["port"]["no-dest-nat"] = 1 if no_dest_nat else 0
+        if ha_conn_mirror is not None:
+            params["port"]["ha-conn-mirror"] = 1 if ha_conn_mirror else 0
+        if conn_limit is not None:
+            conn_limit = int(conn_limit)
+            if conn_limit > 0 and conn_limit <= 8000000:
+                params["port"]["conn-limit"] = conn_limit
 
         url = self.url_server_tmpl.format(name=virtual_server_name)
+
+        aflex_scripts = kwargs.get("aflex-scripts", None)
+        if aflex_scripts:
+            params['port']['aflex-scripts'] = aflex_scripts
+
         if update:
             url += self.url_port_tmpl.format(
                 port_number=port, protocol=protocol
@@ -154,6 +176,9 @@ class VirtualPort(base.BaseV30):
         ipinip=False,
         no_dest_nat=None,
         source_nat_pool=None,
+        ha_conn_mirror=None,
+        conn_limit=None,
+        virtual_port_templates=None,
         tcp_template=None,
         udp_template=None,
         **kwargs
@@ -172,6 +197,9 @@ class VirtualPort(base.BaseV30):
             ipinip=ipinip,
             no_dest_nat=no_dest_nat,
             source_nat_pool=source_nat_pool,
+            ha_conn_mirror=ha_conn_mirror,
+            conn_limit=conn_limit,
+            virtual_port_templates=virtual_port_templates,
             tcp_template=tcp_template,
             udp_template=udp_template,
             **kwargs
@@ -191,6 +219,9 @@ class VirtualPort(base.BaseV30):
         ipinip=False,
         no_dest_nat=None,
         source_nat_pool=None,
+        ha_conn_mirror=None,
+        conn_limit=None,
+        virtual_port_templates=None,
         tcp_template=None,
         udp_template=None,
         **kwargs
@@ -211,12 +242,15 @@ class VirtualPort(base.BaseV30):
                 s_pers_name,
                 c_pers_name,
                 status,
-                autosnat,
-                ipinip,
-                no_dest_nat,
-                source_nat_pool,
-                tcp_template,
-                udp_template,
+                autosnat=autosnat,
+                ipinip=ipinip,
+                no_dest_nat=no_dest_nat,
+                source_nat_pool=source_nat_pool,
+                ha_conn_mirror=ha_conn_mirror,
+                conn_limit=conn_limit,
+                virtual_port_templates=virtual_port_templates,
+                tcp_template=tcp_template,
+                udp_template=udp_template,
                 exclude_minimize=exclude,
                 update=True,
                 **kwargs
@@ -231,13 +265,16 @@ class VirtualPort(base.BaseV30):
                 s_pers_name,
                 c_pers_name,
                 status,
-                autosnat,
-                ipinip,
-                no_dest_nat,
-                source_nat_pool,
-                tcp_template,
-                udp_template,
-                exclude_minimize=None,
+                autosnat=autosnat,
+                ipinip=ipinip,
+                no_dest_nat=no_dest_nat,
+                source_nat_pool=source_nat_pool,
+                ha_conn_mirror=ha_conn_mirror,
+                conn_limit=conn_limit,
+                virtual_port_templates=virtual_port_templates,
+                tcp_template=tcp_template,
+                udp_template=udp_template,
+                exclude_minimize=exclude,
                 update=True,
                 **kwargs
             )
