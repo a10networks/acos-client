@@ -49,14 +49,14 @@ class Action(base.BaseV30):
     def reload(self):
         self._post("/reload", "")
 
-    def reboot(self):
-        self._post("/reboot", "")
-
     def setInterface(self, interface):
         data = {"ethernet": {"ifnum": str(interface), "name": "DataPort",
                 "action": "enable", "ip": {"dhcp": 1}}}
         url = "/interface/ethernet/" + str(interface)
         self._post(url, data)
+
+    def reboot(self):
+        self._post("/reboot", "")
 
     def configureVRRP(self, device_id, set_id):
         data = {"common": {"device-id": device_id, "set-id": set_id,
