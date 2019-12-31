@@ -23,6 +23,7 @@ from acos_client.v30 import base
 class HealthMonitor(base.BaseV30):
 
     # Valid method objects
+    UDP = 'udp'
     ICMP = 'icmp'
     TCP = 'tcp'
     HTTP = 'http'
@@ -32,6 +33,11 @@ class HealthMonitor(base.BaseV30):
     _method_objects = {
         ICMP: {
             "icmp": 1
+        },
+         UDP: {
+            "udp": 1,
+            "udp-port": 5555,
+            "force-up-with-single-healthcheck": 0
         },
         HTTP: {
             "http": 1,
@@ -62,7 +68,7 @@ class HealthMonitor(base.BaseV30):
         return self._get(self.url_prefix + name, **kwargs)
 
     def _set(self, action, name, mon_method, interval, timeout, max_retries,
-             method=None, url=None, expect_code=None, port=None, update=False,
+             method=None, url=None, expect_code=None, port=None,  ipv4=None, update=False,
              **kwargs):
         params = {
             "monitor": {
@@ -72,7 +78,8 @@ class HealthMonitor(base.BaseV30):
                 "timeout": int(timeout),
                 "method": {
                     mon_method: self._method_objects[mon_method]
-                }
+                },
+                "override-ipv4" : ipv4
             }
         }
         if method:
@@ -103,7 +110,7 @@ class HealthMonitor(base.BaseV30):
         self._post(action, params, **kwargs)
 
     def create(self, name, mon_type, interval, timeout, max_retries,
-               method=None, url=None, expect_code=None, port=None, **kwargs):
+               method=None, url=None, expect_code=None, port=None, ipv4=None, **kwargs):
         try:
             self.get(name)
         except acos_errors.NotFound:
@@ -112,13 +119,13 @@ class HealthMonitor(base.BaseV30):
             raise acos_errors.Exists()
 
         self._set(self.url_prefix, name, mon_type, interval, timeout,
-                  max_retries, method, url, expect_code, port, **kwargs)
+                  max_retries, method, url, expect_code, port, ipv4, update=False, **kwargs)
 
     def update(self, name, mon_type, interval, timeout, max_retries,
-               method=None, url=None, expect_code=None, port=None, **kwargs):
+               method=None, url=None, expect_code=None, port=None, ipv4=None, **kwargs):
         self.get(name)  # We want a NotFound if it does not exist
         self._set(self.url_prefix, name, mon_type, interval, timeout,
-                  max_retries, method, url, expect_code, port, update=True,
+                  max_retries, method, url, expect_code, port, ipv4, update=True,
                   **kwargs)
 
     def delete(self, name):
