@@ -68,7 +68,7 @@ class HealthMonitor(base.BaseV30):
         return self._get(self.url_prefix + name, **kwargs)
 
     def _set(self, action, name, mon_method, interval, timeout, max_retries,
-             method=None, url=None, expect_code=None, port=None,  ipv4=None, update=False,
+             method=None, url=None, expect_code=None, port=None, ipv4=None, update=False,
              **kwargs):
         params = {
             "monitor": {
