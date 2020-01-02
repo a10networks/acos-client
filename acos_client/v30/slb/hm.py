@@ -34,7 +34,7 @@ class HealthMonitor(base.BaseV30):
         ICMP: {
             "icmp": 1
         },
-         UDP: {
+        UDP: {
             "udp": 1,
             "udp-port": 5555,
             "force-up-with-single-healthcheck": 0
@@ -79,7 +79,7 @@ class HealthMonitor(base.BaseV30):
                 "method": {
                     mon_method: self._method_objects[mon_method]
                 },
-                "override-ipv4" : ipv4
+                "override-ipv4": ipv4
             }
         }
         if method:
