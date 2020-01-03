@@ -183,6 +183,7 @@ class TestIPv6Server(unittest.TestCase):
                 'conn-resume': None,
                 'server-ipv6-addr': '2001:baad:deed:bead:daab:daad:cead:100e',
                 'name': VSERVER_NAME,
+                'health-check': 'ping'
             }
         }
 
@@ -216,6 +217,7 @@ class TestIPv6Server(unittest.TestCase):
                 'conn-resume': None,
                 'host': '192.168.2.254',
                 'name': VSERVER_NAME,
+                'health-check': 'ping',
                 'template-server': 'test-template-server'
             }
         }
