@@ -40,7 +40,7 @@ class HealthMonitor(base.BaseV30):
             "udp-port": 5555,
             "force-up-with-single-healthcheck": 0
         },
-        UDP_CONNECT:{
+        UDP_CONNECT: {
         },
         HTTP: {
             "http": 1,
