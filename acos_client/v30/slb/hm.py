@@ -29,6 +29,7 @@ class HealthMonitor(base.BaseV30):
     HTTP = 'http'
     HTTPS = 'https'
     url_prefix = "/health/monitor/"
+    UDP_CONNECT = 'udp'
 
     _method_objects = {
         ICMP: {
@@ -38,6 +39,8 @@ class HealthMonitor(base.BaseV30):
             "udp": 1,
             "udp-port": 5555,
             "force-up-with-single-healthcheck": 0
+        },
+        UDP_CONNECT:{
         },
         HTTP: {
             "http": 1,
