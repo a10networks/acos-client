@@ -54,7 +54,7 @@ class CookiePersistence(BasePersistence):
         return {
             "cookie": {
                 "name": name,
-                "cookie-name" : cookie_name
+                "cookie-name": cookie_name
             }
         }
 
