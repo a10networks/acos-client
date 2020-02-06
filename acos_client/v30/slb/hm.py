@@ -107,7 +107,7 @@ class HealthMonitor(base.BaseV30):
 
         if update:
             action += name
-        self._post(action, params, **kwargs)
+        return self._post(action, params, **kwargs)
 
     def create(self, name, mon_type, interval, timeout, max_retries,
                method=None, url=None, expect_code=None, port=None, ipv4=None, **kwargs):
@@ -118,15 +118,16 @@ class HealthMonitor(base.BaseV30):
         else:
             raise acos_errors.Exists()
 
-        self._set(self.url_prefix, name, mon_type, interval, timeout,
-                  max_retries, method, url, expect_code, port, ipv4, update=False, **kwargs)
+        return self._set(self.url_prefix, name, mon_type, interval, timeout,
+                         max_retries, method, url, expect_code, port, ipv4, update=False,
+                         **kwargs)
 
     def update(self, name, mon_type, interval, timeout, max_retries,
                method=None, url=None, expect_code=None, port=None, ipv4=None, **kwargs):
         self.get(name)  # We want a NotFound if it does not exist
-        self._set(self.url_prefix, name, mon_type, interval, timeout,
-                  max_retries, method, url, expect_code, port, ipv4, update=True,
-                  **kwargs)
+        return self._set(self.url_prefix, name, mon_type, interval, timeout,
+                         max_retries, method, url, expect_code, port, ipv4, update=True,
+                         **kwargs)
 
     def delete(self, name):
-        self._delete(self.url_prefix + name)
+        return self._delete(self.url_prefix + name)
