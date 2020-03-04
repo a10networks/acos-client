@@ -1,11 +1,25 @@
 # ACOS Client
 
-## Installation
+
+## Supported Versions
+| ACOS Version | AXAPI Version | ACOS Client Version |
+|:------------:|:-------------:|:-------------------:|
+| 2.7.1^       | 2             | =>0.1.0,<0.3.0      |
+| 2.7.X        | 2             | =>0.1.0,<0.3.0      |
+| 4.0.0        | 3             | =>1.4.6,<1.5.0      |
+| 4.1.1        | 3             | =>1.5.0,<2.0.0      |
+| 4.1.4        | 3             | =>2.0.0             |
+
+^Works only when not using partitioning
+
+_ACOS versions greater than 4.1.4 are not supported a this time_
+
+## Installation ACOSv4.1.4
 
 ### Install using pip
 
 ```sh
-$ pip install acos-client
+$ pip install acos-client>=2.0.0
 ```
 
 ### Install from source
@@ -13,13 +27,31 @@ $ pip install acos-client
 ```sh
 $ git clone https://github.com/a10networks/acos-client.git
 $ cd acos-client
-$ python setup.py install
+$ git checkout stable/v414 
+$ pip install -e . 
+```
+
+## Installation ACOSv4.1.1
+
+### Install using pip
+
+```sh
+$ pip install acos-client>=1.5.0,<2.0.0
+```
+
+### Install from source
+
+```sh
+$ git clone https://github.com/a10networks/acos-client.git
+$ cd acos-client
+$ git checkout stable/v411
+$ pip install -e .
 ```
 
 ## Usage
 
 ```python
-c = acos_client.Client('somehost.example.com', acos_client.AXAPI_21,
+c = acos_client.Client('somehost.example.com', acos_client.AXAPI_30,
                        'admin', 'password')
 ```
 
@@ -28,7 +60,7 @@ c = acos_client.Client('somehost.example.com', acos_client.AXAPI_21,
 ```python
 import acos_client as acos
 
-c = acos.Client('1.2.3.4', acos.AXAPI_21, 'admin', 'password')
+c = acos.Client('1.2.3.4', acos.AXAPI_30, 'admin', 'password')
 c.slb.server.create('s1', '1.1.1.1')
 c.slb.server.create('s2', '1.1.1.2')
 c.slb.service_group.create('pool1',
@@ -40,6 +72,9 @@ c.slb.service_group.update('pool1', health_monitor='hm1')
 c.slb.service_group.member.create('pool1', 's1', 80)
 c.slb.service_group.member.create('pool1', 's2', 80)
 ```
+
+## Issue Reporting
+Please direct all questions and concerns to support@a10networks.com
 
 ## Contributing
 
@@ -60,14 +95,11 @@ $ cd /path/to/acos_client
 $ tox
 ```
 
-[pypy](http://pypy.org/index.html) needs to be installed as well as Python 2.6
-side by side 2.7 7. We recommend
-[deadsnakes](http://coreygoldberg.blogspot.com/2013/10/deadsnakes-using-old-versions-of-python.html)
-if you're on Ubuntu, and the [python26 AUR
-package](https://aur.archlinux.org/packages/python26/) if you use Arch Linux.
+## Helpful links
 
-## Supported Versions
+### Improved speed
+pypy: [http://pypy.org/index.html](http://pypy.org/index.html)
 
-  * axapi 2.1, ACOS 2.7.2+ (2.7.1 works if you avoid partitions)
-  * axapi 3.0, ACOS 4.0.0+
-
+### Old python versions
+Deadsnakes github: [https://github.com/deadsnakes](https://github.com/deadsnakes)  
+Deadsnakes ppa: [https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa](https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa)
