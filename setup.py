@@ -17,7 +17,7 @@ setup(
     keywords = "a10 axapi acos adc slb load balancer",
     url = "https://github.com/a10networks/acos-client",
 
-    long_description = open('README.md', encoding='utf-8').read(),
+    long_description = open('README.md').read(),
     long_description_content_type = "text/markdown",
 
     classifiers = [
