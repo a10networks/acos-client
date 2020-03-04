@@ -2,20 +2,23 @@
 # flake8: noqa
 
 from setuptools import find_packages, setup
+from os import path
+
 
 setup(
     name = "acos-client",
-    version = "1.4.6",
+    version = "1.4.7",
     packages = find_packages(),
 
     author = "A10 Networks",
-    author_email = "mdurrant@a10networks.com",
+    author_email = "support@a10networks.com",
     description = "A10 Networks ACOS API Client",
     license = "Apache",
     keywords = "a10 axapi acos adc slb load balancer",
     url = "https://github.com/a10networks/acos-client",
 
     long_description = open('README.md').read(),
+    long_description_content_type = "text/markdown",
 
     classifiers = [
         'Intended Audience :: Developers',
