@@ -49,10 +49,11 @@ class CookiePersistence(BasePersistence):
         self.pers_type = 'cookie'
         super(CookiePersistence, self).__init__(client)
 
-    def get_params(self, name):
+    def get_params(self, name, cookie_name=None):
         return {
             "cookie": {
-                "name": name
+                "name": name,
+                "cookie-name": cookie_name
             }
         }
 
