@@ -75,6 +75,7 @@ class Member(base.BaseV30):
         if config_defaults:
             for k, v in six.iteritems(config_defaults):
                 params['member'][k] = v
+
         self._post(url, params, **kwargs)
 
     def create(self,
