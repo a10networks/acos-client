@@ -4,13 +4,13 @@
 ## Supported Versions
 | ACOS Version | AXAPI Version | ACOS Client Version |
 |:------------:|:-------------:|:-------------------:|
-| 2.7.1^       | 2             | =>0.1.0,<0.3.0      |
+| 2.7.1†       | 2             | =>0.1.0,<0.3.0      |
 | 2.7.X        | 2             | =>0.1.0,<0.3.0      |
 | 4.0.0        | 3             | =>1.4.6,<1.5.0      |
 | 4.1.1        | 3             | =>1.5.0,<2.0.0      |
 | 4.1.4        | 3             | =>2.0.0             |
 
-^Works only when not using partitioning
+†Works only when not using partitioning
 
 _ACOS versions greater than 4.1.4 are not supported a this time_
 
