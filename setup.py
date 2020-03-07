@@ -7,11 +7,11 @@ from os import path
 
 setup(
     name = "acos-client",
-    version = "1.4.7",
+    version = "1.4.8",
     packages = find_packages(),
 
     author = "A10 Networks",
-    author_email = "support@a10networks.com",
+    author_email = "opensource@a10networks.com",
     description = "A10 Networks ACOS API Client",
     license = "Apache",
     keywords = "a10 axapi acos adc slb load balancer",
