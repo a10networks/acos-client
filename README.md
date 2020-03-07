@@ -4,11 +4,11 @@
 ## Supported Versions
 | ACOS Version | AXAPI Version | ACOS Client Version |
 |:------------:|:-------------:|:-------------------:|
-| 2.7.1†       | 2             | =>0.1.0,<0.3.0      |
-| 2.7.2        | 2             | =>0.1.0,<0.3.0      |
-| 4.0.0        | 3             | =>1.4.6,<1.5.0      |
-| 4.1.1        | 3             | =>1.5.0,<2.0.0      |
-| 4.1.4        | 3             | =>2.0.0             |
+| 2.7.1†       | 2             | >=0.1.0,<0.3.0      |
+| 2.7.2        | 2             | >=0.1.0,<0.3.0      |
+| 4.0.0        | 3             | >=1.4.6,<1.5.0      |
+| 4.1.1        | 3             | >=1.5.0,<2.0.0      |
+| 4.1.4        | 3             | >=2.0.0             |
 
 †Works only when not using partitioning
 
@@ -27,7 +27,7 @@ $ pip install acos-client>=2.0.0
 ```sh
 $ git clone https://github.com/a10networks/acos-client.git
 $ cd acos-client
-$ git checkout stable/v414 
+$ git checkout stable/acos_4_1_4
 $ pip install -e . 
 ```
 
@@ -44,7 +44,7 @@ $ pip install acos-client>=1.5.0,<2.0.0
 ```sh
 $ git clone https://github.com/a10networks/acos-client.git
 $ cd acos-client
-$ git checkout stable/v411
+$ git checkout stable/acos_4_1_1
 $ pip install -e .
 ```
 
