@@ -14,23 +14,6 @@
 
 _ACOS versions greater than 4.1.4 are not supported a this time_
 
-## Installation ACOSv4.1.4
-
-### Install using pip
-
-```sh
-$ pip install acos-client>=2.0.0
-```
-
-### Install from source
-
-```sh
-$ git clone https://github.com/a10networks/acos-client.git
-$ cd acos-client
-$ git checkout stable/v414 
-$ pip install -e . 
-```
-
 ## Installation ACOSv4.1.1
 
 ### Install using pip
