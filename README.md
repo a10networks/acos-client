@@ -1,7 +1,7 @@
 # ACOS Client
 
 ## Table of Contents
-1. [Support Versions](#Supported-Versions)
+1. [Supported Versions](#Supported-Versions)
 
 2. [Installation for ACOSv4.1.4](#Installation-ACOSv4.1.4)
 
