@@ -53,6 +53,7 @@ class TestServer(unittest.TestCase):
                 'action': 'enable',
                 'conn-limit': 8000000,
                 'conn-resume': None,
+                'health-check': None,
                 'host': '192.168.2.254',
                 'name': VSERVER_NAME,
             }
@@ -88,6 +89,7 @@ class TestServer(unittest.TestCase):
                 'conn-resume': None,
                 'host': '192.168.2.254',
                 'name': VSERVER_NAME,
+                'health-check': None,
                 'template-server': 'test-template-server'
             }
         }
@@ -181,6 +183,7 @@ class TestIPv6Server(unittest.TestCase):
                 'action': 'enable',
                 'conn-limit': 8000000,
                 'conn-resume': None,
+                'health-check': None,
                 'server-ipv6-addr': '2001:baad:deed:bead:daab:daad:cead:100e',
                 'name': VSERVER_NAME,
             }
@@ -216,6 +219,7 @@ class TestIPv6Server(unittest.TestCase):
                 'conn-resume': None,
                 'host': '192.168.2.254',
                 'name': VSERVER_NAME,
+                'health-check': None,
                 'template-server': 'test-template-server'
             }
         }

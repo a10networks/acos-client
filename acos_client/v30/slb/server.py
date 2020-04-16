@@ -35,6 +35,7 @@ class Server(base.BaseV30):
                 "action": 'enable' if status else 'disable',
                 "conn-resume": kwargs.get("conn_resume", None),
                 "conn-limit": kwargs.get("conn_limit", 8000000),
+                "health-check": kwargs.get("health_check")
             }
         }
 

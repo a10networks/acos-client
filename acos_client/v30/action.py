@@ -45,3 +45,64 @@ class Action(base.BaseV30):
             "commandlist": commandlist
         }
         return self._post("/clideploy/", payload, **kwargs)
+
+    def reload(self):
+        self._post("/reload", "")
+
+    def setInterface(self, interface):
+        data = {"ethernet": {"ifnum": str(interface), "name": "DataPort",
+                "action": "enable", "ip": {"dhcp": 1}}}
+        url = "/interface/ethernet/" + str(interface)
+        self._post(url, data)
+
+    def reboot(self):
+        self._post("/reboot", "")
+
+    def configureVRRP(self, device_id, set_id):
+        data = {"common": {"device-id": device_id, "set-id": set_id,
+                "action": "enable"}}
+        url = "/vrrp-a/common"
+        self._post(url, data)
+
+    def configureVRID(self, vrid):
+        data = {"vrid": {"vrid-val": vrid,
+                "blade-parameters": {"priority": 150}}}
+        url = "/vrrp-a/vrid"
+        self._post(url, data)
+
+    def configSynch(self, ip_address, username, password):
+        data = {"sync": {"address": ip_address, "auto-authentication": 1,
+                "type": "all", "usr": username, "pwd": password}}
+        url = "/configure/sync"
+        self._post(url, data)
+
+    def set_vcs_device(self, device_id, priority):
+        data = {"device": {"device": device_id, "priority": priority,
+                "management": 1, "enable": 1}}
+        url = "/vcs/device/"
+        self._post(url, data)
+
+    def set_vcs_para(self, floating_ip, floating_ip_mask):
+        data = {"vcs-para": {"floating-ip-cfg": [{"floating-ip": floating_ip,
+                "floating-ip-mask": floating_ip_mask}]}}
+        url = "/vcs/vcs-para"
+        self._post(url, data)
+
+    def vcs_enable(self):
+        data = {"action": {"action": "enable"}}
+        url = "/vcs/action"
+        self._post(url, data)
+
+    def vcs_reload(self):
+        url = "/vcs/reload"
+        self._post(url)
+
+    def check_vrrp_status(self):
+        url = "/vrrp-a"
+        data = self._get(url)
+        if "common" in data["vrrp-a"].keys() and \
+            "action" in data["vrrp-a"]["common"].keys() and \
+                data["vrrp-a"]["common"]["action"] == "enable":
+            return True
+        else:
+            return False
