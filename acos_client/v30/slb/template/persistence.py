@@ -37,8 +37,10 @@ class BasePersistence(base.BaseV30):
     def create(self, name, **kwargs):
         if self.exists(name):
             raise acos_errors.Exists
-        cookie_name = kwargs.get("cookie_name", None)
-        self._post(self.prefix, self.get_params(name, cookie_name=cookie_name), **kwargs)
+        self._post(self.prefix,
+                   self.get_params(name,
+                                   cookie_name=kwargs.get("cookie_name")),
+                   **kwargs)
 
     def delete(self, name, **kwargs):
         self._delete(self.prefix + name, **kwargs)
@@ -51,11 +53,10 @@ class CookiePersistence(BasePersistence):
         super(CookiePersistence, self).__init__(client)
 
     def get_params(self, name, **kwargs):
-        cookie_name = kwargs.get("cookie_name", None)
         return {
             "cookie": {
                 "name": name,
-                "cookie-name": cookie_name
+                "cookie-name": kwargs.get("cookie_name")
             }
         }
 
