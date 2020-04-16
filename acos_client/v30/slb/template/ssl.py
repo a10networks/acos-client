@@ -52,8 +52,8 @@ class BaseSSL(base.BaseV30):
         else:
             obj_params = {
                 "name": name,
-                "cert-str": cert,
-                "key-str": key,
+                "cert": cert,
+                "key": key,
                 self.passphrase: passphrase,
                 # Unimplemented options:
                 # "encrypted": encrypted,
