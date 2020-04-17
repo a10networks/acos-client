@@ -106,7 +106,7 @@ class VirtualPort(base.BaseV30):
         if virtual_port_templates:
             virtual_port_templates = {k: v for k, v in virtual_port_templates.items() if v}
             params['port']['template-virtual-port'] = virtual_port_templates.get('template-virtual-port', None)
-            if protocol == 'http':
+            if protocol in ['http', 'https']:
                 params['port']['template-http'] = virtual_port_templates.get('template-http', None)
             else:
                 params['port']['template-tcp'] = virtual_port_templates.get('template-tcp', None)
