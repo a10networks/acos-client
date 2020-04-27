@@ -92,7 +92,8 @@ class TestVirtualPort(unittest.TestCase):
                 'tcp_template': 'test_tcp_template',
                 'template-persist-cookie': 'test_c_pers_template',
                 'template-persist-source-ip': 'test_s_pers_template',
-                'udp_template': 'test_udp_template'
+                'udp_template': 'test_udp_template',
+                'use-rcv-hop-for-resp': 1
             }
         }
 
@@ -113,6 +114,7 @@ class TestVirtualPort(unittest.TestCase):
             source_nat_pool="test_nat_pool",
             tcp_template="test_tcp_template",
             udp_template="test_udp_template",
+            use_rcv_hop=True,
         )
 
         self.assertEqual(resp, json_response)
@@ -239,6 +241,7 @@ class TestVirtualPort(unittest.TestCase):
                 'template-tcp': 'template_tcp',
                 'template-policy': 'template_pl',
             },
+            use_rcv_hop=False,
         )
 
         self.assertEqual(resp, json_response)
@@ -347,6 +350,7 @@ class TestVirtualPort(unittest.TestCase):
                 'template-persist-cookie': 'test_c_pers_template',
                 'template-persist-source-ip': 'test_s_pers_template',
                 'udp_template': 'test_udp_template',
+                'use-rcv-hop-for-resp': 1,
             }
         }
 
@@ -367,6 +371,7 @@ class TestVirtualPort(unittest.TestCase):
             source_nat_pool="test_nat_pool",
             tcp_template="test_tcp_template",
             udp_template="test_udp_template",
+            use_rcv_hop=True,
         )
         self.assertEqual(resp, json_response)
         self.assertEqual(len(responses.calls), 2)
@@ -450,6 +455,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_port_templates={
                 'template-virtual-port': 'template_vp'
             },
+            use_rcv_hop=False,
         )
         self.assertEqual(resp, json_response)
         self.assertEqual(len(responses.calls), 2)
