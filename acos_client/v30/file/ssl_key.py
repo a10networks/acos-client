@@ -62,6 +62,6 @@ class SSLKey(base.BaseV30):
     def update(self, file="", cert="", size="", action=""):
         self._set(file, cert, size, action)
 
-    def delete(self, private_key="", **kwargs):
+    def delete(self, private_key=""):
         payload = {"delete": {"private-key": private_key}}
         self._request("POST", "/pki/delete", payload)
