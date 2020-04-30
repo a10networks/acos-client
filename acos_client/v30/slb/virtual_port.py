@@ -82,6 +82,7 @@ class VirtualPort(base.BaseV30):
         ipinip=False,
         source_nat_pool=None,
         ha_conn_mirror=None,
+        use_rcv_hop=False,
         conn_limit=None,
         virtual_port_templates=None,
         tcp_template=None,
@@ -116,6 +117,8 @@ class VirtualPort(base.BaseV30):
             params['port']['auto'] = int(autosnat)
         if ipinip:
             params['port']['ipinip'] = int(ipinip)
+        if use_rcv_hop:
+            params['port']['use-rcv-hop-for-resp'] = int(use_rcv_hop)
         if source_nat_pool and len(source_nat_pool) > 0:
             params['port']['pool'] = source_nat_pool
         if tcp_template:
@@ -177,6 +180,7 @@ class VirtualPort(base.BaseV30):
         no_dest_nat=None,
         source_nat_pool=None,
         ha_conn_mirror=None,
+        use_rcv_hop=False,
         conn_limit=None,
         virtual_port_templates=None,
         tcp_template=None,
@@ -198,6 +202,7 @@ class VirtualPort(base.BaseV30):
             no_dest_nat=no_dest_nat,
             source_nat_pool=source_nat_pool,
             ha_conn_mirror=ha_conn_mirror,
+            use_rcv_hop=use_rcv_hop,
             conn_limit=conn_limit,
             virtual_port_templates=virtual_port_templates,
             tcp_template=tcp_template,
@@ -220,6 +225,7 @@ class VirtualPort(base.BaseV30):
         no_dest_nat=None,
         source_nat_pool=None,
         ha_conn_mirror=None,
+        use_rcv_hop=False,
         conn_limit=None,
         virtual_port_templates=None,
         tcp_template=None,
@@ -247,6 +253,7 @@ class VirtualPort(base.BaseV30):
                 no_dest_nat=no_dest_nat,
                 source_nat_pool=source_nat_pool,
                 ha_conn_mirror=ha_conn_mirror,
+                use_rcv_hop=use_rcv_hop,
                 conn_limit=conn_limit,
                 virtual_port_templates=virtual_port_templates,
                 tcp_template=tcp_template,
@@ -270,6 +277,7 @@ class VirtualPort(base.BaseV30):
                 no_dest_nat=no_dest_nat,
                 source_nat_pool=source_nat_pool,
                 ha_conn_mirror=ha_conn_mirror,
+                use_rcv_hop=use_rcv_hop,
                 conn_limit=conn_limit,
                 virtual_port_templates=virtual_port_templates,
                 tcp_template=tcp_template,
