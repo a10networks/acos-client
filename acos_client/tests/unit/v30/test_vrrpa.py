@@ -39,13 +39,14 @@ class TestVRID(unittest.TestCase):
                     'threshold': threshold,
                     'disable': disable
                 }
-            },
-            'floating-ip': {
+            }
+        }
+        if floating_ip:
+            rv['floating-ip'] = {
                 'ip-address-cfg': [{
                     'ip-address': floating_ip
                 }]
             }
-        }
 
         return rv
 
@@ -54,6 +55,7 @@ class TestVRID(unittest.TestCase):
         self.client.http.request.assert_called_with("GET", self.url_prefix + '0', {}, mock.ANY)
 
     def test_vrid_create_threshold(self):
+        import pdb; pdb.set_trace()
         self.target.create(4, threshold=2)
         self.client.http.request.assert_called_with(
             "POST", self.url_prefix, self.expected_payload(4, threshold=2), mock.ANY)
@@ -64,7 +66,7 @@ class TestVRID(unittest.TestCase):
             "POST", self.url_prefix, self.expected_payload(4, disable=1), mock.ANY)
 
     def test_vrid_create_floating_ip(self):
-        self.target.create(4, floating_ip='10.10.10.8')
+        self.target.create(4, threshold=1, disable=0, floating_ip='10.10.10.8')
         self.client.http.request.assert_called_with(
             "POST", self.url_prefix, self.expected_payload(4, floating_ip='10.10.10.8'),
             mock.ANY)
@@ -80,7 +82,7 @@ class TestVRID(unittest.TestCase):
             "PUT", self.url_prefix + '4', self.expected_payload(4, disable=1), mock.ANY)
 
     def test_vrid_update_floating_ip(self):
-        self.target.update(4, floating_ip='10.10.10.9')
+        self.target.update(4, threshold=1, disable=0, floating_ip='10.10.10.9')
         self.client.http.request.assert_called_with(
             "PUT", self.url_prefix + '4', self.expected_payload(4, floating_ip='10.10.10.9'),
             mock.ANY)
