@@ -40,11 +40,11 @@ class VRID(base.BaseV30):
 
     def _build_params(self, vrid_val, threshold=None, disable=None, floating_ip=None):
         vrid = {'vrid-val': vrid_val}
-	if floating_ip:
+        if floating_ip:
             ip_address_cfg = []
-            ip_address = {'ip-address' : floating_ip}
+            ip_address = {'ip-address': floating_ip}
             ip_address_cfg.append(ip_address)
-            floating_ip_payload = {'ip-address-cfg' : ip_address_cfg}
+            floating_ip_payload = {'ip-address-cfg': ip_address_cfg}
 
         if threshold or disable:
             threshold = threshold if threshold in range(0, 256) else 1

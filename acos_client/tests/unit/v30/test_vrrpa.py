@@ -40,10 +40,10 @@ class TestVRID(unittest.TestCase):
                     'disable': disable
                 }
             },
-            'floating-ip' : {
-                'ip-address-cfg' :[{
-                    'ip-address' : floating_ip
-                }] 
+            'floating-ip': {
+                'ip-address-cfg': [{
+                    'ip-address': floating_ip
+                }]
             }
         }
 
@@ -84,4 +84,3 @@ class TestVRID(unittest.TestCase):
         self.client.http.request.assert_called_with(
             "PUT", self.url_prefix + '4', self.expected_payload(4, floating_ip='10.10.10.9'),
             mock.ANY)
-
