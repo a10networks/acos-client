@@ -55,7 +55,6 @@ class TestVRID(unittest.TestCase):
         self.client.http.request.assert_called_with("GET", self.url_prefix + '0', {}, mock.ANY)
 
     def test_vrid_create_threshold(self):
-        import pdb; pdb.set_trace()
         self.target.create(4, threshold=2)
         self.client.http.request.assert_called_with(
             "POST", self.url_prefix, self.expected_payload(4, threshold=2), mock.ANY)
