@@ -42,7 +42,7 @@ class TestVRID(unittest.TestCase):
             }
         }
         if floating_ip:
-            rv['floating-ip'] = {
+            rv['vrid']['floating-ip'] = {
                 'ip-address-cfg': [{
                     'ip-address': floating_ip
                 }]

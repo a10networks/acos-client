@@ -41,10 +41,12 @@ class VRID(base.BaseV30):
     def _build_params(self, vrid_val, threshold=None, disable=None, floating_ip=None):
         vrid = {'vrid-val': vrid_val}
         if floating_ip:
-            ip_address_cfg = []
-            ip_address = {'ip-address': floating_ip}
-            ip_address_cfg.append(ip_address)
-            floating_ip_payload = {'ip-address-cfg': ip_address_cfg}
+            vrid_floating_ip = {
+                'ip-address-cfg': [{
+                    'ip-address': floating_ip
+                }]
+            }
+            vrid['floating-ip'] = vrid_floating_ip
 
         if threshold or disable:
             threshold = threshold if threshold in range(0, 256) else 1
@@ -57,16 +59,15 @@ class VRID(base.BaseV30):
             vrid['preempt-mode'] = preempt
 
         payload = {'vrid': vrid}
-        if floating_ip:
-            payload['floating-ip'] = floating_ip_payload
-
         return payload
 
     def create(self, vrid_val, threshold=None, disable=None, floating_ip=None):
-        return self._post(self.base_url, self._build_params(vrid_val, threshold, disable, floating_ip))
+        return self._post(self.base_url, self._build_params(vrid_val, threshold, disable,
+                                                            floating_ip))
 
     def update(self, vrid_val, threshold=None, disable=None, floating_ip=None):
-        return self._put(self.base_url + str(vrid_val), self._build_params(vrid_val, threshold, disable, floating_ip))
+        return self._put(self.base_url + str(vrid_val), self._build_params(vrid_val, threshold,
+                                                                           disable, floating_ip))
 
     def delete(self, vrid_val):
         return self._delete(self.base_url + str(vrid_val))
