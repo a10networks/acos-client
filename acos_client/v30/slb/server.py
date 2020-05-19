@@ -33,8 +33,8 @@ class Server(base.BaseV30):
             "server": {
                 "name": name,
                 "action": 'enable' if status else 'disable',
-                "conn-resume": kwargs.get("conn_resume", None),
-                "conn-limit": kwargs.get("conn_limit", 8000000),
+                "conn-resume": kwargs.get("conn_resume"),
+                "conn-limit": kwargs.get("conn_limit"),
                 "health-check": kwargs.get("health_check")
             }
         }
@@ -46,7 +46,7 @@ class Server(base.BaseV30):
 
         if server_templates:
             server_templates = {k: v for k, v in server_templates.items() if v}
-            params['server']['template-server'] = server_templates.get('template-server', None)
+            params['server']['template-server'] = server_templates.get('template-server')
 
         config_defaults = kwargs.get("config_defaults")
 
@@ -69,8 +69,8 @@ class Server(base.BaseV30):
             "server": {
                 "name": name,
                 "action": 'enable' if status else 'disable',
-                "conn-resume": kwargs.get("conn_resume", None),
-                "conn-limit": kwargs.get("conn_limit", 8000000),
+                "conn-resume": kwargs.get("conn_resume"),
+                "conn-limit": kwargs.get("conn_limit"),
             }
         }
 
@@ -81,7 +81,7 @@ class Server(base.BaseV30):
 
         if server_templates:
             server_templates = {k: v for k, v in server_templates.items() if v}
-            params['server']['template-server'] = server_templates.get('template-server', None)
+            params['server']['template-server'] = server_templates.get('template-server')
 
         self.get(name, **kwargs)
 

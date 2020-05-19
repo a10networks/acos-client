@@ -34,7 +34,7 @@ class TestPort(unittest.TestCase):
         expected = {
             'port': {
                 "conn-resume": None,
-                "conn-limit": 8000000,
+                "conn-limit": None,
                 "stats-data-action": "stats-data-enable",
                 "weight": 1,
                 "port-number": 80,
