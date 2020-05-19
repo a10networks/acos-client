@@ -39,7 +39,7 @@ class Port(base.BaseV30):
         params = {
             "port": {
                 "conn-resume": kwargs.get("conn_resume", None),
-                "conn-limit": kwargs.get("conn_limit", 8000000),
+                "conn-limit": kwargs.get("conn_limit"),
                 "stats-data-action": kwargs.get("stats_data_action", "stats-data-enable"),
                 "weight": kwargs.get("weight", 1),
                 "port-number": port,
