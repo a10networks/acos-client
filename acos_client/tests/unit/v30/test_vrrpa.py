@@ -31,7 +31,8 @@ class TestVRID(unittest.TestCase):
         self.target = vrid.VRID(self.client)
         self.url_prefix = "/axapi/v3/vrrp-a/vrid/"
 
-    def expected_payload(self, vrid_val, threshold=1, disable=0, floating_ip=None):
+    def expected_payload(self, vrid_val, threshold=1, disable=0, floating_ip=None,
+                         is_partition=None):
         rv = {
             'vrid': {
                 'vrid-val': vrid_val,
@@ -42,12 +43,19 @@ class TestVRID(unittest.TestCase):
             }
         }
         if floating_ip:
-            rv['vrid']['floating-ip'] = {
-                'ip-address-cfg': [{
-                    'ip-address': floating_ip
-                }]
-            }
+            fip_config_json = None
+            if is_partition:
+                fip_config_json = {
+                    'ip-address-part-cfg': [{
+                        'ip-address-partition': floating_ip
+                    }]}
+            else:
+                fip_config_json = {
+                    'ip-address-cfg': [{
+                        'ip-address': floating_ip
+                    }]}
 
+            rv['vrid']['floating-ip'] = fip_config_json
         return rv
 
     def test_vrid_get(self):
@@ -85,3 +93,15 @@ class TestVRID(unittest.TestCase):
         self.client.http.request.assert_called_with(
             "PUT", self.url_prefix + '4', self.expected_payload(4, floating_ip='10.10.10.9'),
             mock.ANY)
+
+    def test_patition_vrid_create_floating_ip(self):
+        self.target.create(4, threshold=1, disable=0, floating_ip='10.10.10.8', is_partition=True)
+        self.client.http.request.assert_called_with(
+            "POST", self.url_prefix, self.expected_payload(4, floating_ip='10.10.10.8',
+                                                           is_partition=True), mock.ANY)
+
+    def test_partition_vrid_update_floating_ip(self):
+        self.target.update(4, threshold=1, disable=0, floating_ip='10.10.10.9', is_partition=True)
+        self.client.http.request.assert_called_with(
+            "PUT", self.url_prefix + '4', self.expected_payload(4, floating_ip='10.10.10.9',
+                                                                is_partition=True), mock.ANY)

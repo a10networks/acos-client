@@ -38,14 +38,24 @@ class VRID(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def _build_params(self, vrid_val, threshold=None, disable=None, floating_ip=None):
+    def _build_params(self, vrid_val, threshold=None, disable=None, floating_ip=None,
+                      is_partition=False):
         vrid = {'vrid-val': vrid_val}
+
+        vrid_floating_ip = None
         if floating_ip:
-            vrid_floating_ip = {
-                'ip-address-cfg': [{
-                    'ip-address': floating_ip
-                }]
-            }
+            if is_partition:
+                vrid_floating_ip = {
+                    'ip-address-part-cfg': [{
+                        'ip-address-partition': floating_ip
+                    }]
+                }
+            else:
+                vrid_floating_ip = {
+                    'ip-address-cfg': [{
+                        'ip-address': floating_ip
+                    }]
+                }
             vrid['floating-ip'] = vrid_floating_ip
 
         if threshold or disable:
@@ -61,13 +71,14 @@ class VRID(base.BaseV30):
         payload = {'vrid': vrid}
         return payload
 
-    def create(self, vrid_val, threshold=None, disable=None, floating_ip=None):
+    def create(self, vrid_val, threshold=None, disable=None, floating_ip=None, is_partition=False):
         return self._post(self.base_url, self._build_params(vrid_val, threshold, disable,
-                                                            floating_ip))
+                                                            floating_ip, is_partition))
 
-    def update(self, vrid_val, threshold=None, disable=None, floating_ip=None):
+    def update(self, vrid_val, threshold=None, disable=None, floating_ip=None, is_partition=False):
         return self._put(self.base_url + str(vrid_val), self._build_params(vrid_val, threshold,
-                                                                           disable, floating_ip))
+                                                                           disable, floating_ip,
+                                                                           is_partition))
 
     def delete(self, vrid_val):
         return self._delete(self.base_url + str(vrid_val))
