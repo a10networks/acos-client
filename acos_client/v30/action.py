@@ -106,3 +106,7 @@ class Action(base.BaseV30):
             return True
         else:
             return False
+
+    def get_vcs_summary_oper(self):
+        url = "/vcs/vcs-summary/oper"
+        return self._get(url)
