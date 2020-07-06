@@ -20,13 +20,18 @@ from acos_client.v30 import base
 
 class Action(base.BaseV30):
 
-    def write_memory(self, partition="all", destination="primary", **kwargs):
+    def write_memory(self, partition="all", destination="primary", specified_partition=None, **kwargs):
         payload = {
             "memory": {
                 "destination": destination,
                 "partition": partition
             }
         }
+
+        if specified_partition:
+            del payload["memory"]["destination"]
+            payload["memory"]["specified-partition"] = specified_partition
+
         try:
             try:
                 self._post("/write/memory/", payload, **kwargs)
