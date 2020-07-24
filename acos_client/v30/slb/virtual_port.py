@@ -115,7 +115,8 @@ class VirtualPort(base.BaseV30):
 
         if autosnat:
             params['port']['auto'] = int(autosnat)
-        params['port']['ipinip'] = int(ipinip)
+        if ipinip:
+            params['port']['ipinip'] = int(ipinip)
         if use_rcv_hop:
             params['port']['use-rcv-hop-for-resp'] = int(use_rcv_hop)
         if source_nat_pool and len(source_nat_pool) > 0:
