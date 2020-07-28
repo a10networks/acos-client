@@ -33,21 +33,24 @@ BASE_URL = 'https://{}:443/axapi/v3'.format(HOSTNAME)
 AUTH_URL = '{}/auth'.format(BASE_URL)
 VSERVER_NAME = 'test'
 CREATE_URL = '{}/slb/virtual-server/{}/port/'.format(BASE_URL, VSERVER_NAME)
-OBJECT_URL = '{}/slb/virtual-server/{}/port/80+http'.format(BASE_URL, VSERVER_NAME)
+OBJECT_URL = '{}/slb/virtual-server/{}/port/80+http'.format(
+    BASE_URL, VSERVER_NAME)
 ALL_URL = '{}/slb/virtual-server/{}/port/'.format(BASE_URL, VSERVER_NAME)
 
 
 class TestVirtualPort(unittest.TestCase):
 
     def setUp(self):
-        self.client = client.Client(HOSTNAME, '30', 'fake_username', 'fake_password')
+        self.client = client.Client(
+            HOSTNAME, '30', 'fake_username', 'fake_password')
         self.maxDiff = None
 
     @responses.activate
     def test_virtual_port_create_no_params(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {'response': {'status': 'OK'}}
-        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, CREATE_URL,
+                      json=json_response, status=200)
         params = {
             'port':
             {
@@ -55,7 +58,10 @@ class TestVirtualPort(unittest.TestCase):
                 'name': 'test1_VPORT',
                 'port-number': 80,
                 'protocol': 'http',
-                'service-group': 'pool1'
+                'service-group': 'pool1',
+                'use-rcv-hop-for-resp': 0,
+                'ipinip': 0,
+                'auto': 0
             }
         }
 
@@ -74,7 +80,8 @@ class TestVirtualPort(unittest.TestCase):
     def test_virtual_port_create_with_params(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {'response': {'status': 'OK'}}
-        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, CREATE_URL,
+                      json=json_response, status=200)
         params = {
             'port':
             {
@@ -129,7 +136,8 @@ class TestVirtualPort(unittest.TestCase):
         json_response = {
             "response": {"status": "fail", "err": {"code": 1406, "msg": "The virtual port already exists."}}
         }
-        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, CREATE_URL,
+                      json=json_response, status=200)
 
         with self.assertRaises(acos_errors.ACOSException):
             self.client.slb.virtual_server.vport.create(
@@ -147,7 +155,8 @@ class TestVirtualPort(unittest.TestCase):
         mocked_get.return_value = {"foo": "bar"}
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {"foo": "bar"}
-        responses.add(responses.POST, OBJECT_URL, json=json_response, status=200)
+        responses.add(responses.POST, OBJECT_URL,
+                      json=json_response, status=200)
         params = {
             "port":
             {
@@ -158,6 +167,9 @@ class TestVirtualPort(unittest.TestCase):
                 "template-persist-source-ip": None,
                 "template-persist-cookie": None,
                 "extended-stats": 1,
+                "auto": 0,
+                "use-rcv-hop-for-resp": 0,
+                "ipinip": 0,
             }
         }
 
@@ -177,7 +189,8 @@ class TestVirtualPort(unittest.TestCase):
     def test_virtual_port_create_with_templates(self, mocked_get):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {'response': {'status': 'OK'}}
-        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, CREATE_URL,
+                      json=json_response, status=200)
         protocol = self.client.slb.virtual_server.vport.HTTP
         if protocol.lower() == 'http':
             params = {
@@ -191,6 +204,7 @@ class TestVirtualPort(unittest.TestCase):
                     'port-number': 80,
                     'protocol': 'http',
                     'service-group': 'pool1',
+                    'use-rcv-hop-for-resp': 0,
                     'tcp_template': 'test_tcp_template',
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
@@ -255,7 +269,8 @@ class TestVirtualPort(unittest.TestCase):
     def test_virtual_port_create_with_partial_templates(self, mocked_get):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {'response': {'status': 'OK'}}
-        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        responses.add(responses.POST, CREATE_URL,
+                      json=json_response, status=200)
         protocol = self.client.slb.virtual_server.vport.HTTP
         if protocol.lower() == 'http':
             params = {
@@ -269,6 +284,7 @@ class TestVirtualPort(unittest.TestCase):
                     'port-number': 80,
                     'protocol': 'http',
                     'service-group': 'pool1',
+                    'use-rcv-hop-for-resp': 0,
                     'tcp_template': 'test_tcp_template',
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
@@ -290,6 +306,7 @@ class TestVirtualPort(unittest.TestCase):
                     'port-number': 80,
                     'protocol': 'http',
                     'service-group': 'pool1',
+                    'use-rcv-hop-for-resp': 0,
                     'tcp_template': 'test_tcp_template',
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
@@ -331,7 +348,8 @@ class TestVirtualPort(unittest.TestCase):
         mocked_get.return_value = {"foo": "bar"}
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {"foo": "bar"}
-        responses.add(responses.POST, OBJECT_URL, json=json_response, status=200)
+        responses.add(responses.POST, OBJECT_URL,
+                      json=json_response, status=200)
         params = {
             'port':
             {
@@ -385,7 +403,8 @@ class TestVirtualPort(unittest.TestCase):
         mocked_get.return_value = {"foo": "bar"}
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {"foo": "bar"}
-        responses.add(responses.POST, OBJECT_URL, json=json_response, status=200)
+        responses.add(responses.POST, OBJECT_URL,
+                      json=json_response, status=200)
         protocol = self.client.slb.virtual_server.vport.HTTP
         if protocol.lower() == 'http':
             params = {
@@ -402,6 +421,7 @@ class TestVirtualPort(unittest.TestCase):
                     'service-group': 'pool1',
                     'ha-conn-mirror': 1,
                     'conn-limit': 50000,
+                    'use-rcv-hop-for-resp': 0,
                     'tcp_template': 'test_tcp_template',
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
@@ -426,6 +446,7 @@ class TestVirtualPort(unittest.TestCase):
                     'service-group': 'pool1',
                     'ha-conn-mirror': 1,
                     'conn-limit': 50000,
+                    'use-rcv-hop-for-resp': 0,
                     'tcp_template': 'test_tcp_template',
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
@@ -469,7 +490,8 @@ class TestVirtualPort(unittest.TestCase):
         json_response = {
             'response': {'status': 'OK'}
         }
-        responses.add(responses.DELETE, OBJECT_URL, json=json_response, status=200)
+        responses.add(responses.DELETE, OBJECT_URL,
+                      json=json_response, status=200)
 
         resp = self.client.slb.virtual_server.vport.delete(
             VSERVER_NAME, 'test1_VPORT', self.client.slb.virtual_server.vport.HTTP, '80'
@@ -486,7 +508,8 @@ class TestVirtualPort(unittest.TestCase):
         json_response = {
             "response": {"status": "fail", "err": {"code": 1043, "msg": "Can not find the virtual server port"}}
         }
-        responses.add(responses.DELETE, OBJECT_URL, json=json_response, status=200)
+        responses.add(responses.DELETE, OBJECT_URL,
+                      json=json_response, status=200)
 
         with self.assertRaises(acos_errors.ACOSException):
             self.client.slb.virtual_server.vport.delete(
@@ -501,7 +524,8 @@ class TestVirtualPort(unittest.TestCase):
     def test_virtual_port_search(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {"foo": "bar"}
-        responses.add(responses.GET, OBJECT_URL, json=json_response, status=200)
+        responses.add(responses.GET, OBJECT_URL,
+                      json=json_response, status=200)
 
         resp = self.client.slb.virtual_server.vport.get(
             VSERVER_NAME, 'test1_VPORT', protocol=self.client.slb.virtual_server.vport.HTTP, port='80'
@@ -518,7 +542,8 @@ class TestVirtualPort(unittest.TestCase):
         json_response = {
             "response": {"status": "fail", "err": {"code": 1043, "msg": "Can not find the virtual server port"}}
         }
-        responses.add(responses.GET, OBJECT_URL, json=json_response, status=200)
+        responses.add(responses.GET, OBJECT_URL,
+                      json=json_response, status=200)
 
         with self.assertRaises(acos_errors.ACOSException):
             self.client.slb.virtual_server.vport.get(

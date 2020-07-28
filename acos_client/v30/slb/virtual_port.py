@@ -113,12 +113,10 @@ class VirtualPort(base.BaseV30):
                 params['port']['template-tcp'] = virtual_port_templates.get('template-tcp', None)
             params['port']['template-policy'] = virtual_port_templates.get('template-policy', None)
 
-        if autosnat:
-            params['port']['auto'] = int(autosnat)
-        if ipinip:
-            params['port']['ipinip'] = int(ipinip)
-        if use_rcv_hop:
-            params['port']['use-rcv-hop-for-resp'] = int(use_rcv_hop)
+        params['port']['auto'] = int(autosnat)
+        params['port']['ipinip'] = int(ipinip)
+        params['port']['use-rcv-hop-for-resp'] = int(use_rcv_hop)
+
         if source_nat_pool and len(source_nat_pool) > 0:
             params['port']['pool'] = source_nat_pool
         if tcp_template:
