@@ -58,10 +58,7 @@ class TestVirtualPort(unittest.TestCase):
                 'name': 'test1_VPORT',
                 'port-number': 80,
                 'protocol': 'http',
-                'service-group': 'pool1',
-                'use-rcv-hop-for-resp': 0,
-                'ipinip': 0,
-                'auto': 0
+                'service-group': 'pool1'
             }
         }
 
@@ -166,10 +163,7 @@ class TestVirtualPort(unittest.TestCase):
                 "port-number": 80,
                 "template-persist-source-ip": None,
                 "template-persist-cookie": None,
-                "extended-stats": 1,
-                "auto": 0,
-                "use-rcv-hop-for-resp": 0,
-                "ipinip": 0,
+                "extended-stats": 1
             }
         }
 
@@ -284,7 +278,6 @@ class TestVirtualPort(unittest.TestCase):
                     'port-number': 80,
                     'protocol': 'http',
                     'service-group': 'pool1',
-                    'use-rcv-hop-for-resp': 0,
                     'tcp_template': 'test_tcp_template',
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
@@ -306,7 +299,6 @@ class TestVirtualPort(unittest.TestCase):
                     'port-number': 80,
                     'protocol': 'http',
                     'service-group': 'pool1',
-                    'use-rcv-hop-for-resp': 0,
                     'tcp_template': 'test_tcp_template',
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
