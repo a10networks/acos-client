@@ -241,7 +241,6 @@ class TestVirtualPort(unittest.TestCase):
                 'template-tcp': 'template_tcp',
                 'template-policy': 'template_pl',
             },
-            use_rcv_hop=False,
         )
 
         self.assertEqual(resp, json_response)
@@ -396,6 +395,7 @@ class TestVirtualPort(unittest.TestCase):
                     'name': 'test1_VPORT',
                     'ipinip': 1,
                     'no-dest-nat': 0,
+                    'use-rcv-hop-for-resp': 0,
                     'pool': 'test_nat_pool',
                     'port-number': 80,
                     'protocol': 'http',
@@ -420,6 +420,7 @@ class TestVirtualPort(unittest.TestCase):
                     'name': 'test1_VPORT',
                     'ipinip': 1,
                     'no-dest-nat': 0,
+                    'use-rcv-hop-for-resp': 0,
                     'pool': 'test_nat_pool',
                     'port-number': 80,
                     'protocol': 'http',

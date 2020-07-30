@@ -78,11 +78,11 @@ class VirtualPort(base.BaseV30):
         c_pers_name=None,
         status=0,
         no_dest_nat=None,
-        autosnat=False,
-        ipinip=False,
+        autosnat=None,
+        ipinip=None,
         source_nat_pool=None,
         ha_conn_mirror=None,
-        use_rcv_hop=False,
+        use_rcv_hop=None,
         conn_limit=None,
         virtual_port_templates=None,
         tcp_template=None,
@@ -113,12 +113,13 @@ class VirtualPort(base.BaseV30):
                 params['port']['template-tcp'] = virtual_port_templates.get('template-tcp', None)
             params['port']['template-policy'] = virtual_port_templates.get('template-policy', None)
 
-        if autosnat:
+        if autosnat is not None:
             params['port']['auto'] = int(autosnat)
-        if ipinip:
+        if ipinip is not None:
             params['port']['ipinip'] = int(ipinip)
-        if use_rcv_hop:
+        if use_rcv_hop is not None:
             params['port']['use-rcv-hop-for-resp'] = int(use_rcv_hop)
+
         if source_nat_pool and len(source_nat_pool) > 0:
             params['port']['pool'] = source_nat_pool
         if tcp_template:
@@ -173,12 +174,12 @@ class VirtualPort(base.BaseV30):
         s_pers_name=None,
         c_pers_name=None,
         status=1,
-        autosnat=False,
-        ipinip=False,
+        autosnat=None,
+        ipinip=None,
         no_dest_nat=None,
         source_nat_pool=None,
         ha_conn_mirror=None,
-        use_rcv_hop=False,
+        use_rcv_hop=None,
         conn_limit=None,
         virtual_port_templates=None,
         tcp_template=None,
@@ -218,12 +219,12 @@ class VirtualPort(base.BaseV30):
         s_pers_name=None,
         c_pers_name=None,
         status=1,
-        autosnat=False,
-        ipinip=False,
+        autosnat=None,
+        ipinip=None,
         no_dest_nat=None,
         source_nat_pool=None,
         ha_conn_mirror=None,
-        use_rcv_hop=False,
+        use_rcv_hop=None,
         conn_limit=None,
         virtual_port_templates=None,
         tcp_template=None,
