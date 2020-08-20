@@ -76,6 +76,10 @@ class ServiceGroup(base.BaseV30):
         # health-check-disable and health-check at the same time.
         if hm_name is None:
             params["service-group"]["health-check-disable"] = health_check_disable
+            # Have to explicitly detach health monitor from the service group,
+            # by setting health_check parameter to None.
+            if 'health_check' in kwargs:
+                params["service-group"]["health-check"] = kwargs['health_check']
         else:
             params["service-group"]["health-check"] = hm_name
 
