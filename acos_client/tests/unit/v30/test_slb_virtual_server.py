@@ -77,6 +77,7 @@ class TestVirtualServer(unittest.TestCase):
                 'ip-address': '192.168.2.254',
                 'name': VSERVER_NAME,
                 'arp-disable': 1,
+                'description': 'test_description',
                 'vrid': 1,
                 'template-virtual-server': 'TEST_VIP_TEMPLATE',
             }
@@ -86,6 +87,7 @@ class TestVirtualServer(unittest.TestCase):
             name='test',
             ip_address='192.168.2.254',
             arp_disable=1,
+            description='test_description',
             vrid=1,
             template_virtual_server='TEST_VIP_TEMPLATE',
         )
@@ -135,6 +137,7 @@ class TestVirtualServer(unittest.TestCase):
                 'name': VSERVER_NAME,
                 'ip-address': '192.168.2.254',
                 'arp-disable': 1,
+                'description': 'test_description',
                 'vrid': 1,
                 'template-virtual-server': 'TEST_VIP_TEMPLATE',
             }
@@ -144,6 +147,7 @@ class TestVirtualServer(unittest.TestCase):
             name='test',
             ip_address='192.168.2.254',
             arp_disable=1,
+            description='test_description',
             vrid=1,
             template_virtual_server='TEST_VIP_TEMPLATE',
         )
