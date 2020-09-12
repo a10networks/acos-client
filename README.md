@@ -17,13 +17,14 @@
 
 
 ## Supported Versions
-| ACOS Version | AXAPI Version | ACOS Client Version |
-|:------------:|:-------------:|:-------------------:|
-| 2.7.1†       | 2             | >=0.1.0,<0.3.0      |
-| 2.7.2        | 2             | >=0.1.0,<0.3.0      |
-| 4.0.0        | 3             | >=1.4.6,<1.5.0      |
-| 4.1.1        | 3             | >=1.5.0,<2.0.0      |
-| 4.1.4        | 3             | >=2.0.0             |
+| ACOS Version   | AXAPI Version | ACOS Client Version | Status      |
+|:--------------:|:-------------:|:-------------------:|:-----------:|
+| 2.7.1†         | 2             | >=0.1.0,<0.3.0      | EOL         |
+| 2.7.2          | 2             | >=0.1.0,<0.3.0      | EOL         |
+| 4.0.0          | 3             | >=1.4.6,<1.5.0      | Maintenance |
+| 4.1.1          | 3             | >=1.5.0,<2.0.0      | Maintenance |
+| 4.1.4 GR1-P2   | 3             | >=2.0.0,<2.4.0      | Maintenance |
+| 4.1.4          | 3             | >=2.4.0             | Development |
 
 †Works only when not using partitioning
 
