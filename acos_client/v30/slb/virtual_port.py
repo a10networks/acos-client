@@ -106,7 +106,7 @@ class VirtualPort(base.BaseV30):
         }
         if virtual_port_templates:
             virtual_port_templates = {k: v for k, v in virtual_port_templates.items() if v}
- 
+
             if virtual_port_templates.get('template-virtual-port'):
                 params['port']['template-virtual-port'] = virtual_port_templates['template-virtual-port']
             elif virtual_port_templates.get('template-virtual-port-shared'):
@@ -122,9 +122,9 @@ class VirtualPort(base.BaseV30):
             else:
                 if virtual_port_templates.get('template-tcp'):
                     params['port']['template-tcp'] = virtual_port_templates['template-tcp']
-                elif virtual_port_templates.get('template-http-shared'):
+                elif virtual_port_templates.get('template-tcp-shared'):
                     params['port']['template-tcp-shared'] = virtual_port_templates['template-tcp-shared']
-                    params['port']['shared-partition-tcp'] = True 
+                    params['port']['shared-partition-tcp'] = True
 
             if virtual_port_templates.get('template-policy'):
                 params['port']['template-policy'] = virtual_port_templates['template-policy']
@@ -157,7 +157,11 @@ class VirtualPort(base.BaseV30):
         if server_ssl_tmpl:
             params['port']['template-server-ssl'] = server_ssl_tmpl
         if client_ssl_tmpl:
-            params['port']['template-client-ssl'] = client_ssl_tmpl
+            if client_ssl_tmpl.get('template-client-ssl'):
+                params['port']['template-client-ssl'] = virtual_port_templates['template-client-ssl']
+            elif virtual_port_templates.get('template-client-ssl-shared'):
+                params['port']['template-client-ssl-shared'] = virtual_port_templates['template-client-ssl-shared']
+                params['port']['shared-partition-client-ssl-template'] = True
 
         sampling_enable = kwargs.get('sampling_enable')
         if sampling_enable is not None:
