@@ -108,10 +108,24 @@ class VirtualPort(base.BaseV30):
             virtual_port_templates = {k: v for k, v in virtual_port_templates.items() if v}
             params['port']['template-virtual-port'] = virtual_port_templates.get('template-virtual-port', None)
             if protocol in ['http', 'https']:
-                params['port']['template-http'] = virtual_port_templates.get('template-http', None)
+                if virtual_port_templates.get('template-http'):
+                    params['port']['template-http'] = virtual_port_templates.get('template-http', None)
+                else:
+                    params['port']['template-http-shared'] = virtual_port_templates.get('template-http-shared', None)
+                    params['port']['shared-partition-http-template'] = virtual_port_templates.get(
+                        'template-http-shared', False)
             else:
-                params['port']['template-tcp'] = virtual_port_templates.get('template-tcp', None)
-            params['port']['template-policy'] = virtual_port_templates.get('template-policy', None)
+                if virtual_port_templates.get('template-tcp'):
+                    params['port']['template-tcp'] = virtual_port_templates.get('template-tcp', None)
+                else:
+                    params['port']['template-tcp-shared'] = virtual_port_templates.get('template-tcp-shared', None)
+                    params['port']['shared-partition-tcp'] = virtual_port_templates.get('shared-partition-tcp', False)
+            if virtual_port_templates.get('template-policy'):
+                params['port']['template-policy'] = virtual_port_templates.get('template-policy', None)
+            else:
+                params['port']['template-policy-shared'] = virtual_port_templates.get('template-policy-shared', None)
+                params['port']['shared-partition-policy-template'] = virtual_port_templates.get(
+                    'shared-partition-policy-template', False)
 
         if autosnat is not None:
             params['port']['auto'] = int(autosnat)
