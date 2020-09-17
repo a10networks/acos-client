@@ -106,7 +106,7 @@ class VirtualPort(base.BaseV30):
         }
         if virtual_port_templates:
             virtual_port_templates = {k: v for k, v in virtual_port_templates.items() if v}
- 
+
             if virtual_port_templates.get('template-virtual-port'):
                 params['port']['template-virtual-port'] = virtual_port_templates['template-virtual-port']
             elif virtual_port_templates.get('template-virtual-port-shared'):
@@ -122,9 +122,9 @@ class VirtualPort(base.BaseV30):
             else:
                 if virtual_port_templates.get('template-tcp'):
                     params['port']['template-tcp'] = virtual_port_templates['template-tcp']
-                elif virtual_port_templates.get('template-http-shared'):
+                elif virtual_port_templates.get('template-tcp-shared'):
                     params['port']['template-tcp-shared'] = virtual_port_templates['template-tcp-shared']
-                    params['port']['shared-partition-tcp'] = True 
+                    params['port']['shared-partition-tcp'] = True
 
             if virtual_port_templates.get('template-policy'):
                 params['port']['template-policy'] = virtual_port_templates['template-policy']

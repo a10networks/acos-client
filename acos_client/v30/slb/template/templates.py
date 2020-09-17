@@ -1,4 +1,4 @@
-# Copyright 2015,  Tobit Raff,  A10 Networks.
+# Copyright 2020, A10 Networks.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -14,12 +14,12 @@
 
 from acos_client.v30 import base
 
+
 class BaseTemplate(base.BaseV30):
 
     def get(self, **kwargs):
-        return self._get(self.url_prefix , **kwargs)
+        return self._get(self.url_prefix, **kwargs)
 
 
 class Templates(BaseTemplate):
     url_prefix = '/slb/template/'
-   
