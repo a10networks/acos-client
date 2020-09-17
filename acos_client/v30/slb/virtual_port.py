@@ -157,11 +157,7 @@ class VirtualPort(base.BaseV30):
         if server_ssl_tmpl:
             params['port']['template-server-ssl'] = server_ssl_tmpl
         if client_ssl_tmpl:
-            if client_ssl_tmpl.get('template-client-ssl'):
-                params['port']['template-client-ssl'] = virtual_port_templates['template-client-ssl']
-            elif virtual_port_templates.get('template-client-ssl-shared'):
-                params['port']['template-client-ssl-shared'] = virtual_port_templates['template-client-ssl-shared']
-                params['port']['shared-partition-client-ssl-template'] = True
+            params['port']['template-client-ssl'] = client_ssl_tmpl
 
         sampling_enable = kwargs.get('sampling_enable')
         if sampling_enable is not None:
