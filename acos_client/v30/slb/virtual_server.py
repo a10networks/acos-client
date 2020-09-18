@@ -49,8 +49,11 @@ class VirtualServer(base.BaseV30):
         else:
             params['virtual-server']['ip-address'] = ip_address
 
-        if description:
+        if description and len(description) > 1:
             params['virtual-server']['description'] = description
+        else:
+            params['virtual-server']['description'] = None
+
         if vrid:
             params['virtual-server']['vrid'] = int(vrid)
         if virtual_server_templates:
