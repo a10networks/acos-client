@@ -49,7 +49,7 @@ class VirtualServer(base.BaseV30):
         else:
             params['virtual-server']['ip-address'] = ip_address
 
-        if description and len(description) > 1:
+        if description:
             params['virtual-server']['description'] = description
         else:
             params['virtual-server']['description'] = None
