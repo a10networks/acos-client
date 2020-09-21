@@ -109,7 +109,7 @@ class VirtualPort(base.BaseV30):
             params['port']['template-virtual-port'] = virtual_port_templates.get('template-virtual-port', None)
             if protocol in ['http', 'https']:
                 params['port']['template-http'] = virtual_port_templates.get('template-http', None)
-            elif protocol in ['tcp','TCP']:
+            elif protocol in ['tcp', 'TCP']:
                 params['port']['template-tcp'] = virtual_port_templates.get('template-tcp', None)
             else
                 params['port']['template-udp'] = virtual_port_templates.get('template-udp', None)
