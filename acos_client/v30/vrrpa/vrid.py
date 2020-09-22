@@ -44,12 +44,12 @@ class VRID(base.BaseV30):
         vrid_floating_ips = None
         if floating_ips:
             if is_partition:
-                ip_partition_list = map(lambda ip: {'ip-address-partition': ip}, floating_ips)
+                ip_partition_list = [{'ip-address-partition': ip} for ip in floating_ips]
                 vrid_floating_ips = {
                     'ip-address-part-cfg': ip_partition_list
                 }
             else:
-                ip_list = map(lambda ip: {'ip-address': ip}, floating_ips)
+                ip_list = [{'ip-address': ip} for ip in floating_ips]
                 vrid_floating_ips = {
                     'ip-address-cfg': ip_list
                 }
