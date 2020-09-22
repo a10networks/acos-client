@@ -54,6 +54,7 @@ class TestVirtualServer(unittest.TestCase):
                 'ip-address': '192.168.2.254',
                 'name': VSERVER_NAME,
                 'arp-disable': 0,
+                'description': None,
             }
         }
 
@@ -116,6 +117,7 @@ class TestVirtualServer(unittest.TestCase):
                 'ip-address': '192.168.2.254',
                 'name': VSERVER_NAME,
                 'arp-disable': 0,
+                'description': None,
             }
         }
 
@@ -175,6 +177,7 @@ class TestVirtualServer(unittest.TestCase):
                 'template-logging': 'template_lg',
                 'template-policy': 'template_pl',
                 'template-scaleout': 'template_sc',
+                'description': None,
             }
         }
 
@@ -249,6 +252,7 @@ class TestVirtualServer(unittest.TestCase):
                 'template-logging': 'template_lg',
                 'template-policy': None,
                 'template-scaleout': None,
+                'description': None,
             }
         }
 

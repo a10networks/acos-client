@@ -51,6 +51,9 @@ class VirtualServer(base.BaseV30):
 
         if description:
             params['virtual-server']['description'] = description
+        else:
+            params['virtual-server']['description'] = None
+
         if vrid:
             params['virtual-server']['vrid'] = int(vrid)
         if virtual_server_templates:
