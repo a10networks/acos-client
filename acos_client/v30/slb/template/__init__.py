@@ -22,6 +22,7 @@ from acos_client.v30.slb.template.ssl import ServerSSL
 from acos_client.v30.slb.template.ssl import SSLCipher
 from acos_client.v30.slb.template.templates import Templates
 
+
 class Template(base.BaseV30):
 
     @property
