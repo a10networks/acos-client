@@ -157,7 +157,7 @@ class TestVirtualPort(unittest.TestCase):
                 "port-number": 80,
                 "template-persist-source-ip": None,
                 "template-persist-cookie": None,
-                "extended-stats": 1,
+                "extended-stats": 1
             }
         }
 
@@ -196,8 +196,7 @@ class TestVirtualPort(unittest.TestCase):
                     'template-persist-source-ip': 'test_s_pers_template',
                     'udp_template': 'test_udp_template',
                     'template-virtual-port': 'template_vp',
-                    'template-http': None,
-                    'template-policy': 'template_pl',
+                    'template-policy': 'template_pl'
                 }
             }
         else:
@@ -218,7 +217,7 @@ class TestVirtualPort(unittest.TestCase):
                     'udp_template': 'test_udp_template',
                     'template-virtual-port': 'template_vp',
                     'template-tcp': 'template_tcp',
-                    'template-policy': 'template_pl',
+                    'template-policy': 'template_pl'
                 }
             }
 
@@ -272,9 +271,7 @@ class TestVirtualPort(unittest.TestCase):
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
                     'udp_template': 'test_udp_template',
-                    'template-virtual-port': 'template_vp',
-                    'template-http': None,
-                    'template-policy': None,
+                    'template-virtual-port': 'template_vp'
                 }
             }
         else:
@@ -406,9 +403,7 @@ class TestVirtualPort(unittest.TestCase):
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
                     'udp_template': 'test_udp_template',
-                    'template-virtual-port': 'template_vp',
-                    'template-http': None,
-                    'template-policy': None,
+                    'template-virtual-port': 'template_vp'
                 }
             }
         else:
@@ -431,9 +426,7 @@ class TestVirtualPort(unittest.TestCase):
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
                     'udp_template': 'test_udp_template',
-                    'template-virtual-port': 'template_vp',
-                    'template-tcp': None,
-                    'template-policy': None,
+                    'template-virtual-port': 'template_vp'
                 }
             }
         resp = self.client.slb.virtual_server.vport.update(
