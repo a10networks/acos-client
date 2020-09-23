@@ -85,7 +85,7 @@ class HealthMonitor(base.BaseV30):
         if mon_method in ['http', 'https']:
             if method:
                 params['monitor']['method'][mon_method]['url-type'] = method
-        if mon_method in ['https']:        
+        if mon_method in ['https']:
             if disable_sslv2:
                 params['monitor']['method'][mon_method]['disable-sslv2hello'] = disable_sslv2
         if url:
