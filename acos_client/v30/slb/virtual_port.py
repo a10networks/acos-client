@@ -109,9 +109,9 @@ class VirtualPort(base.BaseV30):
             params['port']['template-virtual-port'] = virtual_port_templates.get('template-virtual-port', None)
             if protocol in ['http', 'https']:
                 params['port']['template-http'] = virtual_port_templates.get('template-http', None)
-            elif protocol in ['tcp', 'TCP']:
+            elif protocol in ['tcp']:
                 params['port']['template-tcp'] = virtual_port_templates.get('template-tcp', None)
-            else
+            else:
                 params['port']['template-udp'] = virtual_port_templates.get('template-udp', None)
             params['port']['template-policy'] = virtual_port_templates.get('template-policy', None)
 
@@ -125,9 +125,9 @@ class VirtualPort(base.BaseV30):
         if source_nat_pool and len(source_nat_pool) > 0:
             params['port']['pool'] = source_nat_pool
         if tcp_template:
-            params['port']['template_tcp'] = tcp_template
+            params['port']['template-tcp'] = tcp_template
         if udp_template:
-            params['port']['template_udp'] = udp_template
+            params['port']['template-udp'] = udp_template
 
         server_ssl_tmpl = kwargs.get("template_server_ssl", None)
         client_ssl_tmpl = kwargs.get("template_client_ssl")
