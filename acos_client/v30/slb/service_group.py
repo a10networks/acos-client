@@ -96,9 +96,15 @@ class ServiceGroup(base.BaseV30):
 
         if service_group_templates:
             service_group_templates = {k: v for k, v in service_group_templates.items() if v}
+
+            if service_group_templates.get('template-policy'):
+                params['service-group']['template-policy'] = service_group_templates['template-policy']
+            elif service_group_templates.get('template-policy-shared'):
+                params['service-group']['template-policy-shared'] = service_group_templates['template-policy-shared']
+                params['service-group']['shared-partition-policy-template'] = True
+
             params['service-group']['template-server'] = service_group_templates.get('template-server', None)
             params['service-group']['template-port'] = service_group_templates.get('template-port', None)
-            params['service-group']['template-policy'] = service_group_templates.get('template-policy', None)
 
         config_defaults = kwargs.get("config_defaults")
 
