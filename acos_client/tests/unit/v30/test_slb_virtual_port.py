@@ -271,9 +271,7 @@ class TestVirtualPort(unittest.TestCase):
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
                     'template-udp': 'test_udp_template',
-                    'template-virtual-port': 'template_vp',
-                    'template-http': None,
-                    'template-policy': None,
+                    'template-virtual-port': 'template_vp'
                 }
             }
         else:
@@ -405,9 +403,7 @@ class TestVirtualPort(unittest.TestCase):
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
                     'template-udp': 'test_udp_template',
-                    'template-virtual-port': 'template_vp',
-                    'template-http': None,
-                    'template-policy': None,
+                    'template-virtual-port': 'template_vp'
                 }
             }
         else:
@@ -430,9 +426,7 @@ class TestVirtualPort(unittest.TestCase):
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
                     'template-udp': 'test_udp_template',
-                    'template-virtual-port': 'template_vp',
-                    'template-tcp': None,
-                    'template-policy': None,
+                    'template-virtual-port': 'template_vp'
                 }
             }
         resp = self.client.slb.virtual_server.vport.update(
