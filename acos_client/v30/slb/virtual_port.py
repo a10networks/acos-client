@@ -112,7 +112,7 @@ class VirtualPort(base.BaseV30):
             elif virtual_port_templates.get('template-virtual-port-shared'):
                 params['port']['template-virtual-port-shared'] = virtual_port_templates['template-virtual-port-shared']
                 params['port']['shared-partition-virtual-port-template'] = True
-            if protocl in ['http','https']:
+            if protocol in ['http', 'https']:
                 if virtual_port_templates.get('template-http'):
                     params['port']['template-http'] = virtual_port_templates['template-http']
                 elif virtual_port_templates.get('template-http-shared'):
