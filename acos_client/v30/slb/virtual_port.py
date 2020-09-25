@@ -112,17 +112,23 @@ class VirtualPort(base.BaseV30):
             elif virtual_port_templates.get('template-virtual-port-shared'):
                 params['port']['template-virtual-port-shared'] = virtual_port_templates['template-virtual-port-shared']
                 params['port']['shared-partition-virtual-port-template'] = True
-            if virtual_port_templates.get('template-http'):
-                params['port']['template-http'] = virtual_port_templates['template-http']
-            elif virtual_port_templates.get('template-http-shared'):
-                params['port']['template-http-shared'] = virtual_port_templates['template-http-shared']
-                params['port']['shared-partition-http-template'] = True
+            if protocl in ['http','https']:
+                if virtual_port_templates.get('template-http'):
+                    params['port']['template-http'] = virtual_port_templates['template-http']
+                elif virtual_port_templates.get('template-http-shared'):
+                    params['port']['template-http-shared'] = virtual_port_templates['template-http-shared']
+                    params['port']['shared-partition-http-template'] = True
             else:
                 if virtual_port_templates.get('template-tcp'):
                     params['port']['template-tcp'] = virtual_port_templates['template-tcp']
                 elif virtual_port_templates.get('template-tcp-shared'):
                     params['port']['template-tcp-shared'] = virtual_port_templates['template-tcp-shared']
                     params['port']['shared-partition-tcp'] = True
+            if virtual_port_templates.get('template-policy'):
+                params['port']['template-policy'] = virtual_port_templates['template-policy']
+            elif virtual_port_templates.get('template-policy-shared'):
+                params['port']['template-policy-shared'] = virtual_port_templates['template-policy-shared']
+                params['port']['shared-partition-policy-template'] = True
 
         if autosnat is not None:
             params['port']['auto'] = int(autosnat)
