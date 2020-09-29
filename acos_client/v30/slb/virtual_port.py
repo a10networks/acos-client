@@ -104,6 +104,10 @@ class VirtualPort(base.BaseV30):
             }, exclude=exclude_minimize
             )
         }
+        params['port']['template-virtual-port'] = None
+        params['port']['template-http'] = None
+        params['port']['template-tcp'] = None
+        params['port']['template-policy'] = None
         if virtual_port_templates:
             virtual_port_templates = {k: v for k, v in virtual_port_templates.items() if v}
 
