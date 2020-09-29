@@ -112,7 +112,8 @@ class TestVirtualServer(unittest.TestCase):
                 'protocol': 'tcp',
                 'stateless-auto-switch': 0,
                 'template-server': 'template_sv',
-                'template-port': 'template_port'
+                'template-port': 'template_port',
+                'template-policy': None
             }
         }
 

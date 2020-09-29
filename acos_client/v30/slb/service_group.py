@@ -67,6 +67,9 @@ class ServiceGroup(base.BaseV30):
                 "protocol": protocol,
             })
         }
+        params['service-group']['template-policy'] = None
+        params['service-group']['template-server'] = None
+        params['service-group']['template-port'] = None
 
         # If we explicitly disable health checks, ensure it happens
         # Else, we implicitly disable health checks if not specified.
