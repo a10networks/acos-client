@@ -38,6 +38,7 @@ class Server(base.BaseV30):
                 "health-check": kwargs.get("health_check")
             }
         }
+        params['server']['template-server'] = None
 
         if self._is_ipv6(ip_address):
             params['server']['server-ipv6-addr'] = ip_address
