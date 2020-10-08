@@ -112,12 +112,7 @@ class ServiceGroup(base.BaseV30):
             for k, v in six.iteritems(config_defaults):
                 params['service-group'][k] = v
 
-        if not update:
-            name = ''
-        else:
-            if 'protocol' in params['service-group']:
-                del params['service-group']['protocol']
-        return self._post(self.url_prefix + name, params, **kwargs)
+        return params, kwargs
 
     def all(self, *args, **kwargs):
         return self._get(self.url_prefix, **kwargs)
@@ -136,7 +131,9 @@ class ServiceGroup(base.BaseV30):
         else:
             raise acos_errors.Exists
 
-        return self._set(name, protocol, lb_method, service_group_templates, **kwargs)
+        params, kwargs = self._set(name, protocol=protocol, lb_method=lb_method,
+                                   service_group_templates=service_group_templates, **kwargs)
+        return self._post(self.url_prefix, params, **kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)
@@ -152,5 +149,12 @@ class ServiceGroup(base.BaseV30):
 
     def update(self, name, protocol=None, lb_method=None, health_monitor=None,
                service_group_templates=None, **kwargs):
-        return self._set(name, protocol, lb_method, hm_name=health_monitor,
-                         service_group_templates=service_group_templates, update=True, **kwargs)
+        params, kwargs = self._set(name, protocol=None, lb_method=lb_method, hm_name=health_monitor,
+                                   service_group_templates=service_group_templates, **kwargs)
+        return self._post(self.url_prefix + name, params, **kwargs)
+
+    def replace(self, name, protocol=None, lb_method=None, health_monitor=None,
+                service_group_templates=None, **kwargs):
+        params, kwargs = self._set(name, protocol=protocol, lb_method=lb_method, hm_name=health_monitor,
+                                   service_group_templates=service_group_templates, **kwargs)
+        return self._put(self.url_prefix + name, params, **kwargs)
