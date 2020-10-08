@@ -144,6 +144,19 @@ class TestVirtualServer(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
 
     @responses.activate
+    def test_server_group_replace(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.PUT, OBJECT_URL, json=json_response, status=200)
+
+        resp = self.client.slb.service_group.replace('test1', protocl='tcp')
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.PUT)
+        self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
+
+    @responses.activate
     def test_server_group_delete(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {"foo": "bar"}
