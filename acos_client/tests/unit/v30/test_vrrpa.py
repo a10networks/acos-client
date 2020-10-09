@@ -31,8 +31,7 @@ class TestVRID(unittest.TestCase):
         self.target = vrid.VRID(self.client)
         self.url_prefix = "/axapi/v3/vrrp-a/vrid/"
 
-    def expected_payload(self, vrid_val, threshold=1, disable=0, floating_ip=None,
-                         is_partition=None):
+    def expected_payload(self, vrid_val, threshold=1, disable=0, is_partition=None):
         rv = {
             'vrid': {
                 'vrid-val': vrid_val,
@@ -42,20 +41,6 @@ class TestVRID(unittest.TestCase):
                 }
             }
         }
-        if floating_ip:
-            fip_config_json = None
-            if is_partition:
-                fip_config_json = {
-                    'ip-address-part-cfg': [{
-                        'ip-address-partition': floating_ip
-                    }]}
-            else:
-                fip_config_json = {
-                    'ip-address-cfg': [{
-                        'ip-address': floating_ip
-                    }]}
-
-            rv['vrid']['floating-ip'] = fip_config_json
         return rv
 
     def test_vrid_get(self):
@@ -73,9 +58,11 @@ class TestVRID(unittest.TestCase):
             "POST", self.url_prefix, self.expected_payload(4, disable=1), mock.ANY)
 
     def test_vrid_create_floating_ip(self):
-        self.target.create(4, threshold=1, disable=0, floating_ip='10.10.10.8')
+        self.target.create(4, threshold=1, disable=0, floating_ips=['10.10.10.8'])
+        payload = self.expected_payload(4)
+        payload['vrid']['floating-ip'] = mock.ANY
         self.client.http.request.assert_called_with(
-            "POST", self.url_prefix, self.expected_payload(4, floating_ip='10.10.10.8'),
+            "POST", self.url_prefix, payload,
             mock.ANY)
 
     def test_vrid_update_threshold(self):
@@ -89,19 +76,41 @@ class TestVRID(unittest.TestCase):
             "PUT", self.url_prefix + '4', self.expected_payload(4, disable=1), mock.ANY)
 
     def test_vrid_update_floating_ip(self):
-        self.target.update(4, threshold=1, disable=0, floating_ip='10.10.10.9')
+        self.target.update(4, threshold=1, disable=0, floating_ips=['10.10.10.9'])
+        payload = self.expected_payload(4)
+        payload['vrid']['floating-ip'] = mock.ANY
         self.client.http.request.assert_called_with(
-            "PUT", self.url_prefix + '4', self.expected_payload(4, floating_ip='10.10.10.9'),
+            "PUT", self.url_prefix + '4', payload,
             mock.ANY)
 
     def test_patition_vrid_create_floating_ip(self):
-        self.target.create(4, threshold=1, disable=0, floating_ip='10.10.10.8', is_partition=True)
+        self.target.create(4, threshold=1, disable=0, floating_ips=['10.10.10.8'], is_partition=True)
+        payload = self.expected_payload(4, is_partition=True)
+        payload['vrid']['floating-ip'] = mock.ANY
         self.client.http.request.assert_called_with(
-            "POST", self.url_prefix, self.expected_payload(4, floating_ip='10.10.10.8',
-                                                           is_partition=True), mock.ANY)
+            "POST", self.url_prefix, payload, mock.ANY)
 
     def test_partition_vrid_update_floating_ip(self):
-        self.target.update(4, threshold=1, disable=0, floating_ip='10.10.10.9', is_partition=True)
+        self.target.update(4, threshold=1, disable=0, floating_ips=['10.10.10.9'], is_partition=True)
+        payload = self.expected_payload(4, is_partition=True)
+        payload['vrid']['floating-ip'] = mock.ANY
         self.client.http.request.assert_called_with(
-            "PUT", self.url_prefix + '4', self.expected_payload(4, floating_ip='10.10.10.9',
-                                                                is_partition=True), mock.ANY)
+            "PUT", self.url_prefix + '4', payload, mock.ANY)
+
+    def test_build_params_multi_ip(self):
+        floating_ips = ['11.11.11.11', '12.12.12.12', '13.13.13.13']
+        floating_ip_payload = [{'ip-address': '11.11.11.11'},
+                               {'ip-address': '12.12.12.12'},
+                               {'ip-address': '13.13.13.13'}]
+        payload = self.target._build_params(0, floating_ips=floating_ips)
+        ip_cfg = list(payload['vrid']['floating-ip']['ip-address-cfg'])
+        self.assertEqual(floating_ip_payload, ip_cfg)
+
+    def test_build_params_multi_ip_partition(self):
+        floating_ips = ['11.11.11.11', '12.12.12.12', '13.13.13.13']
+        floating_ip_payload = [{'ip-address-partition': '11.11.11.11'},
+                               {'ip-address-partition': '12.12.12.12'},
+                               {'ip-address-partition': '13.13.13.13'}]
+        payload = self.target._build_params(0, floating_ips=floating_ips, is_partition=True)
+        ip_cfg = list(payload['vrid']['floating-ip']['ip-address-part-cfg'])
+        self.assertEqual(floating_ip_payload, ip_cfg)

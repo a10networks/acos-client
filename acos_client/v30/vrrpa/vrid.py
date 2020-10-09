@@ -38,25 +38,22 @@ class VRID(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
-    def _build_params(self, vrid_val, threshold=None, disable=None, floating_ip=None,
+    def _build_params(self, vrid_val, threshold=None, disable=None, floating_ips=[],
                       is_partition=False):
         vrid = {'vrid-val': vrid_val}
-
-        vrid_floating_ip = None
-        if floating_ip:
+        vrid_floating_ips = None
+        if floating_ips:
             if is_partition:
-                vrid_floating_ip = {
-                    'ip-address-part-cfg': [{
-                        'ip-address-partition': floating_ip
-                    }]
+                ip_partition_list = [{'ip-address-partition': ip} for ip in floating_ips]
+                vrid_floating_ips = {
+                    'ip-address-part-cfg': ip_partition_list
                 }
             else:
-                vrid_floating_ip = {
-                    'ip-address-cfg': [{
-                        'ip-address': floating_ip
-                    }]
+                ip_list = [{'ip-address': ip} for ip in floating_ips]
+                vrid_floating_ips = {
+                    'ip-address-cfg': ip_list
                 }
-            vrid['floating-ip'] = vrid_floating_ip
+            vrid['floating-ip'] = vrid_floating_ips
 
         if threshold or disable:
             threshold = threshold if threshold in range(0, 256) else 1
@@ -65,19 +62,18 @@ class VRID(base.BaseV30):
                 'threshold': threshold,
                 'disable': disable
             }
-
             vrid['preempt-mode'] = preempt
 
         payload = {'vrid': vrid}
         return payload
 
-    def create(self, vrid_val, threshold=None, disable=None, floating_ip=None, is_partition=False):
+    def create(self, vrid_val, threshold=None, disable=None, floating_ips=[], is_partition=False):
         return self._post(self.base_url, self._build_params(vrid_val, threshold, disable,
-                                                            floating_ip, is_partition))
+                                                            floating_ips, is_partition))
 
-    def update(self, vrid_val, threshold=None, disable=None, floating_ip=None, is_partition=False):
+    def update(self, vrid_val, threshold=None, disable=None, floating_ips=[], is_partition=False):
         return self._put(self.base_url + str(vrid_val), self._build_params(vrid_val, threshold,
-                                                                           disable, floating_ip,
+                                                                           disable, floating_ips,
                                                                            is_partition))
 
     def delete(self, vrid_val):
