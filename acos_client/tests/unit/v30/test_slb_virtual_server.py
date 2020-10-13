@@ -14,6 +14,9 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import json
+import responses
+
 try:
     import unittest
     from unittest import mock
@@ -23,8 +26,6 @@ except ImportError:
 
 from acos_client import client
 import acos_client.errors as acos_errors
-import json
-import responses
 
 
 HOSTNAME = 'fake_a10'
@@ -42,10 +43,8 @@ class TestVirtualServer(unittest.TestCase):
     def setUp(self):
         self.client = client.Client(HOSTNAME, '30', 'fake_username', 'fake_password')
 
-    @mock.patch('acos_client.v30.slb.virtual_server.VirtualServer.get')
     @responses.activate
-    def test_virtual_server_create_no_params(self, mocked_get):
-        mocked_get.side_effect = acos_errors.NotFound
+    def test_virtual_server_create_no_params(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {"foo": "bar"}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
@@ -66,10 +65,8 @@ class TestVirtualServer(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-    @mock.patch('acos_client.v30.slb.virtual_server.VirtualServer.get')
     @responses.activate
-    def test_virtual_server_create_with_params(self, mocked_get):
-        mocked_get.side_effect = acos_errors.NotFound
+    def test_virtual_server_create_with_params(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {"foo": "bar"}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
@@ -98,14 +95,6 @@ class TestVirtualServer(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
-
-    @mock.patch('acos_client.v30.slb.virtual_server.VirtualServer.get')
-    @responses.activate
-    def test_virtual_server_create_already_exists(self, mocked_get):
-        mocked_get.return_value = {"foo": "bar"}
-
-        with self.assertRaises(acos_errors.Exists):
-            self.client.slb.virtual_server.create('test', '192.168.2.254')
 
     @responses.activate
     def test_virtual_server_update_no_params(self):
@@ -151,7 +140,7 @@ class TestVirtualServer(unittest.TestCase):
             arp_disable=1,
             description='test_description',
             vrid=1,
-            template_virtual_server='TEST_VIP_TEMPLATE',
+            template_virtual_server='TEST_VIP_TEMPLATE'
         )
 
         self.assertEqual(resp, json_response)

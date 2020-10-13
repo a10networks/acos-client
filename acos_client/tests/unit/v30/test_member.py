@@ -11,92 +11,138 @@
 #    under the License.
 from __future__ import absolute_import
 from __future__ import unicode_literals
+import json
+import responses
 
 try:
     import unittest
-    from unittest import mock
 except ImportError:
-    import mock
     import unittest2 as unittest
 
-from acos_client import errors as acos_errors
-from acos_client.v30.slb import member
+from acos_client import client
+
+HOSTNAME = 'fake_a10'
+BASE_URL = 'https://{}:443/axapi/v3'.format(HOSTNAME)
+AUTH_URL = '{}/auth'.format(BASE_URL)
+MEM_NAME = 'fake-server'
+SG_NAME = 'fake-sg'
+CREATE_URL = '{}/slb/service-group/{}/member/'.format(BASE_URL, SG_NAME)
+OBJECT_URL = '{}/slb/service-group/{}/member/{}+{}/'
+OK_RESP = {'response': {'status': 'OK'}}
 
 
 class TestMember(unittest.TestCase):
+
     def setUp(self):
-        self.client = mock.MagicMock()
-        self.member = member.Member(self.client)
-        self.member._get = mock.MagicMock(side_effect=acos_errors.NotFound)
+        self.client = client.Client(HOSTNAME, '30', 'fake_username', 'fake_password')
+        self.member = self.client.slb.service_group.member
 
-        # common test parameter(s) throughout all test-cases
-        self._sg_name = 'fake-sg'
-
+    @responses.activate
     def test_create_enable_member(self):
-        expected = {
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        responses.add(responses.POST, CREATE_URL, json=OK_RESP, status=200)
+        params = {
             'member': {
-                'name': 'fake-srever',
+                'name': MEM_NAME,
                 'port': 80,
                 'member-stats-data-disable': self.member.STATUS_ENABLE,
                 'member-state': 'enable',
             }
         }
-        self.member.create(self._sg_name, 'fake-srever', 80)
+        resp = self.member.create(SG_NAME, MEM_NAME, 80)
 
-        ((method, url, params, header), kwargs) = self.client.http.request.call_args
+        self.assertEqual(resp, OK_RESP)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-        self.assertEqual(url, '/axapi/v3/slb/service-group/%s/member/' % (self._sg_name))
-        self.assertEqual(params, expected)
-
+    @responses.activate
     def test_create_disable_member(self):
-        expected = {
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        responses.add(responses.POST, CREATE_URL, json=OK_RESP, status=200)
+        params = {
             'member': {
-                'name': 'fake-srever',
+                'name': MEM_NAME,
                 'port': 80,
                 'member-stats-data-disable': self.member.STATUS_DISABLE,
                 'member-state': 'disable',
             }
         }
-        self.member.create(self._sg_name, 'fake-srever', 80, self.member.STATUS_DISABLE, False)
+        resp = self.member.create(SG_NAME, MEM_NAME, 80,
+                                  self.member.STATUS_DISABLE,
+                                  False)
 
-        ((method, url, params, header), kwargs) = self.client.http.request.call_args
+        self.assertEqual(resp, OK_RESP)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-        self.assertEqual(params, expected)
-
+    @responses.activate
     def test_update_enable_member(self):
-        expected = {
+        port = 443
+        object_url = OBJECT_URL.format(BASE_URL, SG_NAME, MEM_NAME, port)
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        responses.add(responses.POST, object_url, json=OK_RESP, status=200)
+        params = {
             'member': {
-                'name': 'fake-srever',
-                'port': 443,
+                'name': MEM_NAME,
+                'port': port,
                 'member-stats-data-disable': self.member.STATUS_ENABLE,
                 'member-state': 'enable',
             }
         }
-        self.member.update(self._sg_name, 'fake-srever', 443)
+        resp = self.member.update(SG_NAME, MEM_NAME, port)
 
-        ((method, url, params, header), kwargs) = self.client.http.request.call_args
+        self.assertEqual(resp, OK_RESP)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, object_url)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-        self.assertEqual(url, '/axapi/v3/slb/service-group/%s/member/%s+%s/' %
-                              (self._sg_name,
-                               expected['member']['name'],
-                               expected['member']['port']))
-        self.assertEqual(params, expected)
-
+    @responses.activate
     def test_update_disable_member(self):
-        expected = {
+        port = 443
+        object_url = OBJECT_URL.format(BASE_URL, SG_NAME, MEM_NAME, port)
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        responses.add(responses.POST, object_url, json=OK_RESP, status=200)
+        params = {
             'member': {
-                'name': 'fake-srever',
-                'port': 443,
+                'name': MEM_NAME,
+                'port': port,
                 'member-stats-data-disable': self.member.STATUS_DISABLE,
                 'member-state': 'disable',
             }
         }
-        self.member.update(self._sg_name, 'fake-srever', 443, self.member.STATUS_DISABLE, False)
+        resp = self.member.update(SG_NAME, MEM_NAME, port,
+                                  self.member.STATUS_DISABLE,
+                                  False)
 
-        ((method, url, params, header), kwargs) = self.client.http.request.call_args
+        self.assertEqual(resp, OK_RESP)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, object_url)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-        self.assertEqual(url, '/axapi/v3/slb/service-group/%s/member/%s+%s/' %
-                              (self._sg_name,
-                               expected['member']['name'],
-                               expected['member']['port']))
-        self.assertEqual(params, expected)
+    @responses.activate
+    def test_replace_enable_member(self):
+        port = 443
+        object_url = OBJECT_URL.format(BASE_URL, SG_NAME, MEM_NAME, port)
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        responses.add(responses.PUT, object_url, json=OK_RESP, status=200)
+        params = {
+            'member': {
+                'name': MEM_NAME,
+                'port': port,
+                'member-stats-data-disable': self.member.STATUS_ENABLE,
+                'member-state': 'enable',
+            }
+        }
+        resp = self.member.replace(SG_NAME, MEM_NAME, port)
+
+        self.assertEqual(resp, OK_RESP)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.PUT)
+        self.assertEqual(responses.calls[1].request.url, object_url)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)

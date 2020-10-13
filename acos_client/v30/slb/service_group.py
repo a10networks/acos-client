@@ -112,7 +112,7 @@ class ServiceGroup(base.BaseV30):
             for k, v in six.iteritems(config_defaults):
                 params['service-group'][k] = v
 
-        return params, kwargs
+        return params
 
     def all(self, *args, **kwargs):
         return self._get(self.url_prefix, **kwargs)
@@ -131,8 +131,8 @@ class ServiceGroup(base.BaseV30):
         else:
             raise acos_errors.Exists
 
-        params, kwargs = self._set(name, protocol=protocol, lb_method=lb_method,
-                                   service_group_templates=service_group_templates, **kwargs)
+        params = self._set(name, protocol=protocol, lb_method=lb_method,
+                           service_group_templates=service_group_templates, **kwargs)
         return self._post(self.url_prefix, params, **kwargs)
 
     def delete(self, name):
@@ -149,12 +149,12 @@ class ServiceGroup(base.BaseV30):
 
     def update(self, name, protocol=None, lb_method=None, health_monitor=None,
                service_group_templates=None, **kwargs):
-        params, kwargs = self._set(name, protocol=None, lb_method=lb_method, hm_name=health_monitor,
-                                   service_group_templates=service_group_templates, **kwargs)
+        params = self._set(name, protocol=None, lb_method=lb_method, hm_name=health_monitor,
+                           service_group_templates=service_group_templates, **kwargs)
         return self._post(self.url_prefix + name, params, **kwargs)
 
     def replace(self, name, protocol=None, lb_method=None, health_monitor=None,
                 service_group_templates=None, **kwargs):
-        params, kwargs = self._set(name, protocol=protocol, lb_method=lb_method, hm_name=health_monitor,
-                                   service_group_templates=service_group_templates, **kwargs)
+        params = self._set(name, protocol=protocol, lb_method=lb_method, hm_name=health_monitor,
+                           service_group_templates=service_group_templates, **kwargs)
         return self._put(self.url_prefix + name, params, **kwargs)

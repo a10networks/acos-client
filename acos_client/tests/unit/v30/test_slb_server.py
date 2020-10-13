@@ -69,14 +69,6 @@ class TestServer(unittest.TestCase):
 
     @mock.patch('acos_client.v30.slb.server.Server.get')
     @responses.activate
-    def test_server_create_already_exists(self, mocked_get):
-        mocked_get.return_value = {"foo": "bar"}
-
-        with self.assertRaises(acos_errors.Exists):
-            self.client.slb.server.create('test', '192.168.2.254')
-
-    @mock.patch('acos_client.v30.slb.server.Server.get')
-    @responses.activate
     def test_server_create_with_template(self, mocked_get):
         mocked_get.side_effect = acos_errors.NotFound
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
@@ -174,7 +166,6 @@ class TestIPv6Server(unittest.TestCase):
     @mock.patch('acos_client.v30.slb.server.Server.get')
     @responses.activate
     def test_server_create(self, mocked_get):
-        mocked_get.side_effect = acos_errors.NotFound
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {'foo': 'bar'}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
@@ -199,16 +190,7 @@ class TestIPv6Server(unittest.TestCase):
 
     @mock.patch('acos_client.v30.slb.server.Server.get')
     @responses.activate
-    def test_server_create_already_exists(self, mocked_get):
-        mocked_get.return_value = {"foo": "bar"}
-
-        with self.assertRaises(acos_errors.Exists):
-            self.client.slb.server.create('test', '2001:baad:deed:bead:daab:daad:cead:100e')
-
-    @mock.patch('acos_client.v30.slb.server.Server.get')
-    @responses.activate
     def test_server_create_with_template(self, mocked_get):
-        mocked_get.side_effect = acos_errors.NotFound
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {'foo': 'bar'}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)

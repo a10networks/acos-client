@@ -15,8 +15,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import six
 
-
-from acos_client import errors as acos_errors
 from acos_client.v30 import base
 from acos_client.v30.slb.virtual_port import VirtualPort
 
@@ -35,7 +33,7 @@ class VirtualServer(base.BaseV30):
         return self._get(self.url_prefix + name)
 
     def _set(self, name, ip_address=None, arp_disable=False, description=None, vrid=None,
-             virtual_server_templates=None, template_virtual_server=None, update=False, **kwargs):
+             virtual_server_templates=None, template_virtual_server=None, **kwargs):
         params = {
             "virtual-server": self.minimal_dict({
                 "name": name,
@@ -73,26 +71,25 @@ class VirtualServer(base.BaseV30):
             for k, v in six.iteritems(config_defaults):
                 params['virtual-server'][k] = v
 
-        if not update:
-            name = ''
-        return self._post(self.url_prefix + name, params, **kwargs)
+        return params
 
     def create(self, name, ip_address, arp_disable=False, description=None, vrid=None,
                virtual_server_templates=None, template_virtual_server=None, **kwargs):
-        try:
-            self.get(name)
-        except acos_errors.NotFound:
-            pass
-        else:
-            raise acos_errors.Exists
-
-        return self._set(name, ip_address, arp_disable, description, vrid, virtual_server_templates,
-                         template_virtual_server, **kwargs)
+        params = self._set(name, ip_address, arp_disable, description, vrid, virtual_server_templates,
+                           template_virtual_server, **kwargs)
+        return self._post(self.url_prefix, params, **kwargs)
 
     def update(self, name, ip_address=None, arp_disable=False, description=None, vrid=None,
                virtual_server_templates=None, template_virtual_server=None, **kwargs):
-        return self._set(name, ip_address, arp_disable, description, vrid, virtual_server_templates,
-                         template_virtual_server, update=True, **kwargs)
+        params = self._set(name, ip_address, arp_disable, description, vrid, virtual_server_templates,
+                           template_virtual_server, **kwargs)
+        return self._post(self.url_prefix + name, params, **kwargs)
+
+    def replace(self, name, ip_address=None, arp_disable=False, description=None, vrid=None,
+                virtual_server_templates=None, template_virtual_server=None, **kwargs):
+        params = self._set(name, ip_address, arp_disable, description, vrid, virtual_server_templates,
+                           template_virtual_server, **kwargs)
+        return self._put(self.url_prefix + name, params, **kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)
