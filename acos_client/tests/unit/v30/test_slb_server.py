@@ -17,9 +17,7 @@ from __future__ import unicode_literals
 
 try:
     import unittest
-    from unittest import mock
 except ImportError:
-    import mock
     import unittest2 as unittest
 
 from acos_client import client
@@ -41,10 +39,8 @@ class TestServer(unittest.TestCase):
     def setUp(self):
         self.client = client.Client(HOSTNAME, '30', 'fake_username', 'fake_password')
 
-    @mock.patch('acos_client.v30.slb.server.Server.get')
     @responses.activate
-    def test_server_create(self, mocked_get):
-        mocked_get.side_effect = acos_errors.NotFound
+    def test_server_create(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {'foo': 'bar'}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
@@ -67,10 +63,8 @@ class TestServer(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-    @mock.patch('acos_client.v30.slb.server.Server.get')
     @responses.activate
-    def test_server_create_with_template(self, mocked_get):
-        mocked_get.side_effect = acos_errors.NotFound
+    def test_server_create_with_template(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {'foo': 'bar'}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
@@ -94,6 +88,60 @@ class TestServer(unittest.TestCase):
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
+    @responses.activate
+    def test_server_update_with_template(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {'foo': 'bar'}
+        responses.add(responses.POST, OBJECT_URL, json=json_response, status=200)
+        params = {
+            'server': {
+                'action': 'enable',
+                'conn-limit': None,
+                'conn-resume': None,
+                'host': '192.168.2.254',
+                'name': VSERVER_NAME,
+                'health-check': None,
+                'template-server': 'test-template-server'
+            }
+        }
+        templates = {
+            "template-server": "test-template-server"
+        }
+        resp = self.client.slb.server.update('test', '192.168.2.254', server_templates=templates)
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
+    @responses.activate
+    def test_server_replace_with_template(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {'foo': 'bar'}
+        responses.add(responses.PUT, OBJECT_URL, json=json_response, status=200)
+        params = {
+            'server': {
+                'action': 'enable',
+                'conn-limit': None,
+                'conn-resume': None,
+                'host': '192.168.2.254',
+                'name': VSERVER_NAME,
+                'health-check': None,
+                'template-server': 'test-template-server'
+            }
+        }
+        templates = {
+            "template-server": "test-template-server"
+        }
+        resp = self.client.slb.server.replace('test', '192.168.2.254', server_templates=templates)
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.PUT)
+        self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
     @responses.activate
@@ -163,9 +211,8 @@ class TestIPv6Server(unittest.TestCase):
     def setUp(self):
         self.client = client.Client(HOSTNAME, '30', 'fake_username', 'fake_password')
 
-    @mock.patch('acos_client.v30.slb.server.Server.get')
     @responses.activate
-    def test_server_create(self, mocked_get):
+    def test_server_create(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {'foo': 'bar'}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
@@ -188,9 +235,8 @@ class TestIPv6Server(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-    @mock.patch('acos_client.v30.slb.server.Server.get')
     @responses.activate
-    def test_server_create_with_template(self, mocked_get):
+    def test_server_create_with_template(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {'foo': 'bar'}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
@@ -214,6 +260,60 @@ class TestIPv6Server(unittest.TestCase):
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
+    @responses.activate
+    def test_server_update_with_template(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {'foo': 'bar'}
+        responses.add(responses.POST, OBJECT_URL, json=json_response, status=200)
+        params = {
+            'server': {
+                'action': 'enable',
+                'conn-limit': None,
+                'conn-resume': None,
+                'host': '192.168.2.254',
+                'name': VSERVER_NAME,
+                'health-check': None,
+                'template-server': 'test-template-server'
+            }
+        }
+        templates = {
+            "template-server": "test-template-server"
+        }
+        resp = self.client.slb.server.update('test', '192.168.2.254', server_templates=templates)
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
+    @responses.activate
+    def test_server_replace_with_template(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {'foo': 'bar'}
+        responses.add(responses.PUT, OBJECT_URL, json=json_response, status=200)
+        params = {
+            'server': {
+                'action': 'enable',
+                'conn-limit': None,
+                'conn-resume': None,
+                'host': '192.168.2.254',
+                'name': VSERVER_NAME,
+                'health-check': None,
+                'template-server': 'test-template-server'
+            }
+        }
+        templates = {
+            "template-server": "test-template-server"
+        }
+        resp = self.client.slb.server.replace('test', '192.168.2.254', server_templates=templates)
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.PUT)
+        self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
     @responses.activate
