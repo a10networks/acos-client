@@ -15,8 +15,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import six
 
-
-from acos_client import errors as acos_errors
 from acos_client.v30 import base
 from acos_client.v30.slb.port import Port
 
@@ -28,7 +26,7 @@ class Server(base.BaseV30):
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
 
-    def create(self, name, ip_address, status=1, server_templates=None, **kwargs):
+    def _set(self, name, ip_address, status=1, server_templates=None, **kwargs):
         params = {
             "server": {
                 "name": name,
@@ -54,38 +52,22 @@ class Server(base.BaseV30):
             for k, v in six.iteritems(config_defaults):
                 params['server'][k] = v
 
-        # Two creates in a row apparently works in ACOS 4.0; stop that
-        try:
-            self.get(name, **kwargs)
-        except acos_errors.NotFound:
-            pass
-        else:
-            raise acos_errors.Exists()
+        return params
 
+    def create(self, name, ip_address, status=1, server_templates=None, **kwargs):
+        params = self._set(name, ip_address, status=status,
+                           server_templates=server_templates, **kwargs)
         return self._post(self.url_prefix, params, **kwargs)
 
     def update(self, name, ip_address, status=1, server_templates=None, **kwargs):
-        params = {
-            "server": {
-                "name": name,
-                "action": 'enable' if status else 'disable',
-                "conn-resume": kwargs.get("conn_resume"),
-                "conn-limit": kwargs.get("conn_limit"),
-            }
-        }
-
-        if self._is_ipv6(ip_address):
-            params['server']['server-ipv6-addr'] = ip_address
-        else:
-            params['server']['host'] = ip_address
-
-        if server_templates:
-            server_templates = {k: v for k, v in server_templates.items() if v}
-            params['server']['template-server'] = server_templates.get('template-server')
-
-        self.get(name, **kwargs)
-
+        params = self._set(name, ip_address, status=status,
+                           server_templates=server_templates, **kwargs)
         return self._post(self.url_prefix + name, params, **kwargs)
+
+    def replace(self, name, ip_address, status=1, server_templates=None, **kwargs):
+        params = self._set(name, ip_address, status=status,
+                           server_templates=server_templates, **kwargs)
+        return self._put(self.url_prefix + name, params, **kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)

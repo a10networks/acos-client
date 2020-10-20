@@ -180,8 +180,7 @@ class VirtualPort(base.BaseV30):
             url += self.url_port_tmpl.format(
                 port_number=port, protocol=protocol
             )
-
-        return self._post(url, params, **kwargs)
+        return url, params, kwargs
 
     def create(
         self,
@@ -206,7 +205,7 @@ class VirtualPort(base.BaseV30):
         **kwargs
     ):
 
-        return self._set(
+        url, params, kwargs = self._set(
             virtual_server_name,
             name,
             protocol,
@@ -228,7 +227,9 @@ class VirtualPort(base.BaseV30):
             **kwargs
         )
 
-    def update(
+        return self._post(url, params, **kwargs)
+
+    def _update(
         self,
         virtual_server_name,
         name,
@@ -250,6 +251,7 @@ class VirtualPort(base.BaseV30):
         udp_template=None,
         **kwargs
     ):
+
         vp = self.get(virtual_server_name, name, protocol, port)
         if vp is None:
             raise ae.NotFound()
@@ -257,7 +259,7 @@ class VirtualPort(base.BaseV30):
         exclude = ['template-persist-source-ip', 'template-persist-cookie']
 
         try:
-            return self._set(
+            url, params, kwargs = self._set(
                 virtual_server_name,
                 name,
                 protocol,
@@ -281,7 +283,7 @@ class VirtualPort(base.BaseV30):
                 **kwargs
             )
         except ae.AxapiJsonFormatError:
-            return self._set(
+            url, params, kwargs = self._set(
                 virtual_server_name,
                 name,
                 protocol,
@@ -304,6 +306,97 @@ class VirtualPort(base.BaseV30):
                 update=True,
                 **kwargs
             )
+        return url, params, kwargs
+
+    def update(
+        self,
+        virtual_server_name,
+        name,
+        protocol,
+        port,
+        service_group_name,
+        s_pers_name=None,
+        c_pers_name=None,
+        status=1,
+        autosnat=None,
+        ipinip=None,
+        no_dest_nat=None,
+        source_nat_pool=None,
+        ha_conn_mirror=None,
+        use_rcv_hop=None,
+        conn_limit=None,
+        virtual_port_templates=None,
+        tcp_template=None,
+        udp_template=None,
+        **kwargs
+    ):
+
+        url, params, kwargs = self._update(
+            virtual_server_name,
+            name,
+            protocol,
+            port,
+            service_group_name,
+            s_pers_name=s_pers_name,
+            c_pers_name=c_pers_name,
+            status=status,
+            autosnat=autosnat,
+            ipinip=ipinip,
+            no_dest_nat=no_dest_nat,
+            source_nat_pool=source_nat_pool,
+            ha_conn_mirror=ha_conn_mirror,
+            use_rcv_hop=use_rcv_hop,
+            conn_limit=conn_limit,
+            virtual_port_templates=virtual_port_templates,
+            tcp_template=tcp_template,
+            udp_template=udp_template,
+            **kwargs)
+        return self._post(url, params, **kwargs)
+
+    def replace(
+        self,
+        virtual_server_name,
+        name,
+        protocol,
+        port,
+        service_group_name,
+        s_pers_name=None,
+        c_pers_name=None,
+        status=1,
+        autosnat=None,
+        ipinip=None,
+        no_dest_nat=None,
+        source_nat_pool=None,
+        ha_conn_mirror=None,
+        use_rcv_hop=None,
+        conn_limit=None,
+        virtual_port_templates=None,
+        tcp_template=None,
+        udp_template=None,
+        **kwargs
+    ):
+
+        url, params, kwargs = self._update(
+            virtual_server_name,
+            name,
+            protocol,
+            port,
+            service_group_name,
+            s_pers_name=s_pers_name,
+            c_pers_name=c_pers_name,
+            status=status,
+            autosnat=autosnat,
+            ipinip=ipinip,
+            no_dest_nat=no_dest_nat,
+            source_nat_pool=source_nat_pool,
+            ha_conn_mirror=ha_conn_mirror,
+            use_rcv_hop=use_rcv_hop,
+            conn_limit=conn_limit,
+            virtual_port_templates=virtual_port_templates,
+            tcp_template=tcp_template,
+            udp_template=udp_template,
+            **kwargs)
+        return self._put(url, params, **kwargs)
 
     def delete(self, virtual_server_name, name, protocol, port):
         url = self.url_server_tmpl.format(name=virtual_server_name)

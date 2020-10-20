@@ -15,8 +15,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import six
 
-
-from acos_client import errors as acos_errors
 from acos_client.v30 import base
 
 
@@ -45,21 +43,12 @@ class Member(base.BaseV30):
         )
         return self._get(url + 'oper', **kwargs)
 
-    def _write(self,
-               service_group_name,
-               server_name,
-               server_port,
-               status=STATUS_ENABLE,
-               member_state=True,
-               update=False, **kwargs):
-
-        url = self.url_base_tmpl.format(gname=service_group_name)
-        if update:
-            url += self.url_mbr_tmpl.format(
-                name=server_name,
-                port=server_port
-            )
-
+    def _set(self,
+             service_group_name,
+             server_name,
+             server_port,
+             status=STATUS_ENABLE,
+             member_state=True, **kwargs):
         params = {
             "member": self.minimal_dict({
                 "name": server_name,
@@ -76,7 +65,7 @@ class Member(base.BaseV30):
             for k, v in six.iteritems(config_defaults):
                 params['member'][k] = v
 
-        self._post(url, params, **kwargs)
+        return params
 
     def create(self,
                service_group_name,
@@ -84,15 +73,10 @@ class Member(base.BaseV30):
                server_port,
                status=STATUS_ENABLE,
                member_state=True, **kwargs):
-        try:
-            self.get(service_group_name, server_name, server_port)
-        except acos_errors.NotFound:
-            pass
-        else:
-            raise acos_errors.Exists()
-
-        self._write(service_group_name,
-                    server_name, server_port, status, member_state, **kwargs)
+        url = self.url_base_tmpl.format(gname=service_group_name)
+        params = self._set(service_group_name,
+                           server_name, server_port, status, member_state, **kwargs)
+        return self._post(url, params, **kwargs)
 
     def update(self,
                service_group_name,
@@ -100,8 +84,27 @@ class Member(base.BaseV30):
                server_port,
                status=STATUS_ENABLE,
                member_state=True, **kwargs):
-        self._write(service_group_name,
-                    server_name, server_port, status, member_state, update=True, **kwargs)
+        url = self.url_base_tmpl.format(gname=service_group_name)
+        url += self.url_mbr_tmpl.format(
+            name=server_name,
+            port=server_port
+        )
+        params = self._set(service_group_name,
+                           server_name, server_port, status, member_state, **kwargs)
+        return self._post(url, params, **kwargs)
+
+    def replace(self,
+                service_group_name,
+                server_name,
+                server_port,
+                status=STATUS_ENABLE,
+                member_state=True, **kwargs):
+        url = self.url_base_tmpl.format(gname=service_group_name)
+        url += self.url_mbr_tmpl.format(name=server_name,
+                                        port=server_port)
+        params = self._set(service_group_name,
+                           server_name, server_port, status, member_state, **kwargs)
+        return self._put(url, params, **kwargs)
 
     def delete(self, service_group_name, server_name, server_port):
         url = self.url_base_tmpl.format(gname=service_group_name)
