@@ -33,13 +33,15 @@ class VirtualServer(base.BaseV30):
         return self._get(self.url_prefix + name)
 
     def _set(self, name, ip_address=None, arp_disable=False, description=None, vrid=None,
-             virtual_server_templates=None, template_virtual_server=None, **kwargs):
+             virtual_server_templates=None, template_virtual_server=None,
+             port_list=None, **kwargs):
         params = {
             "virtual-server": self.minimal_dict({
                 "name": name,
                 "ip-address": ip_address,
                 "arp-disable": None if arp_disable is None else int(arp_disable),
-                "description": description
+                "description": description,
+                "port-list": port_list
             }),
         }
         if self._is_ipv6(ip_address):
@@ -74,21 +76,30 @@ class VirtualServer(base.BaseV30):
         return params
 
     def create(self, name, ip_address, arp_disable=False, description=None, vrid=None,
-               virtual_server_templates=None, template_virtual_server=None, **kwargs):
-        params = self._set(name, ip_address, arp_disable, description, vrid, virtual_server_templates,
-                           template_virtual_server, **kwargs)
+               virtual_server_templates=None, template_virtual_server=None,
+               port_list=None, **kwargs):
+        params = self._set(name, ip_address, arp_disable=arp_disable, description=description,
+                           vrid=vrid, virtual_server_templates=virtual_server_templates,
+                           template_virtual_server=template_virtual_server,
+                           port_list=port_list, **kwargs)
         return self._post(self.url_prefix, params, **kwargs)
 
     def update(self, name, ip_address=None, arp_disable=False, description=None, vrid=None,
-               virtual_server_templates=None, template_virtual_server=None, **kwargs):
-        params = self._set(name, ip_address, arp_disable, description, vrid, virtual_server_templates,
-                           template_virtual_server, **kwargs)
+               virtual_server_templates=None, template_virtual_server=None,
+               port_list=None, **kwargs):
+        params = self._set(name, ip_address, arp_disable=arp_disable, description=description,
+                           vrid=vrid, virtual_server_templates=virtual_server_templates,
+                           template_virtual_server=template_virtual_server,
+                           port_list=port_list, **kwargs)
         return self._post(self.url_prefix + name, params, **kwargs)
 
     def replace(self, name, ip_address=None, arp_disable=False, description=None, vrid=None,
-                virtual_server_templates=None, template_virtual_server=None, **kwargs):
-        params = self._set(name, ip_address, arp_disable, description, vrid, virtual_server_templates,
-                           template_virtual_server, **kwargs)
+                virtual_server_templates=None, template_virtual_server=None,
+                port_list=None, **kwargs):
+        params = self._set(name, ip_address, arp_disable=arp_disable, description=description,
+                           vrid=vrid, virtual_server_templates=virtual_server_templates,
+                           template_virtual_server=template_virtual_server,
+                           port_list=port_list, **kwargs)
         return self._put(self.url_prefix + name, params, **kwargs)
 
     def delete(self, name):
