@@ -16,9 +16,7 @@ from __future__ import unicode_literals
 
 try:
     import unittest
-    from unittest import mock
 except ImportError:
-    import mock
     import unittest2 as unittest
 
 from acos_client import client
@@ -40,10 +38,8 @@ class TestVirtualServer(unittest.TestCase):
     def setUp(self):
         self.client = client.Client(HOSTNAME, '30', 'fake_username', 'fake_password')
 
-    @mock.patch('acos_client.v30.slb.service_group.ServiceGroup.get')
     @responses.activate
-    def test_server_group_create(self, mocked_get):
-        mocked_get.side_effect = acos_errors.NotFound
+    def test_server_group_create(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {"foo": "bar"}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
@@ -56,10 +52,8 @@ class TestVirtualServer(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
 
-    @mock.patch('acos_client.v30.slb.service_group.ServiceGroup.get')
     @responses.activate
-    def test_server_group_create_with_templates(self, mocked_get):
-        mocked_get.side_effect = acos_errors.NotFound
+    def test_server_group_create_with_templates(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {"foo": "bar"}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
@@ -89,10 +83,8 @@ class TestVirtualServer(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
-    @mock.patch('acos_client.v30.slb.service_group.ServiceGroup.get')
     @responses.activate
-    def test_server_group_create_with_partial_templates(self, mocked_get):
-        mocked_get.side_effect = acos_errors.NotFound
+    def test_server_group_create_with_partial_templates(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {"foo": "bar"}
         responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
@@ -121,14 +113,6 @@ class TestVirtualServer(unittest.TestCase):
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
-
-    @mock.patch('acos_client.v30.slb.service_group.ServiceGroup.get')
-    @responses.activate
-    def test_server_group_create_already_exists(self, mocked_get):
-        mocked_get.return_value = {"foo": "bar"}
-
-        with self.assertRaises(acos_errors.Exists):
-            self.client.slb.service_group.create('test1')
 
     @responses.activate
     def test_server_group_update(self):

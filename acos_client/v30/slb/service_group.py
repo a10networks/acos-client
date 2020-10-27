@@ -15,8 +15,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import six
 
-
-from acos_client import errors as acos_errors
 from acos_client.v30 import base
 from acos_client.v30.slb.member import Member
 
@@ -54,7 +52,7 @@ class ServiceGroup(base.BaseV30):
     UDP = 'udp'
 
     def _set(self, name, protocol=None, lb_method=None, service_group_templates=None,
-             hm_name=None, update=False, **kwargs):
+             hm_name=None, mem_list=None, **kwargs):
 
         # Normalize "" -> None for json
         hm_name = hm_name or None
@@ -65,6 +63,7 @@ class ServiceGroup(base.BaseV30):
             "service-group": self.minimal_dict({
                 "name": name,
                 "protocol": protocol,
+                "member-list": mem_list
             })
         }
 
@@ -123,16 +122,11 @@ class ServiceGroup(base.BaseV30):
     def all_oper(self, *args, **kwargs):
         return self._get(self.url_prefix + "oper", **kwargs)
 
-    def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, service_group_templates=None, **kwargs):
-        try:
-            self.get(name)
-        except acos_errors.NotFound:
-            pass
-        else:
-            raise acos_errors.Exists
-
+    def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, service_group_templates=None,
+               mem_list=None, hm_name=None, **kwargs):
         params = self._set(name, protocol=protocol, lb_method=lb_method,
-                           service_group_templates=service_group_templates, **kwargs)
+                           service_group_templates=service_group_templates,
+                           mem_list=mem_list, hm_name=hm_name, **kwargs)
         return self._post(self.url_prefix, params, **kwargs)
 
     def delete(self, name):
@@ -148,13 +142,15 @@ class ServiceGroup(base.BaseV30):
         return self._get(self.url_prefix + name + "/stats", **kwargs)
 
     def update(self, name, protocol=None, lb_method=None, health_monitor=None,
-               service_group_templates=None, **kwargs):
-        params = self._set(name, protocol=None, lb_method=lb_method, hm_name=health_monitor,
-                           service_group_templates=service_group_templates, **kwargs)
+               service_group_templates=None, mem_list=None, hm_name=None, **kwargs):
+        params = self._set(name, protocol=None, lb_method=lb_method, hm_name=hm_name,
+                           service_group_templates=service_group_templates,
+                           mem_list=mem_list, **kwargs)
         return self._post(self.url_prefix + name, params, **kwargs)
 
     def replace(self, name, protocol=None, lb_method=None, health_monitor=None,
-                service_group_templates=None, **kwargs):
-        params = self._set(name, protocol=protocol, lb_method=lb_method, hm_name=health_monitor,
-                           service_group_templates=service_group_templates, **kwargs)
+                service_group_templates=None, mem_list=None, hm_name=None, **kwargs):
+        params = self._set(name, protocol=protocol, lb_method=lb_method, hm_name=hm_name,
+                           service_group_templates=service_group_templates,
+                           mem_list=mem_list, **kwargs)
         return self._put(self.url_prefix + name, params, **kwargs)
