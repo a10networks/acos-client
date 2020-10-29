@@ -7,7 +7,7 @@ from os import path
 
 setup(
     name = "acos-client",
-    version = "2.4.0",
+    version = "2.5.0",
     packages = find_packages(),
 
     author = "A10 Networks",
