@@ -85,11 +85,7 @@ class HealthMonitor(base.BaseV30):
         if method:
             params['monitor']['method'][mon_method]['url-type'] = method
         if url:
-            if method == "POST":
-                params['monitor']['method'][mon_method]['post-path'] = url
-                params['monitor']['method'][mon_method].pop('url-path')
-            else:
-                params['monitor']['method'][mon_method]['url-path'] = url
+            params['monitor']['method'][mon_method]['url-path'] = url
         if expect_code:
             k = "%s-response-code" % mon_method
             params['monitor']['method'][mon_method][k] = str(expect_code)
@@ -100,10 +96,17 @@ class HealthMonitor(base.BaseV30):
                 k = '%s-port' % mon_method
             params['monitor']['method'][mon_method][k] = int(port)
             params['monitor']['override-port'] = int(port)
-        if post_data:
-            if method == "POST":
+        # handle POST case
+        if params['monitor']['method'][mon_method]['url-type'] == "POST":
+            if post_data:
                 params['monitor']['method'][mon_method]['post-type'] = "postdata"
                 params['monitor']['method'][mon_method]['http-postdata'] = str(post_data)
+                params['monitor']['method'][mon_method]['post-path'] = params['monitor']['method'][mon_method]['url-path']
+                params['monitor']['method'][mon_method].pop('url-path', None)
+        else:
+            params['monitor']['method'][mon_method].pop('post-type', None)
+            params['monitor']['method'][mon_method].pop('http-postdata', None)
+            params['monitor']['method'][mon_method].pop('post-path', None)
 
         # TODO(mdurrant) : Might have to get tricky with JSON structures
         # ... due to 'mon_method' stuff.
