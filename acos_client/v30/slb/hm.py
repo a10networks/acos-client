@@ -101,7 +101,8 @@ class HealthMonitor(base.BaseV30):
             if post_data:
                 params['monitor']['method'][mon_method]['post-type'] = "postdata"
                 params['monitor']['method'][mon_method]['http-postdata'] = str(post_data)
-                params['monitor']['method'][mon_method]['post-path'] = params['monitor']['method'][mon_method]['url-path']
+                postpath = params['monitor']['method'][mon_method]['url-path']
+                params['monitor']['method'][mon_method]['post-path'] = postpath
                 params['monitor']['method'][mon_method].pop('url-path', None)
         else:
             params['monitor']['method'][mon_method].pop('post-type', None)
@@ -137,7 +138,7 @@ class HealthMonitor(base.BaseV30):
                method=None, url=None, expect_code=None, port=None, ipv4=None, post_data=None, **kwargs):
         self.get(name)  # We want a NotFound if it does not exist
         return self._set(self.url_prefix, name, mon_type, interval, timeout,
-                         max_retries, method, url, expect_code, port, ipv4, 
+                         max_retries, method, url, expect_code, port, ipv4,
                          update=True, post_data=post_data, **kwargs)
 
     def delete(self, name):
