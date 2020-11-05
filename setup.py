@@ -4,6 +4,10 @@
 from setuptools import find_packages, setup
 from os import path
 
+from os import path
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name = "acos-client",
@@ -17,7 +21,7 @@ setup(
     keywords = "a10 axapi acos adc slb load balancer",
     url = "https://github.com/a10networks/acos-client",
 
-    description_file = "README.md",
+    long_description = long_description, 
     long_description_content_type = "text/markdown",
 
     classifiers = [
