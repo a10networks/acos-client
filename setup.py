@@ -7,7 +7,7 @@ from os import path
 
 setup(
     name = "acos-client",
-    version = "2.5.0",
+    version = "2.5.1",
     packages = find_packages(),
 
     author = "A10 Networks",
@@ -17,7 +17,7 @@ setup(
     keywords = "a10 axapi acos adc slb load balancer",
     url = "https://github.com/a10networks/acos-client",
 
-    long_description = open('README.md').read(),
+    description_file = "README.md",
     long_description_content_type = "text/markdown",
 
     classifiers = [
