@@ -26,16 +26,19 @@ class Server(base.BaseV30):
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
 
-    def _set(self, name, ip_address, status=1, server_templates=None, **kwargs):
+    def _set(self, name, ip_address, status=1, server_templates=None, port_list=None, **kwargs):
         params = {
             "server": {
                 "name": name,
                 "action": 'enable' if status else 'disable',
                 "conn-resume": kwargs.get("conn_resume"),
                 "conn-limit": kwargs.get("conn_limit"),
-                "health-check": kwargs.get("health_check")
+                "health-check": kwargs.get("health_check"),
             }
         }
+
+        if port_list:
+            params['server']['port-list'] = port_list
 
         if self._is_ipv6(ip_address):
             params['server']['server-ipv6-addr'] = ip_address
@@ -54,18 +57,21 @@ class Server(base.BaseV30):
 
         return params
 
-    def create(self, name, ip_address, status=1, server_templates=None, **kwargs):
-        params = self._set(name, ip_address, status=status,
+    def create(self, name, ip_address, status=1, server_templates=None,
+               port_list=None, **kwargs):
+        params = self._set(name, ip_address, status=status, port_list=port_list,
                            server_templates=server_templates, **kwargs)
         return self._post(self.url_prefix, params, **kwargs)
 
-    def update(self, name, ip_address, status=1, server_templates=None, **kwargs):
-        params = self._set(name, ip_address, status=status,
+    def update(self, name, ip_address, status=1, server_templates=None,
+               port_list=None, **kwargs):
+        params = self._set(name, ip_address, status=status, port_list=port_list,
                            server_templates=server_templates, **kwargs)
         return self._post(self.url_prefix + name, params, **kwargs)
 
-    def replace(self, name, ip_address, status=1, server_templates=None, **kwargs):
-        params = self._set(name, ip_address, status=status,
+    def replace(self, name, ip_address, status=1, server_templates=None,
+                port_list=None, **kwargs):
+        params = self._set(name, ip_address, status=status, port_list=port_list,
                            server_templates=server_templates, **kwargs)
         return self._put(self.url_prefix + name, params, **kwargs)
 
