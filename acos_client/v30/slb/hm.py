@@ -69,7 +69,7 @@ class HealthMonitor(base.BaseV30):
 
     def _set(self, action, name, mon_method, interval, timeout, max_retries,
              method=None, url=None, expect_code=None, port=None, ipv4=None, update=False,
-             **kwargs):
+             disable_sslv2=False, **kwargs):
         params = {
             "monitor": {
                 "name": name,
@@ -82,8 +82,12 @@ class HealthMonitor(base.BaseV30):
                 "override-ipv4": ipv4
             }
         }
-        if method:
-            params['monitor']['method'][mon_method]['url-type'] = method
+        if mon_method in ['http', 'https']:
+            if method:
+                params['monitor']['method'][mon_method]['url-type'] = method
+        if mon_method in ['https']:
+            if disable_sslv2:
+                params['monitor']['method'][mon_method]['disable-sslv2hello'] = disable_sslv2
         if url:
             params['monitor']['method'][mon_method]['url-path'] = url
         if expect_code:
@@ -96,7 +100,6 @@ class HealthMonitor(base.BaseV30):
                 k = '%s-port' % mon_method
             params['monitor']['method'][mon_method][k] = int(port)
             params['monitor']['override-port'] = int(port)
-
         # TODO(mdurrant) : Might have to get tricky with JSON structures
         # ... due to 'mon_method' stuff.
         config_defaults = kwargs.get("config_defaults")
