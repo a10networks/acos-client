@@ -50,9 +50,14 @@ class Server(base.BaseV30):
             params['server']['template-server'] = server_templates.get('template-server')
 
         config_defaults = kwargs.get("config_defaults")
-
         if config_defaults:
             for k, v in six.iteritems(config_defaults):
+                params['server'][k] = v
+
+        # put all remaining kwargs in param
+        options = self.dict_underscore_to_dash(kwargs)
+        if options:
+            for k, v in six.iteritems(options):
                 params['server'][k] = v
 
         return params
