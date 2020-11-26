@@ -68,7 +68,7 @@ class HealthMonitor(base.BaseV30):
         return self._get(self.url_prefix + name, **kwargs)
 
     def _set(self, action, name, mon_method, interval, timeout, max_retries,
-             method=None, url=None, expect_code=None, port=None, ipv4=None, update=False,
+             method=None, url=None, expect_code=None, port=None, ipv4=None, update=False, post_data=None,
              **kwargs):
         params = {
             "monitor": {
@@ -96,6 +96,18 @@ class HealthMonitor(base.BaseV30):
                 k = '%s-port' % mon_method
             params['monitor']['method'][mon_method][k] = int(port)
             params['monitor']['override-port'] = int(port)
+        # handle POST case
+        if params['monitor']['method'][mon_method]['url-type'] == "POST":
+            if post_data:
+                params['monitor']['method'][mon_method]['post-type'] = "postdata"
+                params['monitor']['method'][mon_method]['http-postdata'] = str(post_data)
+                postpath = params['monitor']['method'][mon_method]['url-path']
+                params['monitor']['method'][mon_method]['post-path'] = postpath
+                params['monitor']['method'][mon_method].pop('url-path', None)
+        else:
+            params['monitor']['method'][mon_method].pop('post-type', None)
+            params['monitor']['method'][mon_method].pop('http-postdata', None)
+            params['monitor']['method'][mon_method].pop('post-path', None)
 
         # TODO(mdurrant) : Might have to get tricky with JSON structures
         # ... due to 'mon_method' stuff.
@@ -110,7 +122,7 @@ class HealthMonitor(base.BaseV30):
         return self._post(action, params, **kwargs)
 
     def create(self, name, mon_type, interval, timeout, max_retries,
-               method=None, url=None, expect_code=None, port=None, ipv4=None, **kwargs):
+               method=None, url=None, expect_code=None, port=None, ipv4=None, post_data=None, **kwargs):
         try:
             self.get(name)
         except acos_errors.NotFound:
@@ -119,15 +131,15 @@ class HealthMonitor(base.BaseV30):
             raise acos_errors.Exists()
 
         return self._set(self.url_prefix, name, mon_type, interval, timeout,
-                         max_retries, method, url, expect_code, port, ipv4, update=False,
-                         **kwargs)
+                         max_retries, method, url, expect_code, port, ipv4,
+                         update=False, post_data=post_data, **kwargs)
 
     def update(self, name, mon_type, interval, timeout, max_retries,
-               method=None, url=None, expect_code=None, port=None, ipv4=None, **kwargs):
+               method=None, url=None, expect_code=None, port=None, ipv4=None, post_data=None, **kwargs):
         self.get(name)  # We want a NotFound if it does not exist
         return self._set(self.url_prefix, name, mon_type, interval, timeout,
-                         max_retries, method, url, expect_code, port, ipv4, update=True,
-                         **kwargs)
+                         max_retries, method, url, expect_code, port, ipv4,
+                         update=True, post_data=post_data, **kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)
