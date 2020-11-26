@@ -15,6 +15,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import six
 
+import acos_client
 from acos_client.v30 import base
 from acos_client.v30.slb.port import Port
 
@@ -55,10 +56,13 @@ class Server(base.BaseV30):
                 params['server'][k] = v
 
         # put all remaining kwargs in param
-        options = self.dict_underscore_to_dash(kwargs)
-        if options:
-            for k, v in six.iteritems(options):
-                params['server'][k] = v
+        options = {}
+        options['server'] = kwargs.pop('server', None)
+        if options['server']:
+            params = acos_client.v21.axapi_http.merge_dicts(params, options)
+        options['server'] = self.dict_underscore_to_dash(kwargs)
+        if options['server']:
+            params = acos_client.v21.axapi_http.merge_dicts(params, options)
 
         return params
 

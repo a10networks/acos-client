@@ -91,6 +91,37 @@ class TestServer(unittest.TestCase):
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
     @responses.activate
+    def test_server_create_with_kwargs(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {'foo': 'bar'}
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        params = {
+            'server': {
+                'action': 'enable',
+                'conn-limit': 400,
+                'conn-resume': 500,
+                'health-check': None,
+                'host': '192.168.2.254',
+                'name': VSERVER_NAME,
+            }
+        }
+
+        kwargs = {
+            'conn-resume': 500,
+            'server': {
+                'conn-limit': 400,
+            }
+        }
+
+        resp = self.client.slb.server.create('test', '192.168.2.254', **kwargs)
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
+    @responses.activate
     def test_server_update_with_template(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {'foo': 'bar'}
