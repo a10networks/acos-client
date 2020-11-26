@@ -57,7 +57,7 @@ class Server(base.BaseV30):
 
         # put all remaining kwargs in param
         options = {}
-        options['server'] = kwargs.pop('server', None)
+        options['server'] = self.dict_underscore_to_dash(kwargs.pop('server', None))
         if options['server']:
             params = acos_client.v21.axapi_http.merge_dicts(params, options)
         options['server'] = self.dict_underscore_to_dash(kwargs)

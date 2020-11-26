@@ -107,9 +107,9 @@ class TestServer(unittest.TestCase):
         }
 
         kwargs = {
-            'conn-resume': 500,
+            'conn_resume': 500,
             'server': {
-                'conn-limit': 400,
+                'conn_limit': 400,
             }
         }
 

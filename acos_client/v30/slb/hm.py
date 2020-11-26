@@ -15,7 +15,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import six
 
-
+import acos_client
 from acos_client import errors as acos_errors
 from acos_client.v30 import base
 
@@ -112,10 +112,18 @@ class HealthMonitor(base.BaseV30):
         # TODO(mdurrant) : Might have to get tricky with JSON structures
         # ... due to 'mon_method' stuff.
         config_defaults = kwargs.get("config_defaults")
-
         if config_defaults:
             for k, v in six.iteritems(config_defaults):
                 params['monitor'][k] = v
+
+        # put all remaining kwargs in param
+        options = {}
+        options['monitor'] = self.dict_underscore_to_dash(kwargs.pop('monitor', None))
+        if options['monitor']:
+            params = acos_client.v21.axapi_http.merge_dicts(params, options)
+        options['monitor'] = self.dict_underscore_to_dash(kwargs)
+        if options['monitor']:
+            params = acos_client.v21.axapi_http.merge_dicts(params, options)
 
         if update:
             action += name
