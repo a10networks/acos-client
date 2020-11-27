@@ -15,7 +15,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import six
 
-
+import acos_client
 from acos_client import errors as ae
 from acos_client.v30 import base
 
@@ -175,6 +175,12 @@ class VirtualPort(base.BaseV30):
         aflex_scripts = kwargs.get("aflex-scripts", None)
         if aflex_scripts is not None:
             params['port']['aflex-scripts'] = aflex_scripts
+
+        # put options from flavor (and conf)
+        options = {}
+        options['port'] = self.dict_underscore_to_dash(kwargs.pop('virtual_port', None))
+        if options['port']:
+            params = acos_client.v21.axapi_http.merge_dicts(params, options)
 
         if update:
             url += self.url_port_tmpl.format(
