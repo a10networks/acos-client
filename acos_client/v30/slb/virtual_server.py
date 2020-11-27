@@ -15,6 +15,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import six
 
+import acos_client
 from acos_client.v30 import base
 from acos_client.v30.slb.virtual_port import VirtualPort
 
@@ -72,6 +73,12 @@ class VirtualServer(base.BaseV30):
         if config_defaults:
             for k, v in six.iteritems(config_defaults):
                 params['virtual-server'][k] = v
+
+        # put options from flavor (and conf)
+        options = {}
+        options['virtual-server'] = self.dict_underscore_to_dash(kwargs.pop('virtual_server', None))
+        if options['virtual-server']:
+            params = acos_client.v21.axapi_http.merge_dicts(params, options)
 
         return params
 
