@@ -116,12 +116,9 @@ class HealthMonitor(base.BaseV30):
             for k, v in six.iteritems(config_defaults):
                 params['monitor'][k] = v
 
-        # put all remaining kwargs in param
+        # put options from flavor (and conf)
         options = {}
         options['monitor'] = self.dict_underscore_to_dash(kwargs.pop('monitor', None))
-        if options['monitor']:
-            params = acos_client.v21.axapi_http.merge_dicts(params, options)
-        options['monitor'] = self.dict_underscore_to_dash(kwargs)
         if options['monitor']:
             params = acos_client.v21.axapi_http.merge_dicts(params, options)
 

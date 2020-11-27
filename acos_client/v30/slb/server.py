@@ -55,12 +55,9 @@ class Server(base.BaseV30):
             for k, v in six.iteritems(config_defaults):
                 params['server'][k] = v
 
-        # put all remaining kwargs in param
+        # put options from flavor (and conf)
         options = {}
         options['server'] = self.dict_underscore_to_dash(kwargs.pop('server', None))
-        if options['server']:
-            params = acos_client.v21.axapi_http.merge_dicts(params, options)
-        options['server'] = self.dict_underscore_to_dash(kwargs)
         if options['server']:
             params = acos_client.v21.axapi_http.merge_dicts(params, options)
 

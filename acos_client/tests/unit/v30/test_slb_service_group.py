@@ -94,7 +94,6 @@ class TestVirtualServer(unittest.TestCase):
             'template-policy': 'template-pl'
         }
         args = {
-            'template_server': 'template_sv1',
             'service_group':
             {
                 'health_check_disable': 1,
@@ -109,7 +108,7 @@ class TestVirtualServer(unittest.TestCase):
                 'name': 'test1',
                 'protocol': 'tcp',
                 'stateless-auto-switch': 0,
-                'template-server': 'template_sv1',
+                'template-server': 'template_sv',
                 'template-port': 'template_port',
                 'template-policy': 'template-pl'
             }
@@ -171,7 +170,6 @@ class TestVirtualServer(unittest.TestCase):
         json_response = {"foo": "bar"}
         responses.add(responses.POST, OBJECT_URL, json=json_response, status=200)
         args = {
-            'template_server': 'template_sv1',
             'service_group':
             {
                 'health_check_disable': 1,
@@ -183,7 +181,6 @@ class TestVirtualServer(unittest.TestCase):
             {
                 'health-check-disable': 1,
                 'name': 'test1',
-                'template-server': 'template_sv1',
             }
         }
 
