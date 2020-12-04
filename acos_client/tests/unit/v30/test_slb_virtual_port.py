@@ -59,7 +59,7 @@ class TestVirtualPort(unittest.TestCase):
         }
 
         resp = self.client.slb.virtual_server.vport.create(
-            VSERVER_NAME, 'test1_VPORT', protocol=self.client.slb.virtual_server.vport.HTTP, port='80',
+            VSERVER_NAME, 'test1_VPORT', protocol=self.client.slb.virtual_server.vport.HTTP, protocol_port='80',
             service_group_name='pool1'
         )
 
@@ -99,7 +99,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",
@@ -143,20 +143,17 @@ class TestVirtualPort(unittest.TestCase):
             }
         }
         kwargs = {
-            'virtual_port': {
-                'conn_limit': 400,
-            }
+            'conn_limit': 400,
         }
 
         resp = self.client.slb.virtual_server.vport.create(
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             ha_conn_mirror=1,
             no_dest_nat=1,
-            conn_limit=50000,
             status=1,
             autosnat=True,
             ipinip=True,
@@ -181,7 +178,7 @@ class TestVirtualPort(unittest.TestCase):
 
         with self.assertRaises(acos_errors.ACOSException):
             self.client.slb.virtual_server.vport.create(
-                VSERVER_NAME, 'test1_VPORT', protocol=self.client.slb.virtual_server.vport.HTTP, port='80',
+                VSERVER_NAME, 'test1_VPORT', protocol=self.client.slb.virtual_server.vport.HTTP, protocol_port='80',
                 service_group_name='pool1'
             )
 
@@ -210,7 +207,7 @@ class TestVirtualPort(unittest.TestCase):
         }
 
         resp = self.client.slb.virtual_server.vport.update(
-            VSERVER_NAME, 'test1_VPORT', protocol=self.client.slb.virtual_server.vport.HTTP, port='80',
+            VSERVER_NAME, 'test1_VPORT', protocol=self.client.slb.virtual_server.vport.HTTP, protocol_port='80',
             service_group_name='pool1'
         )
 
@@ -272,7 +269,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",
@@ -346,7 +343,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",
@@ -400,7 +397,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",
@@ -448,16 +445,14 @@ class TestVirtualPort(unittest.TestCase):
             }
         }
         kwargs = {
-            'virtual_port': {
-                'conn-limit': 400
-            }
+            'conn_limit': 400
         }
 
         resp = self.client.slb.virtual_server.vport.update(
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",
@@ -466,7 +461,6 @@ class TestVirtualPort(unittest.TestCase):
             ipinip=True,
             ha_conn_mirror=1,
             no_dest_nat=1,
-            conn_limit=50000,
             source_nat_pool="test_nat_pool",
             use_rcv_hop=True,
             **kwargs
@@ -535,7 +529,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",
@@ -592,7 +586,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",
@@ -671,7 +665,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",

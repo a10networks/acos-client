@@ -13,9 +13,7 @@
 #    under the License.
 from __future__ import absolute_import
 from __future__ import unicode_literals
-import six
 
-import acos_client
 from acos_client import errors as ae
 from acos_client.v30 import base
 
@@ -72,7 +70,7 @@ class VirtualPort(base.BaseV30):
         virtual_server_name,
         name,
         protocol,
-        port,
+        protocol_port,
         service_group_name,
         s_pers_name=None,
         c_pers_name=None,
@@ -89,6 +87,10 @@ class VirtualPort(base.BaseV30):
         udp_template=None,
         exclude_minimize=None,
         update=False,
+        template_server_ssl=None,
+        template_client_ssl=None,
+        sampling_enable=None,
+        aflex_scripts=None,
         **kwargs
     ):
         exclude_minimize = [] if exclude_minimize is None else exclude_minimize
@@ -97,7 +99,7 @@ class VirtualPort(base.BaseV30):
                 "name": name,
                 "service-group": service_group_name,
                 "protocol": protocol,
-                "port-number": int(port),
+                "port-number": int(protocol_port),
                 "template-persist-source-ip": s_pers_name,
                 "template-persist-cookie": c_pers_name,
                 "extended-stats": status
@@ -146,20 +148,11 @@ class VirtualPort(base.BaseV30):
         if udp_template:
             params['port']['udp_template'] = udp_template
 
-        server_ssl_tmpl = kwargs.get("template_server_ssl", None)
-        client_ssl_tmpl = kwargs.get("template_client_ssl")
-        vport_defaults = kwargs.get("vport_defaults")
+        if template_server_ssl:
+            params['port']['template-server-ssl'] = template_server_ssl
+        if template_client_ssl:
+            params['port']['template-client-ssl'] = template_client_ssl
 
-        if vport_defaults:
-            for k, v in six.iteritems(vport_defaults):
-                params['port'][k] = v
-
-        if server_ssl_tmpl:
-            params['port']['template-server-ssl'] = server_ssl_tmpl
-        if client_ssl_tmpl:
-            params['port']['template-client-ssl'] = client_ssl_tmpl
-
-        sampling_enable = kwargs.get('sampling_enable')
         if sampling_enable is not None:
             self._set_sampling_enable(sampling_enable, params)
 
@@ -172,19 +165,12 @@ class VirtualPort(base.BaseV30):
 
         url = self.url_server_tmpl.format(name=virtual_server_name)
 
-        aflex_scripts = kwargs.get("aflex-scripts", None)
         if aflex_scripts is not None:
             params['port']['aflex-scripts'] = aflex_scripts
 
-        # put options from flavor (and conf)
-        options = {}
-        options['port'] = self.dict_underscore_to_dash(kwargs.pop('virtual_port', None))
-        if options['port']:
-            params = acos_client.v21.axapi_http.merge_dicts(params, options)
-
         if update:
             url += self.url_port_tmpl.format(
-                port_number=port, protocol=protocol
+                port_number=protocol_port, protocol=protocol
             )
         return url, params, kwargs
 
@@ -193,7 +179,7 @@ class VirtualPort(base.BaseV30):
         virtual_server_name,
         name,
         protocol,
-        port,
+        protocol_port,
         service_group_name,
         s_pers_name=None,
         c_pers_name=None,
@@ -208,14 +194,24 @@ class VirtualPort(base.BaseV30):
         virtual_port_templates=None,
         tcp_template=None,
         udp_template=None,
+        max_retries=None,
+        timeout=None,
+        template_server_ssl=None,
+        template_client_ssl=None,
+        sampling_enable=None,
+        aflex_scripts=None,
         **kwargs
     ):
+
+        # backward compatiable for a10-neutron-lbaas
+        if not aflex_scripts:
+            aflex_scripts = kwargs.pop('aflex-scripts', None)
 
         url, params, kwargs = self._set(
             virtual_server_name,
             name,
             protocol,
-            port,
+            protocol_port,
             service_group_name,
             s_pers_name,
             c_pers_name,
@@ -230,17 +226,21 @@ class VirtualPort(base.BaseV30):
             virtual_port_templates=virtual_port_templates,
             tcp_template=tcp_template,
             udp_template=udp_template,
+            template_server_ssl=template_server_ssl,
+            template_client_ssl=template_client_ssl,
+            sampling_enable=sampling_enable,
+            aflex_scripts=aflex_scripts,
             **kwargs
         )
 
-        return self._post(url, params, **kwargs)
+        return self._post(url, params, max_retries=max_retries, timeout=timeout, axapi_args=kwargs)
 
     def _update(
         self,
         virtual_server_name,
         name,
         protocol,
-        port,
+        protocol_port,
         service_group_name,
         s_pers_name=None,
         c_pers_name=None,
@@ -255,10 +255,14 @@ class VirtualPort(base.BaseV30):
         virtual_port_templates=None,
         tcp_template=None,
         udp_template=None,
+        template_server_ssl=None,
+        template_client_ssl=None,
+        sampling_enable=None,
+        aflex_scripts=None,
         **kwargs
     ):
 
-        vp = self.get(virtual_server_name, name, protocol, port)
+        vp = self.get(virtual_server_name, name, protocol, protocol_port)
         if vp is None:
             raise ae.NotFound()
 
@@ -269,7 +273,7 @@ class VirtualPort(base.BaseV30):
                 virtual_server_name,
                 name,
                 protocol,
-                port,
+                protocol_port,
                 service_group_name,
                 s_pers_name,
                 c_pers_name,
@@ -286,6 +290,10 @@ class VirtualPort(base.BaseV30):
                 udp_template=udp_template,
                 exclude_minimize=exclude,
                 update=True,
+                template_server_ssl=template_server_ssl,
+                template_client_ssl=template_client_ssl,
+                sampling_enable=sampling_enable,
+                aflex_scripts=aflex_scripts,
                 **kwargs
             )
         except ae.AxapiJsonFormatError:
@@ -293,7 +301,7 @@ class VirtualPort(base.BaseV30):
                 virtual_server_name,
                 name,
                 protocol,
-                port,
+                protocol_port,
                 service_group_name,
                 s_pers_name,
                 c_pers_name,
@@ -310,6 +318,10 @@ class VirtualPort(base.BaseV30):
                 udp_template=udp_template,
                 exclude_minimize=exclude,
                 update=True,
+                template_server_ssl=template_server_ssl,
+                template_client_ssl=template_client_ssl,
+                sampling_enable=sampling_enable,
+                aflex_scripts=aflex_scripts,
                 **kwargs
             )
         return url, params, kwargs
@@ -319,7 +331,7 @@ class VirtualPort(base.BaseV30):
         virtual_server_name,
         name,
         protocol,
-        port,
+        protocol_port,
         service_group_name,
         s_pers_name=None,
         c_pers_name=None,
@@ -334,14 +346,24 @@ class VirtualPort(base.BaseV30):
         virtual_port_templates=None,
         tcp_template=None,
         udp_template=None,
+        max_retries=None,
+        timeout=None,
+        template_server_ssl=None,
+        template_client_ssl=None,
+        sampling_enable=None,
+        aflex_scripts=None,
         **kwargs
     ):
+
+        # backward compatiable for a10-neutron-lbaas
+        if not aflex_scripts:
+            aflex_scripts = kwargs.pop('aflex-scripts', None)
 
         url, params, kwargs = self._update(
             virtual_server_name,
             name,
             protocol,
-            port,
+            protocol_port,
             service_group_name,
             s_pers_name=s_pers_name,
             c_pers_name=c_pers_name,
@@ -356,15 +378,19 @@ class VirtualPort(base.BaseV30):
             virtual_port_templates=virtual_port_templates,
             tcp_template=tcp_template,
             udp_template=udp_template,
+            template_server_ssl=template_server_ssl,
+            template_client_ssl=template_client_ssl,
+            sampling_enable=sampling_enable,
+            aflex_scripts=aflex_scripts,
             **kwargs)
-        return self._post(url, params, **kwargs)
+        return self._post(url, params, max_retries=max_retries, timeout=timeout, axapi_args=kwargs)
 
     def replace(
         self,
         virtual_server_name,
         name,
         protocol,
-        port,
+        protocol_port,
         service_group_name,
         s_pers_name=None,
         c_pers_name=None,
@@ -379,14 +405,24 @@ class VirtualPort(base.BaseV30):
         virtual_port_templates=None,
         tcp_template=None,
         udp_template=None,
+        max_retries=None,
+        timeout=None,
+        template_server_ssl=None,
+        template_client_ssl=None,
+        sampling_enable=None,
+        aflex_scripts=None,
         **kwargs
     ):
+
+        # backward compatiable for a10-neutron-lbaas
+        if not aflex_scripts:
+            aflex_scripts = kwargs.pop('aflex-scripts', None)
 
         url, params, kwargs = self._update(
             virtual_server_name,
             name,
             protocol,
-            port,
+            protocol_port,
             service_group_name,
             s_pers_name=s_pers_name,
             c_pers_name=c_pers_name,
@@ -401,8 +437,12 @@ class VirtualPort(base.BaseV30):
             virtual_port_templates=virtual_port_templates,
             tcp_template=tcp_template,
             udp_template=udp_template,
+            template_server_ssl=template_server_ssl,
+            template_client_ssl=template_client_ssl,
+            sampling_enable=sampling_enable,
+            aflex_scripts=aflex_scripts,
             **kwargs)
-        return self._put(url, params, **kwargs)
+        return self._put(url, params, max_retries=max_retries, timeout=timeout, axapi_args=kwargs)
 
     def delete(self, virtual_server_name, name, protocol, port):
         url = self.url_server_tmpl.format(name=virtual_server_name)
