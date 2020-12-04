@@ -37,7 +37,8 @@ class TestDns(unittest.TestCase):
         expected_payload = {'primary': {'ip-v4-addr': expected}}
 
         self.client.http.request.assert_called_with("POST", self.url_prefix + 'primary',
-                                                    expected_payload, mock.ANY)
+                                                    expected_payload, mock.ANY, axapi_args=None,
+                                                    max_retries=None, timeout=None)
 
     def test_primary_ipv6(self):
         expected = '0:0:0:0:0:FFFF:129.144.52.38'
@@ -46,7 +47,8 @@ class TestDns(unittest.TestCase):
         expected_payload = {'primary': {'ip-v6-addr': expected}}
 
         self.client.http.request.assert_called_with("POST", self.url_prefix + 'primary',
-                                                    expected_payload, mock.ANY)
+                                                    expected_payload, mock.ANY, axapi_args=None,
+                                                    max_retries=None, timeout=None)
 
     def test_secondary_ipv4(self):
         expected = '192.0.2.5'
@@ -55,7 +57,8 @@ class TestDns(unittest.TestCase):
         expected_payload = {'secondary': {'ip-v4-addr': expected}}
 
         self.client.http.request.assert_called_with("POST", self.url_prefix + 'secondary',
-                                                    expected_payload, mock.ANY)
+                                                    expected_payload, mock.ANY, axapi_args=None,
+                                                    max_retries=None, timeout=None)
 
     def test_secondary_ipv6(self):
         expected = '0:0:0:0:0:FFFF:129.144.52.39'
@@ -64,7 +67,8 @@ class TestDns(unittest.TestCase):
         expected_payload = {'secondary': {'ip-v6-addr': expected}}
 
         self.client.http.request.assert_called_with("POST", self.url_prefix + 'secondary',
-                                                    expected_payload, mock.ANY)
+                                                    expected_payload, mock.ANY, axapi_args=None,
+                                                    max_retries=None, timeout=None)
 
     def test_suffix(self):
         expected = 'example.com'
@@ -73,4 +77,5 @@ class TestDns(unittest.TestCase):
         expected_payload = {'suffix': {'domain-name': expected}}
 
         self.client.http.request.assert_called_with("POST", self.url_prefix + 'suffix',
-                                                    expected_payload, mock.ANY)
+                                                    expected_payload, mock.ANY, axapi_args=None,
+                                                    max_retries=None, timeout=None)

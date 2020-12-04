@@ -50,13 +50,15 @@ class BaseV30(object):
         self.auth_header['Authorization'] = "A10 %s" % self.client.session.id
         return ("/axapi/v3" + action)
 
-    def _request(self, method, action, params, retry_count=0, **kwargs):
+    def _request(self, method, action, params, retry_count=0, max_retries=None,
+                 timeout=None, axapi_args=None, **kwargs):
         if retry_count > 24:
             raise ae.ACOSUnknownError()
 
         try:
-            return self.client.http.request(method, self.url(action), params,
-                                            self.auth_header, **kwargs)
+            return self.client.http.request(method, self.url(action), params, self.auth_header,
+                                            max_retries=max_retries, timeout=timeout,
+                                            axapi_args=axapi_args, **kwargs)
         except (ae.InvalidSessionID, ae.ConfigManagerNotReady) as e:
             if type(e) == ae.ConfigManagerNotReady:
                 retry_limit = 24
@@ -73,20 +75,25 @@ class BaseV30(object):
                     self.client.partition.active(p)
                 except Exception:
                     pass
-                return self._request(method, action, params, retry_count + 1, **kwargs)
+                return self._request(method, action, params, retry_count + 1, max_retries=max_retries,
+                                     timeout=timeout, axapi_args=axapi_args, **kwargs)
             raise e
 
-    def _get(self, action, params={}, **kwargs):
-        return self._request('GET', action, params, **kwargs)
+    def _get(self, action, params={}, max_retries=None, timeout=None, axapi_args=None, **kwargs):
+        return self._request('GET', action, params, max_retries=max_retries, timeout=timeout,
+                             axapi_args=axapi_args, **kwargs)
 
-    def _post(self, action, params={}, **kwargs):
-        return self._request('POST', action, params, **kwargs)
+    def _post(self, action, params={}, max_retries=None, timeout=None, axapi_args=None, **kwargs):
+        return self._request('POST', action, params, max_retries=max_retries, timeout=timeout,
+                             axapi_args=axapi_args, **kwargs)
 
-    def _put(self, action, params={}, **kwargs):
-        return self._request('PUT', action, params, **kwargs)
+    def _put(self, action, params={}, max_retries=None, timeout=None, axapi_args=None, **kwargs):
+        return self._request('PUT', action, params, max_retries=max_retries, timeout=timeout,
+                             axapi_args=axapi_args, **kwargs)
 
-    def _delete(self, action, params={}, **kwargs):
-        return self._request('DELETE', action, params, **kwargs)
+    def _delete(self, action, params={}, max_retries=None, timeout=None, axapi_args=None, **kwargs):
+        return self._request('DELETE', action, params, max_retries=max_retries, timeout=timeout,
+                             axapi_args=axapi_args, **kwargs)
 
     def _is_ipv6(self, ip_address):
         validated_ip_address = ipaddress.ip_address(six.text_type(ip_address))
