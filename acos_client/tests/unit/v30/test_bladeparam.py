@@ -82,19 +82,22 @@ class TestBlade(unittest.TestCase):
 
     def test_blade_get(self):
         self.target.get(0)
-        self.client.http.request.assert_called_with("GET", self.url_prefix.format(0), {}, mock.ANY)
+        self.client.http.request.assert_called_with("GET", self.url_prefix.format(0), {}, mock.ANY,
+                                                    axapi_args=None, max_retries=None, timeout=None)
 
     def test_blade_create(self):
         self.target.create(4)
         self.client.http.request.assert_called_with(
             "POST", self.url_prefix.format(4),
-            self._expected_payload(), mock.ANY)
+            self._expected_payload(), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_blade_create_priority(self):
         self.target.create(4, 122)
         self.client.http.request.assert_called_with(
             "POST", self.url_prefix.format(4),
-            self._expected_payload(122), mock.ANY)
+            self._expected_payload(122), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_blade_create_interface(self):
         interface = self._build_interface()
@@ -103,7 +106,8 @@ class TestBlade(unittest.TestCase):
         self.target.create(4)
         self.client.http.request.assert_called_with(
             "POST", self.url_prefix.format(4),
-            self._expected_payload(interface=interface), mock.ANY)
+            self._expected_payload(interface=interface), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_blade_create_gateway(self):
         gateway = self._build_ipv4gateway('1.1.1.1')
@@ -112,7 +116,8 @@ class TestBlade(unittest.TestCase):
         self.target.create(4)
         self.client.http.request.assert_called_with(
             "POST", self.url_prefix.format(4),
-            self._expected_payload(gateway=gateway), mock.ANY)
+            self._expected_payload(gateway=gateway), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_blade_create_gateway_ipv6(self):
         gateway = self._build_ipv6gateway('1.1.1.1')
@@ -121,7 +126,8 @@ class TestBlade(unittest.TestCase):
         self.target.create(4)
         self.client.http.request.assert_called_with(
             "POST", self.url_prefix.format(4),
-            self._expected_payload(gateway=gateway), mock.ANY)
+            self._expected_payload(gateway=gateway), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_blade_create_interface_gateway(self):
         interface = self._build_interface()
@@ -132,19 +138,22 @@ class TestBlade(unittest.TestCase):
         self.target.create(4)
         self.client.http.request.assert_called_with(
             "POST", self.url_prefix.format(4),
-            self._expected_payload(interface=interface, gateway=gateway), mock.ANY)
+            self._expected_payload(interface=interface, gateway=gateway), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_blade_update(self):
         self.target.update(4)
         self.client.http.request.assert_called_with(
             "PUT", self.url_prefix.format(4),
-            self._expected_payload(), mock.ANY)
+            self._expected_payload(), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_blade_update_priority(self):
         self.target.update(4, 122)
         self.client.http.request.assert_called_with(
             "PUT", self.url_prefix.format(4),
-            self._expected_payload(122), mock.ANY)
+            self._expected_payload(122), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_blade_update_interface(self):
         interface = self._build_interface()
@@ -153,7 +162,8 @@ class TestBlade(unittest.TestCase):
         self.target.update(4)
         self.client.http.request.assert_called_with(
             "PUT", self.url_prefix.format(4),
-            self._expected_payload(interface=interface), mock.ANY)
+            self._expected_payload(interface=interface), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_blade_update_gateway(self):
         gateway = self._build_ipv4gateway('1.1.1.1')
@@ -162,7 +172,8 @@ class TestBlade(unittest.TestCase):
         self.target.update(4)
         self.client.http.request.assert_called_with(
             "PUT", self.url_prefix.format(4),
-            self._expected_payload(gateway=gateway), mock.ANY)
+            self._expected_payload(gateway=gateway), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_blade_update_gateway_ipv6(self):
         gateway = self._build_ipv6gateway('1.1.1.1')
@@ -171,7 +182,8 @@ class TestBlade(unittest.TestCase):
         self.target.update(4)
         self.client.http.request.assert_called_with(
             "PUT", self.url_prefix.format(4),
-            self._expected_payload(gateway=gateway), mock.ANY)
+            self._expected_payload(gateway=gateway), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_blade_update_interface_gateway(self):
         interface = self._build_interface()
@@ -182,4 +194,5 @@ class TestBlade(unittest.TestCase):
         self.target.update(4)
         self.client.http.request.assert_called_with(
             "PUT", self.url_prefix.format(4),
-            self._expected_payload(interface=interface, gateway=gateway), mock.ANY)
+            self._expected_payload(interface=interface, gateway=gateway), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
