@@ -49,7 +49,7 @@ class TestServer(unittest.TestCase):
                 'action': 'enable',
                 'conn-limit': None,
                 'conn-resume': None,
-                'health-check': None,
+                'health-check-disable': 0,
                 'host': '192.168.2.254',
                 'name': VSERVER_NAME,
             }
@@ -75,7 +75,7 @@ class TestServer(unittest.TestCase):
                 'conn-resume': None,
                 'host': '192.168.2.254',
                 'name': VSERVER_NAME,
-                'health-check': None,
+                'health-check-disable': 0,
                 'template-server': 'test-template-server'
             }
         }
@@ -102,7 +102,7 @@ class TestServer(unittest.TestCase):
                 'conn-resume': None,
                 'host': '192.168.2.254',
                 'name': VSERVER_NAME,
-                'health-check': None,
+                'health-check-disable': 0,
                 'template-server': 'test-template-server'
             }
         }
@@ -129,7 +129,7 @@ class TestServer(unittest.TestCase):
                 'conn-resume': None,
                 'host': '192.168.2.254',
                 'name': VSERVER_NAME,
-                'health-check': None,
+                'health-check-disable': 0,
                 'template-server': 'test-template-server'
             }
         }
@@ -221,7 +221,7 @@ class TestIPv6Server(unittest.TestCase):
                 'action': 'enable',
                 'conn-limit': None,
                 'conn-resume': None,
-                'health-check': None,
+                'health-check-disable': 0,
                 'server-ipv6-addr': '2001:baad:deed:bead:daab:daad:cead:100e',
                 'name': VSERVER_NAME,
             }
@@ -247,7 +247,7 @@ class TestIPv6Server(unittest.TestCase):
                 'conn-resume': None,
                 'host': '192.168.2.254',
                 'name': VSERVER_NAME,
-                'health-check': None,
+                'health-check-disable': 0,
                 'template-server': 'test-template-server'
             }
         }
@@ -274,7 +274,7 @@ class TestIPv6Server(unittest.TestCase):
                 'conn-resume': None,
                 'host': '192.168.2.254',
                 'name': VSERVER_NAME,
-                'health-check': None,
+                'health-check-disable': 0,
                 'template-server': 'test-template-server'
             }
         }
@@ -301,7 +301,7 @@ class TestIPv6Server(unittest.TestCase):
                 'conn-resume': None,
                 'host': '192.168.2.254',
                 'name': VSERVER_NAME,
-                'health-check': None,
+                'health-check-disable': 0,
                 'template-server': 'test-template-server'
             }
         }

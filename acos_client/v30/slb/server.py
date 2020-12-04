@@ -26,16 +26,27 @@ class Server(base.BaseV30):
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
 
-    def _set(self, name, ip_address, status=1, server_templates=None, port_list=None, **kwargs):
+    def _set(self, name, ip_address, status=1, server_templates=None, port_list=None, hm_name=None, **kwargs):
+
         params = {
             "server": {
                 "name": name,
                 "action": 'enable' if status else 'disable',
                 "conn-resume": kwargs.get("conn_resume"),
-                "conn-limit": kwargs.get("conn_limit"),
-                "health-check": kwargs.get("health_check"),
+                "conn-limit": kwargs.get("conn_limit")
             }
         }
+
+        # If we explicitly disable health checks, ensure it happens
+        # Else, we implicitly disable health checks if not specified.
+        health_check_disable = 1 if kwargs.get("health_check_disable", False) else 0
+
+        # When enabling/disabling a health monitor, you can't specify
+        # health-check-disable and health-check at the same time.
+        if hm_name is None:
+            params["server"]["health-check-disable"] = health_check_disable
+        else:
+            params["server"]["health-check"] = hm_name
 
         if port_list:
             params['server']['port-list'] = port_list
