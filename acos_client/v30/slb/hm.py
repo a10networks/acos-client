@@ -13,9 +13,7 @@
 #    under the License.
 from __future__ import absolute_import
 from __future__ import unicode_literals
-import six
 
-import acos_client
 from acos_client import errors as acos_errors
 from acos_client.v30 import base
 
@@ -67,15 +65,15 @@ class HealthMonitor(base.BaseV30):
     def get(self, name, **kwargs):
         return self._get(self.url_prefix + name, **kwargs)
 
-    def _set(self, action, name, mon_method, interval, timeout, max_retries,
-             method=None, url=None, expect_code=None, port=None, ipv4=None, update=False, post_data=None,
+    def _set(self, name, mon_method, hm_interval, hm_timeout, hm_max_retries,
+             method=None, url=None, expect_code=None, port=None, ipv4=None, post_data=None,
              **kwargs):
         params = {
             "monitor": {
                 "name": name,
-                "retry": int(max_retries),
-                "interval": int(interval),
-                "timeout": int(timeout),
+                "retry": int(hm_max_retries),
+                "interval": int(hm_interval),
+                "timeout": int(hm_timeout),
                 "method": {
                     mon_method: self._method_objects[mon_method]
                 },
@@ -109,25 +107,11 @@ class HealthMonitor(base.BaseV30):
             params['monitor']['method'][mon_method].pop('http-postdata', None)
             params['monitor']['method'][mon_method].pop('post-path', None)
 
-        # TODO(mdurrant) : Might have to get tricky with JSON structures
-        # ... due to 'mon_method' stuff.
-        config_defaults = kwargs.get("config_defaults")
-        if config_defaults:
-            for k, v in six.iteritems(config_defaults):
-                params['monitor'][k] = v
+        return params
 
-        # put options from flavor (and conf)
-        options = {}
-        options['monitor'] = self.dict_underscore_to_dash(kwargs.pop('monitor', None))
-        if options['monitor']:
-            params = acos_client.v21.axapi_http.merge_dicts(params, options)
-
-        if update:
-            action += name
-        return self._post(action, params, **kwargs)
-
-    def create(self, name, mon_type, interval, timeout, max_retries,
-               method=None, url=None, expect_code=None, port=None, ipv4=None, post_data=None, **kwargs):
+    def create(self, name, mon_type, hm_interval, hm_timeout, hm_max_retries,
+               method=None, url=None, expect_code=None, port=None, ipv4=None, post_data=None,
+               max_retries=None, timeout=None, **kwargs):
         try:
             self.get(name)
         except acos_errors.NotFound:
@@ -135,16 +119,21 @@ class HealthMonitor(base.BaseV30):
         else:
             raise acos_errors.Exists()
 
-        return self._set(self.url_prefix, name, mon_type, interval, timeout,
-                         max_retries, method, url, expect_code, port, ipv4,
-                         update=False, post_data=post_data, **kwargs)
+        params = self._set(name, mon_type, hm_interval, hm_timeout,
+                           hm_max_retries, method, url, expect_code, port, ipv4,
+                           post_data=post_data, **kwargs)
+        return self._post(self.url_prefix, params, max_retries=max_retries, timeout=timeout,
+                          axapi_args=kwargs)
 
-    def update(self, name, mon_type, interval, timeout, max_retries,
-               method=None, url=None, expect_code=None, port=None, ipv4=None, post_data=None, **kwargs):
+    def update(self, name, mon_type, hm_interval, hm_timeout, hm_max_retries,
+               method=None, url=None, expect_code=None, port=None, ipv4=None, post_data=None,
+               max_retries=None, timeout=None, **kwargs):
         self.get(name)  # We want a NotFound if it does not exist
-        return self._set(self.url_prefix, name, mon_type, interval, timeout,
-                         max_retries, method, url, expect_code, port, ipv4,
-                         update=True, post_data=post_data, **kwargs)
+        params = self._set(name, mon_type, hm_interval, hm_timeout,
+                           hm_max_retries, method, url, expect_code, port, ipv4,
+                           post_data=post_data, **kwargs)
+        return self._post(self.url_prefix + name, params, max_retries=max_retries, timeout=timeout,
+                          axapi_args=kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)
