@@ -20,11 +20,22 @@ class Port(base.BaseV30):
     url_base_tmpl = "/slb/server/{server}/port/"
     url_port_tmpl = "{port}+{protocol}/"
 
-    def create(self, server_name, port, protocol, **kwargs):
-        return self._set(server_name, port, protocol, **kwargs)
+    def create(self, server_name, port, protocol, max_retries=None, timeout=None,
+               conn_resume=None, conn_limit=None, stats_data_action="stats-data-enable",
+               weight=1, range=0, action="enable", **kwargs):
+        url = self.url_base_tmpl.format(server=server_name)
+        params = self._set(server_name, port, protocol, conn_resume=conn_resume, conn_limit=conn_limit,
+                           stats_data_action=stats_data_action, weight=weight, range=range, action=action)
+        return self._post(url, params, max_retries=max_retries, timeout=timeout, axapi_args=kwargs)
 
-    def update(self, server_name, port, protocol, **kwargs):
-        return self._set(server_name, port, protocol, update=True, **kwargs)
+    def update(self, server_name, port, protocol, max_retries=None, timeout=None,
+               conn_resume=None, conn_limit=None, stats_data_action="stats-data-enable",
+               weight=1, range=0, action="enable", **kwargs):
+        url = self.url_base_tmpl.format(server=server_name)
+        url += self.url_port_tmpl.format(port=port, protocol=protocol)
+        params = self._set(server_name, port, protocol, conn_resume=conn_resume, conn_limit=conn_limit,
+                           stats_data_action=stats_data_action, weight=weight, range=range, action=action)
+        return self._put(url, params, max_retries=max_retries, timeout=timeout, axapi_args=kwargs)
 
     def delete(self, server_name, port, protocol, **kwargs):
         url = (self.url_base_tmpl + self.url_port_tmpl).format(server=server_name,
@@ -33,25 +44,23 @@ class Port(base.BaseV30):
 
         return self._delete(url)
 
-    def _set(self, server_name, port, protocol, update=False, **kwargs):
-        url = self.url_base_tmpl.format(server=server_name)
-
+    def _set(self, server_name, port, protocol, conn_resume=None, conn_limit=None,
+             stats_data_action="stats-data-enable", weight=1, range=0, action="enable"):
         params = {
             "port": {
-                "conn-resume": kwargs.get("conn_resume", None),
-                "conn-limit": kwargs.get("conn_limit"),
-                "stats-data-action": kwargs.get("stats_data_action", "stats-data-enable"),
-                "weight": kwargs.get("weight", 1),
+                "stats-data-action": stats_data_action,
+                "weight": weight,
                 "port-number": port,
-                "range": kwargs.get("range", 0),
-                "action": kwargs.get("action", "enable"),
+                "range": range,
+                "action": action,
                 "protocol": protocol
             }
         }
 
-        if update:
-            url += self.url_port_tmpl.format(port=port, protocol=protocol)
+        if conn_resume:
+            params['port']['conn-resume'] = conn_resume
 
-            return self._put(url, params, **kwargs)
-        else:
-            return self._post(url, params, **kwargs)
+        if conn_limit:
+            params['port']['conn-limit'] = conn_limit
+
+        return params
