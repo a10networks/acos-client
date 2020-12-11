@@ -52,7 +52,7 @@ class ServiceGroup(base.BaseV30):
 
     def _set(self, name, protocol=None, lb_method=None, service_group_templates=None,
              hm_name=None, mem_list=None, health_check_disable=False, health_check=None,
-             **kwargs):
+             hm_delete=False, **kwargs):
 
         # Normalize "" -> None for json
         hm_name = hm_name or None
@@ -76,8 +76,8 @@ class ServiceGroup(base.BaseV30):
         if hm_name is None:
             params["service-group"]["health-check-disable"] = health_check_disable
             # Have to explicitly detach health monitor from the service group,
-            # by setting health_check parameter to None.
-            if health_check:
+            # by setting hm_delete flag
+            if hm_delete:
                 params["service-group"]["health-check"] = health_check
         else:
             params["service-group"]["health-check"] = hm_name
@@ -142,11 +142,11 @@ class ServiceGroup(base.BaseV30):
     def update(self, name, protocol=None, lb_method=None, health_monitor=None,
                service_group_templates=None, mem_list=None, hm_name=None,
                max_retries=None, timeout=None, health_check_disable=False, health_check=None,
-               **kwargs):
+               hm_delete=False, **kwargs):
         params = self._set(name, protocol=None, lb_method=lb_method, hm_name=hm_name,
                            service_group_templates=service_group_templates,
                            mem_list=mem_list, health_check_disable=health_check_disable,
-                           health_check=health_check, **kwargs)
+                           health_check=health_check, hm_delete=hm_delete, **kwargs)
         return self._post(self.url_prefix + name, params, max_retries=max_retries, timeout=timeout,
                           axapi_args=kwargs)
 
