@@ -31,21 +31,6 @@ class BaseV30(object):
     def minimal_dict(self, my_dict, exclude=[]):
         return dict((k, v) for k, v in my_dict.items() if v is not None or k in exclude)
 
-    def dict_underscore_to_dash(self, my_dict, exclude=['config_defaults', 'axapi_args']):
-        if type(my_dict) is list:
-            item_list = []
-            for item in my_dict:
-                item_list.append(self.dict_underscore_to_dash(item), exclude)
-            return item_list
-        elif type(my_dict) is dict:
-            item_dict = {}
-            for k, v in my_dict.items():
-                if k not in exclude:
-                    item_dict[k.replace('_', '-')] = self.dict_underscore_to_dash(v, exclude)
-            return item_dict
-        else:
-            return my_dict
-
     def url(self, action):
         self.auth_header['Authorization'] = "A10 %s" % self.client.session.id
         return ("/axapi/v3" + action)
