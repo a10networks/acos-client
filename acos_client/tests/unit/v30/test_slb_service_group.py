@@ -84,6 +84,43 @@ class TestVirtualServer(unittest.TestCase):
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
     @responses.activate
+    def test_server_group_create_with_kwargs(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        templates = {
+            'template-server': 'template_sv',
+            'template-port': 'template_port',
+            'template-policy': 'template-pl'
+        }
+        args = {
+            'service_group':
+            {
+                'health_check_disable': 1,
+            }
+        }
+        resp = self.client.slb.service_group.create('test1', service_group_templates=templates, **args)
+        params = {
+            'service-group':
+            {
+                'health-check-disable': 1,
+                'lb-method': 'round-robin',
+                'name': 'test1',
+                'protocol': 'tcp',
+                'stateless-auto-switch': 0,
+                'template-server': 'template_sv',
+                'template-port': 'template_port',
+                'template-policy': 'template-pl'
+            }
+        }
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
+    @responses.activate
     def test_server_group_create_with_partial_templates(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {"foo": "bar"}
@@ -126,6 +163,32 @@ class TestVirtualServer(unittest.TestCase):
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
+
+    @responses.activate
+    def test_server_group_update_with_kwargs(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.POST, OBJECT_URL, json=json_response, status=200)
+        args = {
+            'service_group':
+            {
+                'health_check_disable': 1,
+            }
+        }
+        resp = self.client.slb.service_group.update('test1', **args)
+        params = {
+            'service-group':
+            {
+                'health-check-disable': 1,
+                'name': 'test1',
+            }
+        }
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
     @responses.activate
     def test_server_group_replace(self):

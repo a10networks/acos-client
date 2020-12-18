@@ -45,35 +45,40 @@ class TestVRID(unittest.TestCase):
 
     def test_vrid_get(self):
         self.target.get(0)
-        self.client.http.request.assert_called_with("GET", self.url_prefix + '0', {}, mock.ANY)
+        self.client.http.request.assert_called_with("GET", self.url_prefix + '0', {}, mock.ANY,
+                                                    axapi_args=None, max_retries=None, timeout=None)
 
     def test_vrid_create_threshold(self):
         self.target.create(4, threshold=2)
         self.client.http.request.assert_called_with(
-            "POST", self.url_prefix, self.expected_payload(4, threshold=2), mock.ANY)
+            "POST", self.url_prefix, self.expected_payload(4, threshold=2), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_vrid_create_disable(self):
         self.target.create(4, disable=1)
         self.client.http.request.assert_called_with(
-            "POST", self.url_prefix, self.expected_payload(4, disable=1), mock.ANY)
+            "POST", self.url_prefix, self.expected_payload(4, disable=1), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_vrid_create_floating_ip(self):
         self.target.create(4, threshold=1, disable=0, floating_ips=['10.10.10.8'])
         payload = self.expected_payload(4)
         payload['vrid']['floating-ip'] = mock.ANY
         self.client.http.request.assert_called_with(
-            "POST", self.url_prefix, payload,
-            mock.ANY)
+            "POST", self.url_prefix, payload, mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_vrid_update_threshold(self):
         self.target.update(4, threshold=2)
         self.client.http.request.assert_called_with(
-            "PUT", self.url_prefix + '4', self.expected_payload(4, threshold=2), mock.ANY)
+            "PUT", self.url_prefix + '4', self.expected_payload(4, threshold=2), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_vrid_update_disable(self):
         self.target.update(4, disable=1)
         self.client.http.request.assert_called_with(
-            "PUT", self.url_prefix + '4', self.expected_payload(4, disable=1), mock.ANY)
+            "PUT", self.url_prefix + '4', self.expected_payload(4, disable=1), mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_vrid_update_floating_ip(self):
         self.target.update(4, threshold=1, disable=0, floating_ips=['10.10.10.9'])
@@ -81,21 +86,23 @@ class TestVRID(unittest.TestCase):
         payload['vrid']['floating-ip'] = mock.ANY
         self.client.http.request.assert_called_with(
             "PUT", self.url_prefix + '4', payload,
-            mock.ANY)
+            mock.ANY, axapi_args=None, max_retries=None, timeout=None)
 
     def test_patition_vrid_create_floating_ip(self):
         self.target.create(4, threshold=1, disable=0, floating_ips=['10.10.10.8'], is_partition=True)
         payload = self.expected_payload(4, is_partition=True)
         payload['vrid']['floating-ip'] = mock.ANY
         self.client.http.request.assert_called_with(
-            "POST", self.url_prefix, payload, mock.ANY)
+            "POST", self.url_prefix, payload, mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_partition_vrid_update_floating_ip(self):
         self.target.update(4, threshold=1, disable=0, floating_ips=['10.10.10.9'], is_partition=True)
         payload = self.expected_payload(4, is_partition=True)
         payload['vrid']['floating-ip'] = mock.ANY
         self.client.http.request.assert_called_with(
-            "PUT", self.url_prefix + '4', payload, mock.ANY)
+            "PUT", self.url_prefix + '4', payload, mock.ANY,
+            axapi_args=None, max_retries=None, timeout=None)
 
     def test_build_params_multi_ip(self):
         floating_ips = ['11.11.11.11', '12.12.12.12', '13.13.13.13']

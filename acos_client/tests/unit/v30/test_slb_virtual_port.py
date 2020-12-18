@@ -59,7 +59,7 @@ class TestVirtualPort(unittest.TestCase):
         }
 
         resp = self.client.slb.virtual_server.vport.create(
-            VSERVER_NAME, 'test1_VPORT', protocol=self.client.slb.virtual_server.vport.HTTP, port='80',
+            VSERVER_NAME, 'test1_VPORT', protocol=self.client.slb.virtual_server.vport.HTTP, protocol_port='80',
             service_group_name='pool1'
         )
 
@@ -99,7 +99,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",
@@ -122,6 +122,53 @@ class TestVirtualPort(unittest.TestCase):
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
     @responses.activate
+    def test_virtual_port_create_with_kwargs(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        responses.add(responses.POST, CREATE_URL, json=OK_RESP, status=200)
+        params = {
+            'port':
+            {
+                'auto': 1,
+                'extended-stats': 1,
+                'ipinip': 1,
+                'name': 'test1_VPORT',
+                'pool': 'test_nat_pool',
+                'port-number': 80,
+                'protocol': 'http',
+                'service-group': 'pool1',
+                'ha-conn-mirror': 1,
+                'no-dest-nat': 1,
+                'conn-limit': 400,
+                'use-rcv-hop-for-resp': 1
+            }
+        }
+        kwargs = {
+            'conn_limit': 400,
+        }
+
+        resp = self.client.slb.virtual_server.vport.create(
+            virtual_server_name=VSERVER_NAME,
+            name='test1_VPORT',
+            protocol=self.client.slb.virtual_server.vport.HTTP,
+            protocol_port='80',
+            service_group_name='pool1',
+            ha_conn_mirror=1,
+            no_dest_nat=1,
+            status=1,
+            autosnat=True,
+            ipinip=True,
+            source_nat_pool="test_nat_pool",
+            use_rcv_hop=True,
+            **kwargs
+        )
+
+        self.assertEqual(resp, OK_RESP)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
+    @responses.activate
     def test_virtual_port_create_already_exists(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {
@@ -131,7 +178,7 @@ class TestVirtualPort(unittest.TestCase):
 
         with self.assertRaises(acos_errors.ACOSException):
             self.client.slb.virtual_server.vport.create(
-                VSERVER_NAME, 'test1_VPORT', protocol=self.client.slb.virtual_server.vport.HTTP, port='80',
+                VSERVER_NAME, 'test1_VPORT', protocol=self.client.slb.virtual_server.vport.HTTP, protocol_port='80',
                 service_group_name='pool1'
             )
 
@@ -160,7 +207,7 @@ class TestVirtualPort(unittest.TestCase):
         }
 
         resp = self.client.slb.virtual_server.vport.update(
-            VSERVER_NAME, 'test1_VPORT', protocol=self.client.slb.virtual_server.vport.HTTP, port='80',
+            VSERVER_NAME, 'test1_VPORT', protocol=self.client.slb.virtual_server.vport.HTTP, protocol_port='80',
             service_group_name='pool1'
         )
 
@@ -222,7 +269,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",
@@ -296,7 +343,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",
@@ -350,7 +397,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",
@@ -364,6 +411,59 @@ class TestVirtualPort(unittest.TestCase):
             tcp_template="test_tcp_template",
             udp_template="test_udp_template",
             use_rcv_hop=True,
+        )
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, OBJECT_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
+    @mock.patch('acos_client.v30.slb.virtual_port.VirtualPort.get')
+    @responses.activate
+    def test_virtual_port_update_with_kwargs(self, mocked_get):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        mocked_get.return_value = {"foo": "bar"}
+        json_response = {"foo": "bar"}
+        responses.add(responses.POST, OBJECT_URL, json=json_response, status=200)
+        params = {
+            'port':
+            {
+                'auto': 1,
+                'extended-stats': 1,
+                'name': 'test1_VPORT',
+                'ipinip': 1,
+                'no-dest-nat': 1,
+                'pool': 'test_nat_pool',
+                'port-number': 80,
+                'protocol': 'http',
+                'service-group': 'pool1',
+                'ha-conn-mirror': 1,
+                'conn-limit': 400,
+                'template-persist-cookie': 'test_c_pers_template',
+                'template-persist-source-ip': 'test_s_pers_template',
+                'use-rcv-hop-for-resp': 1,
+            }
+        }
+        kwargs = {
+            'conn_limit': 400
+        }
+
+        resp = self.client.slb.virtual_server.vport.update(
+            virtual_server_name=VSERVER_NAME,
+            name='test1_VPORT',
+            protocol=self.client.slb.virtual_server.vport.HTTP,
+            protocol_port='80',
+            service_group_name='pool1',
+            s_pers_name="test_s_pers_template",
+            c_pers_name="test_c_pers_template",
+            status=1,
+            autosnat=True,
+            ipinip=True,
+            ha_conn_mirror=1,
+            no_dest_nat=1,
+            source_nat_pool="test_nat_pool",
+            use_rcv_hop=True,
+            **kwargs
         )
         self.assertEqual(resp, json_response)
         self.assertEqual(len(responses.calls), 2)
@@ -429,7 +529,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",
@@ -486,7 +586,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",
@@ -565,7 +665,7 @@ class TestVirtualPort(unittest.TestCase):
             virtual_server_name=VSERVER_NAME,
             name='test1_VPORT',
             protocol=self.client.slb.virtual_server.vport.HTTP,
-            port='80',
+            protocol_port='80',
             service_group_name='pool1',
             s_pers_name="test_s_pers_template",
             c_pers_name="test_c_pers_template",

@@ -13,7 +13,6 @@
 #    under the License.
 from __future__ import absolute_import
 from __future__ import unicode_literals
-import six
 
 from acos_client.v30 import base
 from acos_client.v30.slb.member import Member
@@ -52,7 +51,8 @@ class ServiceGroup(base.BaseV30):
     UDP = 'udp'
 
     def _set(self, name, protocol=None, lb_method=None, service_group_templates=None,
-             hm_name=None, mem_list=None, **kwargs):
+             hm_name=None, mem_list=None, health_check_disable=False, health_check=None,
+             hm_delete=False, **kwargs):
 
         # Normalize "" -> None for json
         hm_name = hm_name or None
@@ -69,16 +69,16 @@ class ServiceGroup(base.BaseV30):
 
         # If we explicitly disable health checks, ensure it happens
         # Else, we implicitly disable health checks if not specified.
-        health_check_disable = 1 if kwargs.get("health_check_disable", False) else 0
+        health_check_disable = 1 if health_check_disable else 0
 
         # When enabling/disabling a health monitor, you can't specify
         # health-check-disable and health-check at the same time.
         if hm_name is None:
             params["service-group"]["health-check-disable"] = health_check_disable
             # Have to explicitly detach health monitor from the service group,
-            # by setting health_check parameter to None.
-            if 'health_check' in kwargs:
-                params["service-group"]["health-check"] = kwargs['health_check']
+            # by setting hm_delete flag
+            if hm_delete:
+                params["service-group"]["health-check"] = health_check
         else:
             params["service-group"]["health-check"] = hm_name
 
@@ -105,52 +105,58 @@ class ServiceGroup(base.BaseV30):
             params['service-group']['template-server'] = service_group_templates.get('template-server', None)
             params['service-group']['template-port'] = service_group_templates.get('template-port', None)
 
-        config_defaults = kwargs.get("config_defaults")
-
-        if config_defaults:
-            for k, v in six.iteritems(config_defaults):
-                params['service-group'][k] = v
-
         return params
 
-    def all(self, *args, **kwargs):
-        return self._get(self.url_prefix, **kwargs)
+    def all(self, max_retries=None, timeout=None, *args, **kwargs):
+        return self._get(self.url_prefix, max_retries=max_retries, timeout=timeout, axapi_args=kwargs)
 
-    def all_stats(self, *args, **kwargs):
-        return self._get(self.url_prefix + "stats", **kwargs)
+    def all_stats(self, max_retries=None, timeout=None, *args, **kwargs):
+        return self._get(self.url_prefix + "stats", max_retries=max_retries, timeout=timeout, axapi_args=kwargs)
 
-    def all_oper(self, *args, **kwargs):
-        return self._get(self.url_prefix + "oper", **kwargs)
+    def all_oper(self, max_retries=None, timeout=None, *args, **kwargs):
+        return self._get(self.url_prefix + "oper", max_retries=max_retries, timeout=timeout, axapi_args=kwargs)
 
     def create(self, name, protocol=TCP, lb_method=ROUND_ROBIN, service_group_templates=None,
-               mem_list=None, hm_name=None, **kwargs):
+               mem_list=None, hm_name=None, max_retries=None, timeout=None, health_check_disable=False,
+               health_check=None, **kwargs):
         params = self._set(name, protocol=protocol, lb_method=lb_method,
                            service_group_templates=service_group_templates,
-                           mem_list=mem_list, hm_name=hm_name, **kwargs)
-        return self._post(self.url_prefix, params, **kwargs)
+                           mem_list=mem_list, hm_name=hm_name, health_check_disable=health_check_disable,
+                           health_check=health_check, **kwargs)
+        return self._post(self.url_prefix, params, max_retries=max_retries, timeout=timeout, axapi_args=kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)
 
-    def get(self, name, **kwargs):
-        return self._get(self.url_prefix + name, **kwargs)
+    def get(self, name, max_retries=None, timeout=None, **kwargs):
+        return self._get(self.url_prefix + name, max_retries=max_retries, timeout=timeout, axapi_args=kwargs)
 
-    def oper(self, name, *args, **kwargs):
-        return self._get(self.url_prefix + name + "/oper", **kwargs)
+    def oper(self, name, max_retries=None, timeout=None, *args, **kwargs):
+        return self._get(self.url_prefix + name + "/oper", max_retries=max_retries, timeout=timeout,
+                         axapi_args=kwargs)
 
-    def stats(self, name, *args, **kwargs):
-        return self._get(self.url_prefix + name + "/stats", **kwargs)
+    def stats(self, name, max_retries=None, timeout=None, *args, **kwargs):
+        return self._get(self.url_prefix + name + "/stats", max_retries=max_retries, timeout=timeout,
+                         axapi_args=kwargs)
 
     def update(self, name, protocol=None, lb_method=None, health_monitor=None,
-               service_group_templates=None, mem_list=None, hm_name=None, **kwargs):
+               service_group_templates=None, mem_list=None, hm_name=None,
+               max_retries=None, timeout=None, health_check_disable=False, health_check=None,
+               hm_delete=False, **kwargs):
         params = self._set(name, protocol=None, lb_method=lb_method, hm_name=hm_name,
                            service_group_templates=service_group_templates,
-                           mem_list=mem_list, **kwargs)
-        return self._post(self.url_prefix + name, params, **kwargs)
+                           mem_list=mem_list, health_check_disable=health_check_disable,
+                           health_check=health_check, hm_delete=hm_delete, **kwargs)
+        return self._post(self.url_prefix + name, params, max_retries=max_retries, timeout=timeout,
+                          axapi_args=kwargs)
 
     def replace(self, name, protocol=None, lb_method=None, health_monitor=None,
-                service_group_templates=None, mem_list=None, hm_name=None, **kwargs):
+                service_group_templates=None, mem_list=None, hm_name=None,
+                max_retries=None, timeout=None, health_check_disable=False, health_check=None,
+                **kwargs):
         params = self._set(name, protocol=protocol, lb_method=lb_method, hm_name=hm_name,
                            service_group_templates=service_group_templates,
-                           mem_list=mem_list, **kwargs)
-        return self._put(self.url_prefix + name, params, **kwargs)
+                           mem_list=mem_list, health_check_disable=health_check_disable,
+                           health_check=health_check, **kwargs)
+        return self._put(self.url_prefix + name, params, max_retries=max_retries, timeout=timeout,
+                         axapi_args=kwargs)

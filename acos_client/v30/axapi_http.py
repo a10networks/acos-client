@@ -19,7 +19,6 @@ import json
 import logging
 from requests.adapters import HTTPAdapter
 from requests import Session
-import six
 
 import acos_client
 from acos_client import logutils
@@ -51,8 +50,23 @@ class HttpClient(object):
         self.max_retries = max_retries
         self.timeout = timeout
 
+    def dict_underscore_to_dash(self, my_dict):
+        if type(my_dict) is list:
+            item_list = []
+            for item in my_dict:
+                item_list.append(self.dict_underscore_to_dash(item))
+            return item_list
+        elif type(my_dict) is dict:
+            item_dict = {}
+            for k, v in my_dict.items():
+                item_dict[k.replace('_', '-')] = self.dict_underscore_to_dash(v)
+            return item_dict
+        else:
+            return my_dict
+
     def request(self, method, api_url, params={}, headers=None,
-                file_name=None, file_content=None, axapi_args=None, **kwargs):
+                file_name=None, file_content=None, axapi_args=None,
+                max_retries=None, timeout=None, **kwargs):
         LOG.debug("axapi_http: full url = %s", self.url_base + api_url)
         LOG.debug("axapi_http: %s url = %s", method, api_url)
         LOG.debug("axapi_http: params = %s", json.dumps(logutils.clean(params), indent=4))
@@ -61,11 +75,10 @@ class HttpClient(object):
 
         # Update params with axapi_args for currently unsupported configuration of objects
         if axapi_args is not None:
-            formatted_axapi_args = dict(
-                [(k.replace('_', '-'), v) for k, v in six.iteritems(axapi_args)]
-            )
+            formatted_axapi_args = self.dict_underscore_to_dash(axapi_args)
             params = acos_client.v21.axapi_http.merge_dicts(params, formatted_axapi_args)
 
+        LOG.debug("axapi_http: params + axapi_args = %s", json.dumps(logutils.clean(params), indent=4))
         # Set data" variable for the request
         if params:
             params_copy = params.copy()
@@ -78,8 +91,10 @@ class HttpClient(object):
            (file_name is not None and file_content is None):
             raise ValueError("file_name and file_content must both be populated if one is")
 
-        max_retries = kwargs.get('max_retries', self.max_retries)
-        timeout = kwargs.get('timeout', self.timeout)
+        if not max_retries:
+            max_retries = self.max_retries
+        if not timeout:
+            timeout = self.timeout
 
         # Set "headers" variable for the request
         request_headers = self.HEADERS.copy()
@@ -142,14 +157,18 @@ class HttpClient(object):
 
         return json_response
 
-    def get(self, api_url, params={}, headers=None, **kwargs):
-        return self.request("GET", api_url, params, headers, **kwargs)
+    def get(self, api_url, params={}, headers=None, max_retries=None, timeout=None, axapi_args=None, **kwargs):
+        return self.request("GET", api_url, params, headers, max_retries=max_retries,
+                            timeout=timeout, axapi_args=axapi_args, **kwargs)
 
-    def post(self, api_url, params={}, headers=None, **kwargs):
-        return self.request("POST", api_url, params, headers, **kwargs)
+    def post(self, api_url, params={}, headers=None, max_retries=None, timeout=None, axapi_args=None, **kwargs):
+        return self.request("POST", api_url, params, headers, max_retries=max_retries,
+                            timeout=timeout, axapi_args=axapi_args, **kwargs)
 
-    def put(self, api_url, params={}, headers=None, **kwargs):
-        return self.request("PUT", api_url, params, headers, **kwargs)
+    def put(self, api_url, params={}, headers=None, max_retries=None, timeout=None, axapi_args=None, **kwargs):
+        return self.request("PUT", api_url, params, headers, max_retries=max_retries,
+                            timeout=timeout, axapi_args=axapi_args, **kwargs)
 
-    def delete(self, api_url, params={}, headers=None, **kwargs):
-        return self.request("DELETE", api_url, params, headers, **kwargs)
+    def delete(self, api_url, params={}, headers=None, max_retries=None, timeout=None, axapi_args=None, **kwargs):
+        return self.request("DELETE", api_url, params, headers, max_retries=max_retries,
+                            timeout=timeout, axapi_args=axapi_args, **kwargs)

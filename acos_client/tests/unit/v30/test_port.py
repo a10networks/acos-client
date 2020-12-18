@@ -33,8 +33,6 @@ class TestPort(unittest.TestCase):
     def test_create_port(self):
         expected = {
             'port': {
-                "conn-resume": None,
-                "conn-limit": None,
                 "stats-data-action": "stats-data-enable",
                 "weight": 1,
                 "port-number": 80,
@@ -51,20 +49,45 @@ class TestPort(unittest.TestCase):
         self.assertEqual(url, '/axapi/v3/slb/server/%s/port/' % self._server_name)
         self.assertEqual(params, expected)
 
-    def test_update_port(self):
+    def test_create_port_with_params(self):
         expected = {
             'port': {
-                "conn-resume": None,
-                "conn-limit": 12345,
-                "stats-data-action": "stats-data-enable",
-                "weight": 2,
+                "conn-resume": 500,
+                "conn-limit": 600,
+                "stats-data-action": "stats-data-disable",
+                "weight": 3,
                 "port-number": 80,
-                "range": 0,
-                "action": "enable",
+                "range": 30,
+                "action": "disable-with-health-check",
                 "protocol": 'tcp'
             }
         }
-        self.port.update('test_server', 80, 'tcp', conn_limit=12345, weight=2)
+        self.port.create('test_server', 80, 'tcp', conn_resume=500, conn_limit=600,
+                         stats_data_action="stats-data-disable", weight=3, range=30,
+                         action="disable-with-health-check")
+
+        ((method, url, params, header), kwargs) = self.client.http.request.call_args
+
+        self.assertEqual(method, 'POST')
+        self.assertEqual(url, '/axapi/v3/slb/server/%s/port/' % self._server_name)
+        self.assertEqual(params, expected)
+
+    def test_update_port(self):
+        expected = {
+            'port': {
+                "conn-resume": 500,
+                "conn-limit": 600,
+                "stats-data-action": "stats-data-disable",
+                "weight": 3,
+                "port-number": 80,
+                "range": 30,
+                "action": "disable-with-health-check",
+                "protocol": 'tcp'
+            }
+        }
+        self.port.update('test_server', 80, 'tcp', conn_resume=500, conn_limit=600,
+                         stats_data_action="stats-data-disable", weight=3, range=30,
+                         action="disable-with-health-check")
 
         ((method, url, params, header), kwargs) = self.client.http.request.call_args
 
