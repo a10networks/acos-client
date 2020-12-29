@@ -52,6 +52,12 @@ class Nat(base.BaseV30):
         def get(self, name):
             return self._get(self.url_prefix + name)
 
+        def try_get(self, name):
+            try:
+                return self._get(self.url_prefix + name)
+            except acos_errors.NotFound:
+                return None
+
         def exists(self, name):
             try:
                 self.get(name)
