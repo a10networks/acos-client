@@ -356,8 +356,8 @@ class VirtualPort(base.BaseV30):
     ):
 
         # backward compatiable for a10-neutron-lbaas
-        if not aflex_scripts:
-            aflex_scripts = kwargs.pop('aflex-scripts', None)
+        if aflex_scripts is None and 'aflex-scripts' in kwargs:
+            aflex_scripts = kwargs.pop('aflex-scripts')
 
         url, params, kwargs = self._update(
             virtual_server_name,
