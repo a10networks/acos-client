@@ -13,7 +13,6 @@
 #    under the License.
 from __future__ import absolute_import
 from __future__ import unicode_literals
-import six
 
 from acos_client.v30 import base
 from acos_client.v30.slb.port import Port
@@ -23,17 +22,19 @@ class Server(base.BaseV30):
 
     url_prefix = '/slb/server/'
 
-    def get(self, name, **kwargs):
-        return self._get(self.url_prefix + name, **kwargs)
+    def get(self, name, max_retries=None, timeout=None, **kwargs):
+        return self._get(self.url_prefix + name, max_retries=max_retries, timeout=timeout,
+                         axapi_args=kwargs)
 
-    def _set(self, name, ip_address, status=1, server_templates=None, port_list=None, **kwargs):
+    def _set(self, name, ip_address, status=1, server_templates=None, port_list=None,
+             conn_resume=None, conn_limit=None, health_check=None, **kwargs):
         params = {
             "server": {
                 "name": name,
                 "action": 'enable' if status else 'disable',
-                "conn-resume": kwargs.get("conn_resume"),
-                "conn-limit": kwargs.get("conn_limit"),
-                "health-check": kwargs.get("health_check"),
+                "conn-resume": conn_resume,
+                "conn-limit": conn_limit,
+                "health-check": health_check,
             }
         }
 
@@ -49,31 +50,34 @@ class Server(base.BaseV30):
             server_templates = {k: v for k, v in server_templates.items() if v}
             params['server']['template-server'] = server_templates.get('template-server')
 
-        config_defaults = kwargs.get("config_defaults")
-
-        if config_defaults:
-            for k, v in six.iteritems(config_defaults):
-                params['server'][k] = v
-
         return params
 
     def create(self, name, ip_address, status=1, server_templates=None,
-               port_list=None, **kwargs):
+               port_list=None, max_retries=None, timeout=None,
+               conn_resume=None, conn_limit=None, health_check=None, **kwargs):
         params = self._set(name, ip_address, status=status, port_list=port_list,
+                           conn_resume=conn_resume, conn_limit=conn_limit, health_check=health_check,
                            server_templates=server_templates, **kwargs)
-        return self._post(self.url_prefix, params, **kwargs)
+        return self._post(self.url_prefix, params, max_retries=max_retries, timeout=timeout,
+                          axapi_args=kwargs)
 
     def update(self, name, ip_address, status=1, server_templates=None,
-               port_list=None, **kwargs):
+               port_list=None, max_retries=None, timeout=None,
+               conn_resume=None, conn_limit=None, health_check=None, **kwargs):
         params = self._set(name, ip_address, status=status, port_list=port_list,
+                           conn_resume=conn_resume, conn_limit=conn_limit, health_check=health_check,
                            server_templates=server_templates, **kwargs)
-        return self._post(self.url_prefix + name, params, **kwargs)
+        return self._post(self.url_prefix + name, params, max_retries=max_retries, timeout=timeout,
+                          axapi_args=kwargs)
 
     def replace(self, name, ip_address, status=1, server_templates=None,
-                port_list=None, **kwargs):
+                port_list=None, max_retries=None, timeout=None,
+                conn_resume=None, conn_limit=None, health_check=None, **kwargs):
         params = self._set(name, ip_address, status=status, port_list=port_list,
+                           conn_resume=conn_resume, conn_limit=conn_limit, health_check=health_check,
                            server_templates=server_templates, **kwargs)
-        return self._put(self.url_prefix + name, params, **kwargs)
+        return self._put(self.url_prefix + name, params, max_retries=max_retries, timeout=timeout,
+                         axapi_args=kwargs)
 
     def delete(self, name):
         return self._delete(self.url_prefix + name)

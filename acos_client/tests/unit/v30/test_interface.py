@@ -32,11 +32,13 @@ class TestInterface(unittest.TestCase):
 
     def test_interface_get_list(self):
         self.target.get_list()
-        self.client.http.request.assert_called_with("GET", self.url_prefix, {}, mock.ANY)
+        self.client.http.request.assert_called_with("GET", self.url_prefix, {}, mock.ANY, axapi_args=None,
+                                                    max_retries=None, timeout=None)
 
     def test_interface_get(self):
         self.target.get()
-        self.client.http.request.assert_called_with("GET", self.url_prefix, {}, mock.ANY)
+        self.client.http.request.assert_called_with("GET", self.url_prefix, {}, mock.ANY, axapi_args=None,
+                                                    max_retries=None, timeout=None)
 
     def _test_interface_create_dhcp(self, dhcp=True):
         expected = 1 if dhcp else 0
@@ -44,7 +46,8 @@ class TestInterface(unittest.TestCase):
         expected_payload = {self.target.iftype: {'ip': {'dhcp': expected}, 'ifnum': ifnum}}
         self.target.create(ifnum, dhcp=dhcp)
         self.client.http.request.assert_called_with("POST", self.url_prefix,  # URL + ifnum expected
-                                                    expected_payload, mock.ANY)
+                                                    expected_payload, mock.ANY, axapi_args=None,
+                                                    max_retries=None, timeout=None)
 
     def test_interface_create_dhcp_negative(self):
         self._test_interface_create_dhcp(False)
@@ -57,14 +60,15 @@ class TestInterface(unittest.TestCase):
         ip_address = "128.0.0.1"
         ip_netmask = "255.255.255.0"
         self.target.create(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask)
-        self.client.http.request.assert_called_with("POST", self.url_prefix,
-                                                    mock.ANY, mock.ANY)
+        self.client.http.request.assert_called_with("POST", self.url_prefix, mock.ANY, mock.ANY,
+                                                    axapi_args=None, max_retries=None, timeout=None)
 
     def test_interface_delete(self):
         ifnum = 1
         self.target.delete(1)
         self.client.http.request.assert_called_with("DELETE", self.url_prefix + str(ifnum),
-                                                    mock.ANY, mock.ANY)
+                                                    mock.ANY, mock.ANY, axapi_args=None, max_retries=None,
+                                                    timeout=None)
 
     def test_interface_update(self):
         ifnum = 1
@@ -74,7 +78,8 @@ class TestInterface(unittest.TestCase):
         self.target.update(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask)
 
         self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
-                                                    mock.ANY, mock.ANY)
+                                                    mock.ANY, mock.ANY, axapi_args=None, max_retries=None,
+                                                    timeout=None)
 
     def test_interface_enable_positive(self):
         ifnum = 1
@@ -88,7 +93,8 @@ class TestInterface(unittest.TestCase):
         self.assertEqual("enable", params[self.target.iftype]["action"])
 
         self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
-                                                    mock.ANY, mock.ANY)
+                                                    mock.ANY, mock.ANY, axapi_args=None, max_retries=None,
+                                                    timeout=None)
 
     def test_interface_enable_negative(self):
         ifnum = 1
@@ -103,7 +109,8 @@ class TestInterface(unittest.TestCase):
         self.assertEqual("disable", params[self.target.iftype]["action"])
 
         self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
-                                                    mock.ANY, mock.ANY)
+                                                    mock.ANY, mock.ANY, axapi_args=None, max_retries=None,
+                                                    timeout=None)
 
 
 class TestEthernetInterface(TestInterface):
