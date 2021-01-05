@@ -54,7 +54,7 @@ class Nat(base.BaseV30):
 
         def try_get(self, name):
             try:
-                return self.get(self, name)
+                return self.get(name)
             except acos_errors.NotFound:
                 return None
 
