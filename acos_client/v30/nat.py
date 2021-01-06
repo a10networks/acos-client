@@ -68,15 +68,15 @@ class Nat(base.BaseV30):
         def all(self):
             return self._get(self.url_prefix)
 
-        def create(self, name, start_ip, end_ip, mask, ip_rr=None, vrid=None,
+        def create(self, pool_name, start_address, end_address, netmask, ip_rr=None, vrid=None,
                    gateway=None, max_retries=None, timeout=None, **kwargs):
-            if self.exists(name):
+            if self.exists(pool_name):
                 raise acos_errors.Exists
-
-            params = self._set(name, start_ip, end_ip, mask,
+            params = self._set(pool_name, start_address, end_address, netmask,
                                ip_rr=ip_rr, vrid=vrid, gateway=gateway)
+            axapi_args = {'pool': kwargs}
             return self._post(self.url_prefix, params, max_retries=max_retries,
-                              timeout=timeout, axapi_args=kwargs)
+                              timeout=timeout, axapi_args=axapi_args)
 
         def delete(self, name, **kwargs):
             self._delete(self.url_prefix + name)
