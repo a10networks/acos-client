@@ -26,7 +26,7 @@ class Nat(base.BaseV30):
     class Pool(base.BaseV30):
         url_prefix = "/ip/nat/pool/"
 
-        def _set(self, name, start_ip, end_ip, mask, ip_rr=None, vrid=None, **kwargs):
+        def _set(self, name, start_ip, end_ip, mask, ip_rr=None, vrid=None, gateway=None):
             params = {
                 "pool": self.minimal_dict(
                     {
@@ -44,13 +44,19 @@ class Nat(base.BaseV30):
             if vrid:
                 params["pool"]["vrid"] = vrid
 
-            if self.exists(name):
-                self._post(self.url_prefix + name, params, **kwargs)
-            else:
-                self._post(self.url_prefix, params, **kwargs)
+            if gateway:
+                params["pool"]['gateway'] = gateway
+
+            return params
 
         def get(self, name):
             return self._get(self.url_prefix + name)
+
+        def try_get(self, name):
+            try:
+                return self.get(name)
+            except acos_errors.NotFound:
+                return None
 
         def exists(self, name):
             try:
@@ -62,17 +68,23 @@ class Nat(base.BaseV30):
         def all(self):
             return self._get(self.url_prefix)
 
-        def create(self, name, start_ip, end_ip, mask, ip_rr, vrid, **kwargs):
-            if self.exists(name):
+        def create(self, pool_name, start_address, end_address, netmask, ip_rr=None, vrid=None,
+                   gateway=None, max_retries=None, timeout=None, **kwargs):
+            if self.exists(pool_name):
                 raise acos_errors.Exists
-
-            self._set(name, start_ip, end_ip, mask, ip_rr, vrid, **kwargs)
+            params = self._set(pool_name, start_address, end_address, netmask,
+                               ip_rr=ip_rr, vrid=vrid, gateway=gateway)
+            axapi_args = {'pool': kwargs}
+            return self._post(self.url_prefix, params, max_retries=max_retries,
+                              timeout=timeout, axapi_args=axapi_args)
 
         def delete(self, name, **kwargs):
             self._delete(self.url_prefix + name)
 
-        def stats(self, name='', **kwargs):
-            return self._get(self.url_prefix + name + '/stats', **kwargs)
+        def stats(self, name='', max_retries=None, timeout=None, **kwargs):
+            return self._get(self.url_prefix + name + '/stats',
+                             max_retries=max_retries, timeout=timeout,
+                             **kwargs)
 
         def all_stats(self, **kwargs):
             return self.stats()
