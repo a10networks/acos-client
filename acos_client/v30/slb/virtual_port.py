@@ -159,7 +159,8 @@ class VirtualPort(base.BaseV30):
         if no_dest_nat is not None:
             params["port"]["no-dest-nat"] = 1 if no_dest_nat else 0
         if ha_conn_mirror is not None:
-            params["port"]["ha-conn-mirror"] = 1 if ha_conn_mirror else 0
+            if (protocol == self.TCP or protocol == self.UDP):
+                params["port"]["ha-conn-mirror"] = 1 if ha_conn_mirror else 0
         if conn_limit is not None:
             params["port"]["conn-limit"] = conn_limit
 
