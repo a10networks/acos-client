@@ -76,7 +76,7 @@ class Nat(base.BaseV30):
             params = self._set(name, start_ip, end_ip, mask,
                                ip_rr=ip_rr, vrid=vrid, gateway=gateway)
             return self._post(self.url_prefix, params, max_retries=max_retries,
-                              timeout=timeout, axapi=kwargs)
+                              timeout=timeout, axapi_args=kwargs)
 
         def delete(self, name, **kwargs):
             self._delete(self.url_prefix + name)
