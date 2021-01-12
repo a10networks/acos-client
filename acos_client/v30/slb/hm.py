@@ -107,6 +107,14 @@ class HealthMonitor(base.BaseV30):
             params['monitor']['method'][mon_method].pop('http-postdata', None)
             params['monitor']['method'][mon_method].pop('post-path', None)
 
+        # 'response-code-regex' is conflict with 'http-response-code', so if flavor
+        # contains 'response-code-regex' we should remove 'http-response-code'
+        if 'http-response-code' in params['monitor']['method'][mon_method]:
+            if ('monitor' in kwargs and 'method' in kwargs['monitor'] and
+               mon_method in kwargs['monitor']['method'] and
+               'response_code_regex' in kwargs['monitor']['method'][mon_method]):
+                params['monitor']['method'][mon_method].pop('http-response-code')
+
         return params
 
     def create(self, name, mon_type, hm_interval, hm_timeout, hm_max_retries,
