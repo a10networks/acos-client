@@ -159,7 +159,8 @@ class VirtualPort(base.BaseV30):
         if no_dest_nat is not None:
             params["port"]["no-dest-nat"] = 1 if no_dest_nat else 0
         if ha_conn_mirror is not None:
-            params["port"]["ha-conn-mirror"] = 1 if ha_conn_mirror else 0
+            if (protocol == self.TCP or protocol == self.UDP):
+                params["port"]["ha-conn-mirror"] = 1 if ha_conn_mirror else 0
         if conn_limit is not None:
             params["port"]["conn-limit"] = conn_limit
 
@@ -204,8 +205,8 @@ class VirtualPort(base.BaseV30):
     ):
 
         # backward compatiable for a10-neutron-lbaas
-        if not aflex_scripts:
-            aflex_scripts = kwargs.pop('aflex-scripts', None)
+        if aflex_scripts is None and 'aflex-scripts' in kwargs:
+            aflex_scripts = kwargs.pop('aflex-scripts')
 
         url, params, kwargs = self._set(
             virtual_server_name,
@@ -356,8 +357,8 @@ class VirtualPort(base.BaseV30):
     ):
 
         # backward compatiable for a10-neutron-lbaas
-        if not aflex_scripts:
-            aflex_scripts = kwargs.pop('aflex-scripts', None)
+        if aflex_scripts is None and 'aflex-scripts' in kwargs:
+            aflex_scripts = kwargs.pop('aflex-scripts')
 
         url, params, kwargs = self._update(
             virtual_server_name,
@@ -415,8 +416,8 @@ class VirtualPort(base.BaseV30):
     ):
 
         # backward compatiable for a10-neutron-lbaas
-        if not aflex_scripts:
-            aflex_scripts = kwargs.pop('aflex-scripts', None)
+        if aflex_scripts is None and 'aflex-scripts' in kwargs:
+            aflex_scripts = kwargs.pop('aflex-scripts')
 
         url, params, kwargs = self._update(
             virtual_server_name,
