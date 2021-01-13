@@ -94,8 +94,10 @@ class HealthMonitor(base.BaseV30):
                 k = '%s-port' % mon_method
             params['monitor']['method'][mon_method][k] = int(port)
             params['monitor']['override-port'] = int(port)
-        # handle POST case
-        if params['monitor']['method'][mon_method]['url-type'] == "POST":
+        # handle POST case for HTTP/HTTPS hm
+        if ('url-type' in params['monitor']['method'][mon_method] and
+                'url-path' in params['monitor']['method'][mon_method] and
+                params['monitor']['method'][mon_method]['url-type'] == "POST"):
             if post_data:
                 params['monitor']['method'][mon_method]['post-type'] = "postdata"
                 params['monitor']['method'][mon_method]['http-postdata'] = str(post_data)
