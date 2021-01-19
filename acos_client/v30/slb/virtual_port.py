@@ -54,15 +54,18 @@ class VirtualPort(base.BaseV30):
     url_server_tmpl = '/slb/virtual-server/{name}/port/'
     url_port_tmpl = '{port_number}+{protocol}'
 
+    def format_vport_url(self, port_number, protocol):
+        if protocol == 'TERMINATED_HTTPS':
+            protocol = "https"
+        return self.url_port_tmpl.format(port_number=port_number, protocol=protocol)
+
     def all(self, virtual_server_name, **kwargs):
         url = self.url_server_tmpl.format(name=virtual_server_name)
         return self._get(url, **kwargs)
 
     def get(self, virtual_server_name, name, protocol, port):
         url = self.url_server_tmpl.format(name=virtual_server_name)
-        url += self.url_port_tmpl.format(
-            port_number=port, protocol=protocol
-        )
+        url += self.format_vport_url(port_number=port, protocol=protocol)
         return self._get(url)
 
     def _set(
@@ -170,9 +173,7 @@ class VirtualPort(base.BaseV30):
             params['port']['aflex-scripts'] = aflex_scripts
 
         if update:
-            url += self.url_port_tmpl.format(
-                port_number=protocol_port, protocol=protocol
-            )
+            url += self.format_vport_url(port_number=protocol_port, protocol=protocol)
         return url, params, kwargs
 
     def create(
@@ -447,7 +448,7 @@ class VirtualPort(base.BaseV30):
 
     def delete(self, virtual_server_name, name, protocol, port):
         url = self.url_server_tmpl.format(name=virtual_server_name)
-        url += self.url_port_tmpl.format(port_number=port, protocol=protocol)
+        url += self.format_vport_url(port_number=port, protocol=protocol)
         return self._delete(url)
 
     def _set_sampling_enable(self, sample_list, dest_obj):
