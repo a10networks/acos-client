@@ -100,7 +100,10 @@ class HealthMonitor(base.BaseV30):
                 params['monitor']['method'][mon_method]['url-type'] == "POST"):
             if post_data:
                 params['monitor']['method'][mon_method]['post-type'] = "postdata"
-                params['monitor']['method'][mon_method]['http-postdata'] = str(post_data)
+                if mon_method == self.HTTPS:
+                    params['monitor']['method'][mon_method]['https-postdata'] = str(post_data)
+                else:
+                    params['monitor']['method'][mon_method]['http-postdata'] = str(post_data)
                 postpath = params['monitor']['method'][mon_method]['url-path']
                 params['monitor']['method'][mon_method]['post-path'] = postpath
                 params['monitor']['method'][mon_method].pop('url-path', None)
