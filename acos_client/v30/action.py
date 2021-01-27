@@ -115,3 +115,7 @@ class Action(base.BaseV30):
     def get_vcs_summary_oper(self):
         url = "/vcs/vcs-summary/oper"
         return self._get(url)
+
+    def get_thunder_up_time(self):
+        url = "/miscellenious-alb/oper"
+        return self._get(url)
