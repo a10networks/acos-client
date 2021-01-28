@@ -16,7 +16,7 @@ from __future__ import unicode_literals
 
 from acos_client.v30 import base
 from acos_client.v30.slb.port import Port
-
+import validators
 
 class Server(base.BaseV30):
 
@@ -40,8 +40,10 @@ class Server(base.BaseV30):
 
         if port_list:
             params['server']['port-list'] = port_list
-
-        if self._is_ipv6(ip_address):
+        
+        if validators.domain(ip_address):
+            params['server']['fqdn-name'] = ip_address
+        elif self._is_ipv6(ip_address):
             params['server']['server-ipv6-addr'] = ip_address
         else:
             params['server']['host'] = ip_address
