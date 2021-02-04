@@ -17,25 +17,27 @@
 
 
 ## Supported Versions
+
+```
 | ACOS Version   | AXAPI Version | ACOS Client Version | Status      |
-|:--------------:|:-------------:|:-------------------:|:-----------:|
-| 2.7.1†         | 2             | >=0.1.0,<0.3.0      | EOL         |
-| 2.7.2          | 2             | >=0.1.0,<0.3.0      | EOL         |
+| 2.7.1†         | 2             | >=0.1.0,<0.3.0      | end-of-life |
+| 2.7.2          | 2             | >=0.1.0,<0.3.0      | end-of-life |
 | 4.0.0          | 3             | >=1.4.6,<1.5.0      | Maintenance |
 | 4.1.1          | 3             | >=1.5.0,<2.0.0      | Maintenance |
 | 4.1.4 GR1-P2   | 3             | >=2.0.0,<2.4.0      | Maintenance |
-| 4.1.4          | 3             | >=2.4.0             | Development |
+| 4.1.4          | 3             | >=2.4.0             | Maintenance |
+| 4.1.4 GR1-P5   | 3             | >=2.6.0             | Maintenance |
+| 5.2.1          | 3             | >=2.6.0             | Maintenance |
+```
 
 †Works only when not using partitioning
-
-_ACOS versions greater than 4.1.4 are not supported a this time_
 
 ## Installation
 
 ### Install using pip
 
 ```sh
-$ pip install acos-client>=2.0.0
+$ pip install acos-client>=2.6.0
 ```
 
 ### Install from source
@@ -43,15 +45,14 @@ $ pip install acos-client>=2.0.0
 ```sh
 $ git clone https://github.com/a10networks/acos-client.git
 $ cd acos-client
-$ git checkout stable/acos_4_1_4
+$ git checkout stable/stein
 $ pip install -e . 
 ```
 
 ## Usage
 
 ```python
-c = acos_client.Client('somehost.example.com', acos_client.AXAPI_30,
-                       'admin', 'password')
+c = acos_client.Client('somehost.example.com', acos_client.AXAPI_30, 'admin', 'password')
 ```
 
 #### Example setting up an SLB:
@@ -62,9 +63,7 @@ import acos_client as acos
 c = acos.Client('1.2.3.4', acos.AXAPI_30, 'admin', 'password')
 c.slb.server.create('s1', '1.1.1.1')
 c.slb.server.create('s2', '1.1.1.2')
-c.slb.service_group.create('pool1',
-                           c.slb.service_group.TCP,
-                           c.slb.service_group.ROUND_ROBIN)
+c.slb.service_group.create('pool1', c.slb.service_group.TCP, c.slb.service_group.ROUND_ROBIN)
 c.slb.virtual_server.create('vip1', '1.1.1.3')
 c.slb.hm.create('hm1', c.slb.hm.HTTP, 5, 5, 5, 'GET', '/', '200', 80)
 c.slb.service_group.update('pool1', health_monitor='hm1')
