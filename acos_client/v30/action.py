@@ -119,3 +119,11 @@ class Action(base.BaseV30):
     def get_thunder_up_time(self):
         url = "/miscellenious-alb/oper"
         return self._get(url)
+
+    def probe_network_devices(self):
+        url = "/system/probe-network-devices"
+        self._post(url)
+
+    def get_acos_version(self):
+        url = "/version/oper"
+        return self._get(url)
