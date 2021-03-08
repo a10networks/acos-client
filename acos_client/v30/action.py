@@ -127,3 +127,18 @@ class Action(base.BaseV30):
     def get_acos_version(self):
         url = "/version/oper"
         return self._get(url)
+
+    def reload_reboot(self, acos_version=None):
+        if not acos_version:
+            version_summary = self.get_acos_version()
+            acos_version = version_summary['version']['oper']['sw-version'].split(',')[0]
+
+        major = acos_version.split('.')[0]
+        minor = acos_version.split('.')[1]
+        patch = acos_version.split('.')[2]
+
+        if major >= 5 and minor >= 2 and patch >= 0:
+            self.probe_network_devices()
+            self.reload()
+        else:
+            self.reboot()
