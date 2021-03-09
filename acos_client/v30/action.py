@@ -128,7 +128,7 @@ class Action(base.BaseV30):
         url = "/version/oper"
         return self._get(url)
 
-    def reload_reboot(self, acos_version=None):
+    def reload_reboot_for_interface_attachment(self, acos_version=None):
         if not acos_version:
             version_summary = self.get_acos_version()
             acos_version = version_summary['version']['oper']['sw-version'].split(',')[0]
