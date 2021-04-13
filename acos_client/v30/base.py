@@ -64,19 +64,19 @@ class BaseV30(object):
                                      timeout=timeout, axapi_args=axapi_args, **kwargs)
             raise e
 
-    def _get(self, action, params={}, max_retries=None, timeout=None, axapi_args=None, **kwargs):
+    def _get(self, action, params={}, max_retries=None, timeout=300, axapi_args=None, **kwargs):
         return self._request('GET', action, params, max_retries=max_retries, timeout=timeout,
                              axapi_args=axapi_args, **kwargs)
 
-    def _post(self, action, params={}, max_retries=None, timeout=None, axapi_args=None, **kwargs):
+    def _post(self, action, params={}, max_retries=None, timeout=300, axapi_args=None, **kwargs):
         return self._request('POST', action, params, max_retries=max_retries, timeout=timeout,
                              axapi_args=axapi_args, **kwargs)
 
-    def _put(self, action, params={}, max_retries=None, timeout=None, axapi_args=None, **kwargs):
+    def _put(self, action, params={}, max_retries=None, timeout=300, axapi_args=None, **kwargs):
         return self._request('PUT', action, params, max_retries=max_retries, timeout=timeout,
                              axapi_args=axapi_args, **kwargs)
 
-    def _delete(self, action, params={}, max_retries=None, timeout=None, axapi_args=None, **kwargs):
+    def _delete(self, action, params={}, max_retries=None, timeout=300, axapi_args=None, **kwargs):
         return self._request('DELETE', action, params, max_retries=max_retries, timeout=timeout,
                              axapi_args=axapi_args, **kwargs)
 
