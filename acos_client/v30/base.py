@@ -22,7 +22,6 @@ from acos_client import errors as ae
 
 
 class BaseV30(object):
-    AXAPI_DEFAULT_REQ_TIMEOUT = 300
 
     def __init__(self, client):
         self.client = client
@@ -65,23 +64,19 @@ class BaseV30(object):
                                      timeout=timeout, axapi_args=axapi_args, **kwargs)
             raise e
 
-    def _get(self, action, params={}, max_retries=None, timeout=AXAPI_DEFAULT_REQ_TIMEOUT,
-             axapi_args=None, **kwargs):
+    def _get(self, action, params={}, max_retries=None, timeout=None, axapi_args=None, **kwargs):
         return self._request('GET', action, params, max_retries=max_retries, timeout=timeout,
                              axapi_args=axapi_args, **kwargs)
 
-    def _post(self, action, params={}, max_retries=None, timeout=AXAPI_DEFAULT_REQ_TIMEOUT,
-              axapi_args=None, **kwargs):
+    def _post(self, action, params={}, max_retries=None, timeout=None, axapi_args=None, **kwargs):
         return self._request('POST', action, params, max_retries=max_retries, timeout=timeout,
                              axapi_args=axapi_args, **kwargs)
 
-    def _put(self, action, params={}, max_retries=None, timeout=AXAPI_DEFAULT_REQ_TIMEOUT,
-             axapi_args=None, **kwargs):
+    def _put(self, action, params={}, max_retries=None, timeout=None, axapi_args=None, **kwargs):
         return self._request('PUT', action, params, max_retries=max_retries, timeout=timeout,
                              axapi_args=axapi_args, **kwargs)
 
-    def _delete(self, action, params={}, max_retries=None, timeout=AXAPI_DEFAULT_REQ_TIMEOUT,
-                axapi_args=None, **kwargs):
+    def _delete(self, action, params={}, max_retries=None, timeout=None, axapi_args=None, **kwargs):
         return self._request('DELETE', action, params, max_retries=max_retries, timeout=timeout,
                              axapi_args=axapi_args, **kwargs)
 
