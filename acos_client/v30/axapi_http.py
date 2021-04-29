@@ -175,7 +175,7 @@ class HttpClient(object):
                                          **kwargs)
 
             except (ae.ACOSSystemIsBusy) as e:
-                LOG.warning("ACOS response System is busy 1: %s", str(e))
+                LOG.warning("ACOS device system is busy: %s", str(e))
                 attemps = attemps - 2
                 if attemps <= 0:
                     raise e
