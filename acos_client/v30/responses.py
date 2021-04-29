@@ -200,6 +200,16 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    1023464192: {
+        '*': {
+            '*': ae.ACOSSystemNotReady
+        }
+    },
+    1023464193: {
+        '*': {
+            '*': ae.ACOSSystemIsBusy
+        }
+    },
     1023475727: {
         '*': {
             '*': ae.NotFound

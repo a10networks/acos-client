@@ -17,10 +17,13 @@ from __future__ import unicode_literals
 
 import json
 import logging
+import time
+
 from requests.adapters import HTTPAdapter
 from requests import Session
 
 import acos_client
+from acos_client import errors as ae
 from acos_client import logutils
 from acos_client.v30 import responses as acos_responses
 
@@ -64,9 +67,9 @@ class HttpClient(object):
         else:
             return my_dict
 
-    def request(self, method, api_url, params={}, headers=None,
-                file_name=None, file_content=None, axapi_args=None,
-                max_retries=None, timeout=None, **kwargs):
+    def request_impl(self, method, api_url, params={}, headers=None,
+                     file_name=None, file_content=None, axapi_args=None,
+                     max_retries=None, timeout=None, **kwargs):
         LOG.debug("axapi_http: full url = %s", self.url_base + api_url)
         LOG.debug("axapi_http: %s url = %s", method, api_url)
         LOG.debug("axapi_http: params = %s", json.dumps(logutils.clean(params), indent=4))
@@ -156,6 +159,29 @@ class HttpClient(object):
             acos_responses.raise_axapi_auth_error(json_response, method, api_url, headers)
 
         return json_response
+
+    def request(self, method, api_url, params={}, headers=None,
+                file_name=None, file_content=None, axapi_args=None,
+                max_retries=None, timeout=None, **kwargs):
+        attemps = 300
+        if timeout and timeout > attemps:
+            attemps = timeout
+
+        while attemps > 0:
+            try:
+                return self.request_impl(method, api_url, params, headers,
+                                         max_retries=max_retries,
+                                         timeout=timeout, axapi_args=axapi_args,
+                                         **kwargs)
+
+            except (ae.ACOSSystemIsBusy) as e:
+                LOG.warning("ACOS response System is busy 1: %s", str(e))
+                attemps = attemps - 2
+                if attemps <= 0:
+                    raise e
+                time.sleep(2)
+            except (Exception) as e:
+                raise e
 
     def get(self, api_url, params={}, headers=None, max_retries=None, timeout=None, axapi_args=None, **kwargs):
         return self.request("GET", api_url, params, headers, max_retries=max_retries,
