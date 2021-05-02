@@ -35,12 +35,14 @@ broken_replies = {
 
 
 class HttpClient(object):
+    AXAPI_DEFAULT_REQ_TIMEOUT = 300
     HEADERS = {
         "Content-type": "application/json",
         "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
-    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=5):
+    def __init__(self, host, port=None, protocol="https", max_retries=3,
+                 timeout=AXAPI_DEFAULT_REQ_TIMEOUT):
         if port is None:
             if protocol is 'http':
                 self.port = 80
