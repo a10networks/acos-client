@@ -172,6 +172,7 @@ class HttpClient(object):
         while attemps > 0:
             try:
                 return self.request_impl(method, api_url, params, headers,
+                                         file_name=file_name, file_content=file_content,
                                          max_retries=max_retries,
                                          timeout=timeout, axapi_args=axapi_args,
                                          **kwargs)
