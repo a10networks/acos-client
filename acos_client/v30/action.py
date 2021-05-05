@@ -89,7 +89,7 @@ class Action(base.BaseV30):
 
     def set_vcs_para(self, floating_ip, floating_ip_mask):
         data = {"vcs-para": {"floating-ip-cfg": [{"floating-ip": floating_ip,
-                "floating-ip-mask": floating_ip_mask}]}}
+                "floating-ip-mask": floating_ip_mask}], "forever": 1}}
         url = "/vcs/vcs-para"
         self._post(url, data)
 
