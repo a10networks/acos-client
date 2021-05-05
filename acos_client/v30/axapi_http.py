@@ -177,7 +177,7 @@ class HttpClient(object):
                                          timeout=timeout, axapi_args=axapi_args,
                                          **kwargs)
 
-            except (ae.ACOSSystemIsBusy) as e:
+            except (ae.ACOSSystemIsBusy, ae.ACOSSystemNotReady) as e:
                 LOG.warning("ACOS device system is busy: %s", str(e))
                 attemps = attemps - 2
                 if attemps <= 0:
