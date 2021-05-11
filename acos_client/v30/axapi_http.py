@@ -20,8 +20,8 @@ import logging
 import time
 
 from requests.adapters import HTTPAdapter
-from requests import Session
 from requests import exceptions as req_exceptions
+from requests import Session
 
 import acos_client
 from acos_client import errors as ae
