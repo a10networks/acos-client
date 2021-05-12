@@ -20,6 +20,7 @@ import logging
 import time
 
 from requests.adapters import HTTPAdapter
+from requests import exceptions as req_exceptions
 from requests import Session
 
 import acos_client
@@ -177,7 +178,7 @@ class HttpClient(object):
                                          timeout=timeout, axapi_args=axapi_args,
                                          **kwargs)
 
-            except (ae.ACOSSystemIsBusy, ae.ACOSSystemNotReady) as e:
+            except (ae.ACOSSystemIsBusy, ae.ACOSSystemNotReady, req_exceptions.ConnectionError) as e:
                 LOG.warning("ACOS device system is busy: %s", str(e))
                 attemps = attemps - 2
                 if attemps <= 0:
