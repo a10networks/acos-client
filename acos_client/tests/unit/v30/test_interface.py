@@ -33,12 +33,12 @@ class TestInterface(unittest.TestCase):
     def test_interface_get_list(self):
         self.target.get_list()
         self.client.http.request.assert_called_with("GET", self.url_prefix, {}, mock.ANY, axapi_args=None,
-                                                    max_retries=None, timeout=None)
+                                                    max_retries=None, timeout=mock.ANY)
 
     def test_interface_get(self):
         self.target.get()
         self.client.http.request.assert_called_with("GET", self.url_prefix, {}, mock.ANY, axapi_args=None,
-                                                    max_retries=None, timeout=None)
+                                                    max_retries=None, timeout=mock.ANY)
 
     def _test_interface_create_dhcp(self, dhcp=True):
         expected = 1 if dhcp else 0
@@ -47,7 +47,7 @@ class TestInterface(unittest.TestCase):
         self.target.create(ifnum, dhcp=dhcp)
         self.client.http.request.assert_called_with("POST", self.url_prefix,  # URL + ifnum expected
                                                     expected_payload, mock.ANY, axapi_args=None,
-                                                    max_retries=None, timeout=None)
+                                                    max_retries=None, timeout=mock.ANY)
 
     def test_interface_create_dhcp_negative(self):
         self._test_interface_create_dhcp(False)
@@ -61,14 +61,14 @@ class TestInterface(unittest.TestCase):
         ip_netmask = "255.255.255.0"
         self.target.create(ifnum, dhcp=False, ip_address=ip_address, ip_netmask=ip_netmask)
         self.client.http.request.assert_called_with("POST", self.url_prefix, mock.ANY, mock.ANY,
-                                                    axapi_args=None, max_retries=None, timeout=None)
+                                                    axapi_args=None, max_retries=None, timeout=mock.ANY)
 
     def test_interface_delete(self):
         ifnum = 1
         self.target.delete(1)
         self.client.http.request.assert_called_with("DELETE", self.url_prefix + str(ifnum),
                                                     mock.ANY, mock.ANY, axapi_args=None, max_retries=None,
-                                                    timeout=None)
+                                                    timeout=mock.ANY)
 
     def test_interface_update(self):
         ifnum = 1
@@ -79,7 +79,7 @@ class TestInterface(unittest.TestCase):
 
         self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
                                                     mock.ANY, mock.ANY, axapi_args=None, max_retries=None,
-                                                    timeout=None)
+                                                    timeout=mock.ANY)
 
     def test_interface_enable_positive(self):
         ifnum = 1
@@ -94,7 +94,7 @@ class TestInterface(unittest.TestCase):
 
         self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
                                                     mock.ANY, mock.ANY, axapi_args=None, max_retries=None,
-                                                    timeout=None)
+                                                    timeout=mock.ANY)
 
     def test_interface_enable_negative(self):
         ifnum = 1
@@ -110,7 +110,7 @@ class TestInterface(unittest.TestCase):
 
         self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
                                                     mock.ANY, mock.ANY, axapi_args=None, max_retries=None,
-                                                    timeout=None)
+                                                    timeout=mock.ANY)
 
 
 class TestEthernetInterface(TestInterface):

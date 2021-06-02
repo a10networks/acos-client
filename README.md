@@ -93,8 +93,6 @@ $ tox
 ## Issues and Inquiries
 For all issues, please send an email to support@a10networks.com 
 
-For general inquiries, please send an email to opensource@a10networks.com
-
 
 ## Helpful links
 
