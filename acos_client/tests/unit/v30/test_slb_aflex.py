@@ -56,8 +56,8 @@ class TestAFlex(unittest.TestCase):
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
-        self.assertIn(filename, responses.calls[1].request.body.decode('UTF-8'))
-        self.assertIn(action, responses.calls[1].request.body.decode('UTF-8'))
+        self.assertIn(filename, responses.calls[1].request.body.decode("utf-8"))
+        self.assertIn(action, responses.calls[1].request.body.decode("utf-8"))
 
     @mock.patch('acos_client.v30.slb.aflex_policy.AFlexPolicy.get')
     @responses.activate
@@ -76,8 +76,8 @@ class TestAFlex(unittest.TestCase):
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
-        self.assertIn(filename, responses.calls[1].request.body.decode('UTF-8'))
-        self.assertIn(action, responses.calls[1].request.body.decode('UTF-8'))
+        self.assertIn(filename, responses.calls[1].request.body.decode("utf-8"))
+        self.assertIn(action, responses.calls[1].request.body.decode("utf-8"))
 
     @mock.patch('acos_client.v30.slb.aflex_policy.AFlexPolicy.get')
     @responses.activate
@@ -93,5 +93,5 @@ class TestAFlex(unittest.TestCase):
         self.assertEqual(len(responses.calls), 2)
         self.assertEqual(responses.calls[1].request.method, responses.POST)
         self.assertEqual(responses.calls[1].request.url, CREATE_URL)
-        self.assertIn(filename, responses.calls[1].request.body.decode('UTF-8'))
-        self.assertIn('delete', responses.calls[1].request.body.decode('UTF-8'))
+        self.assertIn(filename, responses.calls[1].request.body.decode("utf-8"))
+        self.assertIn('delete', responses.calls[1].request.body.decode("utf-8"))

@@ -17,6 +17,7 @@ from __future__ import unicode_literals
 import re
 
 from acos_client import errors as ae
+from requests import exceptions as req_ex
 
 RESPONSE_CODES = {
     33619969: {
@@ -200,6 +201,16 @@ RESPONSE_CODES = {
             '*': ae.Exists
         }
     },
+    1023464192: {
+        '*': {
+            '*': ae.ACOSSystemNotReady
+        }
+    },
+    1023464193: {
+        '*': {
+            '*': ae.ACOSSystemIsBusy
+        }
+    },
     1023475727: {
         '*': {
             '*': ae.NotFound
@@ -266,3 +277,7 @@ def raise_axapi_ex(response, method, api_url):
         raise ae.ACOSException(code, response['response']['err']['msg'])
 
     raise ae.ACOSException()
+
+
+def axapi_retry_exceptions():
+    return (ae.ACOSSystemIsBusy, ae.ACOSSystemNotReady, req_ex.ConnectionError)

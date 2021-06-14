@@ -17,6 +17,8 @@ from __future__ import unicode_literals
 
 import json
 import logging
+import time
+
 from requests.adapters import HTTPAdapter
 from requests import Session
 
@@ -32,12 +34,14 @@ broken_replies = {
 
 
 class HttpClient(object):
+    AXAPI_DEFAULT_REQ_TIMEOUT = 300
     HEADERS = {
         "Content-type": "application/json",
         "User-Agent": "ACOS-Client-AGENT-%s" % acos_client.VERSION,
     }
 
-    def __init__(self, host, port=None, protocol="https", max_retries=3, timeout=5):
+    def __init__(self, host, port=None, protocol="https", max_retries=3,
+                 timeout=AXAPI_DEFAULT_REQ_TIMEOUT):
         if port is None:
             if protocol == 'http':
                 self.port = 80
@@ -64,9 +68,9 @@ class HttpClient(object):
         else:
             return my_dict
 
-    def request(self, method, api_url, params={}, headers=None,
-                file_name=None, file_content=None, axapi_args=None,
-                max_retries=None, timeout=None, **kwargs):
+    def request_impl(self, method, api_url, params={}, headers=None,
+                     file_name=None, file_content=None, axapi_args=None,
+                     max_retries=None, timeout=None, **kwargs):
         LOG.debug("axapi_http: full url = %s", self.url_base + api_url)
         LOG.debug("axapi_http: %s url = %s", method, api_url)
         LOG.debug("axapi_http: params = %s", json.dumps(logutils.clean(params), indent=4))
@@ -156,6 +160,32 @@ class HttpClient(object):
             acos_responses.raise_axapi_auth_error(json_response, method, api_url, headers)
 
         return json_response
+
+    def request(self, method, api_url, params={}, headers=None,
+                file_name=None, file_content=None, axapi_args=None,
+                max_retries=None, timeout=None, **kwargs):
+        retry_timeout = 300
+        if timeout and timeout > retry_timeout:
+            retry_timeout = timeout
+        start_time = time.time()
+        loop = True
+
+        while loop:
+            try:
+                return self.request_impl(method, api_url, params, headers,
+                                         file_name=file_name, file_content=file_content,
+                                         max_retries=max_retries,
+                                         timeout=timeout, axapi_args=axapi_args,
+                                         **kwargs)
+
+            except acos_responses.axapi_retry_exceptions() as e:
+                LOG.warning("ACOS device system is busy: %s", str(e))
+                loop = ((time.time() - start_time) <= retry_timeout)
+                if not loop:
+                    raise e
+                time.sleep(1)
+            except (Exception) as e:
+                raise e
 
     def get(self, api_url, params={}, headers=None, max_retries=None, timeout=None, axapi_args=None, **kwargs):
         return self.request("GET", api_url, params, headers, max_retries=max_retries,
