@@ -133,9 +133,9 @@ class Action(base.BaseV30):
             version_summary = self.get_acos_version()
             acos_version = version_summary['version']['oper']['sw-version'].split(',')[0]
 
-        major = acos_version.split('.')[0]
-        minor = acos_version.split('.')[1]
-        patch = acos_version.split('.')[2]
+        major = int(acos_version.split('.')[0])
+        minor = int(acos_version.split('.')[1])
+        patch = int(acos_version.split('.')[2])
 
         if major >= 5 and minor >= 2 and patch >= 0:
             self.probe_network_devices()
@@ -148,9 +148,9 @@ class Action(base.BaseV30):
             version_summary = self.get_acos_version()
             acos_version = version_summary['version']['oper']['sw-version'].split(',')[0]
 
-        major = acos_version.split('.')[0]
-        minor = acos_version.split('.')[1]
-        patch = acos_version.split('.')[2]
+        major = int(acos_version.split('.')[0])
+        minor = int(acos_version.split('.')[1])
+        patch = int(acos_version.split('.')[2])
 
         if major >= 5 and minor >= 2 and patch >= 1:
             self.probe_network_devices()
