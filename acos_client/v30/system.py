@@ -31,3 +31,8 @@ class System(base.BaseV30):
 
     def information(self):
         return self._get("/system")
+
+    def stats(self, name='', max_retries=None, timeout=None, **kwargs):
+        return self._get("/system/" + name + '/stats',
+                         max_retries=max_retries, timeout=timeout,
+                         **kwargs)

@@ -113,3 +113,11 @@ class KeyParsingFailed(ACOSException):
 
 class FeatureNotSupported(ACOSException):
     pass
+
+
+class ACOSSystemNotReady(ACOSException):
+    pass
+
+
+class ACOSSystemIsBusy(ACOSException):
+    pass

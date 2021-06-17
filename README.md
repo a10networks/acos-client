@@ -28,6 +28,7 @@
 | 4.1.4          | 3             | >=2.4.0             | Maintenance |
 | 4.1.4 GR1-P5   | 3             | >=2.6.0             | Maintenance |
 | 5.2.1          | 3             | >=2.6.0             | Maintenance |
+| 5.2.1-p1       | 3             | >=2.7.0             | Maintenance |
 ```
 
 †Works only when not using partitioning
@@ -92,8 +93,6 @@ $ tox
 
 ## Issues and Inquiries
 For all issues, please send an email to support@a10networks.com 
-
-For general inquiries, please send an email to opensource@a10networks.com
 
 
 ## Helpful links

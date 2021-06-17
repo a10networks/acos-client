@@ -89,7 +89,7 @@ class Action(base.BaseV30):
 
     def set_vcs_para(self, floating_ip, floating_ip_mask):
         data = {"vcs-para": {"floating-ip-cfg": [{"floating-ip": floating_ip,
-                "floating-ip-mask": floating_ip_mask}]}}
+                "floating-ip-mask": floating_ip_mask}], "forever": 1}}
         url = "/vcs/vcs-para"
         self._post(url, data)
 
@@ -119,3 +119,41 @@ class Action(base.BaseV30):
     def get_thunder_up_time(self):
         url = "/miscellenious-alb/oper"
         return self._get(url)
+
+    def probe_network_devices(self):
+        url = "/system/probe-network-devices"
+        self._post(url)
+
+    def get_acos_version(self):
+        url = "/version/oper"
+        return self._get(url)
+
+    def reload_reboot_for_interface_attachment(self, acos_version=None):
+        if not acos_version:
+            version_summary = self.get_acos_version()
+            acos_version = version_summary['version']['oper']['sw-version'].split(',')[0]
+
+        major = int(acos_version.split('.')[0])
+        minor = int(acos_version.split('.')[1])
+        patch = int(acos_version.split('.')[2])
+
+        if major >= 5 and minor >= 2 and patch >= 0:
+            self.probe_network_devices()
+            self.reload()
+        else:
+            self.reboot()
+
+    def reload_reboot_for_interface_detachment(self, acos_version=None):
+        if not acos_version:
+            version_summary = self.get_acos_version()
+            acos_version = version_summary['version']['oper']['sw-version'].split(',')[0]
+
+        major = int(acos_version.split('.')[0])
+        minor = int(acos_version.split('.')[1])
+        patch = int(acos_version.split('.')[2])
+
+        if major >= 5 and minor >= 2 and patch >= 1:
+            self.probe_network_devices()
+            self.reload()
+        else:
+            self.reboot()
