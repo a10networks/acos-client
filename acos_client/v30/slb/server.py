@@ -26,6 +26,9 @@ class Server(base.BaseV30):
         return self._get(self.url_prefix + name, max_retries=max_retries, timeout=timeout,
                          axapi_args=kwargs)
 
+    def get_all(self):
+        return self._get(self.url_prefix)
+
     def _set(self, name, ip_address, status=1, server_templates=None, port_list=None,
              conn_resume=None, conn_limit=None, health_check=None, **kwargs):
         params = {
