@@ -81,5 +81,8 @@ class BaseV30(object):
                              axapi_args=axapi_args, **kwargs)
 
     def _is_ipv6(self, ip_address):
-        validated_ip_address = ipaddress.ip_address(six.text_type(ip_address))
-        return isinstance(validated_ip_address, ipaddress.IPv6Address)
+        ip_version = ipaddress.ip_address(ip_address).version
+        if ip_version == 4:
+            return False
+        if ip_version == 6:
+            return True
