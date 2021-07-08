@@ -30,7 +30,7 @@ def acos_version_str2int(ver):
 
 def acos_revision_parse(revision):
     rev = []
-    revision_list = ['GR', 'p', 'sp']
+    revision_list = ['GR', 'P', 'SP']
     for tag in revision_list:
         tag_index = revision.find(tag)
         if tag_index >= 0:
