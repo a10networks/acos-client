@@ -50,7 +50,7 @@ def acos_version(acos_version):
     revision = ""
     prev = acos_version.find('-')
     if prev > 0:
-        revision = acos_version[prev + 1:]
+        revision = acos_version[prev + 1:].upper()
     gr, p, sp = acos_revision_parse(revision)
 
     return (major, minor, patch, gr, p, sp)

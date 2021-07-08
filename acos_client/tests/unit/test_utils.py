@@ -33,8 +33,16 @@ class TestUtils(unittest.TestCase):
         tup = acos_client.utils.acos_version("4.1.1-P2")
         self.assertEqual(tup, exp)
 
+        exp = (4, 1, 1, 0, 2, 0)
+        tup = acos_client.utils.acos_version("4.1.1-p2")
+        self.assertEqual(tup, exp)
+
         exp = (4, 1, 4, 1, 2, 0)
         tup = acos_client.utils.acos_version("4.1.4-GR1-P2")
+        self.assertEqual(tup, exp)
+
+        exp = (4, 1, 4, 1, 3, 4)
+        tup = acos_client.utils.acos_version("4.1.4-gr1-p3-sp4")
         self.assertEqual(tup, exp)
 
         exp = (4, 1, 4, 1, 3, 4)
@@ -66,3 +74,10 @@ class TestUtils(unittest.TestCase):
 
         rt = acos_client.utils.acos_version_cmp("5.2.1-GR1-P3-SP1", "5.2.1-GR1-P3")
         self.assertGreater(rt, 0)
+
+        #case insensitive
+        rt = acos_client.utils.acos_version_cmp("5.2.1-GR1-p1", "5.2.1-GR1")
+        self.assertGreater(rt, 0)
+
+        rt = acos_client.utils.acos_version_cmp("5.2.1-GR1-P3-SP1", "5.2.1-gr1-p3-sp1")
+        self.assertEqual(rt, 0)
