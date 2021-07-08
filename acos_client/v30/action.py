@@ -17,7 +17,7 @@ from __future__ import unicode_literals
 from acos_client import errors as ae
 from acos_client.v30 import base
 
-import acos_client.v30.utils as utils
+import acos_client.utils as utils
 
 
 class Action(base.BaseV30):
