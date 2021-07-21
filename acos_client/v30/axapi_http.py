@@ -20,11 +20,9 @@ import logging
 import time
 
 from requests.adapters import HTTPAdapter
-from requests import exceptions as req_exceptions
 from requests import Session
 
 import acos_client
-from acos_client import errors as ae
 from acos_client import logutils
 from acos_client.v30 import responses as acos_responses
 
@@ -166,11 +164,13 @@ class HttpClient(object):
     def request(self, method, api_url, params={}, headers=None,
                 file_name=None, file_content=None, axapi_args=None,
                 max_retries=None, timeout=None, **kwargs):
-        attemps = 300
-        if timeout and timeout > attemps:
-            attemps = timeout
+        retry_timeout = 300
+        if timeout and timeout > retry_timeout:
+            retry_timeout = timeout
+        start_time = time.time()
+        loop = True
 
-        while attemps > 0:
+        while loop:
             try:
                 return self.request_impl(method, api_url, params, headers,
                                          file_name=file_name, file_content=file_content,
@@ -178,12 +178,12 @@ class HttpClient(object):
                                          timeout=timeout, axapi_args=axapi_args,
                                          **kwargs)
 
-            except (ae.ACOSSystemIsBusy, ae.ACOSSystemNotReady, req_exceptions.ConnectionError) as e:
+            except acos_responses.axapi_retry_exceptions() as e:
                 LOG.warning("ACOS device system is busy: %s", str(e))
-                attemps = attemps - 2
-                if attemps <= 0:
+                loop = ((time.time() - start_time) <= retry_timeout)
+                if not loop:
                     raise e
-                time.sleep(2)
+                time.sleep(1)
             except (Exception) as e:
                 raise e
 
