@@ -47,3 +47,13 @@ class DNS(base.BaseV30):
 
         if suffix is not None:
             self._set_suffix(suffix)
+
+    def delete(self, primary=None, secondary=None, suffix=None):
+        if primary is not None:
+            self._delete(self.url_prefix + 'primary')
+
+        if secondary is not None:
+            self._delete(self.url_prefix + 'secondary')
+
+        if summary is not None:
+            self._delete(self.url_prefix + 'suffix')
