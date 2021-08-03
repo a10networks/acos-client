@@ -17,6 +17,8 @@ from __future__ import unicode_literals
 from acos_client import errors as ae
 from acos_client.v30 import base
 
+import acos_client.utils as utils
+
 
 class Action(base.BaseV30):
 
@@ -53,6 +55,10 @@ class Action(base.BaseV30):
 
     def reload(self):
         self._post("/reload", "")
+
+    def reload_all(self):
+        payload = {"reload": {"all": 1}}
+        self._post("/reload", payload)
 
     def setInterface(self, interface):
         data = {"ethernet": {"ifnum": str(interface), "name": "DataPort",
@@ -133,13 +139,9 @@ class Action(base.BaseV30):
             version_summary = self.get_acos_version()
             acos_version = version_summary['version']['oper']['sw-version'].split(',')[0]
 
-        major = acos_version.split('.')[0]
-        minor = acos_version.split('.')[1]
-        patch = acos_version.split('.')[2]
-
-        if major >= 5 and minor >= 2 and patch >= 0:
+        if utils.acos_version_cmp(acos_version, "5.2.0") >= 0:
             self.probe_network_devices()
-            self.reload()
+            self.reload_all()
         else:
             self.reboot()
 
@@ -148,12 +150,8 @@ class Action(base.BaseV30):
             version_summary = self.get_acos_version()
             acos_version = version_summary['version']['oper']['sw-version'].split(',')[0]
 
-        major = acos_version.split('.')[0]
-        minor = acos_version.split('.')[1]
-        patch = acos_version.split('.')[2]
-
-        if major >= 5 and minor >= 2 and patch >= 1:
+        if utils.acos_version_cmp(acos_version, "5.2.1") >= 0:
             self.probe_network_devices()
-            self.reload()
+            self.reload_all()
         else:
             self.reboot()
