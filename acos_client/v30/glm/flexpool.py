@@ -13,8 +13,8 @@
 #    under the License.
 
 from acos_client.v30 import base
-from acos_client.v30.glm.proxy import ProxyServer
-from acos_client.v30.glm.license import LicenseRequest
+from acos_client.v30.glm import proxy
+from acos_client.v30.glm import license
 
 
 class Flexpool(base.BaseV30):
@@ -22,15 +22,15 @@ class Flexpool(base.BaseV30):
 
     @property
     def proxy_server(self):
-        return ProxyServer(self.client)
+        return proxy.ProxyServer(self.client)
 
     @property
     def create_license_request(self):
-        return LicenseRequest(self.client)
+        return license.LicenseRequest(self.client)
 
     @property
     def new_licese(self):
-        return NewLicense(self.client)
+        return license.NewLicense(self.client)
 
     @property
     def send(self):
@@ -40,11 +40,10 @@ class Flexpool(base.BaseV30):
              check_expiration=None, enable_requests=None, enterpise=None,
              enterprise_request_type=None, host=None, interval=None,
              port=None, thunder_capacity_license=None, token=None,
-             use_mgmt_port=None, uuid=None, **kwargs):
+             use_mgmt_port=None):
         
         params = {
             "glm": self.minimal_dict({
-                "uuid": uuid,
                 "host": host,
                 "port": port,
                 "burst": burst,
@@ -61,18 +60,48 @@ class Flexpool(base.BaseV30):
             })
         }
 
-        return params, kwargs
+        return params
 
-    def create(self, *args, **kwargs):
-        params, kwargs = self._set(*args, **kwargs)
+    def create(self, appliance_name=None, allocate_bandwith=None, burst=None,
+               check_expiration=None, enable_requests=None, enterpise=None,
+               enterprise_request_type=None, host=None, interval=None,
+               port=None, thunder_capacity_license=None, token=None,
+               use_mgmt_port=None, **kwargs):
+        params = self._set(appliance_name=appliance_name,
+            allocate_bandwith=allocate_bandwith, burst=burst,
+            check_expiration=check_expiration, enable_requests=enable_requests,
+            enterpise=enterpise, enterprise_request_type=enterprise_request_type,
+            thunder_capacity_license=thunder_capacity_license,
+            token=token, use_mgmt_port=use_mgmt_port,
+            host=host, interval=interval, port=port)
         return self._post(self.url_prefix, params, axapi_args=kwargs)
 
-    def update(self, *args, **kwargs):
-        params, kwargs = self._set(*args, **kwargs)
+    def update(self, appliance_name=None, allocate_bandwith=None, burst=None,
+             check_expiration=None, enable_requests=None, enterpise=None,
+             enterprise_request_type=None, host=None, interval=None,
+             port=None, thunder_capacity_license=None, token=None,
+             use_mgmt_port=None, **kwargs):
+        params, kwargs = self._set(appliance_name=appliance_name,
+            allocate_bandwith=allocate_bandwith, burst=burst,
+            check_expiration=check_expiration, enable_requests=enable_requests,
+            enterpise=enterpise, enterprise_request_type=enterprise_request_type,
+            thunder_capacity_license=thunder_capacity_license,
+            token=token, use_mgmt_port=use_mgmt_port,
+            host=host, interval=interval, port=port)
         return self._post(self.url_prefix, params, axapi_args=kwargs)
 
-    def replace(self, *args, **kwargs):
-        params, kwargs = self._set(*args, **kwargs)
+    def replace(self, appliance_name=None, allocate_bandwith=None, burst=None,
+             check_expiration=None, enable_requests=None, enterpise=None,
+             enterprise_request_type=None, host=None, interval=None,
+             port=None, thunder_capacity_license=None, token=None,
+             use_mgmt_port=None, **kwargs):
+        params, kwargs = self._set(appliance_name=appliance_name,
+            allocate_bandwith=allocate_bandwith, burst=burst,
+            check_expiration=check_expiration, enable_requests=enable_requests,
+            enterpise=enterpise, enterprise_request_type=enterprise_request_type,
+            thunder_capacity_license=thunder_capacity_license,
+            token=token, use_mgmt_port=use_mgmt_port,
+            host=host, interval=interval, port=port)
         return self._put(self.url_prefix, params, axapi_args=kwargs)
 
     def delete(self):
@@ -82,20 +111,7 @@ class Flexpool(base.BaseV30):
 class Send(base.BaseV30):
     url_prefix = '/glm/send'
 
-    def create(self, license_request=None):
-        params = {
-            "send": self.minimal_dict({
-                "license-request": license_request
-            })
-        }
-
-        self._post(self.url_prefix, params)
-
-
-class NewLicense(base.BaseV30):
-    url_prefix = '/glm/send'
-
-    def create(self, license_request=None):
+    def create(self, license_request):
         params = {
             "send": self.minimal_dict({
                 "license-request": license_request
