@@ -159,7 +159,16 @@ class Client(object):
 
     @property
     def license_manager(self):
+        LOG.warning("The paygo method been deprecated and will be removed "
+                    "in a future release.")
         return VERSION_IMPORTS[self._version]["LicenseManager"](self)
+
+    @property
+    def glm(self):
+        if self._version != '30':
+            LOG.error("AXAPIv21 is not supported for the glm attribute")
+            return
+        return VERSION_IMPORTS['30']["GlobalLicenseManager"](self)
 
     @property
     def overlay(self):
