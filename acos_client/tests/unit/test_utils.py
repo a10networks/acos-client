@@ -75,7 +75,7 @@ class TestUtils(unittest.TestCase):
         rt = acos_client.utils.acos_version_cmp("5.2.1-GR1-P3-SP1", "5.2.1-GR1-P3")
         self.assertGreater(rt, 0)
 
-        #case insensitive
+        # case insensitive
         rt = acos_client.utils.acos_version_cmp("5.2.1-GR1-p1", "5.2.1-GR1")
         self.assertGreater(rt, 0)
 

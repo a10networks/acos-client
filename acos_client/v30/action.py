@@ -56,6 +56,10 @@ class Action(base.BaseV30):
     def reload(self):
         self._post("/reload", "")
 
+    def reload_all(self):
+        payload = {"reload": {"all": 1}}
+        self._post("/reload", payload)
+
     def setInterface(self, interface):
         data = {"ethernet": {"ifnum": str(interface), "name": "DataPort",
                 "action": "enable", "ip": {"dhcp": 1}}}
@@ -137,7 +141,7 @@ class Action(base.BaseV30):
 
         if utils.acos_version_cmp(acos_version, "5.2.0") >= 0:
             self.probe_network_devices()
-            self.reload()
+            self.reload_all()
         else:
             self.reboot()
 
@@ -148,6 +152,6 @@ class Action(base.BaseV30):
 
         if utils.acos_version_cmp(acos_version, "5.2.1") >= 0:
             self.probe_network_devices()
-            self.reload()
+            self.reload_all()
         else:
             self.reboot()
