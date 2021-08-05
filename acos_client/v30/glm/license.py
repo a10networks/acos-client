@@ -13,7 +13,7 @@
 #    under the License.
 
 from acos_client.v30 import base
-
+from acos_client import errors as acos_errors
 
 class LicenseRequest(base.BaseV30):
     url_prefix = '/glm/create-license-request'
@@ -41,14 +41,71 @@ class LicenseRequest(base.BaseV30):
         return self._delete(self.url_prefix)
 
 
-class NewLicense(base.BaseV30):
-    url_prefix = '/glm/send'
+class MultiLicenseException(Exception):
 
-    def create(self, license_request=None):
+    def __init__(self):
+        self.message = ("Only one of the following attributes can be "
+                       "used to define a new license: existing_org, "
+                       "existing_user, new_user, or name. These cannot "
+                       "be used in conjuction.")
+        super(MultiLicenseException, self).__init__()
+
+
+class NewLicense(base.BaseV30):
+    url_prefix = '/glm/new-license'
+
+    def create(self, account_name=None, country=None, existing_org=None,
+               glm_password=None, last_name=None, name=None, new_email=None,
+               new_password=None, new_user=None, org_id=None, phone=None,
+               license_type=None, existing_user=None, first_name=None,
+               glm_email=None):
         params = {
-            "send": self.minimal_dict({
-                "license-request": license_request
-            })
+            "new-license": {}
         }
+
+        xor = bool(existing_org) + bool(existing_user) + bool(new_user) + bool(name)
+
+        if xor > 1:
+            raise MultiLicenseException()
+
+        if existing_org:
+            params['new-license'] = self.minimal_dict({
+                'existing-org': existing_org,
+                'org-id': org_id
+            })
+        elif existing_user:
+            if not glm_email:
+                raise acos_errors.RequiredAttributeNotSpecified(
+                    self.url_prefix, "existing_user", ["glm_email"])
+
+            params['new-license'] = self.minimal_dict({
+                'existing-user': existing_user,
+                'glm-email': glm_email,
+                'glm-password': glm_password
+            })
+        elif new_user:
+            if not new_email:
+                raise acos_errors.RequiredAttributeNotSpecified(
+                    self.url_prefix, "new_user", ["new_email"])
+            
+            params['new-license'] = self.minimal_dict({
+                'new-user': new_user,
+                'new-email': new_email,
+                'new-password': new_password,
+                'account-name': account_name,
+                'first-name': first_name,
+                'last-name': last_name,
+                'country': country,
+                'phone': phone
+            })
+        elif name:
+            if not license_type:
+                raise acos_errors.RequiredAttributeNotSpecified(
+                    self.url_prefix, "name", ["license_type"])
+            
+            params['new-license'] = self.minimal_dict({
+                'name': name,
+                'type': license_type
+            })
 
         self._post(self.url_prefix, params)
