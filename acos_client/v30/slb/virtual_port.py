@@ -68,6 +68,11 @@ class VirtualPort(base.BaseV30):
         url += self.format_vport_url(port_number=port, protocol=protocol)
         return self._get(url)
 
+    def get_stats(self, virtual_server_name, name, protocol, port):
+        url = self.url_server_tmpl.format(name=virtual_server_name)
+        url += self.format_vport_url(port_number=port, protocol=protocol)
+        return self._get(url + "/stats")
+
     def _set(
         self,
         virtual_server_name,
