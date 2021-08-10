@@ -55,5 +55,5 @@ class DNS(base.BaseV30):
         if secondary is not None:
             self._delete(self.url_prefix + 'secondary')
 
-        if summary is not None:
+        if suffix is not None:
             self._delete(self.url_prefix + 'suffix')
