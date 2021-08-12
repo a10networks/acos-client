@@ -41,6 +41,7 @@ from acos_client.v30.file import File as v30_File
 from acos_client.v30.ha import HA as v30_HA
 from acos_client.v30.interface import Interface as v30_Interface
 from acos_client.v30.license_manager import LicenseManager as v30_LicenseManager
+from acos_client.v30.glm.flexpool import Flexpool as Flexpool
 from acos_client.v30.nat import Nat as v30_Nat
 from acos_client.v30.network import Network as v30_Network
 from acos_client.v30.overlay import Overlay as v30_Overlay
@@ -85,7 +86,8 @@ VERSION_IMPORTS = {
         'File': v30_File,
         'Vlan': v30_Vlan,
         'VRRPA': v30_VRRPA,
-        'DeviceContext': v30_DeviceContext
+        'DeviceContext': v30_DeviceContext,
+        'Flexpool': Flexpool
     },
 }
 
@@ -159,7 +161,16 @@ class Client(object):
 
     @property
     def license_manager(self):
+        LOG.warning("The paygo method been deprecated and will be removed "
+                    "in a future release.")
         return VERSION_IMPORTS[self._version]["LicenseManager"](self)
+
+    @property
+    def glm(self):
+        if self._version != '30':
+            LOG.error("AXAPIv21 is not supported for the glm attribute")
+            return
+        return VERSION_IMPORTS['30']["Flexpool"](self)
 
     @property
     def overlay(self):

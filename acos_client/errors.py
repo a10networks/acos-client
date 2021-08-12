@@ -13,6 +13,16 @@
 #    under the License.
 
 
+class RequiredAttributeNotSpecified(Exception):
+
+    def __init__(self, url, attribute, requires=[]):
+        required_str = str(requires).strip("[]")
+        self.message = ("The attribute {attribute} requires that {requires}"
+                        "also be specified when querying "
+                        "the {url} endpoint.").format(url, attribute, required_str)
+        super(RequiredAttributeNotSpecified, self).__init__(self.message)
+
+
 class ACOSException(Exception):
     def __init__(self, code=1, msg=''):
         self.code = code
