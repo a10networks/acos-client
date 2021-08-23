@@ -23,9 +23,8 @@ class DeleteGLMLicense(base.BaseV30):
     def post(self, a10_ti=None, ipsec_vpn=None, qosmos=None,
              threatstop=None, webroot=None, webroot_ti=None,
              max_retries=None, timeout=None, **kwargs):
-
         params = {
-            "virtual-server": self.minimal_dict({
+            "glm-license": self.minimal_dict({
                 "a10-ti": a10_ti,
                 "ipsec-vpn": ipsec_vpn,
                 "qosmos": qosmos,
@@ -34,6 +33,9 @@ class DeleteGLMLicense(base.BaseV30):
                 "webroot-ti": webroot_ti
             }),
         }
+
+        if not params['glm-license']:
+            params = {}
 
         self._post(self.url_prefix, params, max_retries=max_retries,
                    timeout=timeout, axapi_args=kwargs)
