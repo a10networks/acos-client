@@ -12,8 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from acos_client.v30 import base
 from acos_client import errors as acos_errors
+from acos_client.v30 import base
+
 
 class LicenseRequest(base.BaseV30):
     url_prefix = '/glm/create-license-request'
@@ -25,7 +26,7 @@ class LicenseRequest(base.BaseV30):
 
         return params
 
-    def create(self, create_license_request=None,  **kwargs):
+    def create(self, create_license_request=None, **kwargs):
         params = self._set(create_license_request=None)
         return self._post(self.url_prefix, params, axapi_args=kwargs)
 
@@ -45,9 +46,9 @@ class MultiLicenseException(Exception):
 
     def __init__(self):
         self.message = ("Only one of the following attributes can be "
-                       "used to define a new license: existing_org, "
-                       "existing_user, new_user, or name. These cannot "
-                       "be used in conjuction.")
+                        "used to define a new license: existing_org, "
+                        "existing_user, new_user, or name. These cannot "
+                        "be used in conjuction.")
         super(MultiLicenseException, self).__init__()
 
 
@@ -87,7 +88,7 @@ class NewLicense(base.BaseV30):
             if not new_email:
                 raise acos_errors.RequiredAttributeNotSpecified(
                     self.url_prefix, "new_user", ["new_email"])
-            
+
             params['new-license'] = self.minimal_dict({
                 'new-user': new_user,
                 'new-email': new_email,
@@ -102,7 +103,7 @@ class NewLicense(base.BaseV30):
             if not license_type:
                 raise acos_errors.RequiredAttributeNotSpecified(
                     self.url_prefix, "name", ["license_type"])
-            
+
             params['new-license'] = self.minimal_dict({
                 'name': name,
                 'type': license_type

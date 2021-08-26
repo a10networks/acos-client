@@ -28,7 +28,9 @@ DEFAULT_LICENSE_PORT = 443
 
 
 class LicenseManager(base.BaseV30):
-    """
+
+    """note:
+
     This class and endpoint are designed to be used exclusively with the
     'Pay-as-you-Go' licensing model.
     """

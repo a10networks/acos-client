@@ -39,10 +39,10 @@ from acos_client.v30.delete.delete import Delete
 from acos_client.v30.device_context import DeviceContext as v30_DeviceContext
 from acos_client.v30.dns import DNS as v30_DNS
 from acos_client.v30.file import File as v30_File
+from acos_client.v30.glm.flexpool import Flexpool as Flexpool
 from acos_client.v30.ha import HA as v30_HA
 from acos_client.v30.interface import Interface as v30_Interface
 from acos_client.v30.license_manager import LicenseManager as v30_LicenseManager
-from acos_client.v30.glm.flexpool import Flexpool as Flexpool
 from acos_client.v30.nat import Nat as v30_Nat
 from acos_client.v30.network import Network as v30_Network
 from acos_client.v30.overlay import Overlay as v30_Overlay

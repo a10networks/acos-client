@@ -39,4 +39,3 @@ class DeleteGLMLicense(base.BaseV30):
 
         self._post(self.url_prefix, params, max_retries=max_retries,
                    timeout=timeout, axapi_args=kwargs)
-        

@@ -21,7 +21,7 @@ class SecretStringUndefinedException(Exception):
         self.message = ("The secret_string argument must "
                         "be defined if password is specified.")
         super(SecretStringUndefinedException, self).__init__(self.message)
-        
+
 
 class ProxyServer(base.BaseV30):
     url_prefix = '/glm/proxy-server'
