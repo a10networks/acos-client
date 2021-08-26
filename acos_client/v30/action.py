@@ -93,6 +93,15 @@ class Action(base.BaseV30):
         url = "/vcs/device/"
         self._post(url, data)
 
+    def set_hostname(self, hostname):
+        url = "/hostname"
+        data = {
+            "hostname": {
+                "value": hostname
+            }
+        }
+        self._post(url, data)
+
     def set_vcs_para(self, floating_ip, floating_ip_mask):
         data = {"vcs-para": {"floating-ip-cfg": [{"floating-ip": floating_ip,
                 "floating-ip-mask": floating_ip_mask}], "forever": 1}}
