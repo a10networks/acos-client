@@ -36,7 +36,7 @@ class Flexpool(base.BaseV30):
     def send(self):
         return Send(self.client)
 
-    def _set(self, appliance_name=None, allocate_bandwith=None, burst=None,
+    def _set(self, appliance_name=None, allocate_bandwidth=None, burst=None,
              check_expiration=None, enable_requests=None, enterpise=None,
              enterprise_request_type=None, host=None, interval=None,
              port=None, thunder_capacity_license=None, token=None,
@@ -54,21 +54,20 @@ class Flexpool(base.BaseV30):
                 "appliance-name": appliance_name,
                 "enable-requests": enable_requests,
                 "check-expiration": check_expiration,
-                "allocate-bandwidth": allocate_bandwith,
+                "allocate-bandwidth": allocate_bandwidth,
                 "enterprise-request-type": enterprise_request_type,
                 "thunder-capacity-license": thunder_capacity_license,
             })
         }
-
         return params
 
-    def create(self, appliance_name=None, allocate_bandwith=None, burst=None,
+    def create(self, appliance_name=None, allocate_bandwidth=None, burst=None,
                check_expiration=None, enable_requests=None, enterpise=None,
                enterprise_request_type=None, host=None, interval=None,
                port=None, thunder_capacity_license=None, token=None,
                use_mgmt_port=None, **kwargs):
         params = self._set(appliance_name=appliance_name,
-                           allocate_bandwith=allocate_bandwith, burst=burst,
+                           allocate_bandwidth=allocate_bandwidth, burst=burst,
                            check_expiration=check_expiration, enable_requests=enable_requests,
                            enterpise=enterpise, enterprise_request_type=enterprise_request_type,
                            thunder_capacity_license=thunder_capacity_license,
@@ -76,13 +75,13 @@ class Flexpool(base.BaseV30):
                            host=host, interval=interval, port=port)
         return self._post(self.url_prefix, params, axapi_args=kwargs)
 
-    def update(self, appliance_name=None, allocate_bandwith=None, burst=None,
+    def update(self, appliance_name=None, allocate_bandwidth=None, burst=None,
                check_expiration=None, enable_requests=None, enterpise=None,
                enterprise_request_type=None, host=None, interval=None,
                port=None, thunder_capacity_license=None, token=None,
                use_mgmt_port=None, **kwargs):
         params, kwargs = self._set(appliance_name=appliance_name,
-                                   allocate_bandwith=allocate_bandwith, burst=burst,
+                                   allocate_bandwidth=allocate_bandwidth, burst=burst,
                                    check_expiration=check_expiration, enable_requests=enable_requests,
                                    enterpise=enterpise, enterprise_request_type=enterprise_request_type,
                                    thunder_capacity_license=thunder_capacity_license,
@@ -90,13 +89,13 @@ class Flexpool(base.BaseV30):
                                    host=host, interval=interval, port=port)
         return self._post(self.url_prefix, params, axapi_args=kwargs)
 
-    def replace(self, appliance_name=None, allocate_bandwith=None, burst=None,
+    def replace(self, appliance_name=None, allocate_bandwidth=None, burst=None,
                 check_expiration=None, enable_requests=None, enterpise=None,
                 enterprise_request_type=None, host=None, interval=None,
                 port=None, thunder_capacity_license=None, token=None,
                 use_mgmt_port=None, **kwargs):
         params, kwargs = self._set(appliance_name=appliance_name,
-                                   allocate_bandwith=allocate_bandwith, burst=burst,
+                                   allocate_bandwidth=allocate_bandwidth, burst=burst,
                                    check_expiration=check_expiration, enable_requests=enable_requests,
                                    enterpise=enterpise,
                                    enterprise_request_type=enterprise_request_type,
