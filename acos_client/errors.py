@@ -131,3 +131,7 @@ class ACOSSystemNotReady(ACOSException):
 
 class ACOSSystemIsBusy(ACOSException):
     pass
+
+
+class LicenseOptionNotAllowed(ACOSException):
+    pass
