@@ -29,6 +29,12 @@ DEFAULT_LICENSE_PORT = 443
 
 class LicenseManager(base.BaseV30):
 
+    """note:
+
+    This class and endpoint are designed to be used exclusively with the
+    'Pay-as-you-Go' licensing model.
+    """
+
     url_base = "/license-manager"
 
     def create(self, host_list=[], serial=None, instance_name=None, use_mgmt_port=False,

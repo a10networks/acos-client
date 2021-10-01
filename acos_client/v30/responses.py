@@ -223,6 +223,7 @@ RESPONSE_CODES = {
     },
     4294967295: {
         '*': {
+            '/axapi/v3/glm': ae.LicenseOptionNotAllowed,
             '*': ae.ConfigManagerNotReady
         }
     },
@@ -243,6 +244,7 @@ def raise_axapi_auth_error(response, method, api_url, headers):
 
 
 def raise_axapi_ex(response, method, api_url):
+
     if 'response' in response and 'err' in response['response']:
         code = response['response']['err']['code']
 
