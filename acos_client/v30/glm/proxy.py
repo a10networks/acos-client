@@ -29,11 +29,13 @@ class ProxyServer(base.BaseV30):
     def _set(self, host=None, port=None, username=None,
              password=None, secret_string=None):
         params = {
-            'host': host,
-            'port': port,
-            'username': username,
-            'password': password,
-            'secret_string': secret_string
+            'proxy-server': {
+                'host': host,
+                'port': port,
+                'username': username,
+                'password': password,
+                'secret-string': secret_string
+            }
         }
 
         if password and not secret_string:
