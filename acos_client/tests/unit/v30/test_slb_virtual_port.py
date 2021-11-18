@@ -87,10 +87,10 @@ class TestVirtualPort(unittest.TestCase):
                 'service-group': 'pool1',
                 'no-dest-nat': 1,
                 'conn-limit': 50000,
-                'tcp_template': 'test_tcp_template',
+                'template-tcp': 'test_tcp_template',
                 'template-persist-cookie': 'test_c_pers_template',
                 'template-persist-source-ip': 'test_s_pers_template',
-                'udp_template': 'test_udp_template',
+                'template-udp': 'test_udp_template',
                 'use-rcv-hop-for-resp': 1
             }
         }
@@ -333,10 +333,10 @@ class TestVirtualPort(unittest.TestCase):
                     'port-number': 80,
                     'protocol': 'http',
                     'service-group': 'pool1',
-                    'tcp_template': 'test_tcp_template',
+                    'template-tcp': 'test_tcp_template',
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
-                    'udp_template': 'test_udp_template',
+                    'template-udp': 'test_udp_template',
                     'template-virtual-port': 'template_vp',
                     'template-policy': 'template_pl'
                 }
@@ -353,10 +353,10 @@ class TestVirtualPort(unittest.TestCase):
                     'port-number': 80,
                     'protocol': 'http',
                     'service-group': 'pool1',
-                    'tcp_template': 'test_tcp_template',
+                    'template-tcp': 'test_tcp_template',
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
-                    'udp_template': 'test_udp_template',
+                    'template-udp': 'test_udp_template',
                     'template-virtual-port': 'template_vp',
                     'template-tcp': 'template_tcp',
                     'template-policy': 'template_pl'
@@ -408,10 +408,10 @@ class TestVirtualPort(unittest.TestCase):
                     'port-number': 80,
                     'protocol': 'http',
                     'service-group': 'pool1',
-                    'tcp_template': 'test_tcp_template',
+                    'template-tcp': 'test_tcp_template',
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
-                    'udp_template': 'test_udp_template',
+                    'template-udp': 'test_udp_template',
                     'template-virtual-port': 'template_vp'
                 }
             }
@@ -427,10 +427,10 @@ class TestVirtualPort(unittest.TestCase):
                     'port-number': 80,
                     'protocol': 'http',
                     'service-group': 'pool1',
-                    'tcp_template': 'test_tcp_template',
+                    'template-tcp': 'test_tcp_template',
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
-                    'udp_template': 'test_udp_template',
+                    'template-udp': 'test_udp_template',
                     'template-virtual-port': 'template_vp',
                     'template-tcp': None,
                     'template-policy': None,
@@ -482,10 +482,10 @@ class TestVirtualPort(unittest.TestCase):
                 'protocol': 'http',
                 'service-group': 'pool1',
                 'conn-limit': 50000,
-                'tcp_template': 'test_tcp_template',
+                'template-tcp': 'test_tcp_template',
                 'template-persist-cookie': 'test_c_pers_template',
                 'template-persist-source-ip': 'test_s_pers_template',
-                'udp_template': 'test_udp_template',
+                'template-udp': 'test_udp_template',
                 'use-rcv-hop-for-resp': 1,
             }
         }
@@ -644,10 +644,10 @@ class TestVirtualPort(unittest.TestCase):
                     'protocol': 'http',
                     'service-group': 'pool1',
                     'conn-limit': 50000,
-                    'tcp_template': 'test_tcp_template',
+                    'template-tcp': 'test_tcp_template',
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
-                    'udp_template': 'test_udp_template',
+                    'template-udp': 'test_udp_template',
                     'template-virtual-port': 'template_vp'
                 }
             }
@@ -667,10 +667,10 @@ class TestVirtualPort(unittest.TestCase):
                     'service-group': 'pool1',
                     'ha-conn-mirror': 1,
                     'conn-limit': 50000,
-                    'tcp_template': 'test_tcp_template',
+                    'template-tcp': 'test_tcp_template',
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
-                    'udp_template': 'test_udp_template',
+                    'template-udp': 'test_udp_template',
                     'template-virtual-port': 'template_vp'
                 }
             }

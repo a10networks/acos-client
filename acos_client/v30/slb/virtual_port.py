@@ -117,7 +117,6 @@ class VirtualPort(base.BaseV30):
             elif virtual_port_templates.get('template-virtual-port-shared'):
                 params['port']['template-virtual-port-shared'] = virtual_port_templates['template-virtual-port-shared']
                 params['port']['shared-partition-virtual-port-template'] = True
-
             if protocol in ['http', 'https']:
                 if virtual_port_templates.get('template-http'):
                     params['port']['template-http'] = virtual_port_templates['template-http']
@@ -130,7 +129,6 @@ class VirtualPort(base.BaseV30):
                 elif virtual_port_templates.get('template-tcp-shared'):
                     params['port']['template-tcp-shared'] = virtual_port_templates['template-tcp-shared']
                     params['port']['shared-partition-tcp'] = True
-
             if virtual_port_templates.get('template-policy'):
                 params['port']['template-policy'] = virtual_port_templates['template-policy']
             elif virtual_port_templates.get('template-policy-shared'):
@@ -147,9 +145,9 @@ class VirtualPort(base.BaseV30):
         if source_nat_pool and len(source_nat_pool) > 0:
             params['port']['pool'] = source_nat_pool
         if tcp_template:
-            params['port']['tcp_template'] = tcp_template
+            params['port']['template-tcp'] = tcp_template
         if udp_template:
-            params['port']['udp_template'] = udp_template
+            params['port']['template-udp'] = udp_template
 
         if template_server_ssl:
             params['port']['template-server-ssl'] = template_server_ssl
