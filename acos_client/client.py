@@ -35,6 +35,7 @@ from acos_client.v21.system import System as v21_System
 from acos_client.v21.vrrp_a import VRRPA as v21_VRRPA
 
 from acos_client.v30 import axapi_http as v30_http
+from acos_client.v30.access_list import AccessList
 from acos_client.v30.delete.delete import Delete
 from acos_client.v30.device_context import DeviceContext as v30_DeviceContext
 from acos_client.v30.dns import DNS as v30_DNS
@@ -56,6 +57,7 @@ from acos_client.v30.vrrpa.vrid import VRID as v30_VRRPA
 
 VERSION_IMPORTS = {
     '21': {
+        'AccessList': None,
         'DNS': v21_DNS,
         'http': v21_http,
         'HA': v21_HA,
@@ -71,6 +73,7 @@ VERSION_IMPORTS = {
         'VRRPA': v21_VRRPA
     },
     '30': {
+        'AccessList': AccessList,
         'DNS': v30_DNS,
         'http': v30_http,
         'Interface': v30_Interface,
@@ -124,6 +127,10 @@ class Client(object):
 
     def _just_digits(self, s):
         return ''.join(i for i in str(s) if i.isdigit())
+
+    @property
+    def access_list(self):
+        return VERSION_IMPORTS[self._version]['AccessList'](self)
 
     @property
     def dns(self):
