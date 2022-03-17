@@ -10,3 +10,12 @@ class AccessList(base.BaseV30):
 
     def list(self, **kwargs):
         return self._get(self.url_prefix, axapi_args=kwargs)
+
+    def create(self, std, stdrules, **kwargs):
+        request_params = {
+            "standard-list": [{
+                "std": std,
+                "stdrules": stdrules
+            }]
+        }
+        return self._post("%s/standard" % self.url_prefix, request_params, axapi_args=kwargs)

@@ -11,7 +11,9 @@ HOSTNAME = 'fake_a10'
 BASE_URL = "https://{}:443/axapi/v3".format(HOSTNAME)
 AUTH_URL = "{}/auth".format(BASE_URL)
 VSERVER_NAME = 'test'
-GET_URL = '{}/access-list'.format(BASE_URL)
+LIST_URL = '{}/access-list'.format(BASE_URL)
+CREATE_URL = '{}/access-list/standard'.format(BASE_URL)
+OK_RESP = {'response': {'status': 'OK'}}
 
 
 class TestServer(unittest.TestCase):
@@ -23,7 +25,22 @@ class TestServer(unittest.TestCase):
     def test_list_access_list(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = [{'foo': 'bar'}]
-        responses.add(responses.GET, GET_URL, json=json_response, status=200)
+        responses.add(responses.GET, LIST_URL, json=json_response, status=200)
 
         resp = self.client.access_list.list()
         self.assertEqual(resp, json_response)
+
+    @responses.activate
+    def test_post_access_list(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        responses.add(responses.POST, CREATE_URL, json=OK_RESP, status=200)
+        request_params = {
+            'std': 1,
+            'stdrules': [{
+                'action': 'permit',
+                'host': '192.168.0.1'
+            }]
+        }
+
+        resp = self.client.access_list.create(**request_params)
+        self.assertEqual(resp, OK_RESP)
