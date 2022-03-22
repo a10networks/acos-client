@@ -17,9 +17,14 @@ from __future__ import unicode_literals
 from acos_client import errors as acos_errors
 from acos_client.v30 import base
 from acos_client.v30.nat.pool import Pool
+from acos_client.v30.nat.inside import Inside
 
 
 class Nat(base.BaseV30):
     @property
     def pool(self):
         return Pool(self.client)
+
+    @property
+    def inside(self):
+        return Inside(self.client)
