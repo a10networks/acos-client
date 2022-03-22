@@ -54,3 +54,13 @@ class TestAccessList(unittest.TestCase):
 
         resp = self.client.access_list.create(**request_params)
         self.assertEqual(resp, OK_RESP)
+
+    @responses.activate
+    def test_delete_access_list(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = [{'foo': 'bar'}]
+        responses.add(responses.DELETE, '{}/access-list/standard/123'.format(BASE_URL),
+                      json=json_response, status=200)
+
+        resp = self.client.access_list.delete(123)
+        self.assertEqual(resp, json_response)

@@ -22,3 +22,6 @@ class AccessList(base.BaseV30):
             }]
         }
         return self._post("%s/standard" % self.url_prefix, request_params, axapi_args=kwargs)
+
+    def delete(self, id, **kwargs):
+        return self._delete("%s/standard/%s" % (self.url_prefix, id), axapi_args=kwargs)
