@@ -67,7 +67,7 @@ class HealthMonitor(base.BaseV30):
 
     def _set(self, name, mon_method, hm_interval, hm_timeout, hm_max_retries,
              method=None, url=None, expect_code=None, port=None, ipv4=None, post_data=None,
-             **kwargs):
+             override_port=None, **kwargs):
         params = {
             "monitor": {
                 "name": name,
@@ -93,7 +93,7 @@ class HealthMonitor(base.BaseV30):
             else:
                 k = '%s-port' % mon_method
             params['monitor']['method'][mon_method][k] = int(port)
-            params['monitor']['override-port'] = int(port)
+            params['monitor']['override-port'] = override_port
         # handle POST case for HTTP/HTTPS hm
         if ('url-type' in params['monitor']['method'][mon_method] and
                 'url-path' in params['monitor']['method'][mon_method] and
@@ -116,7 +116,7 @@ class HealthMonitor(base.BaseV30):
 
     def create(self, name, mon_type, hm_interval, hm_timeout, hm_max_retries,
                method=None, url=None, expect_code=None, port=None, ipv4=None, post_data=None,
-               max_retries=None, timeout=None, **kwargs):
+               max_retries=None, timeout=None, override_port=None, **kwargs):
         try:
             self.get(name)
         except acos_errors.NotFound:
@@ -126,17 +126,17 @@ class HealthMonitor(base.BaseV30):
 
         params = self._set(name, mon_type, hm_interval, hm_timeout,
                            hm_max_retries, method, url, expect_code, port, ipv4,
-                           post_data=post_data, **kwargs)
+                           post_data=post_data, override_port=override_port, **kwargs)
         return self._post(self.url_prefix, params, max_retries=max_retries, timeout=timeout,
                           axapi_args=kwargs)
 
     def update(self, name, mon_type, hm_interval, hm_timeout, hm_max_retries,
                method=None, url=None, expect_code=None, port=None, ipv4=None, post_data=None,
-               max_retries=None, timeout=None, **kwargs):
+               max_retries=None, timeout=None, override_port=None, **kwargs):
         self.get(name)  # We want a NotFound if it does not exist
         params = self._set(name, mon_type, hm_interval, hm_timeout,
                            hm_max_retries, method, url, expect_code, port, ipv4,
-                           post_data=post_data, **kwargs)
+                           post_data=post_data, override_port=override_port, **kwargs)
         return self._post(self.url_prefix + name, params, max_retries=max_retries, timeout=timeout,
                           axapi_args=kwargs)
 
