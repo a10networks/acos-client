@@ -87,7 +87,7 @@ class HealthMonitor(base.BaseV30):
         if expect_code:
             k = "%s-response-code" % mon_method
             params['monitor']['method'][mon_method][k] = str(expect_code)
-        if port:
+        if mon_method != self.ICMP and port:
             if mon_method == self.HTTPS:
                 k = 'web-port'
             else:
