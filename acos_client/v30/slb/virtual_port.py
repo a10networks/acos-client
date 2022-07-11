@@ -94,6 +94,7 @@ class VirtualPort(base.BaseV30):
         template_client_ssl=None,
         sampling_enable=None,
         aflex_scripts=None,
+        aflex_scripts_clear=False,
         tcp_proxy_name=None,
         **kwargs
     ):
@@ -173,6 +174,8 @@ class VirtualPort(base.BaseV30):
 
         if aflex_scripts is not None:
             params['port']['aflex-scripts'] = aflex_scripts
+        elif aflex_scripts_clear:
+            params['port']['aflex-scripts'] = None
 
         if update:
             url += self.format_vport_url(port_number=protocol_port, protocol=protocol)
@@ -265,6 +268,7 @@ class VirtualPort(base.BaseV30):
         template_client_ssl=None,
         sampling_enable=None,
         aflex_scripts=None,
+        aflex_scripts_clear=False,
         tcp_proxy_name=None,
         **kwargs
     ):
@@ -301,6 +305,7 @@ class VirtualPort(base.BaseV30):
                 template_client_ssl=template_client_ssl,
                 sampling_enable=sampling_enable,
                 aflex_scripts=aflex_scripts,
+                aflex_scripts_clear=aflex_scripts_clear,
                 tcp_proxy_name=tcp_proxy_name,
                 **kwargs
             )
@@ -330,6 +335,7 @@ class VirtualPort(base.BaseV30):
                 template_client_ssl=template_client_ssl,
                 sampling_enable=sampling_enable,
                 aflex_scripts=aflex_scripts,
+                aflex_scripts_clear=aflex_scripts_clear,
                 tcp_proxy_name=tcp_proxy_name,
                 **kwargs
             )
@@ -361,6 +367,7 @@ class VirtualPort(base.BaseV30):
         template_client_ssl=None,
         sampling_enable=None,
         aflex_scripts=None,
+        aflex_scripts_clear=False,
         tcp_proxy_name=None,
         **kwargs
     ):
@@ -392,6 +399,7 @@ class VirtualPort(base.BaseV30):
             template_client_ssl=template_client_ssl,
             sampling_enable=sampling_enable,
             aflex_scripts=aflex_scripts,
+            aflex_scripts_clear=aflex_scripts_clear,
             tcp_proxy_name=tcp_proxy_name,
             **kwargs)
         return self._post(url, params, max_retries=max_retries, timeout=timeout, axapi_args=kwargs)
