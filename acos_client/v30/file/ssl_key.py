@@ -38,7 +38,6 @@ class SSLKey(base.BaseV30):
 
         obj_params = {
             "file": file,
-            "size": size,
             "file-handle": file,
             "action": action,
         }

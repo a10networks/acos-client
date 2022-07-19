@@ -38,7 +38,6 @@ class SSLCert(base.BaseV30):
 
         obj_params = {
             "file": file,
-            "size": size,
             "file-handle": file,
             "certificate-type": certificate_type,
             "action": action,

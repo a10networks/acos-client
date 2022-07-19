@@ -20,6 +20,7 @@ from acos_client.v30.slb.hm import HealthMonitor
 from acos_client.v30.slb.server import Server
 from acos_client.v30.slb.service_group import ServiceGroup
 from acos_client.v30.slb.template import Template
+from acos_client.v30.slb.tcp_proxy import TcpProxy
 from acos_client.v30.slb.virtual_server import VirtualServer
 
 
@@ -51,6 +52,10 @@ class SLB(base.BaseV30):
     @property
     def aflex_policy(self):
         return AFlexPolicy(self.client)
+
+    @property
+    def tcp_proxy(self):
+        return TcpProxy(self.client)
 
     @property
     def common(self):

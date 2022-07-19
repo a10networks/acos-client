@@ -94,6 +94,8 @@ class VirtualPort(base.BaseV30):
         template_client_ssl=None,
         sampling_enable=None,
         aflex_scripts=None,
+        aflex_scripts_clear=False,
+        tcp_proxy_name=None,
         **kwargs
     ):
         exclude_minimize = [] if exclude_minimize is None else exclude_minimize
@@ -105,6 +107,7 @@ class VirtualPort(base.BaseV30):
                 "port-number": int(protocol_port),
                 "template-persist-source-ip": s_pers_name,
                 "template-persist-cookie": c_pers_name,
+                "template-tcp-proxy": tcp_proxy_name,
                 "extended-stats": status
             }, exclude=exclude_minimize
             )
@@ -171,6 +174,8 @@ class VirtualPort(base.BaseV30):
 
         if aflex_scripts is not None:
             params['port']['aflex-scripts'] = aflex_scripts
+        elif aflex_scripts_clear:
+            params['port']['aflex-scripts'] = None
 
         if update:
             url += self.format_vport_url(port_number=protocol_port, protocol=protocol)
@@ -202,6 +207,7 @@ class VirtualPort(base.BaseV30):
         template_client_ssl=None,
         sampling_enable=None,
         aflex_scripts=None,
+        tcp_proxy_name=None,
         **kwargs
     ):
 
@@ -232,6 +238,7 @@ class VirtualPort(base.BaseV30):
             template_client_ssl=template_client_ssl,
             sampling_enable=sampling_enable,
             aflex_scripts=aflex_scripts,
+            tcp_proxy_name=tcp_proxy_name,
             **kwargs
         )
 
@@ -261,6 +268,8 @@ class VirtualPort(base.BaseV30):
         template_client_ssl=None,
         sampling_enable=None,
         aflex_scripts=None,
+        aflex_scripts_clear=False,
+        tcp_proxy_name=None,
         **kwargs
     ):
 
@@ -268,7 +277,7 @@ class VirtualPort(base.BaseV30):
         if vp is None:
             raise ae.NotFound()
 
-        exclude = ['template-persist-source-ip', 'template-persist-cookie']
+        exclude = ['template-persist-source-ip', 'template-persist-cookie', 'template-tcp-proxy']
 
         try:
             url, params, kwargs = self._set(
@@ -296,6 +305,8 @@ class VirtualPort(base.BaseV30):
                 template_client_ssl=template_client_ssl,
                 sampling_enable=sampling_enable,
                 aflex_scripts=aflex_scripts,
+                aflex_scripts_clear=aflex_scripts_clear,
+                tcp_proxy_name=tcp_proxy_name,
                 **kwargs
             )
         except ae.AxapiJsonFormatError:
@@ -324,6 +335,8 @@ class VirtualPort(base.BaseV30):
                 template_client_ssl=template_client_ssl,
                 sampling_enable=sampling_enable,
                 aflex_scripts=aflex_scripts,
+                aflex_scripts_clear=aflex_scripts_clear,
+                tcp_proxy_name=tcp_proxy_name,
                 **kwargs
             )
         return url, params, kwargs
@@ -354,6 +367,8 @@ class VirtualPort(base.BaseV30):
         template_client_ssl=None,
         sampling_enable=None,
         aflex_scripts=None,
+        aflex_scripts_clear=False,
+        tcp_proxy_name=None,
         **kwargs
     ):
 
@@ -384,6 +399,8 @@ class VirtualPort(base.BaseV30):
             template_client_ssl=template_client_ssl,
             sampling_enable=sampling_enable,
             aflex_scripts=aflex_scripts,
+            aflex_scripts_clear=aflex_scripts_clear,
+            tcp_proxy_name=tcp_proxy_name,
             **kwargs)
         return self._post(url, params, max_retries=max_retries, timeout=timeout, axapi_args=kwargs)
 
@@ -413,6 +430,7 @@ class VirtualPort(base.BaseV30):
         template_client_ssl=None,
         sampling_enable=None,
         aflex_scripts=None,
+        tcp_proxy_name=None,
         **kwargs
     ):
 
@@ -443,6 +461,7 @@ class VirtualPort(base.BaseV30):
             template_client_ssl=template_client_ssl,
             sampling_enable=sampling_enable,
             aflex_scripts=aflex_scripts,
+            tcp_proxy_name=tcp_proxy_name,
             **kwargs)
         return self._put(url, params, max_retries=max_retries, timeout=timeout, axapi_args=kwargs)
 
