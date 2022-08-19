@@ -12,4 +12,4 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-VERSION = '2.9.0'
+VERSION = '2.9.1'

@@ -30,6 +30,7 @@
 | 5.2.1          | 3             | >=2.6.0             | Maintenance |
 | 5.2.1-p1       | 3             | >=2.7.0             | Maintenance |
 | 5.2.1-p2       | 3             | >=2.9.0             | Maintenance |
+| 5.2.1-p2       | 3             | >=2.9.1             | Maintenance |
 ```
 
 †Works only when not using partitioning
