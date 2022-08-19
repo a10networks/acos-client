@@ -75,7 +75,7 @@ class HealthMonitor(base.BaseV30):
                 "interval": int(hm_interval),
                 "timeout": int(hm_timeout),
                 "method": {
-                    mon_method: self._method_objects[mon_method]
+                    mon_method: dict(self._method_objects[mon_method])
                 },
                 "override-ipv4": ipv4
             }

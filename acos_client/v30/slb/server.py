@@ -14,6 +14,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+from acos_client import errors as acos_errors
 from acos_client.v30 import base
 from acos_client.v30.slb.port import Port
 
@@ -25,6 +26,13 @@ class Server(base.BaseV30):
     def get(self, name, max_retries=None, timeout=None, **kwargs):
         return self._get(self.url_prefix + name, max_retries=max_retries, timeout=timeout,
                          axapi_args=kwargs)
+
+    def exists(self, name):
+        try:
+            self.get(name)
+            return True
+        except acos_errors.NotFound:
+            return False
 
     def get_all(self):
         return self._get(self.url_prefix)

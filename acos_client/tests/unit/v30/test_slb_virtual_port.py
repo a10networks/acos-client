@@ -300,6 +300,7 @@ class TestVirtualPort(unittest.TestCase):
                 "port-number": 80,
                 "template-persist-source-ip": None,
                 "template-persist-cookie": None,
+                "template-tcp-proxy": None,
                 "extended-stats": 1
             }
         }
@@ -434,6 +435,7 @@ class TestVirtualPort(unittest.TestCase):
                     'template-virtual-port': 'template_vp',
                     'template-tcp': None,
                     'template-policy': None,
+                    'template-tcp-proxy': None,
                 }
             }
 
@@ -487,6 +489,7 @@ class TestVirtualPort(unittest.TestCase):
                 'template-persist-source-ip': 'test_s_pers_template',
                 'udp_template': 'test_udp_template',
                 'use-rcv-hop-for-resp': 1,
+                'template-tcp-proxy': None,
             }
         }
 
@@ -541,6 +544,7 @@ class TestVirtualPort(unittest.TestCase):
                 'template-persist-source-ip': 'test_s_pers_template',
                 'udp_template': 'test_udp_template',
                 'use-rcv-hop-for-resp': 1,
+                'template-tcp-proxy': None,
             }
         }
 
@@ -592,6 +596,7 @@ class TestVirtualPort(unittest.TestCase):
                 'template-persist-cookie': 'test_c_pers_template',
                 'template-persist-source-ip': 'test_s_pers_template',
                 'use-rcv-hop-for-resp': 1,
+                'template-tcp-proxy': None,
             }
         }
         kwargs = {
@@ -648,7 +653,8 @@ class TestVirtualPort(unittest.TestCase):
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
                     'udp_template': 'test_udp_template',
-                    'template-virtual-port': 'template_vp'
+                    'template-virtual-port': 'template_vp',
+                    'template-tcp-proxy': None,
                 }
             }
         else:
@@ -671,7 +677,8 @@ class TestVirtualPort(unittest.TestCase):
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
                     'udp_template': 'test_udp_template',
-                    'template-virtual-port': 'template_vp'
+                    'template-virtual-port': 'template_vp',
+                    'template-tcp-proxy': None,
                 }
             }
         resp = self.client.slb.virtual_server.vport.update(
@@ -728,7 +735,8 @@ class TestVirtualPort(unittest.TestCase):
                 'template-persist-cookie': 'test_c_pers_template',
                 'template-persist-source-ip': 'test_s_pers_template',
                 'udp_template': 'test_udp_template',
-                'template-virtual-port': 'template_vp'
+                'template-virtual-port': 'template_vp',
+                'template-tcp-proxy': None,
             }
         }
         resp = self.client.slb.virtual_server.vport.update(
@@ -784,6 +792,7 @@ class TestVirtualPort(unittest.TestCase):
                 'template-persist-source-ip': 'test_s_pers_template',
                 'udp_template': 'test_udp_template',
                 'use-rcv-hop-for-resp': 1,
+                'template-tcp-proxy': None,
             }
         }
 
@@ -838,6 +847,7 @@ class TestVirtualPort(unittest.TestCase):
                 'template-persist-source-ip': 'test_s_pers_template',
                 'udp_template': 'test_udp_template',
                 'use-rcv-hop-for-resp': 1,
+                'template-tcp-proxy': None,
             }
         }
 
@@ -893,6 +903,7 @@ class TestVirtualPort(unittest.TestCase):
                     'template-persist-cookie': 'test_c_pers_template',
                     'template-persist-source-ip': 'test_s_pers_template',
                     'udp_template': 'test_udp_template',
+                    'template-tcp-proxy': None,
                     'template-virtual-port': 'template_vp'
                 }
             }
@@ -973,7 +984,8 @@ class TestVirtualPort(unittest.TestCase):
                 'template-persist-cookie': 'test_c_pers_template',
                 'template-persist-source-ip': 'test_s_pers_template',
                 'udp_template': 'test_udp_template',
-                'template-virtual-port': 'template_vp'
+                'template-virtual-port': 'template_vp',
+                'template-tcp-proxy': None,
             }
         }
         resp = self.client.slb.virtual_server.vport.replace(
