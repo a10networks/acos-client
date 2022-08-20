@@ -64,6 +64,28 @@ class TestVirtualServer(unittest.TestCase):
         self.assertEqual(json.loads(responses.calls[1].request.body), params)
 
     @responses.activate
+    def test_ipv6_virtual_server_create_no_params(self):
+        responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
+        json_response = {"foo": "bar"}
+        responses.add(responses.POST, CREATE_URL, json=json_response, status=200)
+        params = {
+            'virtual-server': {
+                'ipv6-address': '2001:db8:feed::5001',
+                'name': VSERVER_NAME,
+                'arp-disable': 0,
+                'description': None,
+            }
+        }
+
+        resp = self.client.slb.virtual_server.create('test', '2001:db8:feed::5001')
+
+        self.assertEqual(resp, json_response)
+        self.assertEqual(len(responses.calls), 2)
+        self.assertEqual(responses.calls[1].request.method, responses.POST)
+        self.assertEqual(responses.calls[1].request.url, CREATE_URL)
+        self.assertEqual(json.loads(responses.calls[1].request.body), params)
+
+    @responses.activate
     def test_virtual_server_create_with_params(self):
         responses.add(responses.POST, AUTH_URL, json={'session_id': 'foobar'})
         json_response = {"foo": "bar"}
