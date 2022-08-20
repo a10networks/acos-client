@@ -77,7 +77,10 @@ class BaseSSL(base.BaseV30):
             if not update:
                 name = ''
 
-        self._post(self.url_prefix + name, params, **kwargs)
+        if update:
+            self._post(self.url_prefix + name, params, **kwargs)
+        else:
+            self._post(self.url_prefix, params, **kwargs)
 
     def create(self, name, cert="", key="", passphrase="", cipher_template=None, **kwargs):
         if self.exists(name):
