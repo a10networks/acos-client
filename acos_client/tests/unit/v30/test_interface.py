@@ -125,3 +125,46 @@ class TestManagementInterface(TestInterface):
             super(TestManagementInterface, self).setUp()
             self.target = interface.ManagementInterface(self.client)
             self.url_prefix = "{0}{1}/".format(self.url_prefix, self.target.iftype)
+
+class TestVirtualEthernetInterface(TestInterface):
+
+        def setUp(self):
+            super(TestVirtualEthernetInterface, self).setUp()
+            self.target = interface.VirtualEthernet(self.client)
+            self.url_prefix = f"{self.url_prefix}{self.target.iftype}/"
+
+        def test_interface_create_ipaddress(self):
+            ifnum = 33
+            ipv4_address = [("192.168.254.1", "255.255.255.252")]
+            expected_payload = {'ve': {'ifnum': 33, 'ip': {'address-list': [{'ipv4-address': '192.168.254.1', 'ipv4-netmask': '255.255.255.252'}]}}}
+            self.target.create(ifnum, ipv4_address=ipv4_address)
+            self.client.http.request.assert_called_with("POST", self.url_prefix, expected_payload, mock.ANY,
+                                                        axapi_args=None, max_retries=None, timeout=mock.ANY)
+
+        def test_interface_update(self):
+            ifnum = 33
+            ipv6_address = ['fe80::1/64']
+            expected_payload = {'ve': {'ifnum': 33, 'ipv6': {'address-list': [{'ipv6-addr': 'fe80::1/64'}]}}}
+            self.target.update(ifnum, ipv6_address=ipv6_address)
+            self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
+                                                        expected_payload, mock.ANY, axapi_args=None, max_retries=None,
+                                                        timeout=mock.ANY)
+
+        def test_interface_enable_positive(self):
+            ifnum = 1
+            self.target.update(ifnum, enable=True)
+            ((method, url, params, header), kwargs) = self.client.http.request.call_args
+            self.assertEqual("enable", params[self.target.iftype]["action"])
+            self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
+                                                        mock.ANY, mock.ANY, axapi_args=None, max_retries=None,
+                                                        timeout=mock.ANY)
+
+        def test_interface_enable_negative(self):
+            ifnum = 1
+            self.target.update(ifnum, enable=False)
+            ((method, url, params, header), kwargs) = self.client.http.request.call_args
+            self.assertEqual("disable", params[self.target.iftype]["action"])
+            self.client.http.request.assert_called_with("POST", self.url_prefix + str(ifnum),
+                                                        mock.ANY, mock.ANY, axapi_args=None, max_retries=None,
+                                                        timeout=mock.ANY)
+

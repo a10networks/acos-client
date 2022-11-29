@@ -14,8 +14,6 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import six
-
 from acos_client import errors as acos_errors
 from acos_client.v30 import base
 
@@ -41,7 +39,7 @@ class TcpProxy(base.BaseV30):
     def _set(self, name, version, **kwargs):
 
         params = {
-            "tcp-proxy":{
+            "tcp-proxy": {
                 "name": name,
                 "proxy-header": {
                     "proxy-header-action": "insert",
