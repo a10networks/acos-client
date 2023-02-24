@@ -49,9 +49,13 @@ class VRID(base.BaseV30):
                     'ip-address-part-cfg': ip_partition_list
                 }
             else:
-                ip_list = [{'ip-address': ip} for ip in floating_ips]
+                #ip_list = [{'ip-address': ip} for ip in floating_ips]
+                #vrid_floating_ips = {
+                #    'ip-address-cfg': ip_list
+                #}
+                ip_list = [{'ipv6-address': ip} for ip in floating_ips]
                 vrid_floating_ips = {
-                    'ip-address-cfg': ip_list
+                    'ipv6-address-cfg': ip_list
                 }
             vrid['floating-ip'] = vrid_floating_ips
 
