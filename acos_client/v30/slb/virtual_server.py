@@ -37,7 +37,6 @@ class VirtualServer(base.BaseV30):
         params = {
             "virtual-server": self.minimal_dict({
                 "name": name,
-                #"ip-address": ip_address,
                 "arp-disable": None if arp_disable is None else int(arp_disable),
                 "description": description,
                 "port-list": port_list
