@@ -5,6 +5,7 @@ acos-client CHANGELOG
 - Added InterfaceVE object for CRUD on Virtual Ethernet interfaces for v30
 - Added ClassList object for CRUD on Class Lists for v30
 - Added Router/BGP object for CRUD on bgp section for v30
+- Added partition property to client.Client for v30
 - Added more unittests to cover the new addition
 
 acos-client. Changes tracked from 1.4.2 > onward

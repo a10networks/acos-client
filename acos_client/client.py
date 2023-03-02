@@ -55,6 +55,7 @@ from acos_client.v30.vlan import Vlan as v30_Vlan
 from acos_client.v30.vrrpa.vrid import VRID as v30_VRRPA
 from acos_client.v30.router import Router as v30_Router
 from acos_client.v30.class_list import ClassList as v30_ClassList
+from acos_client.v30.partition import Partition
 
 VERSION_IMPORTS = {
     '21': {
@@ -94,6 +95,7 @@ VERSION_IMPORTS = {
         'Flexpool': Flexpool,
         'Delete': Delete,
         'ClassList': v30_ClassList,
+        'Partition': Partition
     },
 }
 
@@ -209,6 +211,10 @@ class Client(object):
     @property
     def class_list(self):
         return VERSION_IMPORTS[self._version]["ClassList"](self)
+
+    @property
+    def partition(self):
+        return VERSION_IMPORTS[self._version]["Partition"](self)
 
     @property
     def delete(self):
