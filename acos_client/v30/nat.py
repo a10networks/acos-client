@@ -19,9 +19,14 @@ from acos_client.v30 import base
 
 
 class Nat(base.BaseV30):
+
     @property
     def pool(self):
         return self.Pool(self.client)
+
+    @property
+    def ipv6pool(self):
+        return self.IPv6Pool(self.client)
 
     class Pool(base.BaseV30):
         url_prefix = "/ip/nat/pool/"
@@ -88,3 +93,9 @@ class Nat(base.BaseV30):
 
         def all_stats(self, **kwargs):
             return self.stats()
+
+
+    class IPv6Pool(Pool):
+        def __init__(self, client):
+            super().__init__(client)
+            self.url_prefix = "/ipv6/nat/pool/"
