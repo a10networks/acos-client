@@ -60,9 +60,18 @@ class Action(base.BaseV30):
         payload = {"reload": {"all": 1}}
         self._post("/reload", payload)
 
-    def setInterface(self, interface):
-        data = {"ethernet": {"ifnum": str(interface), "name": "DataPort",
-                "action": "enable", "ip": {"dhcp": 1}}}
+    def setInterface(self, interface, address_list, ip_version):
+        if not address_list and ip_version == 4:
+            data = {"ethernet": {"ifnum": str(interface), "name": "DataPort",
+                    "action": "enable", "ip": {"dhcp": 1}}}
+
+        if address_list and ip_version == 4:
+            data = {'ethernet': {'ifnum': str(interface), "name": "DataPort", "action": "enable",
+                    'ip': {'address-list': address_list}}}
+        if address_list and ip_version == 6:
+            data = {'ethernet': {'ifnum': str(interface), "name": "DataPort",
+                    'ipv6': {'address-list': address_list, 'ipv6-enable': 1}}}
+
         url = "/interface/ethernet/" + str(interface)
         self._post(url, data)
 
