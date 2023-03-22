@@ -15,6 +15,7 @@
 from acos_client import errors as acos_errors
 from acos_client.v30 import base
 from acos_client.v30.vrrpa.blade_params import BladeParameters
+from collections import ChainMap
 
 
 class VRID(base.BaseV30):
@@ -44,20 +45,24 @@ class VRID(base.BaseV30):
         vrid_floating_ips = None
         if floating_ips:
             if is_partition:
-                ip_partition_list = [{'ip-address-partition': ip} for ip in floating_ips]
+                ip_partition_list = [{'ip-address-partition': ip} for ip in floating_ips if not self._is_ipv6(ip)]
                 vrid_floating_ips = {
                     'ip-address-part-cfg': ip_partition_list
                 }
+                ipv6_partition_list = [{'ipv6-address-partition': ip} for ip in floating_ips if self._is_ipv6(ip)]
+                ipv6_vrid_floating_ips = {
+                    'ipv6-address-part-cfg': ipv6_partition_list
+                }
             else:
-                #ip_list = [{'ip-address': ip} for ip in floating_ips]
-                #vrid_floating_ips = {
-                #    'ip-address-cfg': ip_list
-                #}
-                ip_list = [{'ipv6-address': ip} for ip in floating_ips]
+                ip_list = [{'ip-address': ip} for ip in floating_ips if not self._is_ipv6(ip)]
                 vrid_floating_ips = {
                     'ipv6-address-cfg': ip_list
                 }
-            vrid['floating-ip'] = vrid_floating_ips
+                ipv6_list = [{'ipv6-address': ip} for ip in floating_ips if self._is_ipv6(ip)]
+                ipv6_vrid_floating_ips = {
+                    'ipv6-address-cfg': ipv6_list
+                }
+            vrid['floating-ip'] = dict(ChainMap(vrid_floating_ips, ipv6_vrid_floating_ips))
 
         if threshold or disable:
             threshold = threshold if threshold in range(0, 256) else 1
