@@ -56,7 +56,7 @@ class VRID(base.BaseV30):
             else:
                 ip_list = [{'ip-address': ip} for ip in floating_ips if not self._is_ipv6(ip)]
                 vrid_floating_ips = {
-                    'ipv6-address-cfg': ip_list
+                    'ip-address-cfg': ip_list
                 }
                 ipv6_list = [{'ipv6-address': ip} for ip in floating_ips if self._is_ipv6(ip)]
                 ipv6_vrid_floating_ips = {
