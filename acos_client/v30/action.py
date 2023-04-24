@@ -73,7 +73,7 @@ class Action(base.BaseV30):
                     'ipv6': {'address-list': address_list, 'ipv6-enable': 1}}}
 
         url = "/interface/ethernet/" + str(interface)
-        self._post(url, data)
+        self._put(url, data)
 
     def reboot(self):
         self._post("/reboot", "")
