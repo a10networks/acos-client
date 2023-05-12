@@ -60,11 +60,30 @@ class Action(base.BaseV30):
         payload = {"reload": {"all": 1}}
         self._post("/reload", payload)
 
-    def setInterface(self, interface):
-        data = {"ethernet": {"ifnum": str(interface), "name": "DataPort",
-                "action": "enable", "ip": {"dhcp": 1}}}
+    def setInterface(self, interface, address_list, ip_version, dual=False):
+        if not address_list and ip_version == 4:
+            data = {"ethernet": {"ifnum": str(interface), "name": "DataPort",
+                    "action": "enable", "ip": {"dhcp": 1}}}
+
+        if address_list and ip_version == 4:
+            data = {'ethernet': {'ifnum': str(interface), "name": "DataPort", "action": "enable",
+                    'ip': {'address-list': address_list}}}
+
+        if ip_version == 6:
+            if address_list:
+                if dual:
+                    data = {'ethernet': {'ifnum': str(interface), "name": "DataPort",
+                            "action": "enable", "ip": {"dhcp": 1},
+                            'ipv6': {'address-list': address_list, 'ipv6-enable': 1}}}
+                else:
+                    data = {'ethernet': {'ifnum': str(interface), "name": "DataPort",
+                            "action": "enable",
+                            'ipv6': {'address-list': address_list, 'ipv6-enable': 1}}}
+            else:
+                data = {'ethernet': {'ifnum': str(interface), "name": "DataPort"}}
+
         url = "/interface/ethernet/" + str(interface)
-        self._post(url, data)
+        self._put(url, data)
 
     def reboot(self):
         self._post("/reboot", "")

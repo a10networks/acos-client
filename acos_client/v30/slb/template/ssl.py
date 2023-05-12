@@ -18,6 +18,7 @@ import six
 
 from acos_client import errors as acos_errors
 from acos_client.v30 import base
+import acos_client.utils as utils
 
 
 class BaseSSL(base.BaseV30):
@@ -32,6 +33,10 @@ class BaseSSL(base.BaseV30):
         except acos_errors.NotFound:
             return False
 
+    def get_acos_version(self):
+        url = "/version/oper"
+        return self._get(url)
+
     def _set(self, name, cert="", key="", passphrase="", update=False,
              cipher_template=None, **kwargs):
         # Unimplemented options:
@@ -39,6 +44,8 @@ class BaseSSL(base.BaseV30):
         # close_notify, session_cache_size, session_cache_timeout,
         # server_certificate_error, cipher_without_prio_list,
 
+        version_summary = self.get_acos_version()
+        acos_version = version_summary['version']['oper']['sw-version'].split(',')[0]
         params = {}
 
         if cipher_template:
@@ -50,23 +57,84 @@ class BaseSSL(base.BaseV30):
             }
 
         else:
-            obj_params = {
-                "name": name,
-                "cert": cert,
-                "key": key,
-                self.passphrase: passphrase,
-                # Unimplemented options:
-                # "encrypted": encrypted,
-                # "session-ticket-enable": session_ticket_enable,
-                # "version": version,
-                # "forward-proxy-enable": forward_proxy_enable,
-                # "close-notify": close_notify,
-                # "session-cache-size": session_cache_size,
-                # "session-cache-timeout": session_cache_timeout,
-                # "server-certificate-error": server_certificate_error,
-                # "cipher-without-prio-list": cipher_without_prio_list,
-                # "ca-certs": ca_certs,
-            }
+            if utils.acos_version_cmp(acos_version, "5.2.0") >= 0:
+                if not update:
+                    obj_params = {
+                        "name": name,
+                        "certificate-list": [
+                            {
+                                "cert": cert,
+                                "key": key,
+                                "passphrase": passphrase
+                            }
+                        ]
+                        # Unimplemented options:
+                        # "encrypted": encrypted,
+                        # "session-ticket-enable": session_ticket_enable,
+                        # "version": version,
+                        # "forward-proxy-enable": forward_proxy_enable,
+                        # "close-notify": close_notify,
+                        # "session-cache-size": session_cache_size,
+                        # "session-cache-timeout": session_cache_timeout,
+                        # "server-certificate-error": server_certificate_error,
+                        # "cipher-without-prio-list": cipher_without_prio_list,
+                        # "ca-certs": ca_certs,
+                    }
+                else:
+                    if self.exists(name):
+                        existing_template = self.get(name)
+                        existing_cert_list = existing_template['client-ssl']['certificate-list'][0]
+                        existing_cert = existing_cert_list['cert']
+                        existing_key = existing_cert_list['key']
+                        if "passphrase" in existing_cert_list:
+                            existing_passphrase = existing_cert_list['passphrase']
+                        else:
+                            existing_passphrase = ""
+
+                    obj_params = {
+                        "name": name,
+                        "certificate-list": [
+                            {
+                                "cert": existing_cert,
+                                "key": existing_key,
+                                "passphrase": existing_passphrase
+                            },
+                            {
+                                "cert": cert,
+                                "key": key,
+                                "passphrase": passphrase
+                            }
+                        ]
+                        # Unimplemented options:
+                        # "encrypted": encrypted,
+                        # "session-ticket-enable": session_ticket_enable,
+                        # "version": version,
+                        # "forward-proxy-enable": forward_proxy_enable,
+                        # "close-notify": close_notify,
+                        # "session-cache-size": session_cache_size,
+                        # "session-cache-timeout": session_cache_timeout,
+                        # "server-certificate-error": server_certificate_error,
+                        # "cipher-without-prio-list": cipher_without_prio_list,
+                        # "ca-certs": ca_certs,
+                    }
+            else:
+                obj_params = {
+                    "name": name,
+                    "cert": cert,
+                    "key": key,
+                    self.passphrase: passphrase,
+                    # Unimplemented options:
+                    # "encrypted": encrypted,
+                    # "session-ticket-enable": session_ticket_enable,
+                    # "version": version,
+                    # "forward-proxy-enable": forward_proxy_enable,
+                    # "close-notify": close_notify,
+                    # "session-cache-size": session_cache_size,
+                    # "session-cache-timeout": session_cache_timeout,
+                    # "server-certificate-error": server_certificate_error,
+                    # "cipher-without-prio-list": cipher_without_prio_list,
+                    # "ca-certs": ca_certs,
+                }
 
             params = {'%s-ssl' % self.prefix: {}}
             for key, val in six.iteritems(obj_params):
