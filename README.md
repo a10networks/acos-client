@@ -22,15 +22,16 @@
 | ACOS Version   | AXAPI Version | ACOS Client Version | Status      |
 | 2.7.1†         | 2             | >=0.1.0,<0.3.0      | end-of-life |
 | 2.7.2          | 2             | >=0.1.0,<0.3.0      | end-of-life |
-| 4.0.0          | 3             | >=1.4.6,<1.5.0      | Maintenance |
-| 4.1.1          | 3             | >=1.5.0,<2.0.0      | Maintenance |
-| 4.1.4 GR1-P2   | 3             | >=2.0.0,<2.4.0      | Maintenance |
-| 4.1.4          | 3             | >=2.4.0             | Maintenance |
+| 4.0.0          | 3             | >=1.4.6,<1.5.0      | end-of-life |
+| 4.1.1          | 3             | >=1.5.0,<2.0.0      | end-of-life |
+| 4.1.4 GR1-P2   | 3             | >=2.0.0,<2.4.0      | end-of-life |
+| 4.1.4          | 3             | >=2.4.0             | end-of-life |
 | 4.1.4 GR1-P5   | 3             | >=2.6.0             | Maintenance |
 | 5.2.1          | 3             | >=2.6.0             | Maintenance |
 | 5.2.1-p1       | 3             | >=2.7.0             | Maintenance |
 | 5.2.1-p2       | 3             | >=2.9.0             | Maintenance |
 | 5.2.1-p2       | 3             | >=2.9.1             | Maintenance |
+| 5.2.1-p2       | 3             | >=2.10.0            | Maintenance |
 ```
 
 †Works only when not using partitioning
@@ -40,7 +41,7 @@
 ### Install using pip
 
 ```sh
-$ pip install acos-client>=2.6.0
+$ pip install acos-client>=2.9.0
 ```
 
 ### Install from source
