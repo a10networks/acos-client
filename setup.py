@@ -14,7 +14,7 @@ except TypeError:
 
 setup(
     name = "acos-client",
-    version = "2.9.1",
+    version = "2.10.0",
     packages = find_packages(),
 
     author = "A10 Networks",
