@@ -53,6 +53,9 @@ from acos_client.v30.slb import SLB as v30_SLB
 from acos_client.v30.system import System as v30_System
 from acos_client.v30.vlan import Vlan as v30_Vlan
 from acos_client.v30.vrrpa.vrid import VRID as v30_VRRPA
+from acos_client.v30.router import Router as v30_Router
+from acos_client.v30.class_list import ClassList as v30_ClassList
+from acos_client.v30.partition import Partition
 
 VERSION_IMPORTS = {
     '21': {
@@ -80,6 +83,7 @@ VERSION_IMPORTS = {
         'Network': v30_Network,
         'Overlay': v30_Overlay,
         'RIB': v30_RIB,
+        'Router': v30_Router,
         'Session': v30_Session,
         'SFlow': v30_SFlow,
         'SLB': v30_SLB,
@@ -90,6 +94,8 @@ VERSION_IMPORTS = {
         'DeviceContext': v30_DeviceContext,
         'Flexpool': Flexpool,
         'Delete': Delete,
+        'ClassList': v30_ClassList,
+        'Partition': Partition
     },
 }
 
@@ -121,6 +127,9 @@ class Client(object):
         )
         self.session = VERSION_IMPORTS[self._version]['Session'](self, username, password)
         self.current_partition = 'shared'
+
+    def __str__(self):
+        return f"Client: {vars(self)}"
 
     def _just_digits(self, s):
         return ''.join(i for i in str(s) if i.isdigit())
@@ -187,12 +196,25 @@ class Client(object):
         return VERSION_IMPORTS[self._version]["RIB"](self)
 
     @property
+    def router(self):
+        return VERSION_IMPORTS[self._version]["Router"](self)
+
+
+    @property
     def vrrpa(self):
         return VERSION_IMPORTS[self._version]["VRRPA"](self)
 
     @property
     def device_context(self):
         return VERSION_IMPORTS[self._version]["DeviceContext"](self)
+
+    @property
+    def class_list(self):
+        return VERSION_IMPORTS[self._version]["ClassList"](self)
+
+    @property
+    def partition(self):
+        return VERSION_IMPORTS[self._version]["Partition"](self)
 
     @property
     def delete(self):
@@ -211,3 +233,4 @@ class Client(object):
                 break
             except socket.error:
                 pass
+
