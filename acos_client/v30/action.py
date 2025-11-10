@@ -183,3 +183,12 @@ class Action(base.BaseV30):
             self.reload_all()
         else:
             self.reboot()
+
+    def change_password(self, password):
+        payload = {
+            "password": {
+                "password-in-module": password
+            }
+        }
+        url = "/admin/admin/password"
+        self._post(url, payload)
