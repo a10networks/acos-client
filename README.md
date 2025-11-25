@@ -32,6 +32,7 @@
 | 5.2.1-p2       | 3             | >=2.9.0             | Maintenance |
 | 5.2.1-p2       | 3             | >=2.9.1             | Maintenance |
 | 5.2.1-p2       | 3             | >=2.10.0            | Maintenance |
+| 6.0.7          | 3             | >=2.11.0            | Maintenance |
 ```
 
 †Works only when not using partitioning
@@ -41,7 +42,7 @@
 ### Install using pip
 
 ```sh
-$ pip install acos-client>=2.9.0
+$ pip install acos-client>=2.11.0
 ```
 
 ### Install from source
