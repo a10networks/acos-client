@@ -43,6 +43,11 @@ class TestVRID(unittest.TestCase):
         }
         return rv
 
+    def test_vrid_get_list(self):
+        self.target.get_list()
+        self.client.http.request.assert_called_with("GET", self.url_prefix, {}, mock.ANY,
+                                                    axapi_args=None, max_retries=None, timeout=mock.ANY)
+
     def test_vrid_get(self):
         self.target.get(0)
         self.client.http.request.assert_called_with("GET", self.url_prefix + '0', {}, mock.ANY,

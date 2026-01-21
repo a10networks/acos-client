@@ -29,6 +29,9 @@ class VRID(base.BaseV30):
     def blade(self):
         return BladeParameters(self.client)
 
+    def get_list(self):
+        return self._get(self.base_url)
+
     def get(self, vrid_val):
         return self._get(self.base_url + str(vrid_val))
 
