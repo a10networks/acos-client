@@ -19,6 +19,7 @@ from acos_client.v30.slb.common import SLBCommon
 from acos_client.v30.slb.hm import HealthMonitor
 from acos_client.v30.slb.server import Server
 from acos_client.v30.slb.service_group import ServiceGroup
+from acos_client.v30.slb.ssl_cert import SSLCert
 from acos_client.v30.slb.template import Template
 from acos_client.v30.slb.tcp_proxy import TcpProxy
 from acos_client.v30.slb.virtual_server import VirtualServer
@@ -60,6 +61,10 @@ class SLB(base.BaseV30):
     @property
     def common(self):
         return SLBCommon(self.client)
+
+    @property
+    def ssl_cert(self):
+        return SSLCert(self.client)
 
     def all(self):
         return self._get('/slb/')

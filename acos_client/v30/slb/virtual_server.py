@@ -44,6 +44,7 @@ class VirtualServer(base.BaseV30):
         }
         if self._is_ipv6(ip_address):
             params['virtual-server']['ipv6-address'] = ip_address
+            params['virtual-server'].pop('ip-address')
         else:
             params['virtual-server']['ip-address'] = ip_address
 
