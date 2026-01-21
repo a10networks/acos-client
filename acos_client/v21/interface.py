@@ -62,12 +62,21 @@ class Interface(base.BaseV21):
         return EthernetInterface(self.client)
 
     @property
+    def virtual_ethernet(self):
+        return VirtualEthernetInterface(self.client)
+
+    @property
     def management(self):
         return ManagementInterface(self.client)
 
 
 class EthernetInterface(Interface):
     pass
+
+
+class VirtualEthernetInterface(Interface):
+    def get(self):
+        return self._get('network.ve.getAll')
 
 
 class ManagementInterface(Interface):
