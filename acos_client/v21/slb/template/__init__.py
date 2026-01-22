@@ -18,6 +18,7 @@ from acos_client.v21.slb.template.persistence import CookiePersistence
 from acos_client.v21.slb.template.persistence import SourceIpPersistence
 from acos_client.v21.slb.template.template_ssl import ClientSSL
 from acos_client.v21.slb.template.template_ssl import ServerSSL
+from acos_client.v21.slb.template.templates import PolicyTemplates, HttpTemplates
 
 
 class Template(base.BaseV21):
@@ -37,3 +38,11 @@ class Template(base.BaseV21):
     @property
     def src_ip_persistence(self):
         return SourceIpPersistence(self.client)
+
+    @property
+    def policy_templates(self):
+        return PolicyTemplates(self.client)
+
+    @property
+    def http_templates(self):
+        return HttpTemplates(self.client)
