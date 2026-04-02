@@ -132,6 +132,11 @@ class Action(base.BaseV30):
         url = "/vcs/action"
         self._post(url, data)
 
+    def vcs_disable(self):
+        data = {"action": {"action": "disable"}}
+        url = "/vcs/action"
+        self._post(url, data)
+
     def vcs_reload(self):
         url = "/vcs/reload"
         self._post(url)
